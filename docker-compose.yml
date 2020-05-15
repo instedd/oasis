@@ -1,0 +1,22 @@
+version: '3.6'
+
+services:
+  ui:
+    build:
+      context: ./frontend
+      dockerfile: ./Dockerfile.dev
+    command: yarn start
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - node_modules:/app/node_modules
+    # depends_on:
+    #   - api
+    # environment:
+      # - REACT_APP_API=http://127.0.0.1:8000
+    tty: true
+
+
+volumes:
+  node_modules:
