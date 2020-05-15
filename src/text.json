@@ -1,0 +1,129 @@
+{
+    "Terms and Conditions": {
+        "texts": [
+            "The OASIS platform is a public space for citizens to report health and environmental hazards, like COVID cases, potential illness, or sick contacts. We are based at the University of California San Diego with support from the University and sponsors like Microsoft foundation AI4 Health. We believe everyone can contribute to creating a living map of all of Us and our planet.",
+            "The intent of OASIS is to tell your story and share it in a privacy preserving way that gives greater insight into where the virus is, how it’s spreading, and to help alert others that may be at risk. As OASIS grows we will update our terms of service so stay tuned.",
+            "We will never share your identity unless you consent.",
+            "If you sign up and any data is stored, you own that data and can delete your account and any data in it.",
+            "We will preserve the privacy of your location using the best methods available.",
+            "When you report a contact or a location you’ve been — that information will only be shared anonymously and with your explicit consent understanding there is a risk that your identity could be learned by the circumstances or timing of your contact.",
+            "We will never sell any of your data to any third party.",
+            "You may consent to join research studies in an agreement between you, the user, and the third party via separate agreements.",
+            "All data entered besides your personal identifiable information is meant to be shared with the public in a privacy preserving manner which means the public can aggregated data but not your individual personal health information.",
+            "This application is not a medical system, it makes no diagnoses or predictions and provides only data reported by our users.",
+            "Any links are to established and trusted government sites, or research activities with prior ethical approval.",
+            "This app uses encryption in transit and secure encryption of passwords, current hosting is on a secure server using best in class security"
+        ],
+        "listIndex": [
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+        ],
+        "linkIndex": []
+    },
+    "Profession": [
+        "Agriculture, Food, and Natural Resources",
+        "Architecture and Construction",
+        "Arts, Audio/Video Technology, and Communications",
+        "Education and Training",
+        "Government and Public Administration",
+        "Healthcare",
+        "Police/fire and Emergency Services",
+        "Hospitality and Tourism",
+        "Information Technology",
+        "Military or National Guard",
+        "Manufacturing",
+        "Science, Technology, Engineering, and Mathematics",
+        "Others"
+    ],
+    "Close Contacts": {
+        "texts": [
+            "Based on our current knowledge, a close contact is someone who was within 6 feet of an infected person for at least 30 minutes starting from 48 hours before illness onset until the time the patient is isolated.",
+            "They should stay home, maintain social distancing, and self-monitor until 14 days from the last date of exposure.",
+            "https://www.cdc.gov/coronavirus/2019-ncov/php/principles-contact-tracing.html"
+        ],
+        "listIndex": [
+            1
+        ],
+        "linkIndex": [
+            2
+        ]
+    },
+    "Recent Travel": {
+        "texts": [
+            "Starting 48 hours before your first symptoms and until 3 days after symptoms resolved).",
+            "Any place or form of transportation you have been for more than 30 Minutes.",
+            "For travel this includes places you’ve been like work, the gym, family and friends or shopping or recent trips.",
+            "It also includes mode of travel and the route if available. This includes buses, taxis, subways, trains, air travel and cruises or boats).",
+            "https://www.cdc.gov/coronavirus/2019-ncov/php/principles-contact-tracing.html"
+        ],
+        "listIndex": [
+            0,
+            1,
+            2,
+            3
+        ],
+        "linkIndex": [
+            4
+        ]
+    },
+    "Warning Signs": {
+        "texts": [
+            "Are you currently having:",
+            "Trouble breathing",
+            "Persistent pain or pressure in the chest",
+            "New confusion or inability to arouse",
+            "Bluish lips or face",
+            "Unable to care for yourself.",
+            "If you have any of these emergency warning signs* for COVID-19 get medical attention immediately:",
+            "https: //www.cdc.gov/coronavirus/2019-ncov/symptoms-testing/symptoms.html"
+        ],
+        "listIndex": [
+            1,
+            2,
+            3,
+            4,
+            5
+        ],
+        "linkIndex": [
+            7
+        ]
+    },
+    "HomeBound Link": "https://earth2-covid.ucsd.edu/homebound",
+    "More Information": [
+        "Coronavirus.gov",
+        "Who.net/covid-19"
+    ],
+    "Symptoms": [
+        "Fever/Chills",
+        "Cough",
+        "Shortness of breath",
+        "Chest pressure/pain",
+        "Fatigue/exhaustion",
+        "Muscle pain",
+        "Headache",
+        "Sore throat",
+        "Nasal congestion",
+        "Sneezing",
+        "Loss of taste/smell",
+        "Dizziness",
+        "Nausea",
+        "Vomiting",
+        "Diarrhea"
+    ],
+    "Medical Problems": [
+        "cancer",
+        "diabetes",
+        "heart disease",
+        "hypertension",
+        "smoker",
+        "take medications that affect your immune system"
+    ]
+}
