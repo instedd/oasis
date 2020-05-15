@@ -53,12 +53,6 @@ function App(props) {
   const classes = useStyles();
   const classesTooltip = useStylesTooltip();
   const [open, setOpen] = React.useState(false);
-  const [hidden, setHidden] = React.useState(false);
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const popoverOpen = Boolean(anchorEl);
-  const popoverId = popoverOpen ? 'simple-popover' : undefined;
 
   const handleOpen = () => {
     setOpen(true);
@@ -78,7 +72,6 @@ function App(props) {
         <SpeedDial
           ariaLabel="SpeedDial tooltip example"
           className={classes.speedDial}
-          hidden={hidden}
           icon={<SpeedDialIcon />}
           onClose={handleClose}
           onOpen={handleOpen}
@@ -92,7 +85,7 @@ function App(props) {
             icon={<div className="row" style={{ alignItems: 'center' }}>
               <Checkbox style={{ color: "white", "padding": "0 5px 0 0" }} />
               <Pop
-                label={<a style={{ textDecoration: "underline", color: "white" }}>Terms and Conditions</a>}
+                label={<span style={{ textDecoration: "underline", color: "white" }}>Terms and Conditions</span>}
                 title={<h2 style={{ textAlign: 'center' }}>Terms and Conditions</h2>}
                 texts={texts}
                 linkIndex={linkIndex}

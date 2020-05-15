@@ -181,9 +181,6 @@ export default class Application extends React.Component {
             });
 
             var colorExpression = ["match", ["get", "GEOID"]];
-            var colorQuantiles = Object.entries(colors).forEach(function ([color, GEOIDs]) {
-                colorExpression.push(GEOIDs, color);
-            });
 
             colorExpression.push("rgba(0,0,0,0)");
 

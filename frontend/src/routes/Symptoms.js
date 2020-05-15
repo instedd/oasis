@@ -55,13 +55,6 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function Symptoms(props) {
-    const [state, setState] = React.useState({});
-
-
-    const handleChange = (event) => {
-        setState({ ...state, [event.target.name]: event.target.checked });
-    };
-
     const classes = useStyles();
     const isSick = useSelector(state => state.post.sick)
     const subtitle = isSick==="recovered"? "When you were sick, which of the following symptoms did you have?" : "Are you having now, or did you recently have:"

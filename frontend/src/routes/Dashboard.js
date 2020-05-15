@@ -86,12 +86,9 @@ function Dashboard(props) {
     }, [])
 
     let donate_link = null;
-    
+
     if (isSick === "recovered" && tested === "positive") {
         donate_link = <Link href="https://med.stanford.edu/id/covid19/lambda.html" style={{ color: '#EB5757' }}>Donate your blood to help others</Link>
-    }
-    else {
-        donate_link = null;
     }
 
     const preventDefault = (event) => event.preventDefault();

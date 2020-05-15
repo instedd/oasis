@@ -110,9 +110,6 @@ function CriticalQuestions(props) {
         setTravelDates({ ...travelDates, [travelDatesIndex]: date });
     };
 
-
-    const [error, setError] = React.useState(null);
-    const [isLoaded, setIsLoaded] = React.useState(false);
     const [countries, setCountries] = React.useState([]);
 
     const endPicker = <DatePicker
@@ -131,12 +128,9 @@ function CriticalQuestions(props) {
             .then(res => res.json())
             .then(
                 (result) => {
-                    setIsLoaded(true);
                     setCountries(result);
                 },
-                (error) => {
-                    setIsLoaded(true);
-                    setError(error);
+                () => {
                 }
             )
     }, [])

@@ -1,5 +1,5 @@
 import React from 'react'
-import { TextField, Fab, Typography, Slider } from '@material-ui/core';
+import { Fab, Typography, Slider } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
@@ -27,8 +27,7 @@ import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 //         width: 'max-content'
 //     },
 // });
-const iOSBoxShadow =
-  '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.13),0 0 0 1px rgba(0,0,0,0.02)';
+
 const CustomSlider = withStyles({
     root: {
       color: 'rgb(234, 32, 39)',
@@ -87,7 +86,6 @@ const CustomSlider = withStyles({
   })(Slider);
 
 function HealthMeasurements(props) {
-    const { classes } = props;
     const [temp, setTemp] = React.useState(92);
     const [heartRate, setHeartRate] = React.useState(30);
     const [pulseOxygen, setPulseOxygen] = React.useState(60);

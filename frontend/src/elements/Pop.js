@@ -1,9 +1,5 @@
 import React from 'react';
 import Popover from '@material-ui/core/Popover';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import Button from '@material-ui/core/Button';
 
 export default function Pop(props) {
   

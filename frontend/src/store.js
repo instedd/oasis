@@ -3,7 +3,6 @@ import thunk from 'redux-thunk';
 import rootReducer from './reducers/reducers';
 import { loadState, saveState } from './actions/localStorage'
 
-const initialState = {};
 const middleware = [thunk];
 const persistedState = loadState();
 
