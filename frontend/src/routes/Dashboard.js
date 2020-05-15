@@ -6,9 +6,8 @@ import EditIcon from '@material-ui/icons/Edit';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
-import Text from '../text.json';
 
 const useStyles = makeStyles((theme) => ({
     speedDial: {
@@ -59,12 +58,8 @@ const actions = [
 ];
 
 function Dashboard(props) {
-
-    const dispatch = useDispatch()
-
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
-    const [hidden, setHidden] = React.useState(false);
 
     const isSick = useSelector(state => state.post.sick);
     const tested = useSelector(state => state.post.tested);
@@ -77,9 +72,6 @@ function Dashboard(props) {
         setOpen(false);
     };
 
-
-    const [error, setError] = React.useState(null);
-    const [isLoaded, setIsLoaded] = React.useState(false);
     const [data, setData] = React.useState({ confirmed: null, deaths: null, recovered: null });
 
     React.useEffect(() => {
@@ -87,18 +79,14 @@ function Dashboard(props) {
             .then(res => res.json())
             .then(
                 (result) => {
-                    setIsLoaded(true);
                     setData(result);
                 },
-                (error) => {
-                    setIsLoaded(true);
-                    setError(error);
-                }
+                (error) => {}
             )
     }, [])
 
     let donate_link = null;
-    let trial_link = null;
+    
     if (isSick === "recovered" && tested === "positive") {
         donate_link = <Link href="https://med.stanford.edu/id/covid19/lambda.html" style={{ color: '#EB5757' }}>Donate your blood to help others</Link>
     }
@@ -164,7 +152,6 @@ function Dashboard(props) {
                     <SpeedDial
                         ariaLabel="SpeedDial tooltip example"
                         className={classes.speedDial}
-                        hidden={hidden}
                         icon={<SpeedDialIcon />}
                         onClose={handleClose}
                         onOpen={handleOpen}
