@@ -3,6 +3,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import Link from '@material-ui/core/Link';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import EditIcon from '@material-ui/icons/Edit';
+import SpeedDial from '@material-ui/lab/SpeedDial';
+import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
+import SpeedDialAction from '@material-ui/lab/SpeedDialAction'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Text from '../text.json';
@@ -11,13 +14,19 @@ const useStyles = makeStyles((theme) => ({
     speedDial: {
         '& .MuiFab-label': {
             width: 'max-content'
-        }
+        },
+        position:"absolute",
+        bottom:85,
+        right: 15
     },
     button: {
         '&:hover': {
             background: "#EA2027", color: "white"
         },
-        background: "#EA2027", color: "white"
+        background: "#EA2027", color: "white",
+        position:"absolute",
+        bottom:-45,
+        right: 5
     },
     label: {
         width: 'max-content'
@@ -28,6 +37,12 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+const useStylesTooltip = makeStyles((theme) => ({
+    tooltip: {
+        display: 'none'
+    }
+}))
+
 const status =
 {
     positive: { name: 'Tested Positive', color: 'red' },
@@ -37,6 +52,11 @@ const status =
     "not sick": { name: 'Not Sick', color: 'gray' },
     "not tested": { name: 'Not Tested', color: 'blue' }
 }
+
+const actions = [
+    { name: ' ADD MY STORY ', href: '', classes: "signin-btn MuiFab-extended" },
+    { name: ' DAILY ASSESSMENT ', href: '/symptoms', classes: "MuiFab-extended" },
+];
 
 function Dashboard(props) {
 
@@ -79,7 +99,7 @@ function Dashboard(props) {
 
     let donate_link = null;
     let trial_link = null;
-    if (localStorage.isSick === "recovered" && localStorage.tested === "positive") {
+    if (isSick === "recovered" && tested === "positive") {
         donate_link = <Link href="https://med.stanford.edu/id/covid19/lambda.html" style={{ color: '#EB5757' }}>Donate your blood to help others</Link>
     }
     else {
@@ -87,7 +107,10 @@ function Dashboard(props) {
     }
 
     const preventDefault = (event) => event.preventDefault();
-    // const data= useSelector(state => state.get.overall);
+
+    const classesTooltip = useStylesTooltip();
+
+
     return (
         <div className="Dashboard">
             <Breadcrumbs aria-label="breadcrumb" className="breadcrumbs">
@@ -128,14 +151,38 @@ function Dashboard(props) {
                 </div>
 
             </div>
-
-            <div className="col suggestions-wrapper">
-                <h3>SUGGESTIONS</h3>
-                <div style={{ color: "gray" }}>Stay at home</div>
-                <Link href="https://earth2-covid.ucsd.edu/homebound" style={{ color: '#2D9CDB' }}>Download HomeBound</Link>
-                <Link href="#" onClick={preventDefault} style={{ color: '#F2C94C' }}>Join a clinical trial</Link>
-                {donate_link}
-                <Link onClick={preventDefault} style={{ color: '#FFFFFF' }}>Learn more about COVID-19</Link>
+            <div className="row">
+                <div className="col suggestions-wrapper">
+                    <h3>SUGGESTIONS</h3>
+                    <div style={{ color: "gray" }}>Stay at home</div>
+                    <Link href="https://earth2-covid.ucsd.edu/homebound" style={{ color: '#2D9CDB' }}>Download HomeBound</Link>
+                    <Link href="#" onClick={preventDefault} style={{ color: '#F2C94C' }}>Join a clinical trial</Link>
+                    {donate_link}
+                    <Link onClick={preventDefault} style={{ color: '#FFFFFF' }}>Learn more about COVID-19</Link>
+                </div>
+                <div className="col">
+                    <SpeedDial
+                        ariaLabel="SpeedDial tooltip example"
+                        className={classes.speedDial}
+                        hidden={hidden}
+                        icon={<SpeedDialIcon />}
+                        onClose={handleClose}
+                        onOpen={handleOpen}
+                        open={open}
+                        FabProps={{ className: classes.button }}
+                    >
+                        {actions.map((action) => (
+                            <SpeedDialAction
+                                key={action.name}
+                                icon={action.name}
+                                tooltipTitle={action.name}
+                                className={action.classes}
+                                TooltipClasses={classesTooltip}
+                                href={action.href}
+                            ></SpeedDialAction>
+                        ))}
+                    </SpeedDial>
+                </div>
             </div>
         </div>
     );

@@ -203,13 +203,22 @@ a, a:link, a:visited, a:hover, a:active {
   align-items: center;
 }
 
-.form-row div {
+.contacts div, .travels div{
   height: 24px;
   margin-left: 5px;
 }
 
 .form-row .fab {
   margin-right: 1rem !important;
+}
+
+#menu- .MuiMenu-paper{
+  top:30% !important
+}
+
+.App .signin-btn {
+  background-color: #EA2027;
+  color:white
 }
 
 .next-btn {

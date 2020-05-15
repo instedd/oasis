@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField, MenuItem, FormControl, InputLabel, Select, Checkbox, ListItemText,Input } from '@material-ui/core';
+import { TextField, MenuItem, FormControl, InputLabel, Select, Checkbox, ListItemText, Input } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import { Fab } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
@@ -54,7 +54,22 @@ const styles = theme => ({
         color: 'white',
         width: 'max-content'
     },
+    formControl: {
+        margin: theme.spacing(1),
+        width: '90%'
+    },
+    wrap:{
+        whiteSpace: "normal",
+    }
 });
+
+const MenuProps = {
+    PaperProps: {
+        style: {
+            top:'200px !important'
+        },
+    },
+};
 
 function CriticalQuestions(props) {
     const { classes } = props;
@@ -72,10 +87,10 @@ function CriticalQuestions(props) {
     const [locationCount, setLocationCount] = useState(0)
 
     const [selectedProblems, setMedicalProblems] = useState([]);
+
     const handleMedicalProblemChange = (event) => {
         setMedicalProblems(event.target.value);
     };
-
     const handleSexChange = (event) => {
         setSex(event.target.value);
     };
@@ -92,11 +107,7 @@ function CriticalQuestions(props) {
 
 
     function handleTravelDateChange(date) {
-        console.log(travelDatesIndex);
         setTravelDates({ ...travelDates, [travelDatesIndex]: date });
-
-        console.log(travelDates);
-
     };
 
 
@@ -288,63 +299,81 @@ function CriticalQuestions(props) {
                                 className: classes.label
                             }} /> */}
                     </div>
-                    <div className="form-row"><FormControl className={classes.formControl}>
-                        <InputLabel id="demo-mutiple-checkbox-label"  
-                            InputLabelProps={{ className: classes.label }}>Tag</InputLabel>
+                    <div className="medical-problems">
+                    <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-mutiple-checkbox-label"
+                            className={classes.label}>Medical Problems</InputLabel>
                         <Select
                             labelId="demo-mutiple-checkbox-label"
                             id="demo-mutiple-checkbox"
                             multiple
                             value={selectedProblems}
-                            input={<Input InputProps={{ className: classes.input }}/>}
+                            input={<Input className={classes.input} />}
                             onChange={handleMedicalProblemChange}
                             renderValue={(selected) => selected.join(', ')}
+                            MenuProps={MenuProps}
                         >
                             {medicalProblems.map((name) => (
                                 <MenuItem key={name} value={name}>
-                                    <Checkbox checked={selectedProblems.indexOf(name) > -1}/>
-                                        <ListItemText primary={name} />
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl></div>
-                        <div className="form-row">
-                            <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab" onClick={() => setContactCount(contactCount + 1)}>
-                                <AddIcon />
-                            </Fab>
-                            <p>Close Contacts</p>
-                            <Pop
-                                label={<ErrorOutlineIcon />}
-                                title={<span></span>}
-                                texts={contactText}
-                                linkIndex={contactLinkIndex}
-                                listIndex={contactListIndex} />
+                                    <Checkbox checked={selectedProblems.indexOf(name) > -1} />
+                                    <ListItemText primary={name} className={classes.wrap}/>
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    </div>
+                    {/* <TextField
+                        select
+                        label="Medical Problems"
+                        value={selectedProblems.join(", ")}
+                        onChange={handleMedicalProblemChange}
+                        InputProps={{ className: classes.input }}
+                        InputLabelProps={{ className: classes.label }}
+                    >
+                        {medicalProblems.map((name) => (
+                            <MenuItem key={name} value={name}>
+                                <Checkbox checked={selectedProblems.indexOf(name) > -1} />
+                                <ListItemText primary={name} />
+                            </MenuItem>
+                        ))}
+                    </TextField> */}
+                    <div className="form-row contacts">
+                        <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab" onClick={() => setContactCount(contactCount + 1)}>
+                            <AddIcon />
+                        </Fab>
+                        <p>Close Contacts</p>
+                        <Pop
+                            label={<ErrorOutlineIcon />}
+                            title={<span></span>}
+                            texts={contactText}
+                            linkIndex={contactLinkIndex}
+                            listIndex={contactListIndex} />
 
-                        </div>
-                        {contacts}
-                        <div className="form-row">
-                            <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab" onClick={() => setLocationCount(locationCount + 1)}>
-                                <AddIcon />
-                            </Fab>
-                            <p>Recent Travels</p>
-                            <Pop
-                                label={<ErrorOutlineIcon />}
-                                title={<span></span>}
-                                texts={travelText}
-                                linkIndex={travelLinkIndex}
-                                listIndex={travelListIndex} />
-                        </div>
-                        {locations}
-                        <div style={{ height: '20px' }} ref={pageBottomRef}></div>
+                    </div>
+                    {contacts}
+                    <div className="form-row travels">
+                        <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab" onClick={() => setLocationCount(locationCount + 1)}>
+                            <AddIcon />
+                        </Fab>
+                        <p>Recent Travels</p>
+                        <Pop
+                            label={<ErrorOutlineIcon />}
+                            title={<span></span>}
+                            texts={travelText}
+                            linkIndex={travelLinkIndex}
+                            listIndex={travelListIndex} />
+                    </div>
+                    {locations}
+                    <div style={{ height: '20px' }} ref={pageBottomRef}></div>
                 </form>
             </div>
-                <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab next-btn" onClick={() => props.history.push(nextPage)}>
-                    <ArrowRightIcon />
-                </Fab>
-                <Fab style={{ background: "#9206FF" }} aria-label="add" size="medium" className="fab back-btn" onClick={() => props.history.push('/confirm')}>
-                    <ArrowLeftIcon />
-                </Fab>
-            </div>
+            <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab next-btn" onClick={() => props.history.push(nextPage)}>
+                <ArrowRightIcon />
+            </Fab>
+            <Fab style={{ background: "#9206FF" }} aria-label="add" size="medium" className="fab back-btn" onClick={() => props.history.push('/confirm')}>
+                <ArrowLeftIcon />
+            </Fab>
+        </div>
     )
 }
 
