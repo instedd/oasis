@@ -1,0 +1,91 @@
+System
+
+AWS EC2
+External IP http://13.57.220.143
+
+python 3.6.9
+mysql 5.7.30-0
+ubuntu 18.04.3
+apache 2.4.29
+
+Database
+name: covid
+
+Tables:
+
+1.accounts
+2.patient
+3.symptoms
+4.contact_tracing
+5.jhu (Johns Hopkins data)
+6. countycal (San Diego county cases)
+7. sdzip (San Diego county cases by zip
+8.us (cases by state)
+
+Python Packages
+Pip freeze:
+asn1crypto==0.24.0
+backports.shutil-get-terminal-size==1.0.0
+backports.ssl-match-hostname==3.7.0.1
+certifi==2020.4.5.1
+chardet==3.0.4
+click==7.1.1
+cryptography==2.1.4
+decorator==4.1.2
+docker==4.2.0
+enum34==1.1.6
+Flask==1.1.2
+Flask-Cors==3.0.8
+idna==2.9
+ipaddress==1.0.23
+ipython==5.5.0
+ipython-genutils==0.2.0
+itsdangerous==1.1.0
+Jinja2==2.11.2
+jsonify==0.5
+keyring==10.6.0
+keyrings.alt==3.0
+MarkupSafe==1.1.1
+mysql-connector==2.2.9
+pathlib2==2.3.0
+pexpect==4.2.1
+phpmyadmin==0.0.1
+pickleshare==0.7.4
+prompt-toolkit==1.0.15
+pycrypto==2.6.1
+Pygments==2.2.0
+pygobject==3.26.1
+pyxdg==0.25
+requests==2.23.0
+scandir==1.7
+SecretStorage==2.3.1
+simplegeneric==0.8.1
+six==1.14.0
+termcolor==1.1.0
+traitlets==4.3.2
+urllib3==1.25.9
+virtualenv==15.1.0
+wcwidth==0.1.7
+websocket-client==0.57.0
+Werkzeug==1.0.1
+
+Webservices:
+
+1. Register:
+http://13.57.220.143/register?email=xx&password=mm
+returns: 'success'
+
+2. Login:
+http://13.57.220.143/login?email=xx&password=mm
+returns: 'success'
+
+3. Getzip:
+http://13.57.220.143/getsdzip
+returns: San Diego cases by zipcode
+
+4. Getcounty:
+http://13.57.220.143/getcounty
+returns: California cases by county
+
+5.
+
