@@ -26,6 +26,7 @@ import MomentUtils from '@date-io/moment';
 import Dashboard from './routes/Dashboard';
 import HealthMeasurements from './routes/HealthMeasurements';
 import SignUp from './routes/SignUp';
+import MyStory from './routes/MyStory';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -48,7 +49,7 @@ ReactDOM.render(
           <Route path="/confirm" component={Confirm} />
           <Route path="/measurements" component={HealthMeasurements} />
           <Route path="/signup" component={SignUp} />
-          {/* <Route path="/moreinfo" component={MoreInfo} /> */}
+          <Route path="/mystory" component={MyStory} />
           
         </Switch>
         

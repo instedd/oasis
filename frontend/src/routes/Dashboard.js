@@ -53,8 +53,8 @@ const status =
 }
 
 const actions = [
-    { name: ' ADD MY STORY ', href: '', classes: "signin-btn MuiFab-extended" },
-    { name: ' DAILY ASSESSMENT ', href: '/symptoms', classes: "MuiFab-extended" },
+    { name: ' ADD MY STORY ', href: '/mystory', classes: "MuiFab-extended" },
+    { name: ' DAILY ASSESSMENT ', href: '/symptoms', classes: "signin-btn MuiFab-extended" },
 ];
 
 function Dashboard(props) {
@@ -107,9 +107,9 @@ function Dashboard(props) {
                 <div className="col">
                     <div className="row">
                         <h3>MY STATUS</h3>
-                        <Link className="row status-item" style={{ color: 'white' }} onClick={() => props.history.push("/onboard")}>
+                        {/* <Link className="row status-item" style={{ color: 'white' }} onClick={() => props.history.push("/onboard")}>
                             <EditIcon className={classes.editicon} />
-                        </Link>
+                        </Link> */}
                     </div>
 
                     <div className="status-list">
@@ -162,7 +162,7 @@ function Dashboard(props) {
                                 tooltipTitle={action.name}
                                 className={action.classes}
                                 TooltipClasses={classesTooltip}
-                                href={action.href}
+                                onClick={()=>props.history.push(action.href)}
                             ></SpeedDialAction>
                         ))}
                     </SpeedDial>

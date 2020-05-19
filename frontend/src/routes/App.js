@@ -33,9 +33,7 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       background: "none",
     },
-  },
-  fab: { backgroundColor: "red" }
-
+  }
 }))
 
 const useStylesTooltip = makeStyles((theme) => ({
