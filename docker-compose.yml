@@ -16,7 +16,15 @@ services:
     # environment:
       # - REACT_APP_API=http://127.0.0.1:8000
     tty: true
-
+  api:
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile.dev
+    command: uvicorn app:app --reload --host 0.0.0.0
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
 
 volumes:
   node_modules:
