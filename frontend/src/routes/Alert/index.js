@@ -2,7 +2,10 @@ import React from 'react'
 import { Fab } from '@material-ui/core';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
-import Text from '../text.json';
+
+import Wrapper from 'components/Wrapper';
+import styles from './styles.module.css';
+import Text from 'text.json';
 
 const texts = Text["Warning Signs"].texts
 const listIndex = Text["Warning Signs"].listIndex
@@ -10,10 +13,9 @@ const linkIndex = Text["Warning Signs"].linkIndex
 
 export default function Alert(props) {
     return (
-        <div className="Alert">
-            {/* <div className="dark mask"></div> */}
-            <h1 className="title">WARNING</h1>
-            <div className="warnings">
+        <Wrapper>
+            <h1 className={styles.title}>WARNING</h1>
+            <div className={styles.warnings}>
                 {texts.map((x, i) => {
                     if (listIndex.indexOf(i) >= 0)
                         return <p key={i}>● {x}</p>
@@ -29,6 +31,6 @@ export default function Alert(props) {
                     <ArrowRightIcon />
                 </Fab>
             </div>
-        </div >
+        </Wrapper >
     )
 }

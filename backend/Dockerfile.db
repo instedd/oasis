@@ -1,0 +1,4 @@
+FROM mysql:5.7
+RUN mkdir /scripts
+ADD Coviddatabase.sql /scripts/
+# RUN mysql -u root covid < scripts/Coviddatabase.sql

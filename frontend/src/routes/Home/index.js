@@ -1,12 +1,16 @@
 import React from 'react';
-import '../css/App.css';
+import classNames from 'classnames';
 import { Checkbox } from '@material-ui/core';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction'
 import { makeStyles } from '@material-ui/core/styles';
-import Text from '../text.json';
-import Pop from '../elements/Pop';
+
+import Wrapper from 'components/Wrapper';
+
+import styles from './styles.module.css';
+import Text from '../../text.json';
+import Pop from '../../elements/Pop';
 
 const useStyles = makeStyles((theme) => ({
   speedDial: {
@@ -43,7 +47,7 @@ const useStylesTooltip = makeStyles((theme) => ({
 }))
 
 const actions = [
-  { name: ' SIGN IN / SIGN UP ', href: '/signin', classes: "signin-btn MuiFab-extended" },
+  { name: ' SIGN IN / SIGN UP ', href: '/signin', classes: classNames(styles.signin, "MuiFab-extended") },
   { name: ' CONTINUE AS GUEST ', href: '/onboard', classes: "MuiFab-extended" },
 ];
 
@@ -64,8 +68,8 @@ function App(props) {
   const listIndex = Text["Terms and Conditions"].listIndex
   const linkIndex = Text["Terms and Conditions"].linkIndex
   return (
-    <div className="App container">
-      <h1 className="title"> FIGHT COVID-19 PUT YOUR STORY ON THE MAP</h1>
+    <Wrapper>
+      <h1 className={styles.title}> FIGHT COVID-19 PUT YOUR STORY ON THE MAP</h1>
       <div>
         <SpeedDial
           ariaLabel="SpeedDial tooltip example"
@@ -104,7 +108,7 @@ function App(props) {
           ))}
         </SpeedDial>
       </div>
-    </div>
+    </Wrapper>
   );
 }
 

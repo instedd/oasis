@@ -11,20 +11,34 @@ services:
     volumes:
       - ./frontend:/app
       - node_modules:/app/node_modules
-    # depends_on:
-    #   - api
-    # environment:
-      # - REACT_APP_API=http://127.0.0.1:8000
+    depends_on:
+      - api
+    environment:
+      - REACT_APP_API=http://127.0.0.1:8000
     tty: true
   api:
     build:
       context: ./backend
       dockerfile: ./Dockerfile.dev
-    command: uvicorn app:app --reload --host 0.0.0.0
+    command: uvicorn app:app --reload --host 0.0.0.0 --port 80
     ports:
-      - "8000:8000"
+      - "8000:80"
     volumes:
       - ./backend:/app
+    depends_on:
+      - db
+    environment:
+      DATABASE_HOST: db
+  db:
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile.db
+    volumes:
+      - db:/var/lib/mysql
+    environment: 
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
+      MYSQL_DATABASE: 'covid'
 
 volumes:
   node_modules:
+  db:

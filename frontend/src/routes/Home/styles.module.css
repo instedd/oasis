@@ -1,0 +1,11 @@
+.title {
+  font-weight: normal;
+  line-height: 125%;
+  text-align: center;
+  width: 270px;
+}
+
+.signin {
+  background-color: #EA2027 !important;
+  color:white !important;
+}

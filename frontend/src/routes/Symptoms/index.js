@@ -5,15 +5,17 @@ import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import CheckCircle from '@material-ui/icons/CheckCircle';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
-import Text from '../text.json';
 import { useSelector } from 'react-redux';
+import Text from 'text.json';
+import Wrapper from 'components/Wrapper';
+import styles from './styles.module.css';
 
 const symptoms = Text["Symptoms"]
 
 const useStyles = makeStyles((theme) => ({
     root: {
         width: '90vw',
-        overflow: 'scroll',
+        overflow: 'auto',
         height: 'max-content'
     },
     group: {
@@ -39,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
         width: 'max-content',
         fontSize: 15
     },
-    numbers: {
+    others: {
         '& > *': {
             marginTop: theme.spacing(-1),
             marginBottom: theme.spacing(2),
@@ -55,9 +57,9 @@ export default function Symptoms(props) {
     const isSick = useSelector(state => state.post.sick)
     const subtitle = isSick === "recovered" ? "When you were sick, which of the following symptoms did you have?" : "Are you having now, or did you recently have:"
     return (
-        <div className="Symptoms">
+        <Wrapper>
             <h1 className="title"> MY COVID STORY</h1>
-            <p className="subtitle">{subtitle}</p>
+            <p className={styles.subtitle}>{subtitle}</p>
             <FormControl className={classes.root} component="fieldset">
                 <FormGroup className={classes.group} aria-label="position" row>
                     {symptoms.map((option) => (
@@ -72,37 +74,8 @@ export default function Symptoms(props) {
 
                 </FormGroup>
             </FormControl>
-            {/* <div className={classes.numbers} >
-                <TextField
-                    id="HeartRate"
-                    label="Heart Rate (BPM)"
-                    type="number"
-                    InputProps={{ className: classes.input }}
-                    InputLabelProps={{
-                        className: classes.label
-                    }}
-                />
         
-                <TextField
-                    id="standard-number"
-                    label="Max Temperature (F)"
-                    type="number"
-                    InputProps={{ className: classes.input }}
-                    InputLabelProps={{
-                        className: classes.label
-                    }}
-                />
-                <TextField
-                    id="standard-number"
-                    label="Pulse Oxygen (%sp02)"
-                    type="number"
-                    InputProps={{ className: classes.input }}
-                    InputLabelProps={{
-                        className: classes.label
-                    }}
-                />
-            </div> */}
-            <div className={classes.numbers}>
+            <div className={classes.others}>
                 <TextField
                     id="standard-number"
                     label="Other Symptoms"
@@ -118,6 +91,6 @@ export default function Symptoms(props) {
             <Fab style={{ background: "#9206FF" }} aria-label="add" onClick={() => props.history.push("/questions")} size="medium" className="fab back-btn">
                 <ArrowLeftIcon />
             </Fab>
-        </div>
+        </Wrapper>
     )
 }
