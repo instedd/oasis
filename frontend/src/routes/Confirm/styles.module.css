@@ -1,0 +1,13 @@
+.buttons {
+  display: flex;
+  flex-direction: column;
+  height: 250px;
+  justify-content: space-evenly;
+  width: 250px;
+  align-items: center;
+}
+
+.buttons > button {
+  width: 250px;
+  min-width: max-content;
+}

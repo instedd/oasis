@@ -8,8 +8,9 @@ import {
 } from "react-router-dom";
 import { Provider } from 'react-redux'
 import store from './store'
+import 'css/index.css';
 
-import App from './routes/App';
+import Home from './routes/Home';
 import SignIn from './routes/SignIn';
 import Onboard from './routes/Onboard';
 import Alert from './routes/Alert';
@@ -35,10 +36,9 @@ ReactDOM.render(
     <MuiPickersUtilsProvider utils={MomentUtils}>
       <Router>
         <Link to="/" className="header">OASIS</Link>
-        {/* <Link className="sign-in-btn" to="/signin"><span>SIGN IN</span></Link> */}
         <Map></Map>
         <Switch>
-          <Route exact path="/" component={App} />
+          <Route exact path="/" component={Home} />
           <Route path="/signin" component={SignIn} />
           <Route path="/onboard" component={Onboard} />
           <Route path="/alert" component={Alert} />

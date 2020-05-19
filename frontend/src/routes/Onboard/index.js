@@ -1,7 +1,11 @@
 import React from 'react'
 import { Fab } from '@material-ui/core'
-import { handleSick } from '../actions/handleSick';
+import { handleSick } from '../../actions/handleSick';
 import { useDispatch } from 'react-redux'
+import classNames from 'classnames';
+import Wrapper from 'components/Wrapper';
+
+import styles from './styles.module.css';
 
 export default function Onboard(props) {
 
@@ -11,9 +15,9 @@ export default function Onboard(props) {
         dispatch(handleSick(selected));
     }
     return (
-        <div className="Onboard">
+        <Wrapper>
             <h1 className="title">MY COVID STORY</h1>
-            <div className="btn-group">
+            <div className={classNames("btn-group", styles.buttons)}>
                 <Fab style={{ background: "#EA2027" }} variant="extended" className="fab sick-btn" onClick={() => { handleClick('sick'); props.history.push('/alert') }}>
                     <span>I AM SICK</span>
                 </Fab>
@@ -24,7 +28,7 @@ export default function Onboard(props) {
                     <span>I AM RECOVERED</span>
                 </Fab>
             </div>
-        </div>
+        </Wrapper>
     )
 }
 

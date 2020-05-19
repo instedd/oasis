@@ -6,10 +6,11 @@ import AddIcon from '@material-ui/icons/Add';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import { DatePicker } from "@material-ui/pickers";
-import Pop from '../elements/Pop';
-import Text from '../text.json';
+import Pop from 'elements/Pop';
+import Text from 'text.json';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import { useSelector } from "react-redux";
+import Wrapper from "components/Wrapper";
 
 
 const contactText = Text["Close Contacts"].texts
@@ -200,7 +201,7 @@ function CriticalQuestions(props) {
     }
 
     return (
-        <div className="CriticalQuestions">
+        <Wrapper>
             <h1 className="title"> MY COVID STORY</h1>
             <div className={classes.root}>
                 <form noValidate>
@@ -316,21 +317,6 @@ function CriticalQuestions(props) {
                         </Select>
                     </FormControl>
                     </div>
-                    {/* <TextField
-                        select
-                        label="Medical Problems"
-                        value={selectedProblems.join(", ")}
-                        onChange={handleMedicalProblemChange}
-                        InputProps={{ className: classes.input }}
-                        InputLabelProps={{ className: classes.label }}
-                    >
-                        {medicalProblems.map((name) => (
-                            <MenuItem key={name} value={name}>
-                                <Checkbox checked={selectedProblems.indexOf(name) > -1} />
-                                <ListItemText primary={name} />
-                            </MenuItem>
-                        ))}
-                    </TextField> */}
                     <div className="form-row contacts">
                         <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab" onClick={() => setContactCount(contactCount + 1)}>
                             <AddIcon />
@@ -367,7 +353,7 @@ function CriticalQuestions(props) {
             <Fab style={{ background: "#9206FF" }} aria-label="add" size="medium" className="fab back-btn" onClick={() => props.history.push('/confirm')}>
                 <ArrowLeftIcon />
             </Fab>
-        </div>
+        </Wrapper>
     )
 }
 

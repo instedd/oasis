@@ -3,61 +3,16 @@ import { Fab, Typography, Slider } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
-
-// const styles = theme => ({
-//     root: {
-//         position: 'absolute',
-//         width: '80vw',
-//         top: '30%;',
-//         left: 'calc(10vw - 8px)',
-//         '& > *': {
-//             margin: theme.spacing(1),
-//             width: '100%',
-//         },
-//     },
-//     input: {
-//         color: 'white',
-//         '&:before': {
-//             borderBottom: '1px solid white',
-//         },
-
-//     },
-//     label: {
-//         color: 'white',
-//         width: 'max-content'
-//     },
-// });
+import Wrapper from 'components/Wrapper';
 
 const CustomSlider = withStyles({
     root: {
       color: 'rgb(234, 32, 39)',
       height: 2,
-    //   padding: '15px 0',
     },
     thumb: {
-    //   height: 28,
-    //   width: 28,
       backgroundColor: '#fff',
-    //   boxShadow: iOSBoxShadow,
-    //   marginTop: -14,
-    //   marginLeft: -14,
-    //   '&:focus, &:hover, &$active': {
-    //     boxShadow: '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.3),0 0 0 1px rgba(0,0,0,0.02)',
-    //     // Reset on touch devices, it doesn't add specificity
-    //     '@media (hover: none)': {
-    //       boxShadow: iOSBoxShadow,
-    //     },
-    //   },
     },
-    // active: {},
-    // valueLabel: {
-    //   left: 'calc(-50% + 11px)',
-    //   top: -22,
-    //   '& *': {
-    //     background: 'transparent',
-    //     color: '#000',
-    //   },
-    // },
     track: {
       height: 5,
     },
@@ -73,16 +28,8 @@ const CustomSlider = withStyles({
         marginTop: -2,
     },
     markLabel: {
-    //   backgroundColor: '#bfbfbf',
-    //   height: 8,
-    //   width: 1,
-    //   marginTop: -3,
       color:"white"
     },
-    // markActive: {
-    //   opacity: 1,
-    //   backgroundColor: 'currentColor',
-    // },
   })(Slider);
 
 function HealthMeasurements(props) {
@@ -141,7 +88,7 @@ function HealthMeasurements(props) {
     }
 
     return (
-        <div className="HealthMeasurements">
+        <Wrapper>
             <h1 className="title"> MY COVID STORY</h1>
             <div className="sliders-wrapper">
                 <Typography id="temp-slider" gutterBottom>Temperature</Typography>
@@ -184,36 +131,7 @@ function HealthMeasurements(props) {
                     aria-labelledby="pulse-oxygen-slider"
                     getAriaValueText={pulseOxygenText}
                     marks={pulseOxygenMarks}
-                    // label
                 />
-                {/* <TextField
-                    id="HeartRate"
-                    label="Heart Rate (BPM)"
-                    type="number"
-                    InputProps={{ className: classes.input }}
-                    InputLabelProps={{
-                        className: classes.label
-                    }}
-                />
-        
-                <TextField
-                    id="standard-number"
-                    label="Max Temperature (F)"
-                    type="number"
-                    InputProps={{ className: classes.input }}
-                    InputLabelProps={{
-                        className: classes.label
-                    }}
-                />
-                <TextField
-                    id="standard-number"
-                    label="Pulse Oxygen (%sp02)"
-                    type="number"
-                    InputProps={{ className: classes.input }}
-                    InputLabelProps={{
-                        className: classes.label
-                    }}
-                /> */}
             </div>
             <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab next-btn" onClick={()=>props.history.push('/dashboard')}>
                 <ArrowRightIcon />
@@ -221,7 +139,7 @@ function HealthMeasurements(props) {
             <Fab style={{ background: "#9206FF" }} aria-label="add" size="medium" className="fab back-btn" onClick={()=>props.history.push('/symptoms')}>
                 <ArrowLeftIcon />
             </Fab>
-        </div>
+        </Wrapper>
     )
 }
 
