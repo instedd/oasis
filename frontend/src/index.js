@@ -7,7 +7,7 @@ import {
   Link,
 } from "react-router-dom";
 import { Provider } from 'react-redux'
-import store from './store'
+import {store, persistor} from './redux'
 
 import App from './routes/App';
 import SignIn from './routes/SignIn';
@@ -28,35 +28,38 @@ import HealthMeasurements from './routes/HealthMeasurements';
 import SignUp from './routes/SignUp';
 import MyStory from './routes/MyStory';
 
+import { PersistGate } from 'redux-persist/integration/react'
+
 ReactDOM.render(
   <React.StrictMode>
-     
-     <Provider store={store}>
-  
-    <MuiPickersUtilsProvider utils={MomentUtils}>
-      <Router>
-        <Link to="/" className="header">OASIS</Link>
-        {/* <Link className="sign-in-btn" to="/signin"><span>SIGN IN</span></Link> */}
-        <Map></Map>
-        <Switch>
-          <Route exact path="/" component={App} />
-          <Route path="/signin" component={SignIn} />
-          <Route path="/onboard" component={Onboard} />
-          <Route path="/alert" component={Alert} />
-          <Route path="/questions" component={CriticalQuestions} />
-          <Route path="/symptoms" component={Symptoms} />
-          <Route path="/dashboard" component={Dashboard} />
-          <Route path="/confirm" component={Confirm} />
-          <Route path="/measurements" component={HealthMeasurements} />
-          <Route path="/signup" component={SignUp} />
-          <Route path="/mystory" component={MyStory} />
-          
-        </Switch>
-        
-      </Router>
-    </MuiPickersUtilsProvider>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+
+
+        <MuiPickersUtilsProvider utils={MomentUtils}>
+          <Router>
+            <Link to="/" className="header">OASIS</Link>
+            {/* <Link className="sign-in-btn" to="/signin"><span>SIGN IN</span></Link> */}
+            <Map></Map>
+            <Switch>
+              <Route exact path="/" component={App} />
+              <Route path="/signin" component={SignIn} />
+              <Route path="/onboard" component={Onboard} />
+              <Route path="/alert" component={Alert} />
+              <Route path="/questions" component={CriticalQuestions} />
+              <Route path="/symptoms" component={Symptoms} />
+              <Route path="/dashboard" component={Dashboard} />
+              <Route path="/confirm" component={Confirm} />
+              <Route path="/measurements" component={HealthMeasurements} />
+              <Route path="/signup" component={SignUp} />
+              <Route path="/mystory" component={MyStory} />
+
+            </Switch>
+
+          </Router>
+        </MuiPickersUtilsProvider>
+      </PersistGate>
     </Provider>
-   
   </React.StrictMode>,
   document.getElementById('root')
 );
