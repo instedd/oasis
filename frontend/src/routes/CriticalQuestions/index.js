@@ -11,7 +11,8 @@ import Text from 'text.json';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import { useSelector } from "react-redux";
 import Wrapper from "components/Wrapper";
-
+import styles from './styles.module.css';
+import classNames from 'classnames';
 
 const contactText = Text["Close Contacts"].texts
 const contactListIndex = Text["Close Contacts"].listIndex
@@ -30,47 +31,48 @@ const ethnicities = [
     { value: 'Hispanic or Latino', label: 'Hispanic or Latino' },
     { value: 'Native Hawaiian or Other Pacific Islander', label: 'Native Hawaiian or Other Pacific Islander' },
 ]
-const styles = theme => ({
-    root: {
-        '& .MuiTextField-root': {
-            margin: theme.spacing(1),
-            width: '25ch',
-        },
-        textAlign: 'left',
-        width: '90vw',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'auto',
-        height: 'max-content',
-        maxHeight: '69%'
-    },
-    input: {
-        color: 'white',
-        '&:before': {
-            borderBottom: '1px solid white',
-        },
+// const styles = theme => ({
+//     root: {
+//         '& .MuiTextField-root': {
+//             margin: theme.spacing(1),
+//             width: '25ch',
+//         },
+//         textAlign: 'left',
+//         width: '90vw',
+//         display: 'flex',
+//         flexDirection: 'column',
+//         overflow: 'auto',
+//         height: 'max-content',
+//         maxHeight: '69%'
+//     },
+//     input: {
+//         color: 'white',
+//         '&:before': {
+//             borderBottom: '1px solid white',
+//         },
 
-    },
-    label: {
-        color: 'white',
-        width: 'max-content'
-    },
-    formControl: {
-        margin: theme.spacing(1),
-        width: '90%'
-    },
-    wrap:{
-        whiteSpace: "normal",
-    }
-});
+//     },
+//     label: {
+//         color: 'white',
+//         width: 'max-content'
+//     },
+//     formControl: {
+//         margin: theme.spacing(1),
+//         width: '90%'
+//     },
+//     wrap:{
+//         whiteSpace: "normal",
+//     }
+// });
 
-const MenuProps = {
-    PaperProps: {
-        style: {
-            top:'200px !important'
-        },
-    },
-};
+// const MenuProps = {
+//     PaperProps: {
+//         style: {
+//             top:'200px !important'
+//         },import { classNames } from 'classnames';
+
+//     },
+// };
 
 function CriticalQuestions(props) {
     const { classes } = props;
@@ -120,8 +122,8 @@ function CriticalQuestions(props) {
         disableFuture
         value={selectedEndDate}
         onChange={handleEndDateChange}
-        InputProps={{ className: classes.input }}
-        InputLabelProps={{ className: classes.label }}
+    // InputProps={{ className: classes.input }}
+    // InputLabelProps={{ className: classes.label }}
     />
 
     React.useEffect(() => {
@@ -141,10 +143,14 @@ function CriticalQuestions(props) {
     for (let i = 0; i < contactCount; i++) {
         contacts.push(
             <div key={i}>
-                <TextField label="Email" InputProps={{ className: classes.input }}
-                    InputLabelProps={{ className: classes.label }} />
-                <TextField label="Phone Number" InputProps={{ className: classes.input }}
-                    InputLabelProps={{ className: classes.label }} />
+                <TextField label="Email"
+                // InputProps={{ className: classes.input }}
+                //     InputLabelProps={{ className: classes.label }} 
+                />
+                <TextField label="Phone Number"
+                // InputProps={{ className: classes.input }}
+                //     InputLabelProps={{ className: classes.label }} 
+                />
             </div>)
     }
 
@@ -152,8 +158,10 @@ function CriticalQuestions(props) {
     for (let i = 0; i < locationCount; i++) {
         locations.push(
             <div key={i}>
-                <TextField label="Location" InputProps={{ className: classes.input }}
-                    InputLabelProps={{ className: classes.label }} />
+                <TextField label="Location"
+                // InputProps={{ className: classes.input }}
+                // InputLabelProps={{ className: classes.label }}
+                />
                 <DatePicker
                     // autoOk
                     label="Date"
@@ -164,8 +172,8 @@ function CriticalQuestions(props) {
                     value={travelDates[i]}
                     onOpen={() => setTravelDatesIndex(i)}
                     onChange={(date) => handleTravelDateChange(date)}
-                    InputProps={{ className: classes.input }}
-                    InputLabelProps={{ className: classes.label }}
+                // InputProps={{ className: classes.input }}
+                // InputLabelProps={{ className: classes.label }}
                 />
             </div>)
     }
@@ -203,158 +211,156 @@ function CriticalQuestions(props) {
     return (
         <Wrapper>
             <h1 className="title"> MY COVID STORY</h1>
-            <div className={classes.root}>
-                <form noValidate>
-                    <div className={showDatePicker}>
+            <div className={classNames("root", styles.root)}>
+                <div className={classNames("grid-1", styles["grid-1"])}>
 
-                        <DatePicker
-                            autoOk
-                            label="When did you first start feeling sick?"
-                            clearable
-                            disableFuture
-                            value={selectedDate}
-                            onChange={handleDateChange}
-                            InputProps={{ className: classes.input }}
-                            InputLabelProps={{ className: classes.label }}
-                        />
-                        {isSick === "recovered" ? endPicker : null}
+                    <DatePicker
+                        autoOk
+                        label="When did you first start feeling sick?"
+                        clearable
+                        disableFuture
+                        value={selectedDate}
+                        onChange={handleDateChange}
+                    // InputProps={{ className: classes.input }}
+                    // InputLabelProps={{ className: classes.label }}
+                    />
+                    {isSick === "recovered" ? endPicker : null}
 
 
-                    </div>
-                    <div className="demographics">
-                        <TextField
-                            id="standard-number"
-                            label="Age"
-                            type="number"
-                            InputProps={{ className: classes.input }}
-                            InputLabelProps={{ className: classes.label }}
-                        />
+                </div>
+                <div className={classNames("grid-3", styles["grid-3"])}>
+                    <TextField
+                        id="standard-number"
+                        label="Age"
+                        type="number"
+                    // InputProps={{ className: classes.input }}
+                    // InputLabelProps={{ className: classes.label }}
+                    />
 
-                        <TextField
-                            id="standard-select-currency"
-                            select
-                            label="Sex"
-                            value={sex}
-                            onChange={handleSexChange}
-                            InputProps={{ className: classes.input }}
-                            InputLabelProps={{ className: classes.label }}
-                        >
-                            <MenuItem value={"male"}>Male</MenuItem>
-                            <MenuItem value={"female"}>Female</MenuItem>
-                            <MenuItem value={"female"}>Non Binary</MenuItem>
-                        </TextField>
+                    <TextField
+                        id="standard-select-currency"
+                        select
+                        label="Sex"
+                        value={sex}
+                        onChange={handleSexChange}
+                    // InputProps={{ className: classes.input }}
+                    // InputLabelProps={{ className: classes.label }}
+                    >
+                        <MenuItem value={"male"}>Male</MenuItem>
+                        <MenuItem value={"female"}>Female</MenuItem>
+                        <MenuItem value={"female"}>Non Binary</MenuItem>
+                    </TextField>
 
-                        <TextField
-                            select
-                            label="Ethnicity"
-                            value={ethnicity}
-                            onChange={handleEthnicityChange}
-                            InputProps={{ className: classes.input }}
-                            InputLabelProps={{ className: classes.label }}
-                        >
-                            {ethnicities.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                    </div>
-                    <div className="demographics">
-                        <TextField
-                            select
-                            label="Origin"
-                            value={origin}
-                            onChange={handleOriginChange}
-                            InputProps={{ className: classes.input }}
-                            InputLabelProps={{ className: classes.label }}
-                        >
-                            {countries.map((option) => (
-                                <MenuItem key={option.name} value={option.name}>
-                                    {option.name}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                        <TextField
-                            select
-                            label="Profession"
-                            value={profession}
-                            onChange={handleProfessionChange}
-                            InputProps={{ className: classes.input }}
-                            InputLabelProps={{ className: classes.label }}
-                        >
-                            {professions.map((option) => (
-                                <MenuItem style={{ fontSize: 13 }} key={option} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
-                        </TextField>
+                    <TextField
+                        select
+                        label="Ethnicity"
+                        value={ethnicity}
+                        onChange={handleEthnicityChange}
+                    // InputProps={{ className: classes.input }}
+                    // InputLabelProps={{ className: classes.label }}
+                    >
+                        {ethnicities.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                </div>
+                <div className={classNames("grid-2", styles["grid-2"])}>
+                    <TextField
+                        select
+                        label="Origin"
+                        value={origin}
+                        onChange={handleOriginChange}
+                    // InputProps={{ className: classes.input }}
+                    // InputLabelProps={{ className: classes.label }}
+                    >
+                        {countries.map((option) => (
+                            <MenuItem key={option.name} value={option.name}>
+                                {option.name}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                    <TextField
+                        select
+                        label="Profession"
+                        value={profession}
+                        onChange={handleProfessionChange}
+                    // InputProps={{ className: classes.input }}
+                    // InputLabelProps={{ className: classes.label }}
+                    >
+                        {professions.map((option) => (
+                            <MenuItem style={{ fontSize: 13 }} key={option} value={option}>
+                                {option}
+                            </MenuItem>
+                        ))}
+                    </TextField>
 
-                        {/* <TextField id="standard-required" label="Profession" InputProps={{ className: classes.input }}
+                    {/* <TextField id="standard-required" label="Profession" InputProps={{ className: classes.input }}
                             InputLabelProps={{
                                 className: classes.label
                             }} /> */}
-                    </div>
-                    <div className="medical-problems">
-                    <FormControl className={classes.formControl}>
+                </div>
+                <div className={classNames("grid-1", styles["grid-1"])}>
+                    <FormControl>
                         <InputLabel id="demo-mutiple-checkbox-label"
-                            className={classes.label}>Medical Problems</InputLabel>
+                        >Medical Problems</InputLabel>
                         <Select
                             labelId="demo-mutiple-checkbox-label"
                             id="demo-mutiple-checkbox"
                             multiple
                             value={selectedProblems}
-                            input={<Input className={classes.input} />}
+                            input={<Input />}
                             onChange={handleMedicalProblemChange}
                             renderValue={(selected) => selected.join(', ')}
-                            MenuProps={MenuProps}
+                        // MenuProps={MenuProps}
                         >
                             {medicalProblems.map((name) => (
                                 <MenuItem key={name} value={name}>
                                     <Checkbox checked={selectedProblems.indexOf(name) > -1} />
-                                    <ListItemText primary={name} className={classes.wrap}/>
+                                    <ListItemText primary={name} className={classNames("checkbox-label", styles["checkbox-label"])} />
                                 </MenuItem>
                             ))}
                         </Select>
                     </FormControl>
-                    </div>
-                    <div className="form-row contacts">
-                        <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab" onClick={() => setContactCount(contactCount + 1)}>
-                            <AddIcon />
-                        </Fab>
-                        <p>Close Contacts</p>
-                        <Pop
-                            label={<ErrorOutlineIcon />}
-                            title={<span></span>}
-                            texts={contactText}
-                            linkIndex={contactLinkIndex}
-                            listIndex={contactListIndex} />
+                </div>
+                <div className="form-row contacts">
+                    <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab" onClick={() => setContactCount(contactCount + 1)}>
+                        <AddIcon />
+                    </Fab>
+                    <p>Close Contacts</p>
+                    <Pop
+                        label={<ErrorOutlineIcon />}
+                        title={<span></span>}
+                        texts={contactText}
+                        linkIndex={contactLinkIndex}
+                        listIndex={contactListIndex} />
 
-                    </div>
-                    {contacts}
-                    <div className="form-row travels">
-                        <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab" onClick={() => setLocationCount(locationCount + 1)}>
-                            <AddIcon />
-                        </Fab>
-                        <p>Recent Travels</p>
-                        <Pop
-                            label={<ErrorOutlineIcon />}
-                            title={<span></span>}
-                            texts={travelText}
-                            linkIndex={travelLinkIndex}
-                            listIndex={travelListIndex} />
-                    </div>
-                    {locations}
-                    <div style={{ height: '20px' }} ref={pageBottomRef}></div>
-                </form>
+                </div>
+                {contacts}
+                <div className="form-row travels">
+                    <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab" onClick={() => setLocationCount(locationCount + 1)}>
+                        <AddIcon />
+                    </Fab>
+                    <p>Recent Travels</p>
+                    <Pop
+                        label={<ErrorOutlineIcon />}
+                        title={<span></span>}
+                        texts={travelText}
+                        linkIndex={travelLinkIndex}
+                        listIndex={travelListIndex} />
+                </div>
+                {locations}
+                <div style={{ height: '20px' }} ref={pageBottomRef}></div>
             </div>
-            <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab next-btn" onClick={() => props.history.push(nextPage)}>
-                <ArrowRightIcon />
-            </Fab>
-            <Fab style={{ background: "#9206FF" }} aria-label="add" size="medium" className="fab back-btn" onClick={() => props.history.push('/confirm')}>
-                <ArrowLeftIcon />
-            </Fab>
-        </Wrapper>
+        <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab next-btn" onClick={() => props.history.push(nextPage)}>
+            <ArrowRightIcon />
+        </Fab>
+        <Fab style={{ background: "#9206FF" }} aria-label="add" size="medium" className="fab back-btn" onClick={() => props.history.push('/confirm')}>
+            <ArrowLeftIcon />
+        </Fab>
+        </Wrapper >
     )
 }
 
-export default withStyles(styles)(CriticalQuestions);
+export default CriticalQuestions;
