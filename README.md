@@ -5,7 +5,8 @@ UCSD Oasis platform
 
 1. Install [Docker Compose](https://docs.docker.com/compose/install/)
 2. Clone the project and go to the project folder in your console
-3. Run `docker-compose up` to build & lift the project - navigate to http://localhost:3000 to see it! 🚀
+3. Run `./dev-setup` to build the project
+4. To run the app: `docker-compose up` - navigate to http://localhost:3000 to see it! 🚀
     - All API endpoints are available in `http://localhost:8000/api/{endpoint-name-here}`
 
 ### Generating & running migrations
@@ -18,7 +19,12 @@ docker-compose run api alembic revision --autogenerate -m "Migration name here!"
 
 When possible, keep the migration name descriptive!
 
-Migrations will be run automatically when lifting the `api` container, but if you want to run them manually you can do:
+When a new migration file is available, apply it by running
+
+```
+./dev-setup
+```
+If you want to run them manually you can also do:
 
 ```python
 docker-compose run api alembic upgrade head

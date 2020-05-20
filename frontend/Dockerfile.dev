@@ -1,6 +1,4 @@
 FROM node:lts
 RUN mkdir /app
 WORKDIR /app
-ADD package.json /app/
-RUN yarn
 ADD . /app/
