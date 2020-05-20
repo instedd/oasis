@@ -20,7 +20,7 @@ services:
     build:
       context: ./backend
       dockerfile: ./Dockerfile.dev
-    command: uvicorn app:app --reload --host 0.0.0.0 --port 80
+    command: bash -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
     ports:
       - "8000:80"
     volumes:
@@ -29,6 +29,9 @@ services:
       - db
     environment:
       DATABASE_HOST: db
+      DATABASE_NAME: 'covid'
+      DATABASE_USER: 'root'
+      DATABASE_PASSWORD: ''
   db:
     build:
       context: ./backend
