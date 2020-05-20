@@ -6,6 +6,7 @@ UCSD Oasis platform
 1. Install [Docker Compose](https://docs.docker.com/compose/install/)
 2. Clone the project and go to the project folder in your console
 3. Run `docker-compose up` to build & lift the project - navigate to http://localhost:3000 to see it! 🚀
+    - All API endpoints are available in `http://localhost:8000/api/{endpoint-name-here}`
 
 ## Building & deploying
 
