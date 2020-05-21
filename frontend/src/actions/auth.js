@@ -1,6 +1,8 @@
 import { SIGN_UP, SIGN_IN, SUCCESS, SIGN_UP_START } from './types';
 import axios from 'axios';
 import api from 'utils';
+import history from '../history';
+import paths from 'routes/paths';
 
 export const signUp = (userDTO) => async (dispatch) => {
   dispatch({type: SIGN_UP_START})
