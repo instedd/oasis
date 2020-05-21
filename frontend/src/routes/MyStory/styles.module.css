@@ -1,0 +1,27 @@
+.textarea fieldset {
+    border-color: white;
+    height: 100%;
+}
+
+.textarea > div:hover fieldset{
+    border-color:white !important;
+}
+
+.textarea .Mui-focused label{
+    width: 400px
+}
+.textarea label {
+    color: grey;
+    font-size: 15px;
+    line-height: 1.5rem;
+    width: 320px;
+}
+
+.textarea {
+    width: 340px;
+    height: 40%;
+}
+
+.textarea>div {
+    height: 100%;
+}

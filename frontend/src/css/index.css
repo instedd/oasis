@@ -14,7 +14,7 @@ html, #root, body {
   margin: 0;
 }
 #map {
-  position: absolute;
+  position: fixed;
   top: 0;
   bottom: 0;
   right: 0;
@@ -23,7 +23,7 @@ html, #root, body {
   z-index: -1;
 }
 .mask {
-  position: absolute;
+  position: fixed;
 }
 
 .dark{

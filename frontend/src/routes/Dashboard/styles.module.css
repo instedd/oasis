@@ -1,0 +1,16 @@
+.assessment {
+    color:white !important;
+    background-color: #EA2027 !important;
+}
+
+.speeddial {
+    position: absolute;
+    bottom: 80px;
+    right:10px;
+}
+.speeddial > button{
+    background-color: #EA2027 !important;
+    position:absolute;
+    bottom:-45px;
+    right:5px
+}

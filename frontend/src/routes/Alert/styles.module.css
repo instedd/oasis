@@ -1,4 +1,9 @@
-
 .title, .warnings a {
   color: #ea1f27
+}
+
+.warnings {
+  text-align: left;
+  width: 80%;
+  padding-bottom: 30px;
 }
