@@ -21,7 +21,13 @@ When possible, keep the migration name descriptive!
 Migrations will be run automatically when lifting the `api` container, but if you want to run them manually you can do:
 
 ```python
-docker-compose run api alembic 
+docker-compose run api alembic upgrade head
+```
+
+You can also roll back migrations by doing
+
+```python
+docker-compose run api alembic downgrade
 ```
 
 ## Building & deploying
