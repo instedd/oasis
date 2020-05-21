@@ -34,6 +34,7 @@ services:
       DATABASE_NAME: 'covid'
       DATABASE_USER: 'root'
       DATABASE_PASSWORD: ''
+      PEPPER: '56UpUXF8lF'
   db:
     build:
       context: ./backend

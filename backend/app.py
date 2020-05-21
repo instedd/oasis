@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
-import os
 
 from router import users
 

@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 import bcrypt
+import os
 
 from . import models, schemas
 
@@ -21,7 +22,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_user(db: Session, user: schemas.UserCreate):
-    hashed_password = bcrypt.hashpw(user.password.encode('utf8'), bcrypt.gensalt(rounds=16))
+    hashed_password = bcrypt.hashpw(f"{user.password.encode('utf8')}{os.environ['PEPPER']}", bcrypt.gensalt(rounds=16))
     db_user = models.User(
         email=user.email,
         first_name=user.first_name,
