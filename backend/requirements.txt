@@ -1,6 +1,5 @@
 aiofiles
 jinja2
-mysql-connector==2.2.9
 sqlalchemy
 pydantic
 async-exit-stack
