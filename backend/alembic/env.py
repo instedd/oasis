@@ -3,10 +3,8 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from database.database import Base
-import os, sys
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(BASE_DIR)
+from users import models as user_models
+import os
 
 
 from alembic import context
@@ -25,8 +23,10 @@ fileConfig(config.config_file_name)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = Base.metadata
-print(f'metadata rn is {target_metadata}')
+target_metadata = [
+    user_models.Base.metadata
+]
+print(f'in env.py, the metadata is {target_metadata}')
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

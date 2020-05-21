@@ -6,3 +6,4 @@ async-exit-stack
 async-generator
 pymysql
 alembic
+bcrypt
