@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  BrowserRouter as Router,
+  Router,
   Route,
   Switch,
   Link,
@@ -38,7 +38,7 @@ ReactDOM.render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <MuiPickersUtilsProvider utils={MomentUtils}>
-          <Router>
+          <Router history={history}>
             <Link to="/" className="header">OASIS</Link>
             <Map></Map>
             <Switch>

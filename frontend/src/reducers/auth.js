@@ -15,7 +15,6 @@ const auth = (state = initialState, action) => {
         }
       };
     case SIGN_UP:
-      console.log(action.payload);
       return {
         ...state,
         ...action.payload
