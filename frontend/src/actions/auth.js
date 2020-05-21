@@ -17,6 +17,8 @@ export const signUp = (userDTO) => async (dispatch) => {
       user: (!response.error && {email: response.email}) || null,
     }
   });
+
+  if (!response.error) history.push(paths.signIn);
 }
 
 export function signIn(email,password) {
