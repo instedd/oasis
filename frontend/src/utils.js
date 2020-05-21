@@ -2,6 +2,8 @@
 // import { refreshToken as refreshTokenAction } from 'actions/auth';
 // import store from 'store/configureStore'
 
+import { ERROR } from "actions/types";
+
 const api = async (path, payload = {}) => {
     // const { auth } = await store.getState();
     const fullPayload = {
@@ -32,13 +34,18 @@ const api = async (path, payload = {}) => {
     //     response = await request();
     // }
 
+    // if everything was correct, process data
     if (response.status >= 200 && response.status < 300) return await response.json();
-    const error = new Error(`HTTP Error ${response.statusText}`);
-    error.status = response.statusText;
-    error.response = response.statusText;
+
+    // if we had a known error, return the proper status
     const body = await response.json();
-    if (body.errorCode) error.code = body.errorCode;
-    throw error;
+    return {
+      error: {
+        code: response.status,
+        type: ERROR,
+        detail: body.detail || 'Unknown error! Please try again',
+      }
+    }
 }
 
 export default api;

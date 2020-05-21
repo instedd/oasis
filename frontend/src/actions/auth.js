@@ -1,17 +1,19 @@
-import { SIGN_UP, SIGN_IN } from './types';
+import { SIGN_UP, SIGN_IN, SUCCESS, SIGN_UP_START } from './types';
 import axios from 'axios';
 import api from 'utils';
 
 export const signUp = (userDTO) => async (dispatch) => {
-  const user = await api(`users`, {
+  dispatch({type: SIGN_UP_START})
+  const response = await api(`users`, {
     method: 'POST',
     body: userDTO,
   });
-  console.log(user);
   dispatch({
     type: SIGN_UP,
-    username: userDTO.username,
-    email: userDTO.email,
+    payload: {
+      status: response.error || { type: SUCCESS },
+      user: (!response.error && {email: response.email}) || null,
+    }
   });
 }
 

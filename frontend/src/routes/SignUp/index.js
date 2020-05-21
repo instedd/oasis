@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -10,11 +11,13 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
 
 import {signUp} from 'actions/auth';
 import { Copyright } from 'components/Copyright';
+import { ERROR } from 'actions/types';
+import styles from './styles.module.css'
 
 
 
@@ -66,6 +69,9 @@ export default function SignUp(props) {
     dispatch(signUp(formValues))
   };
 
+  
+  const status = useSelector(state => state.auth.status);
+
   return (
     <Container className={classes.container} component="main">
       <CssBaseline />
@@ -73,9 +79,12 @@ export default function SignUp(props) {
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign Up
-        </Typography>
+        <h1 className={styles.title}>Sign Up</h1>
+        {status.detail && (
+          <p className={classNames(styles.status, status.type === ERROR && styles.error)}>
+            {status.detail}
+          </p>
+        )}
         <form className={classes.form} noValidate>
           <Grid container spacing={2}>
             <Grid item xs={12}>
