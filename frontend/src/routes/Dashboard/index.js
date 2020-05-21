@@ -1,46 +1,12 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Link from '@material-ui/core/Link';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
-import EditIcon from '@material-ui/icons/Edit';
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction'
 import { useSelector } from 'react-redux'
-
-
-const useStyles = makeStyles((theme) => ({
-    speedDial: {
-        '& .MuiFab-label': {
-            width: 'max-content'
-        },
-        position:"absolute",
-        bottom:85,
-        right: 15
-    },
-    button: {
-        '&:hover': {
-            background: "#EA2027", color: "white"
-        },
-        background: "#EA2027", color: "white",
-        position:"absolute",
-        bottom:-45,
-        right: 5
-    },
-    label: {
-        width: 'max-content'
-    },
-    editicon: {
-        fontSize: "large",
-        marginLeft: '10px',
-    }
-}));
-
-const useStylesTooltip = makeStyles((theme) => ({
-    tooltip: {
-        display: 'none'
-    }
-}))
+import classNames from 'classnames';
+import styles from './styles.module.css';
 
 const status =
 {
@@ -54,11 +20,10 @@ const status =
 
 const actions = [
     { name: ' ADD MY STORY ', href: '/mystory', classes: "MuiFab-extended" },
-    { name: ' DAILY ASSESSMENT ', href: '/symptoms', classes: "signin-btn MuiFab-extended" },
+    { name: ' DAILY ASSESSMENT ', href: '/symptoms', classes: classNames("MuiFab-extended assessment", styles.assessment) },
 ];
 
 function Dashboard(props) {
-    const classes = useStyles();
     const [open, setOpen] = React.useState(false);
 
     const isSick = useSelector(state => state.post.sick);
@@ -93,9 +58,6 @@ function Dashboard(props) {
 
     const preventDefault = (event) => event.preventDefault();
 
-    const classesTooltip = useStylesTooltip();
-
-
     return (
         <div className="Dashboard">
             <Breadcrumbs aria-label="breadcrumb" className="breadcrumbs">
@@ -107,9 +69,6 @@ function Dashboard(props) {
                 <div className="col">
                     <div className="row">
                         <h3>MY STATUS</h3>
-                        {/* <Link className="row status-item" style={{ color: 'white' }} onClick={() => props.history.push("/onboard")}>
-                            <EditIcon className={classes.editicon} />
-                        </Link> */}
                     </div>
 
                     <div className="status-list">
@@ -148,12 +107,11 @@ function Dashboard(props) {
                 <div className="col">
                     <SpeedDial
                         ariaLabel="SpeedDial tooltip example"
-                        className={classes.speedDial}
+                        className={classNames("speeddial", styles.speeddial)}
                         icon={<SpeedDialIcon />}
                         onClose={handleClose}
                         onOpen={handleOpen}
                         open={open}
-                        FabProps={{ className: classes.button }}
                     >
                         {actions.map((action) => (
                             <SpeedDialAction
@@ -161,7 +119,6 @@ function Dashboard(props) {
                                 icon={action.name}
                                 tooltipTitle={action.name}
                                 className={action.classes}
-                                TooltipClasses={classesTooltip}
                                 onClick={()=>props.history.push(action.href)}
                             ></SpeedDialAction>
                         ))}

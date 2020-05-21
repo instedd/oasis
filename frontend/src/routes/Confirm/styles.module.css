@@ -11,3 +11,7 @@
   width: 210px;
   min-width: max-content;
 }
+
+.title {
+  width:300px
+}

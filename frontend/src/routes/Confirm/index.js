@@ -18,7 +18,7 @@ export default function Confirm(props) {
 
     return (
         <Wrapper>
-            <h1 className="title">HAVE YOUR BEEN TESTED FOR COVID-19?</h1>
+            <h1 className={classNames("title", styles.title)}>HAVE YOUR BEEN TESTED FOR COVID-19?</h1>
 
             <div className={classNames("btn-group", styles.buttons)}>
 
