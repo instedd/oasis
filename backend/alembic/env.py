@@ -26,7 +26,6 @@ fileConfig(config.config_file_name)
 target_metadata = [
     user_models.Base.metadata
 ]
-print(f'in env.py, the metadata is {target_metadata}')
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

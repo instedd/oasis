@@ -10,7 +10,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import {signIn} from '../actions/signIn';
+import {signIn} from 'actions/auth';
 import { useDispatch } from 'react-redux'
 import { useState } from 'react';
 
@@ -73,9 +73,7 @@ const handlePasswordChange = (event) => {
 };
 const preventDefault = (event) => {event.preventDefault(); dispatch(signIn(email,password))};
 
-console.log(email, password)
   return (
-
     <Container className={classes.container} component="main" >
       <CssBaseline />
       <div className={classes.paper}>

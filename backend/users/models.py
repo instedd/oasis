@@ -11,6 +11,3 @@ class User(Base):
     first_name = Column(String(128))
     password = Column(String(128))
     username = Column(String(64), unique=True)
-
-
-print(f'in models.py, the metadata is {Base.metadata}')

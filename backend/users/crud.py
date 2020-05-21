@@ -21,11 +21,11 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_user(db: Session, user: schemas.UserCreate):
-    hashed_password = bcrypt.hashpw(user.password, salt)
+    hashed_password = bcrypt.hashpw(user.password.encode('utf8'), bcrypt.gensalt(rounds=16))
     db_user = models.User(
         email=user.email,
-        username=user.username,
         first_name=user.first_name,
+        username=user.username,
         password=hashed_password,
     )
     db.add(db_user)
