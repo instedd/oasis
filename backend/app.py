@@ -4,6 +4,8 @@ from starlette.templating import Jinja2Templates
 import os
 import mysql.connector
 
+from router import users
+
 app = FastAPI()
 templates = Jinja2Templates(directory='templates')
 cnx = mysql.connector.connect(host=os.environ['DATABASE_HOST'], user='root', password='', database='covid')
@@ -30,3 +32,8 @@ def getcounty():
     for result in rv:
          json_data.append(dict(zip(row_headers,result)))
     return json_data
+
+
+app.include_router(users.router, 
+    prefix="/api",
+    tags=["users"])
