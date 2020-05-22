@@ -2,7 +2,6 @@ import json
 
 from sqlalchemy import JSON, Column, Integer, String
 from sqlalchemy.orm import relationship
-
 from database.database import Base
 
 
