@@ -19,4 +19,3 @@ export const store = createStore(persistedReducer, compose(
   )
 );
 export const persistor = persistStore(store);
-
