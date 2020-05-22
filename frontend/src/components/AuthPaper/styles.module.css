@@ -8,3 +8,9 @@
   bottom: 0;
   top: 0;
 }
+
+.paper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

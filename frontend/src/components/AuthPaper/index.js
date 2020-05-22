@@ -10,12 +10,6 @@ import Copyright from 'components/Copyright';
 import styles from './styles.module.css';
 
 const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(3),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
@@ -34,7 +28,7 @@ export default function AuthPaper({children}) {
     <div className={styles.root}>
       <Container className={classes.container} component="main" >
         <CssBaseline />
-        <div className={classes.paper}>
+        <div className={styles.paper}>
           <Avatar className={classes.avatar}>
             <LockOutlinedIcon />
           </Avatar>

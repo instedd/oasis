@@ -1,7 +1,7 @@
 import React from 'react';
 import Popover from '@material-ui/core/Popover';
 
-export default function Pop(props) {
+export default function Pop({label, title, texts, listIndex, linkIndex}) {
   
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -17,12 +17,8 @@ export default function Pop(props) {
   const id = open ? 'simple-popover' : undefined;
   
   return (
-    <div>
-      <div aria-describedby={id} variant="contained" color="primary" onClick={handleClick}>{props.label}</div>
-      {/* <ErrorOutlineIcon  aria-owns={open ? 'mouse-over-popover' : undefined}
-        aria-haspopup="true"
-        onMouseEnter={handlePopoverOpen}
-        onMouseLeave={handlePopoverClose}></ErrorOutlineIcon> */}
+    <>
+      <div aria-describedby={id} variant="contained" color="primary" onClick={handleClick}>{label}</div>
       <Popover
         id={id}
         open={open}
@@ -39,12 +35,12 @@ export default function Pop(props) {
         // disableRestoreFocus
       >
         <div className="terms-wrapper" onClick={handleClose}>
-          {props.title}
+          {title}
           
-            {props.texts.map((x, i) => {
-              if (props.listIndex.indexOf(i) >= 0)
+            {texts.map((x, i) => {
+              if (listIndex.indexOf(i) >= 0)
                 return <p key={i}>● {x}</p>
-              else if (props.linkIndex.indexOf(i) >= 0)
+              else if (linkIndex.indexOf(i) >= 0)
                 return <a key={i} href={x}>{x}</a>
               else
                 return <p key={i}>{x}</p>
@@ -52,6 +48,6 @@ export default function Pop(props) {
           }
         </div>
       </Popover>
-    </div>
+    </>
   );
 }

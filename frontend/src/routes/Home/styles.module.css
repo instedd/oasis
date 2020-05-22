@@ -6,6 +6,6 @@
 }
 
 .signin {
-  background-color: #EA2027 !important;
-  color:white !important;
+  background-color: var(--primary) !important;
+  color: white !important;
 }

@@ -1,0 +1,19 @@
+.root {
+  position: relative;
+  height: 100%;
+}
+
+.header {
+  position: absolute;
+  width: fit-content;
+  height: 31px;
+  left: 5%;
+  top: 22px;
+  font-family: Abel;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 31px;
+  color: white;
+  z-index: 2;
+}
