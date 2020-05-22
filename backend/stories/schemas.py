@@ -45,5 +45,6 @@ class Story(CreateStory):
             country_of_origin=db_story.country_of_origin, 
             profession=db_story.profession, 
             medical_problems=db_story.medical_problems, 
-            sick=db_story.sick, tested=db_story.tested
+            sick=db_story.sick, 
+            tested=db_story.tested
             )

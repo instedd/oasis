@@ -2,6 +2,7 @@ import json
 from sqlalchemy import Column, ForeignKey, Integer, String, Table, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
+import json
 from database.database import Base
 
 class Story(Base):
@@ -16,6 +17,7 @@ class Story(Base):
     sick = Column(String(64))
     tested = Column(String(64))
     _medical_problems = Column(JSON)
+    user = relationship("User", uselist=False, back_populates="story")
 
     @property
     def medical_problems(self):
