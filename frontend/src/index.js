@@ -6,32 +6,34 @@ import {
   Switch,
   Link,
 } from "react-router-dom";
+// pick a date util library
+import MomentUtils from '@date-io/moment';
 import { Provider } from 'react-redux'
+
 import {store, persistor} from './redux'
 import 'css/index.css';
 
-import Home from './routes/Home';
-import SignIn from './routes/SignIn';
-import Onboard from './routes/Onboard';
-import Alert from './routes/Alert';
-import CriticalQuestions from './routes/CriticalQuestions';
-import * as serviceWorker from './serviceWorker';
-import Symptoms from './routes/Symptoms';
-import Confirm from './routes/Confirm';
+import Home from 'routes/Home';
+import SignIn from 'routes/SignIn';
+import Onboard from 'routes/Onboard';
+import Alert from 'routes/Alert';
+import CriticalQuestions from 'routes/CriticalQuestions';
+import Symptoms from 'routes/Symptoms';
+import Confirm from 'routes/Confirm';
+import Dashboard from 'routes/Dashboard';
+import HealthMeasurements from 'routes/HealthMeasurements';
+import SignUp from 'routes/SignUp';
+import MyStory from 'routes/MyStory';
+import paths from 'routes/paths';
+
 import Map from './elements/Map'
+import * as serviceWorker from './serviceWorker';
 
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 
-// pick a date util library
-import MomentUtils from '@date-io/moment';
-import Dashboard from './routes/Dashboard';
-import HealthMeasurements from './routes/HealthMeasurements';
-import SignUp from './routes/SignUp';
-import MyStory from './routes/MyStory';
 
 import { PersistGate } from 'redux-persist/integration/react'
 import history from './history';
-import paths from 'routes/paths';
 
 ReactDOM.render(
   <React.StrictMode>

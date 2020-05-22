@@ -35,6 +35,11 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
+@router.get("/users/me/", response_model=schemas.User)
+async def read_users_me(current_user: schemas.User = Depends(crud.get_current_user)):
+    return current_user
+
+
 @router.post("/auth", response_model=schemas.Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user = crud.authenticate_user(get_db, form_data.username, form_data.password)
@@ -49,7 +54,3 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         data={"email": user.email}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
-
-@router.get("/users/me/", response_model=schemas.User)
-async def read_users_me(current_user: schemas.User = Depends(crud.get_current_user)):
-    return current_user
