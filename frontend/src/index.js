@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {
-  BrowserRouter as Router,
+  Router,
   Route,
   Switch,
   Link,
@@ -30,27 +30,29 @@ import SignUp from './routes/SignUp';
 import MyStory from './routes/MyStory';
 
 import { PersistGate } from 'redux-persist/integration/react'
+import history from './history';
+import paths from 'routes/paths';
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <MuiPickersUtilsProvider utils={MomentUtils}>
-          <Router>
+          <Router history={history}>
             <Link to="/" className="header">OASIS</Link>
             <Map></Map>
             <Switch>
-              <Route exact path="/" component={Home} />
-              <Route path="/signin" component={SignIn} />
-              <Route path="/onboard" component={Onboard} />
-              <Route path="/alert" component={Alert} />
-              <Route path="/questions" component={CriticalQuestions} />
-              <Route path="/symptoms" component={Symptoms} />
-              <Route path="/dashboard" component={Dashboard} />
-              <Route path="/confirm" component={Confirm} />
-              <Route path="/measurements" component={HealthMeasurements} />
-              <Route path="/signup" component={SignUp} />
-              <Route path="/mystory" component={MyStory} />
+              <Route exact path={paths.home} component={Home} />
+              <Route path={paths.signIn} component={SignIn} />
+              <Route path={paths.onboard} component={Onboard} />
+              <Route path={paths.alert} component={Alert} />
+              <Route path={paths.criticalQuestions} component={CriticalQuestions} />
+              <Route path={paths.symptoms} component={Symptoms} />
+              <Route path={paths.dashboard} component={Dashboard} />
+              <Route path={paths.confirm} component={Confirm} />
+              <Route path={paths.healthMeasurements} component={HealthMeasurements} />
+              <Route path={paths.signUp} component={SignUp} />
+              <Route path={paths} component={MyStory} />
 
             </Switch>
 

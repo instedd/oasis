@@ -1,0 +1,13 @@
+.title {
+  color: black;
+  margin-top: 0;
+}
+
+.status {
+  color: grey;
+  margin: 0;
+}
+
+.status.error {
+  color: red;
+}

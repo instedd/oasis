@@ -1,19 +1,27 @@
 from fastapi import FastAPI
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
-import os
-from database.database import Base, engine
-# import mysql.connector
+from fastapi.middleware.cors import CORSMiddleware
 
 from router import users
 
-Base.metadata.create_all(bind=engine)
 app = FastAPI()
 templates = Jinja2Templates(directory='templates')
-# cnx = mysql.connector.connect(host=os.environ['DATABASE_HOST'], user='root', password='', database='covid')
-# cursor = cnx.cursor()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+origins = [
+    'http://ui.oasis.lvh.me:3000',
+    'http://localhost:3000'
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["DELETE", "GET", "POST", "PUT"],
+    allow_headers=["*"]
+)
 
 @app.route('/')
 async def homepage(request):
