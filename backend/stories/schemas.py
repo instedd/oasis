@@ -3,16 +3,32 @@ from typing import List
 from pydantic import BaseModel
 from typing import List
 from . import models
+from enum import Enum
+
+class Sex(str, Enum):
+    female = "female"
+    male = "male"
+    other = "other"
+
+class MedicalSituation(str, Enum):
+    sick = "sick"
+    not_sick = "not_sick"
+    recovered = "recovered"
+
+class TestSituation(str, Enum):
+    positive = "positive"
+    negative = "negative"
+    not_tested = "not_tested"
 
 class CreateStory(BaseModel):
     age: int
-    sex: str
+    sex: Sex
     ethnicity: str
     country_of_origin: str
     profession: str
     medical_problems: List[str] = []
-    sick: str
-    tested: str
+    sick: MedicalSituation
+    tested: TestSituation
 
 class Story(CreateStory):
     id: int
