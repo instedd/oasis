@@ -21,6 +21,7 @@ class Story(Base):
     sickness_end = Column(String(64))
     current_location = Column(String(128))
     user = relationship("User", uselist=False, back_populates="story")
+    symptoms = relationship("Symptom", secondary="story_symptoms", back_populates="story")
 
     @property
     def medical_problems(self):
