@@ -11,6 +11,7 @@ import Wrapper from 'components/Wrapper';
 import styles from './styles.module.css';
 import Text from '../../text.json';
 import Pop from '../../elements/Pop';
+import paths from 'routes/paths';
 
 const useStyles = makeStyles((theme) => ({
   speedDial: {
@@ -47,8 +48,8 @@ const useStylesTooltip = makeStyles((theme) => ({
 }))
 
 const actions = [
-  { name: ' SIGN IN / SIGN UP ', href: '/signin', classes: classNames(styles.signin, "MuiFab-extended") },
-  { name: ' CONTINUE AS GUEST ', href: '/onboard', classes: "MuiFab-extended" },
+  { name: ' SIGN IN / SIGN UP ', href: paths.signIn, classes: classNames(styles.signin, "MuiFab-extended") },
+  { name: ' CONTINUE AS GUEST ', href: paths.signUp, classes: "MuiFab-extended" },
 ];
 
 function App(props) {

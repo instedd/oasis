@@ -1,7 +1,7 @@
 from typing import List
 from datetime import timedelta
 
-from fastapi import Depends, FastAPI, APIRouter, HTTPException
+from fastapi import Depends, APIRouter, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -41,8 +41,8 @@ async def read_users_me(current_user: schemas.User = Depends(crud.get_current_us
 
 
 @router.post("/auth", response_model=schemas.Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = crud.authenticate_user(get_db, form_data.username, form_data.password)
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = crud.authenticate_user(form_data.username, form_data.password, db)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

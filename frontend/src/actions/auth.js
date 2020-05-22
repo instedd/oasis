@@ -1,11 +1,10 @@
-import { SIGN_UP, SIGN_IN, SUCCESS, SIGN_UP_START } from './types';
-import axios from 'axios';
+import { SIGN_UP, SIGN_IN, SUCCESS, SIGN_UP_START, SIGN_IN_START } from './types';
 import api from 'utils';
 import history from '../history';
 import paths from 'routes/paths';
 
 export const signUp = (userDTO) => async (dispatch) => {
-  dispatch({type: SIGN_UP_START})
+  dispatch({type: SIGN_UP_START});
   const response = await api(`users`, {
     method: 'POST',
     body: userDTO,
@@ -14,23 +13,29 @@ export const signUp = (userDTO) => async (dispatch) => {
     type: SIGN_UP,
     payload: {
       status: response.error || { type: SUCCESS },
-      user: (!response.error && {email: response.email}) || null,
+      user: (!response.error && response) || null,
     }
   });
 
   if (!response.error) history.push(paths.signIn);
 }
 
-export function signIn(email,password) {
-  return function(dispatch){
-    axios.post(`http://13.57.220.143/login?email=${email}&password=${password}`)
-    .then((res) => {
-      dispatch({
-        type: SIGN_IN,
-        email:email,
-        status:res.data
-      })
+export const signIn = (loginDTO) => async (dispatch) => {
+  dispatch({type: SIGN_IN_START});
+  const response = await api(`auth`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: `username=${encodeURIComponent(loginDTO.email)}&password=${loginDTO.password}`,
+  }, true);
+  dispatch({
+    type: SIGN_IN,
+    payload: {
+      status: response.error || { type: SUCCESS },
+      user: (!response.error && {token: response.access_token}) || null,
     }
-    ).catch((e) => {console.log(e)})
-  }
+  });
+
+  if (!response.error) history.push(paths.onboard);
 }

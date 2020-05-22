@@ -54,7 +54,7 @@ ReactDOM.render(
               <Route path={paths.confirm} component={Confirm} />
               <Route path={paths.healthMeasurements} component={HealthMeasurements} />
               <Route path={paths.signUp} component={SignUp} />
-              <Route path={paths} component={MyStory} />
+              <Route path={paths.myStory} component={MyStory} />
 
             </Switch>
 

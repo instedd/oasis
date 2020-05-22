@@ -1,7 +1,7 @@
 import bcrypt
 import os
 import jwt
-from datetime import timedelta
+from datetime import timedelta, datetime
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, status
 from jwt import PyJWTError
@@ -9,7 +9,6 @@ from fastapi.security import OAuth2PasswordBearer
 
 from database.database import get_db
 from . import models, schemas
-
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth")
@@ -46,10 +45,10 @@ def create_user(db: Session, user: schemas.UserCreate):
 
 
 def verify_password(plain_password, hashed_password):
-    return bcrypt.checkpw(f"{plain_text_password}{os.environ['PEPPER']}".encode('utf8'), hashed_password)
+    return bcrypt.checkpw(f"{plain_password}{os.environ['PEPPER']}".encode('utf8'), hashed_password.encode('utf8'))
 
 
-def authenticate_user(db: Session, email: str, password: str):
+def authenticate_user(email: str, password: str, db: Session):
     user = get_user_by_email(db, email)
     if not user:
         return False
@@ -61,9 +60,9 @@ def authenticate_user(db: Session, email: str, password: str):
 def create_access_token(*, data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.now() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+        expire = datetime.now() + timedelta(minutes=15)
     to_encode.update({ "exp": expire })
     encoded_jwt = jwt.encode(to_encode, os.environ['JWT_SECRET'], algorithm='HS512')
     return encoded_jwt
