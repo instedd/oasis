@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 0,
     boxShadow: 'none',
     '&:hover': {
-      background: "none",
+      background: "none", 
     },
   }
 }))
@@ -72,7 +72,7 @@ function App(props) {
       <h1 className={styles.title}> FIGHT COVID-19 PUT YOUR STORY ON THE MAP</h1>
       <div>
         <SpeedDial
-          ariaLabel="SpeedDial tooltip example"
+          ariaLabel="Signup Form Button"
           className={classes.speedDial}
           icon={<SpeedDialIcon />}
           onClose={handleClose}

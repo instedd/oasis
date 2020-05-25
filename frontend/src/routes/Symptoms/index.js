@@ -85,10 +85,10 @@ export default function Symptoms(props) {
                     }}
                 />
             </div>
-            <Fab style={{ background: "#EA2027" }} aria-label="add" onClick={() => props.history.push("/measurements")} size="medium" className="fab next-btn">
+            <Fab style={{ background: "#EA2027" }} aria-label="Go to next page" onClick={() => props.history.push("/measurements")} size="medium" className="fab next-btn">
                 <ArrowRightIcon />
             </Fab>
-            <Fab style={{ background: "#9206FF" }} aria-label="add" onClick={() => props.history.push("/questions")} size="medium" className="fab back-btn">
+            <Fab style={{ background: "#9206FF" }} aria-label="Go to previous page" onClick={() => props.history.push("/questions")} size="medium" className="fab back-btn">
                 <ArrowLeftIcon />
             </Fab>
         </Wrapper>
