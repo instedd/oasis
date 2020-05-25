@@ -24,10 +24,10 @@ export default function Alert(props) {
                     else
                         return <p key={i}>{x}</p>
                 })}
-                <Fab style={{ background: "#9206FF" }} aria-label="add" onClick={()=>props.history.push("/onboard")} size="medium" className="fab back-btn">
+                <Fab style={{ background: "#9206FF" }} aria-label="Go to next page" onClick={()=>props.history.push("/onboard")} size="medium" className="fab back-btn">
                     <ArrowLeftIcon />
                 </Fab>
-                <Fab style={{ background: "#EA2027" }} aria-label="add" onClick={()=>props.history.push("/confirm")} size="medium" className="fab next-btn">
+                <Fab style={{ background: "#EA2027" }} aria-label="Go to previous page" onClick={()=>props.history.push("/confirm")} size="medium" className="fab next-btn">
                     <ArrowRightIcon />
                 </Fab>
             </div>
