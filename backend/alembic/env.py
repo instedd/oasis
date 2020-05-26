@@ -3,6 +3,7 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
+from database.database import Base
 from users import models as user_models
 from stories import models as story_models
 import os
@@ -24,8 +25,7 @@ fileConfig(config.config_file_name)
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 target_metadata = [
-    user_models.Base.metadata,
-    story_models.Base.metadata
+    Base.metadata,
 ]
 
 # other values from the config, defined by the needs of env.py,
