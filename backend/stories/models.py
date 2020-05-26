@@ -1,9 +1,8 @@
+import json
 from sqlalchemy import Column, ForeignKey, Integer, String, Table, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
-import json
-
-Base = declarative_base()
+from database.database import Base
 
 class Story(Base):
     __tablename__ = "stories"
