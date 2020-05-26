@@ -9,6 +9,7 @@ const paths = {
   dashboard: '/dashboard',
   confirm: '/confirm',
   healthMeasurements: '/measurements',
+  myStory: '/mystory',
 }
 
 export default paths; 

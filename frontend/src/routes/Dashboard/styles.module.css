@@ -1,6 +1,6 @@
 .assessment {
     color:white !important;
-    background-color: #EA2027 !important;
+    background-color: var(--primary) !important;
 }
 
 .speeddial {
@@ -9,8 +9,17 @@
     right:10px;
 }
 .speeddial > button{
-    background-color: #EA2027 !important;
+    background-color: var(--primary) !important;
     position:absolute;
     bottom:-45px;
     right:5px
+}
+
+.dot {
+  height: 25px;
+  width: 25px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 10px;
 }

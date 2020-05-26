@@ -7,6 +7,7 @@ import SpeedDialAction from '@material-ui/lab/SpeedDialAction'
 import { useSelector } from 'react-redux'
 import classNames from 'classnames';
 import styles from './styles.module.css';
+import paths from 'routes/paths';
 
 const status =
 {
@@ -19,8 +20,8 @@ const status =
 }
 
 const actions = [
-    { name: ' ADD MY STORY ', href: '/mystory', classes: "MuiFab-extended" },
-    { name: ' DAILY ASSESSMENT ', href: '/symptoms', classes: classNames("MuiFab-extended assessment", styles.assessment) },
+    { name: ' ADD MY STORY ', href: paths.myStory, classes: "MuiFab-extended" },
+    { name: ' DAILY ASSESSMENT ', href: paths.symptoms, classes: classNames("MuiFab-extended assessment", styles.assessment) },
 ];
 
 function Dashboard(props) {
@@ -73,11 +74,11 @@ function Dashboard(props) {
 
                     <div className="status-list">
                         <div className="row status-item">
-                            <span className="dot" style={{ background: status[isSick].color }}></span>
+                            <span className={styles.dot} style={{ background: status[isSick].color }}></span>
                             {status[isSick].name}
                         </div>
                         <div className="row status-item">
-                            <span className="dot" style={{ background: status[tested].color }}></span>
+                            <span className={styles.dot} style={{ background: status[tested].color }}></span>
                             {status[tested].name}
                         </div>
                         <div >

@@ -2,6 +2,7 @@ export const GET_OVERALL = "GET_OVERALL";
 export const SIGN_UP = "SIGN_UP";
 export const SIGN_UP_START = "SIGN_UP_START";
 export const SIGN_IN = "SIGN_IN";
+export const SIGN_IN_START = "SIGN_IN_START";
 export const HANDLE_SICK = "HANDLE_SICK";
 export const HANDLE_TESTED = "HANDLE_TESTED";
 export const SUCCESS = "SUCCESS";

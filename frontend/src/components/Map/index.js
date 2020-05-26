@@ -1,35 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import mapboxgl from 'mapbox-gl';
 import chroma from 'chroma-js';
+import classNames from 'classnames';
+
+import styles from './styles.module.css'
 
 mapboxgl.accessToken = 'pk.eyJ1Ijoic3RlNTE5IiwiYSI6ImNrOHc1aHlvYTB0N2ozam51MHFiazE3bmcifQ.AHtFuA-pAqau_AJIy-hzOg';
-// let dark = false;
 
-export default class Application extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            lng: -119.6,
-            lat: 36.7,
-            zoom: 5,
-            dark:window.location.pathname!=="/" && window.location.pathname!=="/dashboard"
-        };
-        
-    }
-    
-    componentDidMount() {
-      
-        // dark = window.location.pathname!=="/" && window.location.pathname!=="/dashboard"
-        // console.log(dark)
+export default function Map() {
+    const [state] = useState({
+        lng: -119.6,
+        lat: 36.7,
+        zoom: 5,
+    });
 
-        var map = new mapboxgl.Map({
+    useEffect(() => {
+        const map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/dark-v10',
-            center: [this.state.lng, this.state.lat],
-            zoom: this.state.zoom
+            center: [state.lng, state.lat],
+            zoom: state.zoom
         });
 
-        var stateToFIPS = {
+        const stateToFIPS = {
             "AK": "02",
             "AL": "01",
             "AR": "05",
@@ -88,7 +81,7 @@ export default class Application extends React.Component {
         }
 
         var data = {}
-        var url = "https://covidtracking.com/api/states";
+        const url = "https://covidtracking.com/api/states";
         fetch(url).then((resp) => resp.json())
             .then(function (dat) {
                 data = dat;
@@ -109,9 +102,9 @@ export default class Application extends React.Component {
 
 
             // exclude states outside the 50 states
-            var expression = ['match', ['get', 'STATE_ID']];
+            const expression = ['match', ['get', 'STATE_ID']];
             // var maxValue= data.reduce((max,b) => Math.max(max, b.death), data[0].death);
-            var normalizerValue = 5000;
+            const normalizerValue = 5000;
             data.forEach(function (row) {
                 var stateID = row.state;
                 if (stateID in stateToFIPS) {
@@ -125,7 +118,7 @@ export default class Application extends React.Component {
             // Last value is the default, used where there is no data
             expression.push('rgba(0,0,0,0)');
 
-            var zoomThreshold = 4;
+            const zoomThreshold = 4;
             // Add layer from the vector tile source with data-driven style
             map.addLayer(
                 {
@@ -168,19 +161,19 @@ export default class Application extends React.Component {
                 return colorScale(val).hex();
             }
 
-            var colors = {};
+            const colors = {};
 
             countyData.forEach(function (county) {
-                var GEOID = county.fips;
-                var value = county.deaths;
-                var color = getColor(value);
+                const GEOID = county.fips;
+                const value = county.deaths;
+                const color = getColor(value);
                 if (!colors[color]) {
                     colors[color] = [];
                 }
                 colors[color].push(GEOID);
             });
 
-            var colorExpression = ["match", ["get", "GEOID"]];
+            const colorExpression = ["match", ["get", "GEOID"]];
             Object.entries(colors).forEach(function ([color, GEOIDs]) {
                 colorExpression.push(GEOIDs, color);
             });
@@ -205,13 +198,13 @@ export default class Application extends React.Component {
             });
 
         });
-    }
-    render() {
-        return (
-            <div>
-                  <div className="dark mask"></div>
-                <div id="map"></div>
-            </div>
-        )
-    }
+    }, []);
+
+    
+    return (
+        <div>
+            <div className={classNames(styles.fill, styles.mask)}></div>
+            <div className={classNames(styles.fill, styles.map)} id="map"></div>
+        </div>
+    )
 }

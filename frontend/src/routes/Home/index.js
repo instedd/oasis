@@ -7,10 +7,12 @@ import SpeedDialAction from '@material-ui/lab/SpeedDialAction'
 import { makeStyles } from '@material-ui/core/styles';
 
 import Wrapper from 'components/Wrapper';
+import Text from '../../text.json';
+import Pop from 'components/PopUp';
+import paths from 'routes/paths';
 
 import styles from './styles.module.css';
-import Text from '../../text.json';
-import Pop from '../../elements/Pop';
+import history from '../../history';
 
 const useStyles = makeStyles((theme) => ({
   speedDial: {
@@ -47,8 +49,8 @@ const useStylesTooltip = makeStyles((theme) => ({
 }))
 
 const actions = [
-  { name: ' SIGN IN / SIGN UP ', href: '/signin', classes: classNames(styles.signin, "MuiFab-extended") },
-  { name: ' CONTINUE AS GUEST ', href: '/onboard', classes: "MuiFab-extended" },
+  { name: ' SIGN IN / SIGN UP ', href: paths.signIn, classes: classNames(styles.signin, "MuiFab-extended") },
+  { name: ' CONTINUE AS GUEST ', href: paths.signUp, classes: "MuiFab-extended" },
 ];
 
 function App(props) {
@@ -69,10 +71,10 @@ function App(props) {
   const linkIndex = Text["Terms and Conditions"].linkIndex
   return (
     <Wrapper>
-      <h1 className={styles.title}> FIGHT COVID-19 PUT YOUR STORY ON THE MAP</h1>
+      <h1 className={styles.title}>FIGHT COVID-19 PUT YOUR STORY ON THE MAP</h1>
       <div>
         <SpeedDial
-          ariaLabel="SpeedDial tooltip example"
+          ariaLabel="Take action"
           className={classes.speedDial}
           icon={<SpeedDialIcon />}
           onClose={handleClose}
@@ -93,9 +95,7 @@ function App(props) {
                 linkIndex={linkIndex}
                 listIndex={listIndex} />
             </div>}
-            TooltipClasses={classesTooltip}>
-
-          </SpeedDialAction>
+            TooltipClasses={classesTooltip} />
           {actions.map((action) => (
             <SpeedDialAction
               key={action.name}
@@ -103,8 +103,8 @@ function App(props) {
               tooltipTitle={action.name}
               className={action.classes}
               TooltipClasses={classesTooltip}
-              href={action.href}
-            ></SpeedDialAction>
+              onClick={() => {history.push(action.href)}}
+            />
           ))}
         </SpeedDial>
       </div>
