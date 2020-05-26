@@ -15,6 +15,7 @@
     "axios": "^0.19.2",
     "chroma-js": "^2.1.0",
     "classnames": "^2.2.6",
+    "lodash": "^4.17.15",
     "mapbox-gl": "^1.10.0",
     "moment": "^2.24.0",
     "react": "^16.13.1",
@@ -23,7 +24,6 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
     "redux": "^4.0.5",
-    "redux-persist": "^6.0.0",
     "redux-thunk": "^2.3.0"
   },
   "scripts": {
