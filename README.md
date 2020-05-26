@@ -65,7 +65,3 @@ docker-compose run api alembic downgrade
 1. Move to the `frontend` folder of the project
 2. Build the app with `yarn build`
 3. Deploy to firebase with `firebase deploy`
-
-Development Mode: 
-1. Move to the `frontend` folder of the project
-2. Run `yarn start`
