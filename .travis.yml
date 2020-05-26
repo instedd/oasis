@@ -1,0 +1,5 @@
+deploy:
+  provider: script
+  script: "./build.sh"
+  on:
+    all_branches: true
