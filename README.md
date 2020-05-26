@@ -9,6 +9,28 @@ UCSD Oasis platform
 4. To run the app: `docker-compose up` - navigate to http://localhost:3000 to see it! 🚀
     - All API endpoints are available in `http://localhost:8000/api/{endpoint-name-here}`
 
+### Creating new backend apps with models
+
+If you're creating an app on the backend and it contains models, you'll need to set up a couple of things to make sure migrations work. To begin with, in your app's `models.py` make sure to import the app's declarative base and creating your models based off that:
+
+```python
+from database.database import Base
+
+class YourCoolModel(Base):
+    __tablename__ = "super_cool_models"
+    id = Column(Integer, primary_key=True, index=True)
+    # all your cool model attributes go here
+```
+
+After that, head over to `alembic.env` and import your models on the top section of the file:
+
+```python
+from users import models
+from yourcoolapp import models
+```
+
+That's about it! Migrations should auto-generate correctly with that set up!
+
 ### Generating & running migrations
 
 As part of our everyday work, data models may change from time to time. When you change a model in the backend, make sure to run the following code to generate any necessary Alembic migrations:
