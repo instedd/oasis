@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 0,
     boxShadow: 'none',
     '&:hover': {
-      background: "none", 
+      background: "none",
     },
   }
 }))
