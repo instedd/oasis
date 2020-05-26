@@ -50,7 +50,7 @@ const useStylesTooltip = makeStyles((theme) => ({
 
 const actions = [
   { name: ' SIGN IN / SIGN UP ', href: paths.signIn, classes: classNames(styles.signin, "MuiFab-extended") },
-  { name: ' CONTINUE AS GUEST ', href: paths.signUp, classes: "MuiFab-extended" },
+  { name: ' CONTINUE AS GUEST ', href: paths.onboard, classes: "MuiFab-extended" },
 ];
 
 function App(props) {
