@@ -58,6 +58,16 @@ You can also roll back migrations by doing
 docker-compose run api alembic downgrade
 ```
 
+### Seeding data
+
+To populate development database with seed data, which is located in `/backend/database/seed_data` directory, run:
+
+```
+docker-compose run --rm api python database/seed.py
+```
+
+To add seed data or modify existing one, apply changes in `<entity>.json` file for the target entity in aforementioned `/backend/database/seed_data` directory.
+
 ## Building & deploying
 
 ### Frontend
