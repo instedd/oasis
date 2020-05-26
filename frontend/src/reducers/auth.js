@@ -1,7 +1,8 @@
-import { SIGN_UP, SIGN_UP_START, LOADING } from '../actions/types';
+import { SIGN_UP, SIGN_UP_START, SIGN_IN, SIGN_IN_START, LOADING } from '../actions/types';
 const initialState = {
   status: {},
   user: null,
+  token: null,
 }
 
 const auth = (state = initialState, action) => {
@@ -15,6 +16,19 @@ const auth = (state = initialState, action) => {
         }
       };
     case SIGN_UP:
+      return {
+        ...state,
+        ...action.payload
+      };
+    case SIGN_IN_START:
+      return {
+        ...state,
+        status: {
+          type: LOADING,
+          detail: "We're checking your credentials..."
+        }
+      };
+    case SIGN_IN:
       return {
         ...state,
         ...action.payload

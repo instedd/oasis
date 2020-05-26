@@ -3,9 +3,9 @@ import styles from './styles.module.css';
 
 
 function Wrapper({children}) {
-  return <main className={styles.root}>
+  return <div className={styles.root}>
     {children}
-  </main>;
+  </div>;
 }
 
 export default Wrapper;

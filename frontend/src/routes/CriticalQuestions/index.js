@@ -5,7 +5,7 @@ import AddIcon from '@material-ui/icons/Add';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import { DatePicker } from "@material-ui/pickers";
-import Pop from 'elements/Pop';
+import Pop from 'components/PopUp';
 import Text from 'text.json';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import { useSelector } from "react-redux";

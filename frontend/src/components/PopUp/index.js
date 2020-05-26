@@ -2,7 +2,7 @@ import React from 'react';
 import Popover from '@material-ui/core/Popover';
 import Button from '@material-ui/core/Button';
 
-export default function Pop(props) {
+export default function Pop({label, title, texts, listIndex, linkIndex}) {
   
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -18,12 +18,11 @@ export default function Pop(props) {
   const id = open ? 'simple-popover' : undefined;
   
   return (
-    <div>
+    <>
       <Button aria-describedby={id} color="primary" 
       aria-owns="simple-popover"
       aria-haspopup="true"
-      onClick={handleClick}>{props.label}</Button>
-    
+      onClick={handleClick}>{label}</Button>
       <Popover
         id={id}
         open={open}
@@ -40,13 +39,13 @@ export default function Pop(props) {
         aria-live="polite"
       >
         <div className="terms-wrapper" onClick={handleClose} >
-          {props.title}
+        {title}
             <ul>
-            {props.texts.map((x, i) => {
-              if (props.listIndex.indexOf(i) >= 0)
+            {texts.map((x, i) => {
+              if (listIndex.indexOf(i) >= 0)
                 return <li key={i}>{x}</li>
-              else if (props.linkIndex.indexOf(i) >= 0)
-                return <a key={i} href={x}>{x}</a>
+              else if (linkIndex.indexOf(i) >= 0)
+            return <a key={i} href={x}>{x}</a>
               else
                 return <p key={i}>{x}</p>
             })
@@ -54,6 +53,6 @@ export default function Pop(props) {
           </ul>
         </div>
       </Popover>
-    </div>
+    </>
   );
 }
