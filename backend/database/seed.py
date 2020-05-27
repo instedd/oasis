@@ -2,6 +2,7 @@
 ## Script for seeding data into the development database
 ## As some entities may require a lot of data, we are keeping a separate file for each entity data
 
+## TODO: Fix imports. They're broken because they don't work in the same context as the api
 import json
 from database import get_db
 from symptoms.models import Symptom
