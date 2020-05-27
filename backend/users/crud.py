@@ -83,7 +83,8 @@ async def get_token_data(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, os.environ['JWT_SECRET'], algorithms=['HS512'])  
         email: str = payload.get("email")
-        if email is None:
+        story_id: str = payload.get("story_id")
+        if email is None and story_id is None:
             return None
         token_data = schemas.TokenData(email=email)
     except PyJWTError:
