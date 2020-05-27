@@ -26,10 +26,6 @@ def get_user_by_username(db: Session, username: str):
     return db.query(models.User).filter(models.User.username == username).first()
 
 
-def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.User).offset(skip).limit(limit).all()
-
-
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = bcrypt.hashpw(f"{user.password}{os.environ['PEPPER']}".encode('utf8'), bcrypt.gensalt(rounds=16))
     db_user = models.User(
@@ -74,13 +70,8 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    try:
-        payload = jwt.decode(token, os.environ['JWT_SECRET'], algorithms=['HS512'])
-        email: str = payload.get("email")
-        if email is None:
-            raise credentials_exception
-        token_data = schemas.TokenData(email=email)
-    except PyJWTError:
+    token_data = get_token_data(token=token)
+    if token_data is None:
         raise credentials_exception
     user = get_user_by_email(get_db, email=token_data.email)
     if user is None:
@@ -88,3 +79,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     return user
 
 
+async def get_token_data(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token, os.environ['JWT_SECRET'], algorithms=['HS512'])  
+        email: str = payload.get("email")
+        if email is None:
+            return None
+        token_data = schemas.TokenData(email=email)
+    except PyJWTError:
+        return None
+    return token_data

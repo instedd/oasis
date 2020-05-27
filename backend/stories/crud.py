@@ -1,5 +1,11 @@
+import json
+
+from fastapi import Depends
 from sqlalchemy.orm import Session
 
+from users.crud import get_user_by_email, oauth2_scheme, create_access_token
+from users.schemas import TokenData
+from users.models import User
 from . import models, schemas
 
 
@@ -8,7 +14,8 @@ def get_story(db: Session, story_id: int):
     return db_story
 
 
-def create_story(db: Session, story: schemas.StoryCreate):
+
+def create_story(db: Session, story: schemas.CreateStory, token_data: str):
     db_story = models.Story(
         age=story.age, 
         sex=story.sex, 
@@ -24,4 +31,16 @@ def create_story(db: Session, story: schemas.StoryCreate):
     db.add(db_story)
     db.commit()
     db.refresh(db_story)
-    return db_story
+    # if the story was submitted with an auth token, we want to associate it to the token's user
+    if token_data is not None:
+        user = get_user_by_email(db, email=token_data.email)
+        if user is not None:
+            db.query(User).filter(User.id==user.id).update({"story_id": db_story.id})
+            db.commit()
+            db.refresh(db_story)
+
+    new_story = schemas.Story.from_module(db_story)
+    new_story.token = create_access_token(
+        data={"story_id": db_story.id}, expires_delta=timedelta(days=5)
+    )
+    return new_story

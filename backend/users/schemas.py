@@ -23,5 +23,5 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    username: str = None
     email: str = None
+    story_id: int = None
