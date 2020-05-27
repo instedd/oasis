@@ -43,4 +43,14 @@ class Story(StoryCreate):
     token: str = None
     user: User = None
     class Config:
+        orm_mode: True
+        
+
+class SymptomBase(BaseModel):
+    name: str
+
+class Symptom(SymptomBase):
+    id: int
+    name: str
+    class Config:
         orm_mode = True

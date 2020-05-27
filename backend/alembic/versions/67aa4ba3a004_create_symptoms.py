@@ -1,8 +1,8 @@
 """Create symptoms
 
-Revision ID: 199a9ac84ffe
+Revision ID: 67aa4ba3a004
 Revises: 0ceda838b5c1
-Create Date: 2020-05-27 12:03:22.795157
+Create Date: 2020-05-27 17:58:11.669717
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '199a9ac84ffe'
+revision = '67aa4ba3a004'
 down_revision = '0ceda838b5c1'
 branch_labels = None
 depends_on = None

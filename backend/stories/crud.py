@@ -48,3 +48,6 @@ def create_story(db: Session, story: schemas.StoryCreate, token_data: str):
         data={"story_id": db_story.id}, expires_delta=timedelta(days=5)
     )
     return db_story
+
+def get_symptoms(db: Session, story_id: int):
+    return db.query(models.Symptom).all()
