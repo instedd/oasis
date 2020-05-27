@@ -22,3 +22,6 @@ def create_story(db: Session, story: schemas.CreateStory):
     db.commit()
     db.refresh(db_story)
     return schemas.Story.from_module(db_story)
+
+def get_symptoms(db: Session, story_id: int):
+    return db.query(models.Symptom).all()

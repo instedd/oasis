@@ -53,3 +53,12 @@ class Story(CreateStory):
             current_location=db_story.current_location,
             sickness_start=db_story.sickness_start
             )
+
+class SymptomBase(BaseModel):
+    name: str
+
+class Symptom(SymptomBase):
+    id: int
+    name: str
+    class Config:
+        orm_mode = True
