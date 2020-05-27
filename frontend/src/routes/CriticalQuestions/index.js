@@ -1,18 +1,18 @@
-import React, { useState } from "react";
-import { TextField, MenuItem, FormControl, InputLabel, Select, Checkbox, ListItemText, Input } from '@material-ui/core';
-import { Fab } from '@material-ui/core';
+import { Checkbox, Fab, FormControl, Input, InputLabel, ListItemText, MenuItem, Select, TextField } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
-import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
-import { DatePicker } from "@material-ui/pickers";
-import Pop from 'components/PopUp';
-import Text from 'text.json';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import { useSelector, useDispatch } from "react-redux";
-import Wrapper from "components/Wrapper";
-import styles from './styles.module.css';
-import classNames from 'classnames';
+import { DatePicker } from "@material-ui/pickers";
 import { setStory } from "actions/handleSick";
+import { submitStory } from 'actions/story';
+import classNames from 'classnames';
+import Pop from 'components/PopUp';
+import Wrapper from "components/Wrapper";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Text from 'text.json';
+import styles from './styles.module.css';
 
 const contactText = Text["Close Contacts"].texts
 const contactListIndex = Text["Close Contacts"].listIndex
@@ -35,6 +35,7 @@ const ethnicities = [
 function CriticalQuestions(props) {
 
     const dispatch = useDispatch();
+    const [age, setAge] = useState('')
     const [sex, setSex] = useState('');
     const [ethnicity, setEthnicity] = useState('');
     const [location, setLocation] = useState('');
@@ -50,12 +51,16 @@ function CriticalQuestions(props) {
     const [locationCount, setLocationCount] = useState(0)
 
     const [selectedProblems, setMedicalProblems] = useState([]);
+    const dispatch = useDispatch();
 
     const handleMedicalProblemChange = (event) => {
         setMedicalProblems(event.target.value);
     };
     const handleSexChange = (event) => {
         setSex(event.target.value);
+    };
+    const handleAgeChange = (event) => {
+        setAge(event.target.value);
     };
     const handleEthnicityChange = (event) => {
         setEthnicity(event.target.value);
@@ -74,6 +79,24 @@ function CriticalQuestions(props) {
 
     function handleTravelDateChange(date) {
         setTravelDates({ ...travelDates, [travelDatesIndex]: date });
+    };
+
+const handleSubmit = (event) => {
+    event.preventDefault()
+    const story = {
+        age, 
+        sex, 
+        ethnicity, 
+        countryOfOrigin: citizenship, 
+        profession, 
+        sick: isSick, 
+        tested: tested, 
+        medicalProblems: selectedProblems, 
+        sicknessStart: selectedDate, 
+        currentLocation: location
+    }
+    const dto = {story, nextPage}
+    dispatch(submitStory(dto))
     };
 
     const [countries, setCountries] = React.useState([]);
@@ -180,6 +203,8 @@ function CriticalQuestions(props) {
                         id="standard-number"
                         label="Age"
                         type="number"
+                        value={age}
+                        onChange={handleAgeChange}
                     />
 
                     <TextField
@@ -303,7 +328,7 @@ function CriticalQuestions(props) {
                     citizenship,
                     location
                 }));
-                 props.history.push(nextPage)
+                handleSubmit
                 }}>
                 <ArrowRightIcon />
             </Fab>

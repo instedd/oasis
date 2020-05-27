@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import List
 from . import models
 from enum import Enum
+from users import models as user_models
 
 class Sex(str, Enum):
     female = "female"
@@ -12,16 +13,16 @@ class Sex(str, Enum):
 
 class MedicalSituation(str, Enum):
     sick = "sick"
-    not_sick = "not_sick"
+    not_sick = "not sick"
     recovered = "recovered"
 
 class TestSituation(str, Enum):
     positive = "positive"
     negative = "negative"
-    not_tested = "not_tested"
+    not_tested = "not tested"
 
 class CreateStory(BaseModel):
-    age: int
+    age: str
     sex: Sex
     ethnicity: str
     country_of_origin: str
@@ -29,6 +30,8 @@ class CreateStory(BaseModel):
     medical_problems: List[str] = []
     sick: MedicalSituation
     tested: TestSituation
+    current_location: str
+    sickness_start: str
 
 class Story(CreateStory):
     id: int
@@ -46,5 +49,7 @@ class Story(CreateStory):
             profession=db_story.profession, 
             medical_problems=db_story.medical_problems, 
             sick=db_story.sick, 
-            tested=db_story.tested
+            tested=db_story.tested,
+            current_location=db_story.current_location,
+            sickness_start=db_story.sickness_start
             )
