@@ -10,4 +10,5 @@ WORKDIR /app
 COPY ./backend/ /app/
 RUN pip install -r requirements.txt
 COPY --from=frontend /app/build/ /app/static/
+COPY --from=frontend /app/build/index.html /app/templates/
 ENV APP_MODULE="app:app"
