@@ -49,5 +49,9 @@ def create_story(db: Session, story: schemas.StoryCreate, token_data: str):
     )
     return db_story
 
-def get_symptoms(db: Session, story_id: int):
+def get_symptoms(db: Session):
     return db.query(models.Symptom).all()
+
+def get_story_symptoms(db: Session, story_id: int):
+    db_story = db.query(models.Story).filter(models.Story.id == story_id).first()
+    return db_story.symptoms
