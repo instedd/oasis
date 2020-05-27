@@ -3,7 +3,6 @@ from typing import List
 
 from pydantic import BaseModel
 
-
 class Sex(str, Enum):
     female = "female"
     male = "male"
