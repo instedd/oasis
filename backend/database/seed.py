@@ -11,8 +11,8 @@ session = next(get_db())
 
 with open(SYMPTOMS_FILE, 'r') as json_data:
   data = json.load(json_data)
-  for symptom in data['symptoms']:
-    session.add(Symptom(name=symptom['name']))
+  symptoms = [Symptom(name=s['name']) for s in data['symptoms']]
+  session.add_all(symptoms)
 
 session.commit()
 session.close()
