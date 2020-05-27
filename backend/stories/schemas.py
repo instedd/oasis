@@ -31,7 +31,8 @@ class CreateStory(BaseModel):
     sick: MedicalSituation
     tested: TestSituation
     current_location: str
-    sickness_start: str
+    sickness_start: str = None
+    sickness_end: str = None
 
 class Story(CreateStory):
     id: int
@@ -51,5 +52,6 @@ class Story(CreateStory):
             sick=db_story.sick, 
             tested=db_story.tested,
             current_location=db_story.current_location,
-            sickness_start=db_story.sickness_start
+            sickness_start=db_story.sickness_start,
+            sickness_end=db_story.sickness_end
             )
