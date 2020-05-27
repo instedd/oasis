@@ -15,7 +15,9 @@ def create_story(db: Session, story: schemas.CreateStory):
         profession=story.profession, 
         medical_problems=story.medical_problems, 
         sick=story.sick, 
-        tested=story.tested)
+        tested=story.tested,
+        sickness_start=story.sickness_start,
+        current_location=story.current_location)
     db.add(db_story)
     db.commit()
     db.refresh(db_story)

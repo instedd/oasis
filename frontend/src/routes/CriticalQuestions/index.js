@@ -8,10 +8,11 @@ import { DatePicker } from "@material-ui/pickers";
 import Pop from 'components/PopUp';
 import Text from 'text.json';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from 'react-redux'
 import Wrapper from "components/Wrapper";
 import styles from './styles.module.css';
 import classNames from 'classnames';
+import { submitStory } from 'actions/story'
 
 const contactText = Text["Close Contacts"].texts
 const contactListIndex = Text["Close Contacts"].listIndex
@@ -32,6 +33,7 @@ const ethnicities = [
 ]
 
 function CriticalQuestions(props) {
+    const [age, setAge] = useState('')
     const [sex, setSex] = useState('');
     const [ethnicity, setEthnicity] = useState('');
     const [location, setLocation] = useState('');
@@ -47,12 +49,16 @@ function CriticalQuestions(props) {
     const [locationCount, setLocationCount] = useState(0)
 
     const [selectedProblems, setMedicalProblems] = useState([]);
+    const dispatch = useDispatch();
 
     const handleMedicalProblemChange = (event) => {
         setMedicalProblems(event.target.value);
     };
     const handleSexChange = (event) => {
         setSex(event.target.value);
+    };
+    const handleAgeChange = (event) => {
+        setAge(event.target.value);
     };
     const handleEthnicityChange = (event) => {
         setEthnicity(event.target.value);
@@ -71,6 +77,24 @@ function CriticalQuestions(props) {
 
     function handleTravelDateChange(date) {
         setTravelDates({ ...travelDates, [travelDatesIndex]: date });
+    };
+
+const handleSubmit = (event) => {
+    event.preventDefault()
+    const story = {
+        age, 
+        sex, 
+        ethnicity, 
+        countryOfOrigin: citizenship, 
+        profession, 
+        sick: isSick, 
+        tested: tested, 
+        medicalProblems: selectedProblems, 
+        sicknessStart: selectedDate, 
+        currentLocation: location
+    }
+    const dto = {story, nextPage}
+    dispatch(submitStory(dto))
     };
 
     const [countries, setCountries] = React.useState([]);
@@ -177,6 +201,8 @@ function CriticalQuestions(props) {
                         id="standard-number"
                         label="Age"
                         type="number"
+                        value={age}
+                        onChange={handleAgeChange}
                     />
 
                     <TextField
@@ -295,7 +321,7 @@ function CriticalQuestions(props) {
                 {locations}
                 <div style={{ height: '30px' }} ref={pageBottomRef}></div>
             </div>
-            <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab next-btn" onClick={() => props.history.push(nextPage)}>
+            <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab next-btn" onClick={handleSubmit}>
                 <ArrowRightIcon />
             </Fab>
             <Fab style={{ background: "#9206FF" }} aria-label="add" size="medium" className="fab back-btn" onClick={() => props.history.push('/confirm')}>
