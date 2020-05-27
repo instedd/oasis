@@ -17,29 +17,27 @@ def get_story(db: Session, story_id: int):
 
 
 def create_story(db: Session, story: schemas.CreateStory, token_data: str):
-    db_story = models.Story(
-        age=story.age, 
-        sex=story.sex, 
-        ethnicity=story.ethnicity, 
-        country_of_origin=story.country_of_origin, 
-        profession=story.profession, 
-        medical_problems=story.medical_problems, 
-        sick=story.sick, 
-        tested=story.tested,
-        sickness_start=story.sickness_start,
-        sickness_end=story.sickness_end,
-        current_location=story.current_location)
-    db.add(db_story)
+    # if the story was submitted with an auth token, we want to associate it to the token's user
+    if token_data:
+        user = get_user_by_email(db, email=token_data.email)
+    
+    if user and user.story:
+        # if the user already had a story, we need to update it.
+        story_as_dict = dict(story)
+        modified_story = {k: story_as_dict[k] for k in story_as_dict if k in models.Story.__table__.columns}
+        db.query(models.Story).filter(models.Story.id==user.story.id).update(modified_story)
+        db_story = db.query(models.Story).filter(models.Story.id == user.story.id).first()
+    else:
+        db_story = models.Story(**story.dict())
+        db.add(db_story)
     db.commit()
     db.refresh(db_story)
 
     # if the story was submitted with an auth token, we want to associate it to the token's user
-    if token_data is not None:
-        user = get_user_by_email(db, email=token_data.email)
-        if user is not None:
-            db.query(User).filter(User.id==user.id).update({"story_id": db_story.id})
-            db.commit()
-            db.refresh(db_story)
+    if user and not user.story:
+        db.query(User).filter(User.id==user.id).update({"story_id": db_story.id})
+        db.commit()
+        db.refresh(db_story)
 
     new_story = schemas.Story.from_module(db_story)
     new_story.token = create_access_token(
@@ -59,13 +57,13 @@ async def get_current_story(token: str = Depends(oauth2_scheme), db: Session = D
     if token_data is None:
         raise credentials_exception
     user = get_user_by_email(db, email=token_data.email)
-    story = None if token_data.story_id is None else get_story(db, story_id=token_data.story_id)
-    if story is None:
-        if user is None or user.story is None: # no story nor user match the token data
+    story = get_story(db, story_id=token_data.story_id) if token_data.story_id else None
+    if not story:
+        if not (user and user.story): # no story nor user match the token data
             raise HTTPException(status_code=404, detail="Story not found")
         else: # there's a user with a story
             return schemas.Story.from_module(user.story)
-    if user is None: # the token has no user data, so we're operating anonymously. That's ok!
+    if not user: # the token has no user data, so we're operating anonymously. That's ok!
         return story
     elif user.story.id != story.id: # there's user data in the token but it doesn't match the story data
         raise credentials_exception
