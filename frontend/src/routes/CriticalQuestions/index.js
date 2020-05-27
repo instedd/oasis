@@ -91,6 +91,7 @@ const handleSubmit = (event) => {
         tested: tested, 
         medicalProblems: selectedProblems, 
         sicknessStart: selectedDate, 
+        sicknessEnd: selectedEndDate,
         currentLocation: location
     }
     const dto = {story, nextPage}
