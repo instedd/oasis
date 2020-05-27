@@ -17,6 +17,7 @@ def get_story(db: Session, story_id: int):
 
 
 def create_story(db: Session, story: schemas.CreateStory, token_data: str):
+    user = None
     # if the story was submitted with an auth token, we want to associate it to the token's user
     if token_data:
         user = get_user_by_email(db, email=token_data.email)
