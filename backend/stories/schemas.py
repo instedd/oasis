@@ -37,7 +37,6 @@ class StoryCreate(BaseModel):
     sickness_start: str = None
     sickness_end: str = None
 
-
 class Story(StoryCreate):
     id: int
     token: str = None
