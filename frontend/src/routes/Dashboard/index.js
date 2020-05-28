@@ -29,6 +29,7 @@ function Dashboard(props) {
 
     const isSick = useSelector(state => state.post.sick);
     const tested = useSelector(state => state.post.tested);
+    const story = useSelector(state => state.post.story);
 
     const handleOpen = () => {
         setOpen(true);
@@ -101,6 +102,9 @@ function Dashboard(props) {
                     <h3>SUGGESTIONS</h3>
                     <div style={{ color: "gray" }}>Stay at home</div>
                     <Link href="https://earth2-covid.ucsd.edu/homebound" style={{ color: '#2D9CDB' }}>Download HomeBound</Link>
+                    {story && story.location == "Mexico" && story.citizenship == "United States of America" && (
+                        <Link href="https://mx.usembassy.gov/u-s-citizen-services/covid-19-information/" style={{ color: '#FFFFFF' }} target="_blank">Information for US Citizens</Link>
+                    )}
                     <Link href="#" onClick={preventDefault} style={{ color: '#F2C94C' }}>Join a clinical trial</Link>
                     {donate_link}
                     <Link onClick={preventDefault} style={{ color: '#FFFFFF' }}>Learn more about COVID-19</Link>

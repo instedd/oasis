@@ -8,3 +8,4 @@ export const HANDLE_TESTED = "HANDLE_TESTED";
 export const SUCCESS = "SUCCESS";
 export const ERROR = "ERROR";
 export const LOADING = "LOADING";
+export const SET_STORY = "SET_STORY";
