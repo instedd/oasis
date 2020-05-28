@@ -51,7 +51,6 @@ function CriticalQuestions(props) {
     const [locationCount, setLocationCount] = useState(0)
 
     const [selectedProblems, setMedicalProblems] = useState([]);
-    const dispatch = useDispatch();
 
     const handleMedicalProblemChange = (event) => {
         setMedicalProblems(event.target.value);
@@ -324,12 +323,12 @@ function CriticalQuestions(props) {
                 {locations}
                 <div style={{ height: '30px' }} ref={pageBottomRef}></div>
             </div>
-            <Fab style={{ background: "#EA2027" }} aria-label="Go to next page" size="medium" className="fab next-btn" onClick={() =>{
+            <Fab style={{ background: "#EA2027" }} aria-label="Go to next page" size="medium" className="fab next-btn" onClick={(event) =>{
                 dispatch(setStory({
                     citizenship,
                     location
                 }));
-                handleSubmit
+                handleSubmit(event)
                 }}>
                 <ArrowRightIcon />
             </Fab>
