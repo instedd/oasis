@@ -7,7 +7,7 @@ from stories import crud, schemas
 router = APIRouter()
 
 @router.post("/", response_model=schemas.Story)
-def create_story(story: schemas.CreateStory, db: Session = Depends(get_db)):
+def create_story(story: schemas.StoryCreate, db: Session = Depends(get_db)):
     return crud.create_story(db=db, story=story)
 
 @router.get("/{story_id}", response_model=schemas.Story)

@@ -21,7 +21,7 @@ class TestSituation(str, Enum):
     negative = "negative"
     not_tested = "not tested"
 
-class CreateStory(BaseModel):
+class StoryCreate(BaseModel):
     age: str
     sex: Sex
     ethnicity: str
@@ -34,7 +34,7 @@ class CreateStory(BaseModel):
     sickness_start: str = None
     sickness_end: str = None
 
-class Story(CreateStory):
+class Story(StoryCreate):
     id: int
     class Config:
         orm_mode: True
