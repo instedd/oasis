@@ -81,23 +81,23 @@ function CriticalQuestions(props) {
         setTravelDates({ ...travelDates, [travelDatesIndex]: date });
     };
 
-const handleSubmit = (event) => {
-    event.preventDefault()
-    const story = {
-        age, 
-        sex, 
-        ethnicity, 
-        countryOfOrigin: citizenship, 
-        profession, 
-        sick: isSick, 
-        tested: tested, 
-        medicalProblems: selectedProblems, 
-        sicknessStart: selectedDate, 
-        sicknessEnd: selectedEndDate,
-        currentLocation: location
-    }
-    const dto = {story, nextPage}
-    dispatch(submitStory(dto))
+    const handleSubmit = (event) => {
+        event.preventDefault()
+        const story = {
+            age, 
+            sex, 
+            ethnicity, 
+            countryOfOrigin: citizenship, 
+            profession, 
+            sick: isSick, 
+            tested: tested, 
+            medicalProblems: selectedProblems, 
+            sicknessStart: selectedDate, 
+            sicknessEnd: selectedEndDate,
+            currentLocation: location
+        }
+        const dto = {story, nextPage}
+        dispatch(submitStory(dto))
     };
 
     const [countries, setCountries] = React.useState([]);
