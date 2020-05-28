@@ -17,11 +17,16 @@ def create_story(db: Session, story: schemas.CreateStory):
         sick=story.sick, 
         tested=story.tested,
         sickness_start=story.sickness_start,
+        sickness_end=story.sickness_end,
         current_location=story.current_location)
     db.add(db_story)
     db.commit()
     db.refresh(db_story)
     return schemas.Story.from_module(db_story)
 
-def get_symptoms(db: Session, story_id: int):
+def get_symptoms(db: Session):
     return db.query(models.Symptom).all()
+
+def get_story_symptoms(db: Session, story_id: int):
+    db_story = db.query(models.Story).filter(models.Story.id == story_id).first()
+    return db_story.symptoms

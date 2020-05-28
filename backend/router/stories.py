@@ -10,9 +10,17 @@ router = APIRouter()
 def create_story(story: schemas.CreateStory, db: Session = Depends(get_db)):
     return crud.create_story(db=db, story=story)
 
+@router.get("/symptoms", response_model=List[schemas.Symptom])
+def read_symptoms(db: Session = Depends(get_db)):
+    return crud.get_symptoms(db)
+
 @router.get("/{story_id}", response_model=schemas.Story)
 def read_story(story_id: int, db: Session = Depends(get_db)):
     story = crud.get_story(db, story_id=story_id)
     if story is None:
         raise HTTPException(status_code=404, detail="Story not found")
     return story
+
+@router.get("/{story_id}/symptoms", response_model=List[schemas.Symptom])
+def read_story_symptoms(story_id: int, db: Session = Depends(get_db)):
+    return crud.get_story_symptoms(db, story_id=story_id)
