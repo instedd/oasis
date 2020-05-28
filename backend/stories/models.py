@@ -1,7 +1,6 @@
 import json
 
-from sqlalchemy import JSON, Column, ForeignKey, Integer, String, Table
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import JSON, Column, Integer, String
 from sqlalchemy.orm import relationship
 
 from database.database import Base

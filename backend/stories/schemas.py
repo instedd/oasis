@@ -1,10 +1,10 @@
+from enum import Enum
 from typing import List
 
 from pydantic import BaseModel
-from typing import List
+
 from . import models
-from enum import Enum
-from users import models as user_models
+
 
 class Sex(str, Enum):
     female = "female"
