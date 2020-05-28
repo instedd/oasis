@@ -2,7 +2,8 @@ import json
 
 from sqlalchemy.orm import Session
 
-from users.crud import get_user_by_email, create_access_token
+from users.crud import get_user_by_email
+from auth.main import create_access_token
 from users.models import User
 from . import models, schemas
 

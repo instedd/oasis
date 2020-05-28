@@ -1,17 +1,9 @@
 import bcrypt
 import os
-import jwt
-from datetime import timedelta, datetime
 from sqlalchemy.orm import Session
-from fastapi import Depends, HTTPException, status
-from jwt import PyJWTError
-from fastapi.security import OAuth2PasswordBearer
 
 from database.database import get_db
 from . import models, schemas
-
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth")
 
 
 def get_user(db: Session, user_id: int):
@@ -51,42 +43,3 @@ def authenticate_user(email: str, password: str, db: Session):
     if not verify_password(password, user.password):
         return False
     return user
-
-
-def create_access_token(*, data: dict, expires_delta: timedelta = None):
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.now() + expires_delta
-    else:
-        expire = datetime.now() + timedelta(minutes=15)
-    to_encode.update({ "exp": expire })
-    encoded_jwt = jwt.encode(to_encode, os.environ['JWT_SECRET'], algorithm='HS512')
-    return encoded_jwt
-
-
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    token_data = get_token_data(token=token)
-    if token_data is None:
-        raise credentials_exception
-    user = get_user_by_email(get_db, email=token_data.email)
-    if user is None:
-        raise credentials_exception
-    return user
-
-
-async def get_token_data(token: str = Depends(oauth2_scheme)):
-    try:
-        payload = jwt.decode(token, os.environ['JWT_SECRET'], algorithms=['HS512'])  
-        email: str = payload.get("email")
-        story_id: str = payload.get("story_id")
-        if email is None and story_id is None:
-            return None
-        token_data = schemas.TokenData(email=email)
-    except PyJWTError:
-        return None
-    return token_data
