@@ -1,9 +1,8 @@
-import React from 'react';
-import Popover from '@material-ui/core/Popover';
-import Button from '@material-ui/core/Button';
+import React from "react";
+import Popover from "@material-ui/core/Popover";
+import Button from "@material-ui/core/Button";
 
-export default function Pop({label, title, texts, listIndex, linkIndex}) {
-  
+export default function Pop({ label, title, texts, listIndex, linkIndex }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -15,41 +14,47 @@ export default function Pop({label, title, texts, listIndex, linkIndex}) {
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
-  
+  const id = open ? "simple-popover" : undefined;
+
   return (
     <>
-      <Button aria-describedby={id} color="primary" 
-      aria-owns="simple-popover"
-      aria-haspopup="true"
-      onClick={handleClick}>{label}</Button>
+      <Button
+        aria-describedby={id}
+        color="primary"
+        aria-owns="simple-popover"
+        aria-haspopup="true"
+        onClick={handleClick}
+      >
+        {label}
+      </Button>
       <Popover
         id={id}
         open={open}
         anchorEl={anchorEl}
         anchorOrigin={{
-          vertical: 'center',
-          horizontal: 'center',
+          vertical: "center",
+          horizontal: "center",
         }}
         transformOrigin={{
-          vertical: 'center',
-          horizontal: 'center',
+          vertical: "center",
+          horizontal: "center",
         }}
         onClose={handleClose}
         aria-live="polite"
       >
-        <div className="terms-wrapper" onClick={handleClose} >
-        {title}
-            <ul>
+        <div className="terms-wrapper" onClick={handleClose}>
+          {title}
+          <ul>
             {texts.map((x, i) => {
-              if (listIndex.indexOf(i) >= 0)
-                return <li key={i}>{x}</li>
+              if (listIndex.indexOf(i) >= 0) return <li key={i}>{x}</li>;
               else if (linkIndex.indexOf(i) >= 0)
-            return <a key={i} href={x}>{x}</a>
-              else
-                return <p key={i}>{x}</p>
-            })
-          }
+                return (
+                  <a key={i} href={x}>
+                    {x}
+                  </a>
+                );
+              else return <p key={i}>{x}</p>;
+            })}
           </ul>
         </div>
       </Popover>

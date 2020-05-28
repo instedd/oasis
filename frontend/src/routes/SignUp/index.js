@@ -1,22 +1,22 @@
-import React from 'react';
-import classNames from 'classnames';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import { makeStyles } from '@material-ui/core/styles';
-import { useDispatch, useSelector } from 'react-redux';
-import { useState } from 'react';
+import React from "react";
+import classNames from "classnames";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import Link from "@material-ui/core/Link";
+import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@material-ui/core/styles";
+import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
 
-import {signUp} from 'actions/auth';
-import { ERROR } from 'actions/types';
-import styles from './styles.module.css'
-import paths from 'routes/paths';
-import AuthPaper from 'components/AuthPaper';
+import { signUp } from "actions/auth";
+import { ERROR } from "actions/types";
+import styles from "./styles.module.css";
+import paths from "routes/paths";
+import AuthPaper from "components/AuthPaper";
 
 const useStyles = makeStyles((theme) => ({
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(1),
   },
   submit: {
@@ -28,28 +28,33 @@ export default function SignUp(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [formValues, setFormValues] = useState({
-    password: '',
-    email: '',
-    firstName: '',
-    username: '',
+    password: "",
+    email: "",
+    firstName: "",
+    username: "",
   });
-  
+
   const handleFormChange = (key) => (event) => {
-    setFormValues({...formValues, [key]: event.target.value});
-  }
+    setFormValues({ ...formValues, [key]: event.target.value });
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    dispatch(signUp(formValues))
+    dispatch(signUp(formValues));
   };
-  
-  const status = useSelector(state => state.auth.status);
+
+  const status = useSelector((state) => state.auth.status);
 
   return (
     <AuthPaper>
       <h1 className={styles.title}>Sign Up</h1>
       {status.detail && (
-        <p className={classNames(styles.status, status.type === ERROR && styles.error)}>
+        <p
+          className={classNames(
+            styles.status,
+            status.type === ERROR && styles.error
+          )}
+        >
           {status.detail}
         </p>
       )}
@@ -65,7 +70,7 @@ export default function SignUp(props) {
               id="firstName"
               label="First Name"
               autoFocus
-              onChange={handleFormChange('firstName')}
+              onChange={handleFormChange("firstName")}
             />
           </Grid>
           <Grid item xs={12}>
@@ -77,7 +82,7 @@ export default function SignUp(props) {
               label="Username"
               name="username"
               autoComplete="username"
-              onChange={handleFormChange('username')}
+              onChange={handleFormChange("username")}
             />
           </Grid>
           <Grid item xs={12}>
@@ -89,7 +94,7 @@ export default function SignUp(props) {
               label="Email Address"
               name="email"
               autoComplete="email"
-              onChange={handleFormChange('email')}
+              onChange={handleFormChange("email")}
             />
           </Grid>
           <Grid item xs={12}>
@@ -102,7 +107,7 @@ export default function SignUp(props) {
               type="password"
               id="password"
               autoComplete="current-password"
-              onChange={handleFormChange('password')}
+              onChange={handleFormChange("password")}
             />
           </Grid>
         </Grid>
@@ -118,7 +123,10 @@ export default function SignUp(props) {
         </Button>
         <Grid container justify="flex-end">
           <Grid item>
-            <Link onClick={()=>props.history.push(paths.signIn)} variant="body2">
+            <Link
+              onClick={() => props.history.push(paths.signIn)}
+              variant="body2"
+            >
               Already have an account? Sign in
             </Link>
           </Grid>

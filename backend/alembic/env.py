@@ -1,10 +1,10 @@
+import os
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from users import models as user_models
-import os
 
 
 from alembic import context
@@ -13,7 +13,12 @@ from alembic import context
 # access to the values within the .ini file in use.
 config = context.config
 
-config.set_main_option("sqlalchemy.url", f"mysql+pymysql://{os.environ['DATABASE_USER']}:{os.environ['DATABASE_PASSWORD']}@{os.environ['DATABASE_HOST']}/{os.environ['DATABASE_NAME']}")
+config.set_main_option(
+    "sqlalchemy.url",
+    f"mysql+pymysql://{os.environ['DATABASE_USER']}"
+    f":{os.environ['DATABASE_PASSWORD']}"
+    f"@{os.environ['DATABASE_HOST']}/{os.environ['DATABASE_NAME']}",
+)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -23,9 +28,7 @@ fileConfig(config.config_file_name)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = [
-    user_models.Base.metadata
-]
+target_metadata = [user_models.Base.metadata]
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
