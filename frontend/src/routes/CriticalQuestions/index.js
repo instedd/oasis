@@ -295,10 +295,10 @@ function CriticalQuestions(props) {
                 {locations}
                 <div style={{ height: '30px' }} ref={pageBottomRef}></div>
             </div>
-            <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab next-btn" onClick={() => props.history.push(nextPage)}>
+            <Fab style={{ background: "#EA2027" }} aria-label="Go to next page" size="medium" className="fab next-btn" onClick={() => props.history.push(nextPage)}>
                 <ArrowRightIcon />
             </Fab>
-            <Fab style={{ background: "#9206FF" }} aria-label="add" size="medium" className="fab back-btn" onClick={() => props.history.push('/confirm')}>
+            <Fab style={{ background: "#9206FF" }} aria-label="Go to previous page" size="medium" className="fab back-btn" onClick={() => props.history.push('/confirm')}>
                 <ArrowLeftIcon />
             </Fab>
         </Wrapper >
