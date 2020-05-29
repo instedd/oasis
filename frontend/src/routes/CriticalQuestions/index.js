@@ -24,7 +24,7 @@ const travelLinkIndex = Text["Recent Travel"].linkIndex
 const professions = Text["Profession"]
 const medicalProblems = Text["Medical Problems"]
 
-const ethnicities = [
+const ethnicGroups = [
     { value: 'American Indian or Alaska Native', label: 'American Indian or Alaska Native' },
     { value: 'Asian', label: 'Asian' },
     { value: 'Black or African American', label: 'Black or African American' },
@@ -34,16 +34,20 @@ const ethnicities = [
 ]
 
 function CriticalQuestions(props) {
-
     const dispatch = useDispatch();
-    const [age, setAge] = useState('')
-    const [sex, setSex] = useState('');
-    const [ethnicity, setEthnicity] = useState('');
-    const [location, setLocation] = useState('');
-    const [citizenship, setCitizenship] = useState('');
-    const [profession, setProfession] = useState('');
-    const [selectedDate, handleDateChange] = useState(null);
-    const [selectedEndDate, handleEndDateChange] = useState(null);
+
+    const [formValues, setFormValues] = useState({
+        age: '',
+        sex: '',
+        ethnicity: '',
+        location: '',
+        citizenship: '',
+        profession: '',
+        selectedMedicalProblems: []
+      });
+
+    const [sicknessStart, handleSicknessStartChange] = useState(null);
+    const [sicknessEnd, handleSicknessEndChange] = useState(null);
 
     const [travelDates, setTravelDates] = useState({ 0: null });
     const [travelDatesIndex, setTravelDatesIndex] = useState(0);
@@ -51,31 +55,9 @@ function CriticalQuestions(props) {
     const [contactCount, setContactCount] = useState(0)
     const [locationCount, setLocationCount] = useState(0)
 
-    const [selectedProblems, setMedicalProblems] = useState([]);
-
-    const handleMedicalProblemChange = (event) => {
-        setMedicalProblems(event.target.value);
-    };
-    const handleSexChange = (event) => {
-        setSex(event.target.value);
-    };
-    const handleAgeChange = (event) => {
-        setAge(event.target.value);
-    };
-    const handleEthnicityChange = (event) => {
-        setEthnicity(event.target.value);
-    };
-    const handleCitizenshipChange = (event) => {
-        setCitizenship(event.target.value);
-    };
-
-    const handleProfessionChange = (event) => {
-        setProfession(event.target.value);
-    };
-
-    const handleLocationChange = (event) => {
-        setLocation(event.target.value);
-    };
+    const handleFormChange = (key) => (event) => {
+        setFormValues({...formValues, [key]: event.target.value});
+    }
 
     function handleTravelDateChange(date) {
         setTravelDates({ ...travelDates, [travelDatesIndex]: date });
@@ -84,17 +66,17 @@ function CriticalQuestions(props) {
     const handleSubmit = (event) => {
         event.preventDefault()
         const story = {
-            age, 
-            sex, 
-            ethnicity, 
-            countryOfOrigin: citizenship, 
-            profession, 
+            age: formValues.age, 
+            sex: formValues.sex, 
+            ethnicity: formValues.ethnicity, 
+            countryOfOrigin: formValues.citizenship, 
+            profession: formValues.profession, 
             sick: isSick, 
             tested: tested, 
-            medicalProblems: selectedProblems, 
-            sicknessStart: selectedDate, 
-            sicknessEnd: selectedEndDate,
-            currentLocation: location
+            medicalProblems: formValues.selectedMedicalProblems, 
+            sicknessStart: sicknessStart, 
+            sicknessEnd: sicknessEnd,
+            currentLocation: formValues.location
         }
         const dto = {story, nextPage}
         dispatch(submitStory(dto))
@@ -102,13 +84,13 @@ function CriticalQuestions(props) {
 
     const [countries, setCountries] = React.useState([]);
 
-    const endPicker = <DatePicker
+    const sicknessEndPicker = <DatePicker
         autoOk
         label="When did your illness resolve?"
         clearable
         disableFuture
-        value={selectedEndDate}
-        onChange={handleEndDateChange}
+        value={sicknessEnd}
+        onChange={handleSicknessEndChange}
     />
 
     React.useEffect(() => {
@@ -191,10 +173,10 @@ function CriticalQuestions(props) {
                         label="When did you first start feeling sick?"
                         clearable
                         disableFuture
-                        value={selectedDate}
-                        onChange={handleDateChange}
+                        value={sicknessStart}
+                        onChange={handleSicknessStartChange}
                     />
-                    {isSick === sicknessStatus.RECOVERED ? endPicker : null}
+                    {isSick === sicknessStatus.RECOVERED ? sicknessEndPicker : null}
 
 
                 </div>
@@ -203,16 +185,16 @@ function CriticalQuestions(props) {
                         id="age"
                         label="Age"
                         type="number"
-                        value={age}
-                        onChange={handleAgeChange}
+                        value={formValues.age}
+                        onChange={handleFormChange('age')}
                     />
 
                     <TextField
                         id="sex"
                         select
                         label="Sex"
-                        value={sex}
-                        onChange={handleSexChange}
+                        value={formValues.sex}
+                        onChange={handleFormChange('sex')}
                     >
                         <MenuItem value={"male"}>Male</MenuItem>
                         <MenuItem value={"female"}>Female</MenuItem>
@@ -223,10 +205,10 @@ function CriticalQuestions(props) {
                     <TextField
                         select
                         label="Ethnicity"
-                        value={ethnicity}
-                        onChange={handleEthnicityChange}
+                        value={formValues.ethnicity}
+                        onChange={handleFormChange('ethnicity')}
                     >
-                        {ethnicities.map((option) => (
+                        {ethnicGroups.map((option) => (
                             <MenuItem key={option.value} value={option.value}>
                                 {option.label}
                             </MenuItem>
@@ -237,8 +219,8 @@ function CriticalQuestions(props) {
                     <TextField
                         select
                         label="Current Location"
-                        value={location}
-                        onChange={handleLocationChange}
+                        value={formValues.location}
+                        onChange={handleFormChange('location')}
                     >
                         {countries.map((option) => (
                             <MenuItem key={option.name} value={option.name}>
@@ -249,8 +231,8 @@ function CriticalQuestions(props) {
                     <TextField
                         select
                         label="Citizenship"
-                        value={citizenship}
-                        onChange={handleCitizenshipChange}
+                        value={formValues.citizenship}
+                        onChange={handleFormChange('citizenship')}
                     >
                         {countries.map((option) => (
                             <MenuItem key={option.name} value={option.name}>
@@ -264,8 +246,8 @@ function CriticalQuestions(props) {
                     <TextField
                         select
                         label="Profession"
-                        value={profession}
-                        onChange={handleProfessionChange}
+                        value={formValues.profession}
+                        onChange={handleFormChange('profession')}
                     >
                         {professions.map((option) => (
                             <MenuItem style={{ fontSize: 13 }} key={option} value={option}>
@@ -279,14 +261,14 @@ function CriticalQuestions(props) {
                             labelId="medical-problems"
                             id="medical-problems-checkbox"
                             multiple
-                            value={selectedProblems}
+                            value={formValues.selectedMedicalProblems}
                             input={<Input />}
-                            onChange={handleMedicalProblemChange}
+                            onChange={handleFormChange('selectedMedicalProblems')}
                             renderValue={(selected) => selected.join(', ')}
                         >
                             {medicalProblems.map((name) => (
                                 <MenuItem key={name} value={name}>
-                                    <Checkbox checked={selectedProblems.indexOf(name) > -1} />
+                                    <Checkbox checked={formValues.selectedMedicalProblems.indexOf(name) > -1} />
                                     <ListItemText primary={name} className={classNames("checkbox-label", styles["checkbox-label"])} />
                                 </MenuItem>
                             ))}
@@ -324,8 +306,8 @@ function CriticalQuestions(props) {
             </div>
             <Fab style={{ background: "#EA2027" }} aria-label="Go to next page" size="medium" className="fab next-btn" onClick={(event) =>{
                 dispatch(setStory({
-                    citizenship,
-                    location
+                    citizenship: formValues.citizenship,
+                    location: formValues.location
                 }));
                 handleSubmit(event)
                 }}>
@@ -333,8 +315,8 @@ function CriticalQuestions(props) {
             </Fab>
             <Fab style={{ background: "#9206FF" }} aria-label="Go to previous page" size="medium" className="fab back-btn" onClick={() => {
                 dispatch(setStory({
-                    citizenship,
-                    location
+                    citizenship: formValues.citizenship,
+                    location: formValues.location
                 }));
                 props.history.goBack()
                 }}>
