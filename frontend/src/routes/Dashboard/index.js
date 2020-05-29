@@ -115,10 +115,7 @@ function Dashboard(props) {
                         // title={<h2 style={{ textAlign: 'center' }}>Terms and Conditions</h2>}
                         texts={["N/A"]}
                         linkIndex={[0]}/>
-                    {/* <Link href="https://earth2-covid.ucsd.edu/homebound" style={{ color: '#2D9CDB' }}>Download HomeBound</Link>
-                    <Link href="#" onClick={preventDefault} style={{ color: '#F2C94C' }}>Join a clinical trial</Link>
-                    {donate_link}
-                    <Link onClick={preventDefault} style={{ color: '#FFFFFF' }}>Learn more about COVID-19</Link> */}
+
                 </div>
                 <div className="col">
                     <SpeedDial
