@@ -12,10 +12,6 @@ router = APIRouter()
 def create_story(story: schemas.StoryCreate, db: Session = Depends(get_db)):
     return crud.create_story(db=db, story=story)
 
-@router.get("/symptoms", response_model=List[schemas.Symptom])
-def read_symptoms(db: Session = Depends(get_db)):
-    return crud.get_symptoms(db)
-
 @router.get("/{story_id}", response_model=schemas.Story)
 def read_story(story_id: int, db: Session = Depends(get_db)):
     story = crud.get_story(db, story_id=story_id)
