@@ -1,5 +1,7 @@
+from datetime import timedelta
 from enum import Enum
 from typing import List
+
 from pydantic import BaseModel
 from datetime import timedelta, date
 
@@ -14,19 +16,19 @@ class Sex(str, Enum):
 
 class MedicalSituation(str, Enum):
     sick = "sick"
-    not_sick = "not sick"
+    not_sick = "not_sick"
     recovered = "recovered"
 
 
 class TestSituation(str, Enum):
     positive = "positive"
     negative = "negative"
-    not_tested = "not tested"
+    not_tested = "not_tested"
 
 
 class StoryCreate(BaseModel):
     age: str
-    sex: Sex
+    sex: Sex = None
     ethnicity: str
     country_of_origin: str
     profession: str

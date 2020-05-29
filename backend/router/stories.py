@@ -2,9 +2,9 @@ from typing import List
 
 from fastapi import Depends, FastAPI, APIRouter, HTTPException, Header, status
 from sqlalchemy.orm import Session
-from stories import crud, schemas
 from database import get_db
 from auth import main
+from stories import crud, models, schemas
 
 router = APIRouter()
 
@@ -19,7 +19,7 @@ def check_permissions(current_story, story_id):
 
 @router.post("/", response_model=schemas.Story)
 async def create_story(story: schemas.StoryCreate, db: Session = Depends(get_db), authorization: str = Header(None)):
-    token_data = await main.get_token_data(authorization[7:]) if authorization is not None else None
+    token_data = await main.get_token_contents(authorization[7:]) if authorization is not None else None
     return crud.create_story(db=db, story=story, token_data=token_data)
 
 

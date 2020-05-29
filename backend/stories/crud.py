@@ -4,6 +4,7 @@ from datetime import timedelta
 from sqlalchemy.orm import Session
 
 from auth.main import create_access_token
+from auth.schemas import UserToken
 from users.crud import get_user_by_email
 from users.models import User
 
@@ -26,7 +27,7 @@ def update_story(db: Session, story_id: int, story: schemas.StoryCreate):
 def create_story(db: Session, story: schemas.StoryCreate, token_data: str):
     user = None
     # if the story was submitted with an auth token, we want to associate it to the token's user
-    if token_data:
+    if token_data and isinstance(token_data, UserToken) :
         user = get_user_by_email(db, email=token_data.email)
     
     if user and user.story:

@@ -1,6 +1,6 @@
-import {SAVE_STORY_START, SAVED_STORY, SUCCESS, SIGN_IN} from './types'
 import api from 'utils';
 import history from '../history';
+import { HANDLE_SICK, HANDLE_TESTED, SAVED_STORY, SAVE_STORY_START, SIGN_IN, SUCCESS } from './types';
 
 export const submitStory = (dto) => async (dispatch, getState) => {
     const { token } = getState().auth;
@@ -29,4 +29,22 @@ export const submitStory = (dto) => async (dispatch, getState) => {
     });
     
     if (!response.error) history.push(nextPage);
+}
+
+export function handleSick(option) {
+    return (dispatch) => {
+        dispatch({
+            type: HANDLE_SICK,
+            sick: option
+        })
+    }
+}
+
+export function handleTested(option) {
+    return (dispatch) => {
+        dispatch({
+            type: HANDLE_TESTED,
+            tested: option
+        })
+    }
 }
