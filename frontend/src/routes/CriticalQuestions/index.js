@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField, MenuItem, FormControl, InputLabel, Select, Checkbox, ListItemText, Input} from '@material-ui/core';
+import { TextField, MenuItem, FormControl, FormHelperText, InputLabel, Select, Checkbox, ListItemText, Input } from '@material-ui/core';
 import { Fab } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
@@ -13,6 +13,7 @@ import Wrapper from "components/Wrapper";
 import styles from './styles.module.css';
 import classNames from 'classnames';
 import { setStory } from "actions/saveSick";
+
 
 const contactText = Text["Close Contacts"].texts
 const contactListIndex = Text["Close Contacts"].listIndex
@@ -165,7 +166,7 @@ function CriticalQuestions(props) {
 
     return (
         <Wrapper>
-            <h1 className="title"> MY COVID STORY</h1>
+            <h1 className="title" style={{margin: 0}}> MY COVID STORY</h1>
             <div className={classNames("root", styles.root)}>
                 <div className={classNames("grid-3", styles["grid-3"])}>
 
@@ -214,12 +215,35 @@ function CriticalQuestions(props) {
                 <div className={classNames("location-wrapper", styles["location-wrapper"])}>
                     <span>Current Location</span>
                     <div className={classNames("grid-1", styles["grid-1"])}>
-
+                        <FormControl>
+                            <TextField
+                                select
+                                label=" "
+                                value={location}
+                                onChange={handleLocationChange}
+                            >
+                                {countries.map((option) => (
+                                    <MenuItem key={option.name} value={option.name}>
+                                        {option.name}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                            <FormHelperText>Country</FormHelperText>
+                        </FormControl>
+                        <FormControl>
+                            <TextField
+                                label=" "
+                                value={postalCode}
+                                onChange={handlePostalCodeChange}
+                                type="number"
+                            />
+                            <FormHelperText>Postal Code</FormHelperText>
+                        </FormControl>
                         <TextField
                             select
-                            label="Country"
-                            value={location}
-                            onChange={handleLocationChange}
+                            label="Citizenship"
+                            value={citizenship}
+                            onChange={handleCitizenshipChange}
                         >
                             {countries.map((option) => (
                                 <MenuItem key={option.name} value={option.name}>
@@ -227,28 +251,9 @@ function CriticalQuestions(props) {
                                 </MenuItem>
                             ))}
                         </TextField>
-                        <TextField
-                            label="Postal Code"
-                            value={postalCode}
-                            onChange={handlePostalCodeChange}
-                            type="number"
-                        />
-                 
-                    <TextField
-                        select
-                        label="Citizenship"
-                        value={citizenship}
-                        onChange={handleCitizenshipChange}
-                    >
-                        {countries.map((option) => (
-                            <MenuItem key={option.name} value={option.name}>
-                                {option.name}
-                            </MenuItem>
-                        ))}
-                    </TextField>
                     </div>
                 </div>
-                <div className={classNames("grid-2", styles["grid-2"])} style={{paddingTop:0}}>
+                <div className={classNames("grid-2", styles["grid-2"])} style={{ paddingTop: 0 }}>
                     <TextField
                         select
                         label="Profession"
@@ -311,13 +316,13 @@ function CriticalQuestions(props) {
                 {locations}
                 <div style={{ height: '30px' }} ref={pageBottomRef}></div>
             </div>
-            <Fab style={{ background: "#EA2027" }} aria-label="Go to next page" size="medium" className="fab next-btn" onClick={() =>{
+            <Fab style={{ background: "#EA2027" }} aria-label="Go to next page" size="medium" className="fab next-btn" onClick={() => {
                 dispatch(setStory({
                     citizenship,
                     location
                 }));
-                 props.history.push(nextPage)
-                }}>
+                props.history.push(nextPage)
+            }}>
                 <ArrowRightIcon />
             </Fab>
             <Fab style={{ background: "#9206FF" }} aria-label="Go to previous page" size="medium" className="fab back-btn" onClick={() => {
@@ -326,7 +331,7 @@ function CriticalQuestions(props) {
                     location
                 }));
                 props.history.goBack()
-                }}>
+            }}>
                 <ArrowLeftIcon />
             </Fab>
         </Wrapper >
