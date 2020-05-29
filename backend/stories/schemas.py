@@ -1,4 +1,3 @@
-from datetime import timedelta
 from enum import Enum
 from typing import List
 
@@ -26,7 +25,7 @@ class TestSituation(str, Enum):
 
 
 class StoryCreate(BaseModel):
-    age: str
+    age: int
     sex: Sex = None
     ethnicity: str
     country_of_origin: str

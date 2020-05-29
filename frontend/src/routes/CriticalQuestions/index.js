@@ -36,17 +36,16 @@ function CriticalQuestions(props) {
     const dispatch = useDispatch();
 
     const [formValues, setFormValues] = useState({
-        age: '',
+        age: null,
         sex: '',
         ethnicity: '',
         location: '',
         citizenship: '',
         profession: '',
-        selectedMedicalProblems: []
+        selectedMedicalProblems: [],
+        sicknessStart: null,
+        sicknessEnd: null
       });
-
-    const [sicknessStart, handleSicknessStartChange] = useState(null);
-    const [sicknessEnd, handleSicknessEndChange] = useState(null);
 
     const [travelDates, setTravelDates] = useState({ 0: null });
     const [travelDatesIndex, setTravelDatesIndex] = useState(0);
@@ -55,7 +54,16 @@ function CriticalQuestions(props) {
     const [locationCount, setLocationCount] = useState(0)
 
     const handleFormChange = (key) => (event) => {
-        setFormValues({...formValues, [key]: event.target.value});
+        const intFields = ["age"]
+        const nonValueFields = ["sicknessStart", "sicknessEnd"]
+        
+        if (intFields.includes(key)) {
+            setFormValues({...formValues, [key]: parseInt(event.target.value)});
+        } else if (nonValueFields.includes(key)){
+            setFormValues({...formValues, [key]: event})
+        } else {
+            setFormValues({...formValues, [key]: event.target.value});
+        }
     }
 
     function handleTravelDateChange(date) {
@@ -73,8 +81,8 @@ function CriticalQuestions(props) {
             sick: sick,
             tested: tested, 
             medicalProblems: formValues.selectedMedicalProblems, 
-            sicknessStart: sicknessStart, 
-            sicknessEnd: sicknessEnd,
+            sicknessStart: formValues.sicknessStart,
+            sicknessEnd: formValues.sicknessEnd,
             currentLocation: formValues.location
         }
         const dto = {story, nextPage}
@@ -88,8 +96,8 @@ function CriticalQuestions(props) {
         label="When did your illness resolve?"
         clearable
         disableFuture
-        value={sicknessEnd}
-        onChange={handleSicknessEndChange}
+        value={formValues.sicknessEnd}
+        onChange={handleFormChange('sicknessEnd')}
     />
 
     React.useEffect(() => {
@@ -171,8 +179,8 @@ function CriticalQuestions(props) {
                         label="When did you first start feeling sick?"
                         clearable
                         disableFuture
-                        value={sicknessStart}
-                        onChange={handleSicknessStartChange}
+                        value={formValues.sicknessStart}
+                        onChange={handleFormChange('sicknessStart')}
                     />
                     {sick === sicknessStatus.RECOVERED ? sicknessEndPicker : null}
 
@@ -185,6 +193,7 @@ function CriticalQuestions(props) {
                         type="number"
                         value={formValues.age}
                         onChange={handleFormChange('age')}
+                        InputProps={{ inputProps: { min: 0 } }}
                     />
 
                     <TextField
