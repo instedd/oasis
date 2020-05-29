@@ -1,4 +1,4 @@
-import { SIGN_IN, SIGN_UP, HANDLE_SICK, HANDLE_TESTED } from '../actions/types';
+import { SIGN_IN, SIGN_UP, SAVE_SICK, SAVE_TESTED } from '../actions/types';
 const initialState = {
     status: {}
 }
@@ -17,12 +17,12 @@ export default function (state = initialState, action) {
                 email: action.email,
                 username: action.username
             };
-        case HANDLE_SICK:
+        case SAVE_SICK:
             return {
                 ...state,
                 sick: action.sick
             }
-        case HANDLE_TESTED:
+        case SAVE_TESTED:
             return {
                 ...state,
                 tested: action.tested

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Fab } from '@material-ui/core'
-import { handleSick } from '../../actions/handleSick';
+import { saveSick } from '../../actions/saveSick';
 import { useDispatch } from 'react-redux'
 import classNames from 'classnames';
 import Wrapper from 'components/Wrapper';
@@ -11,7 +11,7 @@ export default function Onboard(props) {
 
     const dispatch = useDispatch();
     function handleClick(selected) {
-        dispatch(handleSick(selected));
+        dispatch(saveSick(selected));
     }
     return (
         <Wrapper>

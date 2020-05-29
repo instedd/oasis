@@ -2,7 +2,7 @@ import React from 'react'
 import { Fab } from '@material-ui/core';
 import classNames from 'classnames';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft'
-import { handleTested } from '../../actions/handleTested';
+import { saveTested } from '../../actions/saveTested';
 import { useDispatch, useSelector } from 'react-redux'
 import Wrapper from 'components/Wrapper';
 import styles from './styles.module.css'
@@ -13,7 +13,7 @@ export default function Confirm(props) {
     const dispatch = useDispatch();
     function handleClick(selected) {
         localStorage.setItem('tested', selected);
-        dispatch(handleTested(selected));
+        dispatch(saveTested(selected));
     }
 
     return (

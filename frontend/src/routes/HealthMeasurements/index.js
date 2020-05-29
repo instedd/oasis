@@ -7,30 +7,30 @@ import Wrapper from 'components/Wrapper';
 
 const CustomSlider = withStyles({
     root: {
-      color: 'rgb(234, 32, 39)',
-      height: 2,
+        color: 'rgb(234, 32, 39)',
+        height: 2,
     },
     thumb: {
-      backgroundColor: '#fff',
+        backgroundColor: '#fff',
     },
     track: {
-      height: 5,
+        height: 5,
     },
     rail: {
-      height: 5,
-      opacity: 0.5,
-      backgroundColor: '#bfbfbf',
+        height: 5,
+        opacity: 0.5,
+        backgroundColor: '#bfbfbf',
     },
-    mark:{
+    mark: {
         backgroundColor: 'transparent',
         height: 5,
         width: 1,
         marginTop: -2,
     },
     markLabel: {
-      color:"white"
+        color: "white"
     },
-  })(Slider);
+})(Slider);
 
 function HealthMeasurements(props) {
     const [temp, setTemp] = React.useState(92);
@@ -77,6 +77,7 @@ function HealthMeasurements(props) {
             label: '100% SpO2',
         },
     ];
+   
     function tempText(value) {
         return `${value}°F`;
     }
@@ -103,7 +104,7 @@ function HealthMeasurements(props) {
                     aria-labelledby="temp-slider"
                     getAriaValueText={tempText}
                     marks={tempMarks}
-                    // label
+                // label
                 />
                 <Typography id="heart-rate-slider" gutterBottom>Heart Rate</Typography>
                 <CustomSlider
@@ -117,7 +118,7 @@ function HealthMeasurements(props) {
                     aria-labelledby="heart-rate-slider"
                     getAriaValueText={heartRateText}
                     marks={heartRateMarks}
-                    // label
+                // label
                 />
                 <Typography id="pulse-oxygen-slider" gutterBottom>Pulse Oxygen</Typography>
                 <CustomSlider
@@ -133,10 +134,10 @@ function HealthMeasurements(props) {
                     marks={pulseOxygenMarks}
                 />
             </div>
-            <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab next-btn" onClick={()=>props.history.push('/dashboard')}>
+            <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab next-btn" onClick={() => props.history.push('/dashboard')}>
                 <ArrowRightIcon />
             </Fab>
-            <Fab style={{ background: "#9206FF" }} aria-label="add" size="medium" className="fab back-btn" onClick={()=>props.history.push('/symptoms')}>
+            <Fab style={{ background: "#9206FF" }} aria-label="add" size="medium" className="fab back-btn" onClick={() => props.history.push('/symptoms')}>
                 <ArrowLeftIcon />
             </Fab>
         </Wrapper>

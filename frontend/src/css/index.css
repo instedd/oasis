@@ -24,7 +24,6 @@ a, a:link, a:visited, a:hover, a:active {
 
 .title {
   font-weight: normal;
-  line-height: 125%;
   text-align: center;
   color: #FFFFFF;
 }
@@ -46,7 +45,7 @@ a, a:link, a:visited, a:hover, a:active {
   align-items: center;
 }
 
-.contacts div, .travels div{
+.contacts div, .travels div {
   height: 24px;
   margin-left: 5px;
 }
@@ -55,8 +54,8 @@ a, a:link, a:visited, a:hover, a:active {
   margin-right: 1rem !important;
 }
 
-#menu- .MuiMenu-paper{
-  top:30% !important
+#menu- .MuiMenu-paper {
+  top: 30% !important
 }
 
 .next-btn {
@@ -89,6 +88,7 @@ a, a:link, a:visited, a:hover, a:active {
 .suggestions-wrapper div {
   font-size: 18px;
   line-height: 26px;
+  width: fit-content;
 }
 
 .col {
@@ -151,8 +151,17 @@ a, a:link, a:visited, a:hover, a:active {
 }
 
 .sliders-wrapper {
-  width: 300px;
-  height: 400px;
+  width: 70%;
+  height: 340px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.feeling-wrapper {
+  width: 70%;
+  Height: 30%;
+  padding-bottom: 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;

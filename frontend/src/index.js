@@ -27,6 +27,7 @@ import HealthMeasurements from 'routes/HealthMeasurements';
 import SignUp from 'routes/SignUp';
 import MyStory from 'routes/MyStory';
 import paths from 'routes/paths';
+import Feeling from 'routes/Feeling'
 
 import Map from 'components/Map'
 import * as serviceWorker from './serviceWorker';
@@ -55,6 +56,7 @@ ReactDOM.render(
                 <Route path={paths.healthMeasurements} component={HealthMeasurements} />
                 <Route path={paths.signUp} component={SignUp} />
                 <Route path={paths.myStory} component={MyStory} />
+                <Route path={paths.feeling} component={Feeling} />
               </Switch>
             </main>
           </Router>

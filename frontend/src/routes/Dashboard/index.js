@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from '@material-ui/core/Link';
-import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import SpeedDial from '@material-ui/lab/SpeedDial';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction'
@@ -8,6 +7,7 @@ import { useSelector } from 'react-redux'
 import classNames from 'classnames';
 import styles from './styles.module.css';
 import paths from 'routes/paths';
+import PopUp from 'components/PopUp'
 
 const status =
 {
@@ -21,7 +21,7 @@ const status =
 
 const actions = [
     { name: ' ADD MY STORY ', href: paths.myStory, classes: "MuiFab-extended" },
-    { name: ' DAILY ASSESSMENT ', href: paths.symptoms, classes: classNames("MuiFab-extended assessment", styles.assessment) },
+    { name: ' DAILY ASSESSMENT ', href: paths.feeling, classes: classNames("MuiFab-extended assessment", styles.assessment) },
 ];
 
 function Dashboard(props) {
@@ -47,7 +47,7 @@ function Dashboard(props) {
                 (result) => {
                     setData(result);
                 },
-                (error) => {}
+                (error) => { }
             )
     }, [])
 
@@ -61,11 +61,6 @@ function Dashboard(props) {
 
     return (
         <div className="Dashboard">
-            <Breadcrumbs aria-label="breadcrumb" className="breadcrumbs">
-                <Link color="inherit">myTrials</Link>
-                <Link color="inherit">myDonations</Link>
-                <Link color="inherit">myRecords</Link>
-            </Breadcrumbs>
             <div className="row status-wrapper">
                 <div className="col">
                     <div className="row">
@@ -99,11 +94,31 @@ function Dashboard(props) {
             <div className="row">
                 <div className="col suggestions-wrapper">
                     <h3>SUGGESTIONS</h3>
-                    <div style={{ color: "gray" }}>Stay at home</div>
-                    <Link href="https://earth2-covid.ucsd.edu/homebound" style={{ color: '#2D9CDB' }}>Download HomeBound</Link>
+                    {/* <div style={{ color: "gray" }}>Stay at home</div> */}
+                    <PopUp
+                        label={<span style={{ textDecoration: "underline", color: "white" }}>What to do</span>}
+                        // title={<h2 style={{ textAlign: 'center' }}>Terms and Conditions</h2>}
+                        texts={["N/A"]}
+                        linkIndex={[0]}/>
+                    <PopUp
+                        label={<span style={{ textDecoration: "underline", color: "white" }}>Trials</span>}
+                        // title={<h2 style={{ textAlign: 'center' }}>Terms and Conditions</h2>}
+                        texts={["N/A"]}
+                        linkIndex={[0]} />
+                    <PopUp
+                        label={<span style={{ textDecoration: "underline", color: "white" }}>Covid Info</span>}
+                        // title={<h2 style={{ textAlign: 'center' }}>Terms and Conditions</h2>}
+                        texts={["N/A"]}
+                        linkIndex={[0]} />
+                         <PopUp
+                        label={<span style={{ textDecoration: "underline", color: "white" }}>Get Involved</span>}
+                        // title={<h2 style={{ textAlign: 'center' }}>Terms and Conditions</h2>}
+                        texts={["N/A"]}
+                        linkIndex={[0]}/>
+                    {/* <Link href="https://earth2-covid.ucsd.edu/homebound" style={{ color: '#2D9CDB' }}>Download HomeBound</Link>
                     <Link href="#" onClick={preventDefault} style={{ color: '#F2C94C' }}>Join a clinical trial</Link>
                     {donate_link}
-                    <Link onClick={preventDefault} style={{ color: '#FFFFFF' }}>Learn more about COVID-19</Link>
+                    <Link onClick={preventDefault} style={{ color: '#FFFFFF' }}>Learn more about COVID-19</Link> */}
                 </div>
                 <div className="col">
                     <SpeedDial
@@ -120,7 +135,7 @@ function Dashboard(props) {
                                 icon={action.name}
                                 tooltipTitle={action.name}
                                 className={action.classes}
-                                onClick={()=>props.history.push(action.href)}
+                                onClick={() => props.history.push(action.href)}
                             ></SpeedDialAction>
                         ))}
                     </SpeedDial>

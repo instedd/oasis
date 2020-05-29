@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField, MenuItem, FormControl, InputLabel, Select, Checkbox, ListItemText, Input } from '@material-ui/core';
+import { TextField, MenuItem, FormControl, InputLabel, Select, Checkbox, ListItemText, Input} from '@material-ui/core';
 import { Fab } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
@@ -35,6 +35,7 @@ function CriticalQuestions(props) {
     const [sex, setSex] = useState('');
     const [ethnicity, setEthnicity] = useState('');
     const [location, setLocation] = useState('');
+    const [postalCode, setPostalCode] = useState(null);
     const [citizenship, setCitizenship] = useState('');
     const [profession, setProfession] = useState('');
     const [selectedDate, handleDateChange] = useState(null);
@@ -69,11 +70,16 @@ function CriticalQuestions(props) {
         setLocation(event.target.value);
     };
 
+    const handlePostalCodeChange = (event) => {
+        setPostalCode(event.target.value);
+    };
+
     function handleTravelDateChange(date) {
         setTravelDates({ ...travelDates, [travelDatesIndex]: date });
     };
 
     const [countries, setCountries] = React.useState([]);
+
 
     const endPicker = <DatePicker
         autoOk
@@ -148,10 +154,10 @@ function CriticalQuestions(props) {
         nextPage = "/dashboard";
     }
     else if (tested === "positive") {
-        nextPage = "/symptoms"
+        nextPage = "/feeling"
     }
     else {
-        nextPage = "/symptoms"
+        nextPage = "/feeling"
     }
 
     return (
@@ -174,13 +180,10 @@ function CriticalQuestions(props) {
                 </div>
                 <div className={classNames("grid-1", styles["grid-1"])}>
                     <TextField
-                        id="standard-number"
                         label="Age"
                         type="number"
                     />
-
                     <TextField
-                        id="standard-select-currency"
                         select
                         label="Sex"
                         value={sex}
@@ -205,19 +208,29 @@ function CriticalQuestions(props) {
                         ))}
                     </TextField>
                 </div>
-                <div className={classNames("grid-2", styles["grid-2"])}>
-                    <TextField
-                        select
-                        label="Current Location"
-                        value={location}
-                        onChange={handleLocationChange}
-                    >
-                        {countries.map((option) => (
-                            <MenuItem key={option.name} value={option.name}>
-                                {option.name}
-                            </MenuItem>
-                        ))}
-                    </TextField>
+                <div className={classNames("location-wrapper", styles["location-wrapper"])}>
+                    <span>Current Location</span>
+                    <div className={classNames("grid-1", styles["grid-1"])}>
+
+                        <TextField
+                            select
+                            label="Country"
+                            value={location}
+                            onChange={handleLocationChange}
+                        >
+                            {countries.map((option) => (
+                                <MenuItem key={option.name} value={option.name}>
+                                    {option.name}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField
+                            label="Postal Code"
+                            value={postalCode}
+                            onChange={handlePostalCodeChange}
+                            type="number"
+                        />
+                 
                     <TextField
                         select
                         label="Citizenship"
@@ -230,9 +243,9 @@ function CriticalQuestions(props) {
                             </MenuItem>
                         ))}
                     </TextField>
-
+                    </div>
                 </div>
-                <div className={classNames("grid-2", styles["grid-2"])}>
+                <div className={classNames("grid-2", styles["grid-2"])} style={{paddingTop:0}}>
                     <TextField
                         select
                         label="Profession"

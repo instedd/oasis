@@ -1,7 +1,7 @@
 import React from 'react';
 import Popover from '@material-ui/core/Popover';
 
-export default function Pop({label, title, texts, listIndex, linkIndex}) {
+export default function Pop({label, title, texts, listIndex=[-1], linkIndex=[-1]}) {
   
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -28,7 +28,7 @@ export default function Pop({label, title, texts, listIndex, linkIndex}) {
           horizontal: 'center',
         }}
         transformOrigin={{
-          vertical: 'center',
+          vertical: 'bottom',
           horizontal: 'center',
         }}
         onClose={handleClose}
