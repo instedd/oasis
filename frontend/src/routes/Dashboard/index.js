@@ -29,6 +29,7 @@ function Dashboard(props) {
 
     const isSick = useSelector(state => state.post.sick);
     const tested = useSelector(state => state.post.tested);
+    const story = useSelector(state => state.post.story);
 
     const handleOpen = () => {
         setOpen(true);
@@ -94,28 +95,14 @@ function Dashboard(props) {
             <div className="row">
                 <div className="col suggestions-wrapper">
                     <h3>SUGGESTIONS</h3>
-                    {/* <div style={{ color: "gray" }}>Stay at home</div> */}
-                    <PopUp
-                        label={<span style={{ textDecoration: "underline", color: "white" }}>What to do</span>}
-                        // title={<h2 style={{ textAlign: 'center' }}>Terms and Conditions</h2>}
-                        texts={["N/A"]}
-                        linkIndex={[0]}/>
-                    <PopUp
-                        label={<span style={{ textDecoration: "underline", color: "white" }}>Trials</span>}
-                        // title={<h2 style={{ textAlign: 'center' }}>Terms and Conditions</h2>}
-                        texts={["N/A"]}
-                        linkIndex={[0]} />
-                    <PopUp
-                        label={<span style={{ textDecoration: "underline", color: "white" }}>Covid Info</span>}
-                        // title={<h2 style={{ textAlign: 'center' }}>Terms and Conditions</h2>}
-                        texts={["N/A"]}
-                        linkIndex={[0]} />
-                         <PopUp
-                        label={<span style={{ textDecoration: "underline", color: "white" }}>Get Involved</span>}
-                        // title={<h2 style={{ textAlign: 'center' }}>Terms and Conditions</h2>}
-                        texts={["N/A"]}
-                        linkIndex={[0]}/>
-
+                    <div style={{ color: "gray" }}>Stay at home</div>
+                    <Link href="https://earth2-covid.ucsd.edu/homebound" style={{ color: '#2D9CDB' }}>Download HomeBound</Link>
+                    {story && story.location == "Mexico" && story.citizenship == "United States of America" && (
+                        <Link href="https://mx.usembassy.gov/u-s-citizen-services/covid-19-information/" style={{ color: '#FFFFFF' }} target="_blank">Information for US Citizens</Link>
+                    )}
+                    <Link href="#" onClick={preventDefault} style={{ color: '#F2C94C' }}>Join a clinical trial</Link>
+                    {donate_link}
+                    <Link onClick={preventDefault} style={{ color: '#FFFFFF' }}>Learn more about COVID-19</Link>
                 </div>
                 <div className="col">
                     <SpeedDial

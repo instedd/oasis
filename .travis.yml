@@ -1,0 +1,14 @@
+services:
+  - docker
+
+install:
+  - docker-compose pull
+  
+script:
+  - docker-compose build # For now, let's just check we can _build_ the images
+
+deploy:
+  provider: script
+  script: "./build.sh"
+  on:
+    all_branches: true

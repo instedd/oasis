@@ -134,10 +134,10 @@ function HealthMeasurements(props) {
                     marks={pulseOxygenMarks}
                 />
             </div>
-            <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab next-btn" onClick={() => props.history.push('/dashboard')}>
+            <Fab style={{ background: "#EA2027" }} aria-label="Go to next page" size="medium" className="fab next-btn" onClick={()=>props.history.push('/dashboard')}>
                 <ArrowRightIcon />
             </Fab>
-            <Fab style={{ background: "#9206FF" }} aria-label="add" size="medium" className="fab back-btn" onClick={() => props.history.push('/symptoms')}>
+            <Fab style={{ background: "#9206FF" }} aria-label="Go to previous page" size="medium" className="fab back-btn" onClick={()=>props.history.push('/symptoms')}>
                 <ArrowLeftIcon />
             </Fab>
         </Wrapper>

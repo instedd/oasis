@@ -8,10 +8,11 @@ import { DatePicker } from "@material-ui/pickers";
 import Pop from 'components/PopUp';
 import Text from 'text.json';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Wrapper from "components/Wrapper";
 import styles from './styles.module.css';
 import classNames from 'classnames';
+import { setStory } from "actions/handleSick";
 
 const contactText = Text["Close Contacts"].texts
 const contactListIndex = Text["Close Contacts"].listIndex
@@ -32,6 +33,8 @@ const ethnicities = [
 ]
 
 function CriticalQuestions(props) {
+
+    const dispatch = useDispatch();
     const [sex, setSex] = useState('');
     const [ethnicity, setEthnicity] = useState('');
     const [location, setLocation] = useState('');
@@ -308,10 +311,22 @@ function CriticalQuestions(props) {
                 {locations}
                 <div style={{ height: '30px' }} ref={pageBottomRef}></div>
             </div>
-            <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab next-btn" onClick={() => props.history.push(nextPage)}>
+            <Fab style={{ background: "#EA2027" }} aria-label="Go to next page" size="medium" className="fab next-btn" onClick={() =>{
+                dispatch(setStory({
+                    citizenship,
+                    location
+                }));
+                 props.history.push(nextPage)
+                }}>
                 <ArrowRightIcon />
             </Fab>
-            <Fab style={{ background: "#9206FF" }} aria-label="add" size="medium" className="fab back-btn" onClick={() => props.history.push('/confirm')}>
+            <Fab style={{ background: "#9206FF" }} aria-label="Go to previous page" size="medium" className="fab back-btn" onClick={() => {
+                dispatch(setStory({
+                    citizenship,
+                    location
+                }));
+                props.history.goBack()
+                }}>
                 <ArrowLeftIcon />
             </Fab>
         </Wrapper >
