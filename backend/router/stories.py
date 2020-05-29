@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 @router.post("/", response_model=schemas.Story)
-async def create_story(story: schemas.CreateStory, db: Session = Depends(get_db), authorization: str = Header(None)):
+async def create_story(story: schemas.StoryCreate, db: Session = Depends(get_db), authorization: str = Header(None)):
     token_data = await main.get_token_data(authorization[7:]) if authorization is not None else None
     return crud.create_story(db=db, story=story, token_data=token_data)
 
