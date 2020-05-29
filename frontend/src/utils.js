@@ -1,13 +1,11 @@
-// import { refreshToken } from './auth';
-// import { refreshToken as refreshTokenAction } from 'actions/auth';
-// import store from 'store/configureStore'
+import {store} from './redux';
 
 import { ERROR } from "actions/types";
 import history from "./history";
 import paths from "routes/paths";
 
 const api = async (path, payload = {}, explicitBody = false) => {
-  // const { auth } = await store.getState();
+  const { auth } = await store.getState();
   const fullPayload = {
     method: 'GET',
     ...payload,
@@ -26,7 +24,7 @@ const api = async (path, payload = {}, explicitBody = false) => {
         {}
       ))
   };
-  // if (auth && auth.token) fullPayload.headers['WWW-Authenticate'] = `Bearer ${auth.token}`;
+  if (auth && auth.token) fullPayload.headers['Authorization'] = `Bearer ${auth.token}`;
 
   let response = await fetch(`${process.env.REACT_APP_API || ''}/api/${path}`, fullPayload);
   if (response.status === 401) 

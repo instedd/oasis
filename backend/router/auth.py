@@ -6,7 +6,8 @@ from database.database import get_db
 
 
 router = APIRouter()
-from users import crud, models, schemas
+from users import crud, models
+from auth import schemas, main
 
 @router.post("/auth", response_model=schemas.Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
@@ -18,7 +19,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(days=1)
-    access_token = crud.create_access_token(
+    access_token = main.create_access_token(
         data={"email": user.email}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
