@@ -12,6 +12,7 @@ import Wrapper from "components/Wrapper";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Text from 'text.json';
+import { sicknessStatus, testStatus } from '../types';
 import styles from './styles.module.css';
 
 const contactText = Text["Close Contacts"].texts
@@ -169,11 +170,10 @@ function CriticalQuestions(props) {
     let nextPage;
     const isSick = useSelector(state => state.post.sick);
     const tested = useSelector(state => state.post.tested);
-    console.log(isSick, tested)
-    if (isSick === "not sick") {
+    if (isSick === sicknessStatus.NOT_SICK) {
         nextPage = "/dashboard";
     }
-    else if (tested === "positive") {
+    else if (tested === testStatus.POSITIVE) {
         nextPage = "/symptoms"
     }
     else {
@@ -194,7 +194,7 @@ function CriticalQuestions(props) {
                         value={selectedDate}
                         onChange={handleDateChange}
                     />
-                    {isSick === "recovered" ? endPicker : null}
+                    {isSick === sicknessStatus.RECOVERED ? endPicker : null}
 
 
                 </div>

@@ -1,22 +1,23 @@
-import React from 'react';
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Link from '@material-ui/core/Link';
-import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import SpeedDial from '@material-ui/lab/SpeedDial';
+import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
-import SpeedDialAction from '@material-ui/lab/SpeedDialAction'
-import { useSelector } from 'react-redux'
 import classNames from 'classnames';
-import styles from './styles.module.css';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import paths from 'routes/paths';
+import { sicknessStatus, testStatus } from 'routes/types';
+import styles from './styles.module.css';
 
 const status =
 {
-    positive: { name: 'Tested Positive', color: 'red' },
-    sick: { name: 'Sick', color: 'orange' },
-    negative: { name: 'Tested Negative', color: 'purple' },
-    recovered: { name: 'Recovered', color: 'green' },
-    "not sick": { name: 'Not Sick', color: 'gray' },
-    "not tested": { name: 'Not Tested', color: 'blue' }
+    [testStatus.POSITIVE]: { name: 'Tested Positive', color: 'red' },
+    [testStatus.NEGATIVE]: { name: 'Tested Negative', color: 'purple' },
+    [testStatus.NOT_TESTED]: { name: 'Not Tested', color: 'blue' },
+    [sicknessStatus.SICK]: { name: 'Sick', color: 'orange' },
+    [sicknessStatus.RECOVERED]: { name: 'Recovered', color: 'green' },
+    [sicknessStatus.NOT_SICK]: { name: 'Not Sick', color: 'gray' }
 }
 
 const actions = [
@@ -54,7 +55,7 @@ function Dashboard(props) {
 
     let donate_link = null;
 
-    if (isSick === "recovered" && tested === "positive") {
+    if (isSick === sicknessStatus.RECOVERED && tested === testStatus.POSITIVE) {
         donate_link = <Link href="https://med.stanford.edu/id/covid19/lambda.html" style={{ color: '#EB5757' }}>Donate your blood to help others</Link>
     }
 
