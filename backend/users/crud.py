@@ -7,7 +7,7 @@ from fastapi import Depends, HTTPException, status
 from jwt import PyJWTError
 from fastapi.security import OAuth2PasswordBearer
 
-from database.database import get_db
+from database import get_db
 from . import models, schemas
 
 

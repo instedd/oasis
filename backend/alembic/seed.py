@@ -5,9 +5,10 @@
 ## TODO: Fix imports. They're broken because they don't work in the same context as the api
 import json
 from database import get_db
-from symptoms.models import Symptom
+import users.models
+from stories.models import Symptom
 
-SYMPTOMS_FILE='/app/database/seed_data/symptoms.json'
+SYMPTOMS_FILE='/app/alembic/seed_data/symptoms.json'
 session = next(get_db())
 
 with open(SYMPTOMS_FILE, 'r') as json_data:
