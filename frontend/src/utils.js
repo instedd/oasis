@@ -13,24 +13,25 @@ const api = async (path, payload = {}, explicitBody = false) => {
       'Content-Type': 'application/json',
       ...payload.headers,
     },
-    body: explicitBody
-      ? payload.body
-      : JSON.stringify(Object.keys(payload.body || {}).reduce(
-        (acc, key) => {
-          const snakeCaseKey = key.replace( /([A-Z])/g, "_$1").toLowerCase();
-          acc[snakeCaseKey] = payload.body[key];
-          return acc;
-        },
-        {}
-      ))
   };
+  if (payload.body) {
+    fullPayload.body = explicitBody
+      ? payload.body
+      : JSON.stringify(parseObjectKeys(payload.body || {}, camelToSnakeCase))
+  }
+
   if (auth && auth.token) fullPayload.headers['Authorization'] = `Bearer ${auth.token}`;
 
   let response = await fetch(`${process.env.REACT_APP_API || ''}/api/${path}`, fullPayload);
   if (response.status === 401) 
     history.push(paths.signIn);
   // if everything was correct, process data
-  if (response.status >= 200 && response.status < 300) return await response.json();
+  if (response.status >= 200 && response.status < 300) {
+    response = await response.json();
+    if (Array.isArray(response)) 
+      return response.map(element => parseObjectKeys(element, snakeToCamelCase))
+    return parseObjectKeys(response, snakeToCamelCase);
+  };
 
   // if we had a known error, return the proper status
   const body = await response.json();
@@ -42,5 +43,20 @@ const api = async (path, payload = {}, explicitBody = false) => {
     }
   }
 }
+
+
+const parseObjectKeys = (object, method) => Object.keys(object).reduce((acc, key) => {
+  acc[method(key)] = object[key];
+  return acc;
+}, {});
+
+const snakeToCamelCase = (str) => str.replace(
+  /([-_][a-z])/g,
+  (group) => group.toUpperCase()
+                  .replace('-', '')
+                  .replace('_', '')
+);
+
+const camelToSnakeCase = (str) => str.replace( /([A-Z])/g, "_$1").toLowerCase();
 
 export default api;

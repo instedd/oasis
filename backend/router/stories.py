@@ -8,7 +8,7 @@ from auth import main
 
 router = APIRouter()
 
-def check_permissions(current_story, story_id)
+def check_permissions(current_story, story_id):
     if current_story.id != story_id:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
