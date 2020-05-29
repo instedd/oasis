@@ -12,10 +12,6 @@ async def create_story(story: schemas.StoryCreate, db: Session = Depends(get_db)
     token_data = await main.get_token_data(authorization[7:]) if authorization is not None else None
     return crud.create_story(db=db, story=story, token_data=token_data)
 
-@router.get("/symptoms", response_model=List[schemas.Symptom])
-def read_symptoms(db: Session = Depends(get_db)):
-    return crud.get_symptoms(db)
-
 @router.get("/{story_id}", response_model=schemas.Story)
 def read_story(story_id: int, current_story: schemas.Story = Depends(main.get_current_story)):
     if current_story.id != story_id:
