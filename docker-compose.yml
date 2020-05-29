@@ -35,6 +35,7 @@ services:
       DATABASE_USER: 'root'
       DATABASE_PASSWORD: ''
       PEPPER: '56UpUXF8lF'
+      DEV: 'True' 
       JWT_SECRET: 'eXqByNjF4w8O3TvR2NZm8qQTG0tVe5yR'
   db:
     build:

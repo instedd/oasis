@@ -1,10 +1,12 @@
+import os
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-
-import os
 from alembic import context
+from sqlalchemy import engine_from_config, pool
+
+from database.database import Base
+from stories import models as story_models
+from users import models as user_models
 
 from database.database import Base
 from users import models as user_models
