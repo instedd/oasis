@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux'
 import classNames from 'classnames';
 import styles from './styles.module.css';
 import paths from 'routes/paths';
-import PopUp from 'components/PopUp'
 
 const status =
 {
@@ -97,7 +96,7 @@ function Dashboard(props) {
                     <h3>SUGGESTIONS</h3>
                     <div style={{ color: "gray" }}>Stay at home</div>
                     <Link href="https://earth2-covid.ucsd.edu/homebound" style={{ color: '#2D9CDB' }}>Download HomeBound</Link>
-                    {story && story.location == "Mexico" && story.citizenship == "United States of America" && (
+                    {story && story.location === "Mexico" && story.citizenship === "United States of America" && (
                         <Link href="https://mx.usembassy.gov/u-s-citizen-services/covid-19-information/" style={{ color: '#FFFFFF' }} target="_blank">Information for US Citizens</Link>
                     )}
                     <Link href="#" onClick={preventDefault} style={{ color: '#F2C94C' }}>Join a clinical trial</Link>

@@ -12,7 +12,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Wrapper from "components/Wrapper";
 import styles from './styles.module.css';
 import classNames from 'classnames';
-import { setStory } from "actions/handleSick";
+import { setStory } from "actions/saveSick";
 
 const contactText = Text["Close Contacts"].texts
 const contactListIndex = Text["Close Contacts"].listIndex
