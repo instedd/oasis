@@ -60,13 +60,13 @@ docker-compose run api alembic downgrade
 
 ### Seeding data
 
-To populate development database with seed data, which is located in `/backend/database/seed_data` directory, run:
+To populate development database with seed data, which is located in `/backend/almebic/seed_data` directory, run:
 
 ```
 docker-compose run --rm api python alembic/seed.py
 ```
 
-To add seed data or modify existing one, apply changes in `<entity>.json` file for the target entity in aforementioned `/backend/database/seed_data` directory. Make sure that the script uses the data you are
+To add seed data or modify existing one, apply changes in `<entity>.json` file for the target entity in aforementioned `/backend/alembic/seed_data` directory. Make sure that the script uses the data you are
 interested in, by checking the "files to be imported" at the top of the script.
 
 ## Building & deploying
