@@ -13,7 +13,7 @@ def get_story(db: Session, story_id: int):
     return db_story
 
 
-def update_story(db: Session, story_id: int, story: schemas.CreateStory):
+def update_story(db: Session, story_id: int, story: schemas.StoryCreate):
     story_as_dict = dict(story)
     story_data = {k: story_as_dict[k] for k in story_as_dict if k in models.Story.__table__.columns}
     db.query(models.Story).filter(models.Story.id == story_id).update(story_data)
@@ -21,7 +21,7 @@ def update_story(db: Session, story_id: int, story: schemas.CreateStory):
     return db_story
 
 
-def create_story(db: Session, story: schemas.CreateStory, token_data: str):
+def create_story(db: Session, story: schemas.StoryCreate, token_data: str):
     user = None
     # if the story was submitted with an auth token, we want to associate it to the token's user
     if token_data:
