@@ -28,9 +28,9 @@ const actions = [
 function Dashboard(props) {
     const [open, setOpen] = React.useState(false);
 
-    const isSick = useSelector(state => state.post.sick);
-    const tested = useSelector(state => state.post.tested);
-    const story = useSelector(state => state.post.story);
+    const sick = useSelector(state => state.story.sick);
+    const tested = useSelector(state => state.story.tested);
+    const story = useSelector(state => state.story.story);
 
     const handleOpen = () => {
         setOpen(true);
@@ -55,7 +55,7 @@ function Dashboard(props) {
 
     let donate_link = null;
 
-    if (isSick === sicknessStatus.RECOVERED && tested === testStatus.POSITIVE) {
+    if (sick === sicknessStatus.RECOVERED && tested === testStatus.POSITIVE) {
         donate_link = <Link href="https://med.stanford.edu/id/covid19/lambda.html" style={{ color: '#EB5757' }}>Donate your blood to help others</Link>
     }
 
@@ -76,8 +76,8 @@ function Dashboard(props) {
 
                     <div className="status-list">
                         <div className="row status-item">
-                            <span className={styles.dot} style={{ background: status[isSick].color }}></span>
-                            {status[isSick].name}
+                            <span className={styles.dot} style={{ background: status[sick].color }}></span>
+                            {status[sick].name}
                         </div>
                         <div className="row status-item">
                             <span className={styles.dot} style={{ background: status[tested].color }}></span>

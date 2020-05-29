@@ -4,7 +4,6 @@ import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import { DatePicker } from "@material-ui/pickers";
-import { setStory } from "actions/handleSick";
 import { submitStory } from 'actions/story';
 import classNames from 'classnames';
 import Pop from 'components/PopUp';
@@ -71,7 +70,7 @@ function CriticalQuestions(props) {
             ethnicity: formValues.ethnicity, 
             countryOfOrigin: formValues.citizenship, 
             profession: formValues.profession, 
-            sick: isSick, 
+            sick: sick,
             tested: tested, 
             medicalProblems: formValues.selectedMedicalProblems, 
             sicknessStart: sicknessStart, 
@@ -150,9 +149,8 @@ function CriticalQuestions(props) {
     React.useEffect(scrollToBottom, [locations]);
     React.useEffect(scrollToBottom, [contacts]);
     let nextPage;
-    const isSick = useSelector(state => state.post.sick);
-    const tested = useSelector(state => state.post.tested);
-    if (isSick === sicknessStatus.NOT_SICK) {
+    const {sick, tested} = useSelector(state => state.story)
+    if (sick === sicknessStatus.NOT_SICK) {
         nextPage = "/dashboard";
     }
     else if (tested === testStatus.POSITIVE) {
@@ -176,7 +174,7 @@ function CriticalQuestions(props) {
                         value={sicknessStart}
                         onChange={handleSicknessStartChange}
                     />
-                    {isSick === sicknessStatus.RECOVERED ? sicknessEndPicker : null}
+                    {sick === sicknessStatus.RECOVERED ? sicknessEndPicker : null}
 
 
                 </div>
@@ -304,20 +302,10 @@ function CriticalQuestions(props) {
                 {locations}
                 <div style={{ height: '30px' }} ref={pageBottomRef}></div>
             </div>
-            <Fab style={{ background: "#EA2027" }} aria-label="Go to next page" size="medium" className="fab next-btn" onClick={(event) =>{
-                dispatch(setStory({
-                    citizenship: formValues.citizenship,
-                    location: formValues.location
-                }));
-                handleSubmit(event)
-                }}>
+            <Fab style={{ background: "#EA2027" }} aria-label="Go to next page" size="medium" className="fab next-btn" onClick={handleSubmit}>
                 <ArrowRightIcon />
             </Fab>
             <Fab style={{ background: "#9206FF" }} aria-label="Go to previous page" size="medium" className="fab back-btn" onClick={() => {
-                dispatch(setStory({
-                    citizenship: formValues.citizenship,
-                    location: formValues.location
-                }));
                 props.history.goBack()
                 }}>
                 <ArrowLeftIcon />

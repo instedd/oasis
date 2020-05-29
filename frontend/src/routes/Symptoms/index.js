@@ -1,13 +1,14 @@
-import React from 'react'
+import { Checkbox, Fab, FormControl, FormControlLabel, FormGroup, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Fab, FormGroup, FormControlLabel, FormControl, Checkbox, TextField} from '@material-ui/core';
-import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import CheckCircle from '@material-ui/icons/CheckCircle';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
-import { useSelector } from 'react-redux';
-import Text from 'text.json';
 import Wrapper from 'components/Wrapper';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { sicknessStatus } from 'routes/types';
+import Text from 'text.json';
 import styles from './styles.module.css';
 
 const symptoms = Text["Symptoms"]
@@ -54,8 +55,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Symptoms(props) {
     const classes = useStyles();
-    const isSick = useSelector(state => state.post.sick)
-    const subtitle = isSick === "recovered" ? "When you were sick, which of the following symptoms did you have?" : "Are you having now, or did you recently have:"
+    const sick = useSelector(state => state.story.sick)
+    const subtitle = sick === sicknessStatus.RECOVERED ? "When you were sick, which of the following symptoms did you have?" : "Are you having now, or did you recently have:"
     return (
         <Wrapper>
             <h1 className="title"> MY COVID STORY</h1>

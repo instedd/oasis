@@ -4,12 +4,12 @@ import classNames from 'classnames';
 import Wrapper from 'components/Wrapper';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { testStatus } from 'routes/types';
-import { handleTested } from '../../actions/handleTested';
+import { sicknessStatus, testStatus } from 'routes/types';
+import { handleTested } from '../../actions/story';
 import styles from './styles.module.css';
 
 export default function Confirm(props) {
-    const isSick = useSelector(state => state.post.sick)
+    const sick = useSelector(state => state.story.sick)
 
     const dispatch = useDispatch();
     function handleClick(selected) {
@@ -34,7 +34,7 @@ export default function Confirm(props) {
                 </Fab>
 
             </div>
-            <Fab style={{ background: "#9206FF" }} size="medium" className="fab back-btn" onClick={() => props.history.push(isSick === "sick" ? '/alert' : '/onboard')}>
+            <Fab style={{ background: "#9206FF" }} size="medium" className="fab back-btn" onClick={() => props.history.push(sick === sicknessStatus.SICK ? '/alert' : '/onboard')}>
                 <ArrowLeftIcon />
             </Fab>
         </Wrapper>

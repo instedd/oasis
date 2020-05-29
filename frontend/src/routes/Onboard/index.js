@@ -4,7 +4,7 @@ import Wrapper from 'components/Wrapper';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { sicknessStatus } from 'routes/types';
-import { handleSick } from '../../actions/handleSick';
+import { handleSick } from '../../actions/story';
 import styles from './styles.module.css';
 
 
