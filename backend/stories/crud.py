@@ -1,10 +1,12 @@
 import json
+from datetime import timedelta
 
 from sqlalchemy.orm import Session
 
-from users.crud import get_user_by_email
 from auth.main import create_access_token
+from users.crud import get_user_by_email
 from users.models import User
+
 from . import models, schemas
 
 
@@ -42,8 +44,7 @@ def create_story(db: Session, story: schemas.StoryCreate, token_data: str):
         db.commit()
         db.refresh(db_story)
 
-    new_story = schemas.Story.from_module(db_story)
-    new_story.token = create_access_token(
+    db_story.token = create_access_token(
         data={"story_id": db_story.id}, expires_delta=timedelta(days=5)
     )
-    return new_story
+    return db_story

@@ -1,15 +1,16 @@
-from datetime import timedelta, datetime
-import jwt
-from jwt import PyJWTError
+import os
+from datetime import datetime, timedelta
 
-from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy.orm import Session
 
+import jwt
 from database.database import get_db
+from jwt import PyJWTError
 from users import crud
-from . import schemas
 
+from . import schemas
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth")
 
@@ -40,13 +41,13 @@ async def get_token_contents(token: str = Depends(oauth2_scheme)):
         return None
     return token_data
 
-
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-    credentials_exception = HTTPException(
+credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
     token_data = get_token_contents(token=token)
     if token_data is None:
         raise credentials_exception
@@ -59,11 +60,6 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 # demands that an endpoint has a token
 # demands that the token is associated to an user that has a story, or a story
 async def get_current_story(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
     token_data = await get_token_contents(token=token)
     if token_data is None:
         raise credentials_exception
