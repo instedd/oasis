@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List
 from pydantic import BaseModel
-from datetime import timedelta
+from datetime import timedelta, date
 
 from users.schemas import User
 
@@ -51,5 +51,7 @@ class SymptomBase(BaseModel):
 class Symptom(SymptomBase):
     id: int
     name: str
+    updated_at: date
+    created_at: date
     class Config:
         orm_mode = True

@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 import jwt
-from database.database import get_db
+from database import get_db
 from jwt import PyJWTError
 from users import crud
 

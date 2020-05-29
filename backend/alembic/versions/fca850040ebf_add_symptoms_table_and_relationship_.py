@@ -1,8 +1,8 @@
-"""Create symptoms
+"""Add symptoms table and relationship with story
 
-Revision ID: e312c409bf85
+Revision ID: fca850040ebf
 Revises: 4a3f5b8dfcfc
-Create Date: 2020-05-27 19:21:16.865531
+Create Date: 2020-05-29 16:06:08.141734
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'e312c409bf85'
+revision = 'fca850040ebf'
 down_revision = '4a3f5b8dfcfc'
 branch_labels = None
 depends_on = None
@@ -21,6 +21,8 @@ def upgrade():
     op.create_table('symptoms',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=128), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_symptoms_id'), 'symptoms', ['id'], unique=False)
@@ -29,6 +31,8 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('story_id', sa.Integer(), nullable=True),
     sa.Column('symptom_id', sa.Integer(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['story_id'], ['stories.id'], ),
     sa.ForeignKeyConstraint(['symptom_id'], ['symptoms.id'], ),
     sa.PrimaryKeyConstraint('id')

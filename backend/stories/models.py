@@ -1,6 +1,7 @@
+import datetime
 import json
 
-from sqlalchemy import JSON, Column, Integer, String
+from sqlalchemy import JSON, Column, Integer, String, DateTime, Table, ForeignKey
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -32,10 +33,14 @@ class Story(Base):
     def medical_problems(self, value):
         self._medical_problems = json.dumps(value)
 
-story_symptoms = Table('story_symptoms', Base.metadata,
+story_symptoms = Table(
+    'story_symptoms',
+    Base.metadata,
     Column('id', Integer, primary_key=True, index=True),
     Column('story_id', ForeignKey('stories.id')),
-    Column('symptom_id', ForeignKey('symptoms.id'))
+    Column('symptom_id', ForeignKey('symptoms.id')),
+    Column('created_at', DateTime, default=datetime.datetime.utcnow),
+    Column('updated_at', DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow),
 )
 
 class Symptom(Base):
@@ -43,3 +48,5 @@ class Symptom(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(128), unique=True, index=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)

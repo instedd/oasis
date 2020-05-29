@@ -51,7 +51,6 @@ function CriticalQuestions(props) {
     const [locationCount, setLocationCount] = useState(0)
 
     const [selectedProblems, setMedicalProblems] = useState([]);
-    const dispatch = useDispatch();
 
     const handleMedicalProblemChange = (event) => {
         setMedicalProblems(event.target.value);
