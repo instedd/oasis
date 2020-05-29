@@ -200,7 +200,7 @@ function CriticalQuestions(props) {
                 </div>
                 <div className={classNames("grid-1", styles["grid-1"])}>
                     <TextField
-                        id="standard-number"
+                        id="age"
                         label="Age"
                         type="number"
                         value={age}
@@ -208,7 +208,7 @@ function CriticalQuestions(props) {
                     />
 
                     <TextField
-                        id="standard-select-currency"
+                        id="sex"
                         select
                         label="Sex"
                         value={sex}
@@ -274,11 +274,10 @@ function CriticalQuestions(props) {
                         ))}
                     </TextField>
                     <FormControl>
-                        <InputLabel id="demo-mutiple-checkbox-label"
-                        >Medical Problems</InputLabel>
+                        <InputLabel id="medical-problems">Medical Problems</InputLabel>
                         <Select
-                            labelId="demo-mutiple-checkbox-label"
-                            id="demo-mutiple-checkbox"
+                            labelId="medical-problems"
+                            id="medical-problems-checkbox"
                             multiple
                             value={selectedProblems}
                             input={<Input />}
