@@ -1,18 +1,18 @@
-import React, { useState } from "react";
-import { TextField, MenuItem, FormControl, InputLabel, Select, Checkbox, ListItemText, Input } from '@material-ui/core';
-import { Fab } from '@material-ui/core';
+import { Checkbox, Fab, FormControl, Input, InputLabel, ListItemText, MenuItem, Select, TextField } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
-import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
-import { DatePicker } from "@material-ui/pickers";
-import Pop from 'components/PopUp';
-import Text from 'text.json';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
-import { useDispatch, useSelector } from 'react-redux'
-import Wrapper from "components/Wrapper";
-import styles from './styles.module.css';
+import { DatePicker } from "@material-ui/pickers";
+import { setStory } from "actions/handleSick";
+import { submitStory } from 'actions/story';
 import classNames from 'classnames';
-import { submitStory } from 'actions/story'
+import Pop from 'components/PopUp';
+import Wrapper from "components/Wrapper";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Text from 'text.json';
+import styles from './styles.module.css';
 
 const contactText = Text["Close Contacts"].texts
 const contactListIndex = Text["Close Contacts"].listIndex
@@ -33,6 +33,8 @@ const ethnicities = [
 ]
 
 function CriticalQuestions(props) {
+
+    const dispatch = useDispatch();
     const [age, setAge] = useState('')
     const [sex, setSex] = useState('');
     const [ethnicity, setEthnicity] = useState('');
@@ -79,23 +81,23 @@ function CriticalQuestions(props) {
         setTravelDates({ ...travelDates, [travelDatesIndex]: date });
     };
 
-const handleSubmit = (event) => {
-    event.preventDefault()
-    const story = {
-        age, 
-        sex, 
-        ethnicity, 
-        countryOfOrigin: citizenship, 
-        profession, 
-        sick: isSick, 
-        tested: tested, 
-        medicalProblems: selectedProblems, 
-        sicknessStart: selectedDate, 
-        sicknessEnd: selectedEndDate,
-        currentLocation: location
-    }
-    const dto = {story, nextPage}
-    dispatch(submitStory(dto))
+    const handleSubmit = (event) => {
+        event.preventDefault()
+        const story = {
+            age, 
+            sex, 
+            ethnicity, 
+            countryOfOrigin: citizenship, 
+            profession, 
+            sick: isSick, 
+            tested: tested, 
+            medicalProblems: selectedProblems, 
+            sicknessStart: selectedDate, 
+            sicknessEnd: selectedEndDate,
+            currentLocation: location
+        }
+        const dto = {story, nextPage}
+        dispatch(submitStory(dto))
     };
 
     const [countries, setCountries] = React.useState([]);
@@ -322,10 +324,22 @@ const handleSubmit = (event) => {
                 {locations}
                 <div style={{ height: '30px' }} ref={pageBottomRef}></div>
             </div>
-            <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab next-btn" onClick={handleSubmit}>
+            <Fab style={{ background: "#EA2027" }} aria-label="Go to next page" size="medium" className="fab next-btn" onClick={(event) =>{
+                dispatch(setStory({
+                    citizenship,
+                    location
+                }));
+                handleSubmit(event)
+                }}>
                 <ArrowRightIcon />
             </Fab>
-            <Fab style={{ background: "#9206FF" }} aria-label="add" size="medium" className="fab back-btn" onClick={() => props.history.push('/confirm')}>
+            <Fab style={{ background: "#9206FF" }} aria-label="Go to previous page" size="medium" className="fab back-btn" onClick={() => {
+                dispatch(setStory({
+                    citizenship,
+                    location
+                }));
+                props.history.goBack()
+                }}>
                 <ArrowLeftIcon />
             </Fab>
         </Wrapper >

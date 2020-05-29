@@ -1,11 +1,8 @@
 from fastapi import APIRouter
-from router import users, stories, auth
+
+from router import auth, stories, users
 
 router = APIRouter()
-
-@router.get("/")
-def read_root():
-    return "Welcome to oasis api 🌴"
 
 router.include_router(users.router, 
     prefix="/users",

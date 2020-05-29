@@ -1,12 +1,14 @@
 from sqlalchemy.orm import Session
-import json
+
 from . import models, schemas
+
 
 def get_story(db: Session, story_id: int):
     db_story = db.query(models.Story).filter(models.Story.id == story_id).first()
-    return schemas.Story.from_module(db_story)
+    return db_story
 
-def create_story(db: Session, story: schemas.CreateStory):
+
+def create_story(db: Session, story: schemas.StoryCreate):
     db_story = models.Story(
         age=story.age, 
         sex=story.sex, 

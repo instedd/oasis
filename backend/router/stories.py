@@ -1,13 +1,15 @@
 from typing import List
-from fastapi import Depends, FastAPI, APIRouter, HTTPException
+
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from stories import crud, models, schemas
+
 from database.database import get_db
+from stories import crud, schemas
 
 router = APIRouter()
 
 @router.post("/", response_model=schemas.Story)
-def create_story(story: schemas.CreateStory, db: Session = Depends(get_db)):
+def create_story(story: schemas.StoryCreate, db: Session = Depends(get_db)):
     return crud.create_story(db=db, story=story)
 
 @router.get("/symptoms", response_model=List[schemas.Symptom])

@@ -8,5 +8,6 @@ export const HANDLE_TESTED = "HANDLE_TESTED";
 export const SUCCESS = "SUCCESS";
 export const ERROR = "ERROR";
 export const LOADING = "LOADING";
+export const SET_STORY = "SET_STORY";
 export const SAVE_STORY_START = "SAVE_STORY_START"
 export const SAVED_STORY = "SAVED_STORY"
