@@ -2,7 +2,7 @@ import bcrypt
 import os
 from sqlalchemy.orm import Session
 
-from database.database import get_db
+from database import get_db
 from . import models, schemas
 
 
