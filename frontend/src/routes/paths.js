@@ -13,4 +13,4 @@ const paths = {
   feeling: '/feeling',
 }
 
-export default paths; 
+export default paths;

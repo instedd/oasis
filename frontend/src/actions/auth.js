@@ -1,12 +1,18 @@
-import { SIGN_UP, SIGN_IN, SUCCESS, SIGN_UP_START, SIGN_IN_START } from './types';
-import api from 'utils';
-import history from '../history';
-import paths from 'routes/paths';
+import {
+  SIGN_UP,
+  SIGN_IN,
+  SUCCESS,
+  SIGN_UP_START,
+  SIGN_IN_START,
+} from "./types";
+import api from "utils";
+import history from "../history";
+import paths from "routes/paths";
 
 export const signUp = (userDTO) => async (dispatch) => {
-  dispatch({type: SIGN_UP_START});
+  dispatch({ type: SIGN_UP_START });
   const response = await api(`users`, {
-    method: 'POST',
+    method: "POST",
     body: userDTO,
   });
   dispatch({
@@ -14,28 +20,34 @@ export const signUp = (userDTO) => async (dispatch) => {
     payload: {
       status: response.error || { type: SUCCESS },
       user: (!response.error && response) || null,
-    }
+    },
   });
 
   if (!response.error) history.push(paths.signIn);
-}
+};
 
 export const signIn = (loginDTO) => async (dispatch) => {
-  dispatch({type: SIGN_IN_START});
-  const response = await api(`auth`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
+  dispatch({ type: SIGN_IN_START });
+  const response = await api(
+    `auth`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `username=${encodeURIComponent(loginDTO.email)}&password=${
+        loginDTO.password
+      }`,
     },
-    body: `username=${encodeURIComponent(loginDTO.email)}&password=${loginDTO.password}`,
-  }, true);
+    true
+  );
   dispatch({
     type: SIGN_IN,
     payload: {
       status: response.error || { type: SUCCESS },
-      user: (!response.error && {token: response.access_token}) || null,
-    }
+      user: (!response.error && { token: response.access_token }) || null,
+    },
   });
 
   if (!response.error) history.push(paths.onboard);
-}
+};

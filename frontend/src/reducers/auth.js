@@ -1,9 +1,15 @@
-import { SIGN_UP, SIGN_UP_START, SIGN_IN, SIGN_IN_START, LOADING } from '../actions/types';
+import {
+  SIGN_UP,
+  SIGN_UP_START,
+  SIGN_IN,
+  SIGN_IN_START,
+  LOADING,
+} from "../actions/types";
 const initialState = {
   status: {},
   user: null,
   token: null,
-}
+};
 
 const auth = (state = initialState, action) => {
   switch (action.type) {
@@ -12,30 +18,30 @@ const auth = (state = initialState, action) => {
         ...state,
         status: {
           type: LOADING,
-          detail: "We're creating your account..."
-        }
+          detail: "We're creating your account...",
+        },
       };
     case SIGN_UP:
       return {
         ...state,
-        ...action.payload
+        ...action.payload,
       };
     case SIGN_IN_START:
       return {
         ...state,
         status: {
           type: LOADING,
-          detail: "We're checking your credentials..."
-        }
+          detail: "We're checking your credentials...",
+        },
       };
     case SIGN_IN:
       return {
         ...state,
-        ...action.payload
+        ...action.payload,
       };
     default:
       return state;
   }
-}
+};
 
 export default auth;

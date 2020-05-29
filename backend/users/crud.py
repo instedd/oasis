@@ -23,7 +23,9 @@ def get_user_by_email(db: Session, email: str):
 
 
 def get_user_by_username(db: Session, username: str):
-    return db.query(models.User).filter(models.User.username == username).first()
+    return (
+        db.query(models.User).filter(models.User.username == username).first()
+    )
 
 
 def get_users(db: Session, skip: int = 0, limit: int = 100):
@@ -31,7 +33,10 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_user(db: Session, user: schemas.UserCreate):
-    hashed_password = bcrypt.hashpw(f"{user.password}{os.environ['PEPPER']}".encode('utf8'), bcrypt.gensalt(rounds=16))
+    hashed_password = bcrypt.hashpw(
+        f"{user.password}{os.environ['PEPPER']}".encode("utf8"),
+        bcrypt.gensalt(rounds=16),
+    )
     db_user = models.User(
         email=user.email,
         first_name=user.first_name,
@@ -45,7 +50,10 @@ def create_user(db: Session, user: schemas.UserCreate):
 
 
 def verify_password(plain_password, hashed_password):
-    return bcrypt.checkpw(f"{plain_password}{os.environ['PEPPER']}".encode('utf8'), hashed_password.encode('utf8'))
+    return bcrypt.checkpw(
+        f"{plain_password}{os.environ['PEPPER']}".encode("utf8"),
+        hashed_password.encode("utf8"),
+    )
 
 
 def authenticate_user(email: str, password: str, db: Session):
@@ -63,8 +71,10 @@ def create_access_token(*, data: dict, expires_delta: timedelta = None):
         expire = datetime.now() + expires_delta
     else:
         expire = datetime.now() + timedelta(minutes=15)
-    to_encode.update({ "exp": expire })
-    encoded_jwt = jwt.encode(to_encode, os.environ['JWT_SECRET'], algorithm='HS512')
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(
+        to_encode, os.environ["JWT_SECRET"], algorithm="HS512"
+    )
     return encoded_jwt
 
 
@@ -75,7 +85,9 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, os.environ['JWT_SECRET'], algorithms=['HS512'])
+        payload = jwt.decode(
+            token, os.environ["JWT_SECRET"], algorithms=["HS512"]
+        )
         email: str = payload.get("email")
         if email is None:
             raise credentials_exception
@@ -86,5 +98,3 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     if user is None:
         raise credentials_exception
     return user
-
-

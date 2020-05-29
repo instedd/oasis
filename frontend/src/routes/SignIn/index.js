@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux'
-import classNames from 'classnames';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import classNames from "classnames";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import Link from "@material-ui/core/Link";
+import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@material-ui/core/styles";
 
-import history from '../../history';
-import { signIn } from 'actions/auth';
-import { ERROR } from 'actions/types';
-import paths from 'routes/paths';
-import AuthPaper from 'components/AuthPaper';
+import history from "../../history";
+import { signIn } from "actions/auth";
+import { ERROR } from "actions/types";
+import paths from "routes/paths";
+import AuthPaper from "components/AuthPaper";
 
-import styles from './styles.module.css';
+import styles from "./styles.module.css";
 
 const useStyles = makeStyles((theme) => ({
   form: {
-    width: '100%', // Fix IE 11 issue.
+    width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(1),
   },
   submit: {
@@ -28,28 +28,33 @@ const useStyles = makeStyles((theme) => ({
 export default function SignIn() {
   const dispatch = useDispatch();
   const classes = useStyles();
-  
-  const {status, user} = useSelector(state => state.auth);
+
+  const { status, user } = useSelector((state) => state.auth);
 
   const [formValues, setFormValues] = useState({
-    password: '',
-    email: (user && user.email) || '',
+    password: "",
+    email: (user && user.email) || "",
   });
-  
+
   const handleFormChange = (key) => (event) => {
-    setFormValues({...formValues, [key]: event.target.value});
-  }
+    setFormValues({ ...formValues, [key]: event.target.value });
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    dispatch(signIn(formValues))
+    dispatch(signIn(formValues));
   };
-  
+
   return (
     <AuthPaper>
       <h1 className={styles.title}>Sign In</h1>
       {status.detail && (
-        <p className={classNames(styles.status, status.type === ERROR && styles.error)}>
+        <p
+          className={classNames(
+            styles.status,
+            status.type === ERROR && styles.error
+          )}
+        >
           {status.detail}
         </p>
       )}
@@ -65,7 +70,7 @@ export default function SignIn() {
           autoComplete="email"
           autoFocus
           value={formValues.email}
-          onChange={handleFormChange('email')}
+          onChange={handleFormChange("email")}
         />
         <TextField
           variant="outlined"
@@ -78,7 +83,7 @@ export default function SignIn() {
           id="password"
           value={formValues.password}
           autoComplete="current-password"
-          onChange={handleFormChange('password')}
+          onChange={handleFormChange("password")}
         />
         <Button
           type="submit"
