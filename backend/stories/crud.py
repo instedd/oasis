@@ -1,9 +1,10 @@
 import json
+from typing import List
 from datetime import timedelta
 
 from sqlalchemy.orm import Session
 
-from auth.main import create_access_token
+from auth import main
 from auth.schemas import UserToken
 from users.crud import get_user_by_email
 from users.models import User
@@ -45,7 +46,7 @@ def create_story(db: Session, story: schemas.StoryCreate, token_data: str):
         db.commit()
         db.refresh(db_story)
 
-    db_story.token = create_access_token(
+    db_story.token = main.create_access_token(
         data={"story_id": db_story.id}, expires_delta=timedelta(days=5)
     )
     return db_story
@@ -55,6 +56,11 @@ def get_symptoms(db: Session):
     return db.query(models.Symptom).all()
 
 
-def get_story_symptoms(db: Session, story_id: int):
-    db_story = get_story(db, story_id)
-    return db_story.symptoms
+def create_story_symptoms(db: Session, symptoms: List[schemas.StorySymptomCreate]):
+    db_symptoms = [
+        models.StorySymptom(**symptom.dict())
+        for symptom in symptoms
+    ]
+    db.add_all(db_symptoms)
+    db.commit()
+    return db_symptoms

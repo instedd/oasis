@@ -8,7 +8,7 @@ import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import { useSelector, useDispatch } from 'react-redux';
 import Wrapper from 'components/Wrapper';
 import styles from './styles.module.css';
-import { fetchSymptoms } from 'actions/symptoms';
+import { fetchSymptoms, submitSymptoms } from 'actions/symptoms';
 import paths from 'routes/paths';
 import { SUCCESS } from 'actions/types';
 
@@ -56,15 +56,13 @@ export default function Symptoms(props) {
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(fetchSymptoms());
-    }, [dispatch, fetchSymptoms]);
+    }, [dispatch]);
     
     const symptoms = useSelector(state => state.symptoms);
     const [selectedSymptoms, setSelectedSymptoms] = useState([]);
 
-    const navigate = (path) => () => {
-        // TODO submit info to backend 
-        props.history.push(path);
-    }
+    const navigate = (path) => () => 
+        dispatch(submitSymptoms(selectedSymptoms, path))
 
     const toggleSymptom = (id) => {
         setSelectedSymptoms(
@@ -84,35 +82,34 @@ export default function Symptoms(props) {
             <h1 className="title"> MY COVID STORY</h1>
             {(
                 symptoms.status.type !== SUCCESS && symptoms.status.detail
-            ) || <>
-                <p className={styles.subtitle}>{subtitle}</p>
-                <FormControl className={classes.root} component="fieldset">
-                    <FormGroup className={classes.group} aria-label="position" row>
-                        {symptoms.all.map(({id, name}) => (
-                            <FormControlLabel
-                                value={id}
-                                control={<Checkbox style={{ color: "white" }} icon={<RadioButtonUncheckedIcon style={{ fontSize: 30 }} />} checkedIcon={<CheckCircle style={{ fontSize: 30 }} />} />}
-                                label={name}
-                                key={`symptom-${id}`}
-                                labelPlacement="top"
-                                onClick={() => toggleSymptom(id)}
-                            />
-                        ))}
+            )}
+            <p className={styles.subtitle}>{subtitle}</p>
+            <FormControl className={classes.root} component="fieldset">
+                <FormGroup className={classes.group} aria-label="position" row>
+                    {symptoms.all.map(({id, name}) => (
+                        <FormControlLabel
+                            value={id}
+                            control={<Checkbox style={{ color: "white" }} icon={<RadioButtonUncheckedIcon style={{ fontSize: 30 }} />} checkedIcon={<CheckCircle style={{ fontSize: 30 }} />} />}
+                            label={name}
+                            key={`symptom-${id}`}
+                            labelPlacement="top"
+                            onClick={() => toggleSymptom(id)}
+                        />
+                    ))}
 
-                    </FormGroup>
-                </FormControl>
-            
-                <div className={classes.others}>
-                    <TextField
-                        id="standard-number"
-                        label="Other Symptoms"
-                        InputProps={{ className: classes.input }}
-                        InputLabelProps={{
-                            className: classes.label
-                        }}
-                    />
-                </div>
-            </>}
+                </FormGroup>
+            </FormControl>
+        
+            <div className={classes.others}>
+                <TextField
+                    id="standard-number"
+                    label="Other Symptoms"
+                    InputProps={{ className: classes.input }}
+                    InputLabelProps={{
+                        className: classes.label
+                    }}
+                />
+            </div>
             <Fab style={{ background: "#EA2027" }} aria-label="Go to next page" onClick={navigate(paths.healthMeasurements)} size="medium" className="fab next-btn">
                 <ArrowRightIcon />
             </Fab>

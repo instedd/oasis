@@ -44,7 +44,7 @@ class Story(StoryCreate):
     token: str = None
     user: User = None
     class Config:
-        orm_mode: True
+        orm_mode = True
         
 
 class SymptomBase(BaseModel):
@@ -55,5 +55,18 @@ class Symptom(SymptomBase):
     name: str
     updated_at: date
     created_at: date
+
+    class Config:
+        orm_mode = True
+
+
+class StorySymptomCreate(BaseModel):
+    story_id: int
+    symptom_id: int
+
+
+class StorySymptom(StorySymptomCreate):
+    id: int
+    
     class Config:
         orm_mode = True

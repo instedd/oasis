@@ -32,4 +32,10 @@ def read_story(story_id: int, current_story: schemas.Story = Depends(main.get_cu
 @router.get("/{story_id}/symptoms", response_model=List[schemas.Symptom])
 def read_story_symptoms(story_id: int, current_story: schemas.Story = Depends(main.get_current_story), db: Session = Depends(get_db)):
     check_permissions(current_story, story_id)
-    return crud.get_story_symptoms(db, story_id=story_id)
+    return current_story.symptoms
+
+
+@router.post("/{story_id}/symptoms", response_model=List[schemas.StorySymptom])
+def create_story_symptoms(story_id: int, symptoms: List[schemas.StorySymptomCreate], current_story: schemas.Story = Depends(main.get_current_story), db: Session = Depends(get_db)):
+    check_permissions(current_story, story_id)
+    return crud.create_story_symptoms(db, symptoms=symptoms)

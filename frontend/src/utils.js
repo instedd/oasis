@@ -17,7 +17,11 @@ const api = async (path, payload = {}, explicitBody = false) => {
   if (payload.body) {
     fullPayload.body = explicitBody
       ? payload.body
-      : JSON.stringify(parseObjectKeys(payload.body || {}, camelToSnakeCase))
+      : JSON.stringify(
+        Array.isArray(payload.body)
+          ? payload.body.map(obj => parseObjectKeys(obj, camelToSnakeCase))
+          :parseObjectKeys(payload.body || {}, camelToSnakeCase)
+      )
   }
 
   if (auth && auth.token) fullPayload.headers['Authorization'] = `Bearer ${auth.token}`;

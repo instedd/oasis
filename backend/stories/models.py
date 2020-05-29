@@ -10,7 +10,6 @@ from database import Base
 class Story(Base):
     __tablename__ = "stories"
 
-    id = Column(Integer, primary_key=True, index=True)
     age = Column(Integer)
     sex = Column(String(64))
     ethnicity = Column(String(128))
@@ -33,20 +32,15 @@ class Story(Base):
     def medical_problems(self, value):
         self._medical_problems = json.dumps(value)
 
-story_symptoms = Table(
-    'story_symptoms',
-    Base.metadata,
-    Column('id', Integer, primary_key=True, index=True),
-    Column('story_id', ForeignKey('stories.id')),
-    Column('symptom_id', ForeignKey('symptoms.id')),
-    Column('created_at', DateTime, default=datetime.datetime.utcnow),
-    Column('updated_at', DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow),
-)
+
+class StorySymptom(Base):
+    __tablename__ = 'story_symptoms'
+    
+    story_id = Column(ForeignKey('stories.id'))
+    symptom_id = Column(ForeignKey('symptoms.id'))
+    
 
 class Symptom(Base):
     __tablename__ = "symptoms"
 
-    id = Column(Integer, primary_key=True, index=True)
     name = Column(String(128), unique=True, index=True)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
