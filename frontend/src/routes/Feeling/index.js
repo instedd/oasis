@@ -81,7 +81,7 @@ export default function Feeling(props) {
             <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab next-btn" onClick={() => props.history.push(paths.symptoms)}>
                 <ArrowRightIcon />
             </Fab>
-            <Fab style={{ background: "#9206FF" }} aria-label="add" size="medium" className="fab back-btn" onClick={() => props.history.push(paths.questions)}>
+            <Fab style={{ background: "#9206FF" }} aria-label="add" size="medium" className="fab back-btn" onClick={() => props.history.push(paths.criticalQuestions)}>
                 <ArrowLeftIcon />
             </Fab>
         </Wrapper>

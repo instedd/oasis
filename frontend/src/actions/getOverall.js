@@ -4,7 +4,6 @@ import axios from "axios";
 
 export function getOverall() {
   return function (dispatch) {
-    console.log("hi");
     axios
       .get("https://covid19api.herokuapp.com/latest")
       .then((res) => {

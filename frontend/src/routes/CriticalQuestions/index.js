@@ -169,7 +169,6 @@ function CriticalQuestions(props) {
   let nextPage;
   const isSick = useSelector((state) => state.post.sick);
   const tested = useSelector((state) => state.post.tested);
-  console.log(isSick, tested);
   if (isSick === "not sick") {
     nextPage = paths.dashboard;
   } else if (tested === "positive") {
