@@ -4,6 +4,7 @@ import {Fab, Slider, Typography} from '@material-ui/core';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import Wrapper from "components/Wrapper";
+import styles from './styles.module.css'
 
 export default function Feeling(props) {
     const CustomSlider = withStyles({
@@ -62,7 +63,7 @@ export default function Feeling(props) {
     return (
         <Wrapper>
             <h1 className="title"> MY COVID STORY</h1>
-              <div className="feeling-wrapper">
+              <div className={styles.feeling-wrapper}>
                 <Typography id="feeling-slider" gutterBottom>How are you feeling today?</Typography>
                 <CustomSlider
                     value={feeling}
@@ -73,9 +74,7 @@ export default function Feeling(props) {
                     valueLabelDisplay="auto"
                     defaultValue={0}
                     aria-labelledby="feeling-slider"
-                    // getAriaValueText={tempText}
                     marks={feelingMarks}
-                // label
                 />
             </div>
             <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab next-btn" onClick={() => props.history.push("/symptoms")}>

@@ -157,12 +157,3 @@ a, a:link, a:visited, a:hover, a:active {
   flex-direction: column;
   justify-content: center;
 }
-
-.feeling-wrapper {
-  width: 70%;
-  Height: 30%;
-  padding-bottom: 30px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}

@@ -1,0 +1,8 @@
+.feeling-wrapper {
+    width: 70%;
+    Height: 30%;
+    padding-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
