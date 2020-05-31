@@ -3,6 +3,7 @@ import {
   TextField,
   MenuItem,
   FormControl,
+  FormHelperText,
   InputLabel,
   Select,
   Checkbox,
@@ -55,6 +56,7 @@ function CriticalQuestions(props) {
   const [location, setLocation] = useState("");
   const [citizenship, setCitizenship] = useState("");
   const [profession, setProfession] = useState("");
+  const [postalCode, setPostalCode] = useState(null);
   const [selectedDate, handleDateChange] = useState(null);
   const [selectedEndDate, handleEndDateChange] = useState(null);
 
@@ -87,6 +89,10 @@ function CriticalQuestions(props) {
     setLocation(event.target.value);
   };
 
+  const handlePostalCodeChange = (event) => {
+    setPostalCode(event.target.value);
+  };
+
   function handleTravelDateChange(date) {
     setTravelDates({ ...travelDates, [travelDatesIndex]: date });
   }
@@ -111,7 +117,7 @@ function CriticalQuestions(props) {
         (result) => {
           setCountries(result);
         },
-        () => {}
+        () => { }
       );
   }, []);
 
@@ -167,14 +173,14 @@ function CriticalQuestions(props) {
   if (isSick === "not sick") {
     nextPage = paths.dashboard;
   } else if (tested === "positive") {
-    nextPage = paths.symptoms;
+    nextPage = paths.feeling;
   } else {
-    nextPage = paths.symptoms;
+    nextPage = paths.feeling;
   }
 
   return (
     <Wrapper>
-      <h1 className="title"> MY COVID STORY</h1>
+      <h1 className="title" style={{ margin: 0 }}> MY COVID STORY</h1>
       <div className={classNames("root", styles.root)}>
         <div className={classNames("grid-3", styles["grid-3"])}>
           <DatePicker
@@ -216,33 +222,49 @@ function CriticalQuestions(props) {
             ))}
           </TextField>
         </div>
-        <div className={classNames("grid-2", styles["grid-2"])}>
-          <TextField
-            select
-            label="Current Location"
-            value={location}
-            onChange={handleLocationChange}
-          >
-            {countries.map((option) => (
-              <MenuItem key={option.name} value={option.name}>
-                {option.name}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            select
-            label="Citizenship"
-            value={citizenship}
-            onChange={handleCitizenshipChange}
-          >
-            {countries.map((option) => (
-              <MenuItem key={option.name} value={option.name}>
-                {option.name}
-              </MenuItem>
-            ))}
-          </TextField>
+        <div className={classNames("location-wrapper", styles["location-wrapper"])}>
+          <span>Current Location</span>
+          <div className={classNames("grid-1", styles["grid-1"])}>
+            <FormControl>
+              <TextField
+                select
+                label=" "
+                value={location}
+                onChange={handleLocationChange}
+              >
+                {countries.map((option) => (
+                  <MenuItem key={option.name} value={option.name}>
+                    {option.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <FormHelperText>Country</FormHelperText>
+            </FormControl>
+            <FormControl>
+              <TextField
+                label=" "
+                value={postalCode}
+                onChange={handlePostalCodeChange}
+                type="number"
+              />
+              <FormHelperText>Postal Code</FormHelperText>
+            </FormControl>
+
+            <TextField
+              select
+              label="Citizenship"
+              value={citizenship}
+              onChange={handleCitizenshipChange}
+            >
+              {countries.map((option) => (
+                <MenuItem key={option.name} value={option.name}>
+                  {option.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </div>
         </div>
-        <div className={classNames("grid-2", styles["grid-2"])}>
+        <div className={classNames("grid-2", styles["grid-2"])} style={{ paddingTop: 0 }}>
           <TextField
             select
             label="Profession"

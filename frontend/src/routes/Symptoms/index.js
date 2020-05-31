@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import Text from "text.json";
 import Wrapper from "components/Wrapper";
 import styles from "./styles.module.css";
+import paths from 'routes/paths';
 
 const symptoms = Text["Symptoms"];
 
@@ -100,7 +101,7 @@ export default function Symptoms(props) {
       <Fab
         style={{ background: "#EA2027" }}
         aria-label="Go to next page"
-        onClick={() => props.history.push("/measurements")}
+        onClick={() => props.history.push(paths.healthMeasurements)}
         size="medium"
         className="fab next-btn"
       >
@@ -109,7 +110,7 @@ export default function Symptoms(props) {
       <Fab
         style={{ background: "#9206FF" }}
         aria-label="Go to previous page"
-        onClick={() => props.history.push("/questions")}
+        onClick={() => props.history.push(paths.feeling)}
         size="medium"
         className="fab back-btn"
       >

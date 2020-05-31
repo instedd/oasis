@@ -103,7 +103,6 @@ a, a:link, a:visited, a:hover, a:active {
 
 .status-wrapper {
   justify-content: space-between;
-  /* text-align: center; */
   width: 90%;
   position: absolute;
   top: 10%;
@@ -151,8 +150,8 @@ a, a:link, a:visited, a:hover, a:active {
 }
 
 .sliders-wrapper {
-  width: 70%;
-  height: 340px;
+  width: 300px;
+  height: 400px;
   display: flex;
   flex-direction: column;
   justify-content: center;

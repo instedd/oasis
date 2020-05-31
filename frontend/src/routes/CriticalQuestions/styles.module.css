@@ -4,7 +4,6 @@
   align-items: center;
   width: 100vw;
   max-height: calc(80% - 100px);
-  ;
   overflow: auto;
   top: 15%;
   justify-content: normal;
@@ -73,4 +72,5 @@ div::before {
 .location-wrapper p{
   font-size:14px;
   color:grey
+
 }
