@@ -22,6 +22,7 @@ import Wrapper from "components/Wrapper";
 import styles from "./styles.module.css";
 import classNames from "classnames";
 import { setStory } from "actions/handleSick";
+import paths from 'routes/paths';
 
 const contactText = Text["Close Contacts"].texts;
 const contactListIndex = Text["Close Contacts"].listIndex;
@@ -164,11 +165,11 @@ function CriticalQuestions(props) {
   const tested = useSelector((state) => state.post.tested);
   console.log(isSick, tested);
   if (isSick === "not sick") {
-    nextPage = "/dashboard";
+    nextPage = paths.dashboard;
   } else if (tested === "positive") {
-    nextPage = "/symptoms";
+    nextPage = paths.symptoms;
   } else {
-    nextPage = "/symptoms";
+    nextPage = paths.symptoms;
   }
 
   return (

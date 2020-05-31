@@ -71,11 +71,6 @@ function Dashboard(props) {
 
   return (
     <div className="Dashboard">
-      <Breadcrumbs aria-label="breadcrumb" className="breadcrumbs">
-        <Link color="inherit">myTrials</Link>
-        <Link color="inherit">myDonations</Link>
-        <Link color="inherit">myRecords</Link>
-      </Breadcrumbs>
       <div className="row status-wrapper">
         <div className="col">
           <div className="row">
@@ -120,8 +115,8 @@ function Dashboard(props) {
             Download HomeBound
           </Link>
           {story &&
-            story.location == "Mexico" &&
-            story.citizenship == "United States of America" && (
+            story.location === "Mexico" &&
+            story.citizenship === "United States of America" && (
               <Link
                 href="https://mx.usembassy.gov/u-s-citizen-services/covid-19-information/"
                 style={{ color: "#FFFFFF" }}

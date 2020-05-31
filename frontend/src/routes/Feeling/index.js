@@ -5,6 +5,7 @@ import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import Wrapper from "components/Wrapper";
 import styles from './styles.module.css'
+import paths from 'routes/paths';
 
 export default function Feeling(props) {
     const CustomSlider = withStyles({
@@ -63,7 +64,7 @@ export default function Feeling(props) {
     return (
         <Wrapper>
             <h1 className="title"> MY COVID STORY</h1>
-              <div className={styles.feeling-wrapper}>
+              <div className={styles.feelings}>
                 <Typography id="feeling-slider" gutterBottom>How are you feeling today?</Typography>
                 <CustomSlider
                     value={feeling}
@@ -77,10 +78,10 @@ export default function Feeling(props) {
                     marks={feelingMarks}
                 />
             </div>
-            <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab next-btn" onClick={() => props.history.push("/symptoms")}>
+            <Fab style={{ background: "#EA2027" }} aria-label="add" size="medium" className="fab next-btn" onClick={() => props.history.push(paths.symptoms)}>
                 <ArrowRightIcon />
             </Fab>
-            <Fab style={{ background: "#9206FF" }} aria-label="add" size="medium" className="fab back-btn" onClick={() => props.history.push('/questions')}>
+            <Fab style={{ background: "#9206FF" }} aria-label="add" size="medium" className="fab back-btn" onClick={() => props.history.push(paths.questions)}>
                 <ArrowLeftIcon />
             </Fab>
         </Wrapper>

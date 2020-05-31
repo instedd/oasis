@@ -20,6 +20,7 @@ import Dashboard from "routes/Dashboard";
 import HealthMeasurements from "routes/HealthMeasurements";
 import SignUp from "routes/SignUp";
 import MyStory from "routes/MyStory";
+import Feeling from 'routes/Feeling';
 import paths from "routes/paths";
 
 import Map from "components/Map";
@@ -27,6 +28,7 @@ import * as serviceWorker from "./serviceWorker";
 
 import history from "./history";
 import styles from "styles.module.css";
+
 
 ReactDOM.render(
   <React.StrictMode>
