@@ -1,14 +1,16 @@
-import React from "react";
 import { Fab } from "@material-ui/core";
-import classNames from "classnames";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
-import { handleTested } from "../../actions/handleTested";
-import { useDispatch, useSelector } from "react-redux";
+import classNames from "classnames";
 import Wrapper from "components/Wrapper";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import paths from "routes/paths";
+import { sicknessStatus, testStatus } from "routes/types";
+import { handleTested } from "../../actions/story";
 import styles from "./styles.module.css";
 
 export default function Confirm(props) {
-  const isSick = useSelector((state) => state.post.sick);
+  const sick = useSelector((state) => state.story.sick);
 
   const dispatch = useDispatch();
   function handleClick(selected) {
@@ -29,8 +31,8 @@ export default function Confirm(props) {
           className="fab"
           variant="extended"
           onClick={() => {
-            handleClick("positive");
-            props.history.push("/questions");
+            handleClick(testStatus.POSITIVE);
+            props.history.push(paths.criticalQuestions);
           }}
         >
           <span>YES, TESTED POSITIVE</span>
@@ -41,8 +43,8 @@ export default function Confirm(props) {
           className="fab"
           variant="extended"
           onClick={() => {
-            handleClick("negative");
-            props.history.push("/questions");
+            handleClick(testStatus.NEGATIVE);
+            props.history.push(paths.criticalQuestions);
           }}
         >
           <span>YES, TESTED NEGATIVE</span>
@@ -53,8 +55,8 @@ export default function Confirm(props) {
           className="fab"
           variant="extended"
           onClick={() => {
-            handleClick("not tested");
-            props.history.push("/questions");
+            handleClick(testStatus.NOT_TESTED);
+            props.history.push(paths.criticalQuestions);
           }}
         >
           <span>NO, I HAVE NOT</span>
@@ -65,7 +67,9 @@ export default function Confirm(props) {
         size="medium"
         className="fab back-btn"
         onClick={() =>
-          props.history.push(isSick === "sick" ? "/alert" : "/onboard")
+          props.history.push(
+            sick === sicknessStatus.SICK ? paths.alert : paths.onboard
+          )
         }
       >
         <ArrowLeftIcon />

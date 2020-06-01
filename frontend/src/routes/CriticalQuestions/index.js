@@ -1,29 +1,19 @@
-import React, { useState } from "react";
-import {
-  TextField,
-  MenuItem,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  Select,
-  Checkbox,
-  ListItemText,
-  Input,
-} from "@material-ui/core";
-import { Fab } from "@material-ui/core";
+import { Checkbox, Fab, FormControl, Input, InputLabel, ListItemText, MenuItem, Select, TextField } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
-import { DatePicker } from "@material-ui/pickers";
-import Pop from "components/PopUp";
-import Text from "text.json";
+import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
-import { useSelector, useDispatch } from "react-redux";
-import Wrapper from "components/Wrapper";
-import styles from "./styles.module.css";
+import { DatePicker } from "@material-ui/pickers";
+import { submitStory } from "actions/story";
 import classNames from "classnames";
-import { setStory } from "actions/handleSick";
-import paths from 'routes/paths';
+import Pop from "components/PopUp";
+import Wrapper from "components/Wrapper";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import paths from "routes/paths";
+import Text from "text.json";
+import { sicknessStatus } from "../types";
+import styles from "./styles.module.css";
 
 const contactText = Text["Close Contacts"].texts;
 const contactListIndex = Text["Close Contacts"].listIndex;
@@ -34,7 +24,7 @@ const travelLinkIndex = Text["Recent Travel"].linkIndex;
 const professions = Text["Profession"];
 const medicalProblems = Text["Medical Problems"];
 
-const ethnicities = [
+const ethnicGroups = [
   {
     value: "American Indian or Alaska Native",
     label: "American Indian or Alaska Native",
@@ -51,14 +41,18 @@ const ethnicities = [
 
 function CriticalQuestions(props) {
   const dispatch = useDispatch();
-  const [sex, setSex] = useState("");
-  const [ethnicity, setEthnicity] = useState("");
-  const [location, setLocation] = useState("");
-  const [citizenship, setCitizenship] = useState("");
-  const [profession, setProfession] = useState("");
-  const [postalCode, setPostalCode] = useState(null);
-  const [selectedDate, handleDateChange] = useState(null);
-  const [selectedEndDate, handleEndDateChange] = useState(null);
+
+  const [formValues, setFormValues] = useState({
+    age: null,
+    sex: "",
+    ethnicity: "",
+    location: "",
+    citizenship: "",
+    profession: "",
+    selectedMedicalProblems: [],
+    sicknessStart: null,
+    sicknessEnd: null,
+  });
 
   const [travelDates, setTravelDates] = useState({ 0: null });
   const [travelDatesIndex, setTravelDatesIndex] = useState(0);
@@ -66,47 +60,52 @@ function CriticalQuestions(props) {
   const [contactCount, setContactCount] = useState(0);
   const [locationCount, setLocationCount] = useState(0);
 
-  const [selectedProblems, setMedicalProblems] = useState([]);
+  const handleFormChange = (key) => (event) => {
+    const intFields = ["age"];
+    const nonValueFields = ["sicknessStart", "sicknessEnd"];
 
-  const handleMedicalProblemChange = (event) => {
-    setMedicalProblems(event.target.value);
-  };
-  const handleSexChange = (event) => {
-    setSex(event.target.value);
-  };
-  const handleEthnicityChange = (event) => {
-    setEthnicity(event.target.value);
-  };
-  const handleCitizenshipChange = (event) => {
-    setCitizenship(event.target.value);
-  };
-
-  const handleProfessionChange = (event) => {
-    setProfession(event.target.value);
-  };
-
-  const handleLocationChange = (event) => {
-    setLocation(event.target.value);
-  };
-
-  const handlePostalCodeChange = (event) => {
-    setPostalCode(event.target.value);
+    if (intFields.includes(key)) {
+      setFormValues({ ...formValues, [key]: parseInt(event.target.value) });
+    } else if (nonValueFields.includes(key)) {
+      setFormValues({ ...formValues, [key]: event });
+    } else {
+      setFormValues({ ...formValues, [key]: event.target.value });
+    }
   };
 
   function handleTravelDateChange(date) {
     setTravelDates({ ...travelDates, [travelDatesIndex]: date });
   }
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const story = {
+      age: formValues.age,
+      sex: formValues.sex,
+      ethnicity: formValues.ethnicity,
+      countryOfOrigin: formValues.citizenship,
+      profession: formValues.profession,
+      sick: sick,
+      tested: tested,
+      medicalProblems: formValues.selectedMedicalProblems,
+      sicknessStart: formValues.sicknessStart,
+      sicknessEnd: formValues.sicknessEnd,
+      currentLocation: formValues.location,
+    };
+    const dto = { story, nextPage };
+    dispatch(submitStory(dto));
+  };
+
   const [countries, setCountries] = React.useState([]);
 
-  const endPicker = (
+  const sicknessEndPicker = (
     <DatePicker
       autoOk
       label="When did your illness resolve?"
       clearable
       disableFuture
-      value={selectedEndDate}
-      onChange={handleEndDateChange}
+      value={formValues.sicknessEnd}
+      onChange={handleFormChange("sicknessEnd")}
     />
   );
 
@@ -117,7 +116,7 @@ function CriticalQuestions(props) {
         (result) => {
           setCountries(result);
         },
-        () => { }
+        () => {}
       );
   }, []);
 
@@ -167,19 +166,16 @@ function CriticalQuestions(props) {
   React.useEffect(scrollToBottom, [locations]);
   React.useEffect(scrollToBottom, [contacts]);
   let nextPage;
-  const isSick = useSelector((state) => state.post.sick);
-  const tested = useSelector((state) => state.post.tested);
-  if (isSick === "not sick") {
+  const { sick, tested } = useSelector((state) => state.story);
+  if (sick === sicknessStatus.NOT_SICK) {
     nextPage = paths.dashboard;
-  } else if (tested === "positive") {
-    nextPage = paths.feeling;
   } else {
-    nextPage = paths.feeling;
+    nextPage = paths.symptoms;
   }
 
   return (
     <Wrapper>
-      <h1 className="title" style={{ margin: 0 }}> MY COVID STORY</h1>
+      <h1 className="title"> MY COVID STORY</h1>
       <div className={classNames("root", styles.root)}>
         <div className={classNames("grid-3", styles["grid-3"])}>
           <DatePicker
@@ -187,20 +183,27 @@ function CriticalQuestions(props) {
             label="When did you first start feeling sick?"
             clearable
             disableFuture
-            value={selectedDate}
-            onChange={handleDateChange}
+            value={formValues.sicknessStart}
+            onChange={handleFormChange("sicknessStart")}
           />
-          {isSick === "recovered" ? endPicker : null}
+          {sick === sicknessStatus.RECOVERED ? sicknessEndPicker : null}
         </div>
         <div className={classNames("grid-1", styles["grid-1"])}>
-          <TextField id="standard-number" label="Age" type="number" />
+          <TextField
+            id="age"
+            label="Age"
+            type="number"
+            value={formValues.age}
+            onChange={handleFormChange("age")}
+            InputProps={{ inputProps: { min: 0 } }}
+          />
 
           <TextField
-            id="standard-select-currency"
+            id="sex"
             select
             label="Sex"
-            value={sex}
-            onChange={handleSexChange}
+            value={formValues.sex}
+            onChange={handleFormChange("sex")}
           >
             <MenuItem value={"male"}>Male</MenuItem>
             <MenuItem value={"female"}>Female</MenuItem>
@@ -211,64 +214,48 @@ function CriticalQuestions(props) {
           <TextField
             select
             label="Ethnicity"
-            value={ethnicity}
-            onChange={handleEthnicityChange}
+            value={formValues.ethnicity}
+            onChange={handleFormChange("ethnicity")}
           >
-            {ethnicities.map((option) => (
+            {ethnicGroups.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 {option.label}
               </MenuItem>
             ))}
           </TextField>
         </div>
-        <div className={classNames("location-wrapper", styles["location-wrapper"])}>
-          <span>Current Location</span>
-          <div className={classNames("grid-1", styles["grid-1"])}>
-            <FormControl>
-              <TextField
-                select
-                label=" "
-                value={location}
-                onChange={handleLocationChange}
-              >
-                {countries.map((option) => (
-                  <MenuItem key={option.name} value={option.name}>
-                    {option.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <FormHelperText>Country</FormHelperText>
-            </FormControl>
-            <FormControl>
-              <TextField
-                label=" "
-                value={postalCode}
-                onChange={handlePostalCodeChange}
-                type="number"
-              />
-              <FormHelperText>Postal Code</FormHelperText>
-            </FormControl>
-
-            <TextField
-              select
-              label="Citizenship"
-              value={citizenship}
-              onChange={handleCitizenshipChange}
-            >
-              {countries.map((option) => (
-                <MenuItem key={option.name} value={option.name}>
-                  {option.name}
-                </MenuItem>
-              ))}
-            </TextField>
-          </div>
+        <div className={classNames("grid-2", styles["grid-2"])}>
+          <TextField
+            select
+            label="Current Location"
+            value={formValues.location}
+            onChange={handleFormChange("location")}
+          >
+            {countries.map((option) => (
+              <MenuItem key={option.name} value={option.name}>
+                {option.name}
+              </MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            select
+            label="Citizenship"
+            value={formValues.citizenship}
+            onChange={handleFormChange("citizenship")}
+          >
+            {countries.map((option) => (
+              <MenuItem key={option.name} value={option.name}>
+                {option.name}
+              </MenuItem>
+            ))}
+          </TextField>
         </div>
-        <div className={classNames("grid-2", styles["grid-2"])} style={{ paddingTop: 0 }}>
+        <div className={classNames("grid-2", styles["grid-2"])}>
           <TextField
             select
             label="Profession"
-            value={profession}
-            onChange={handleProfessionChange}
+            value={formValues.profession}
+            onChange={handleFormChange("profession")}
           >
             {professions.map((option) => (
               <MenuItem style={{ fontSize: 13 }} key={option} value={option}>
@@ -277,21 +264,19 @@ function CriticalQuestions(props) {
             ))}
           </TextField>
           <FormControl>
-            <InputLabel id="demo-mutiple-checkbox-label">
-              Medical Problems
-            </InputLabel>
+            <InputLabel id="medical-problems">Medical Problems</InputLabel>
             <Select
-              labelId="demo-mutiple-checkbox-label"
-              id="demo-mutiple-checkbox"
+              labelId="medical-problems"
+              id="medical-problems-checkbox"
               multiple
-              value={selectedProblems}
+              value={formValues.selectedMedicalProblems}
               input={<Input />}
-              onChange={handleMedicalProblemChange}
+              onChange={handleFormChange("selectedMedicalProblems")}
               renderValue={(selected) => selected.join(", ")}
             >
               {medicalProblems.map((name) => (
                 <MenuItem key={name} value={name}>
-                  <Checkbox checked={selectedProblems.indexOf(name) > -1} />
+                  <Checkbox checked={formValues.selectedMedicalProblems.indexOf(name) > -1} />
                   <ListItemText
                     primary={name}
                     className={classNames(
@@ -351,15 +336,7 @@ function CriticalQuestions(props) {
         aria-label="Go to next page"
         size="medium"
         className="fab next-btn"
-        onClick={() => {
-          dispatch(
-            setStory({
-              citizenship,
-              location,
-            })
-          );
-          props.history.push(nextPage);
-        }}
+        onClick={handleSubmit}
       >
         <ArrowRightIcon />
       </Fab>
@@ -369,12 +346,6 @@ function CriticalQuestions(props) {
         size="medium"
         className="fab back-btn"
         onClick={() => {
-          dispatch(
-            setStory({
-              citizenship,
-              location,
-            })
-          );
           props.history.goBack();
         }}
       >

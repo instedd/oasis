@@ -24,7 +24,7 @@ docker-compose run --rm ui yarn add PACKAGE_NAME_HERE
 If you're creating an app on the backend and it contains models, you'll need to set up a couple of things to make sure migrations work. To begin with, in your app's `models.py` make sure to import the app's declarative base and creating your models based off that:
 
 ```python
-from database.database import Base
+from database import Base
 
 class YourCoolModel(Base):
     __tablename__ = "super_cool_models"
@@ -67,6 +67,17 @@ You can also roll back migrations by doing
 ```python
 docker-compose run api alembic downgrade -1
 ```
+
+### Seeding data
+
+To populate development database with seed data, which is located in `/backend/almebic/seed_data` directory, run:
+
+```
+docker-compose run --rm api python alembic/seed.py
+```
+
+To add seed data or modify existing one, apply changes in `<entity>.json` file for the target entity in aforementioned `/backend/alembic/seed_data` directory. Make sure that the script uses the data you are
+interested in, by checking the "files to be imported" at the top of the script.
 
 ## Building & deploying
 

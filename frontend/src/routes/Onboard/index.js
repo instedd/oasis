@@ -1,10 +1,10 @@
-import React from "react";
 import { Fab } from "@material-ui/core";
-import { handleSick } from "../../actions/handleSick";
-import { useDispatch } from "react-redux";
 import classNames from "classnames";
 import Wrapper from "components/Wrapper";
-
+import React from "react";
+import { useDispatch } from "react-redux";
+import { sicknessStatus } from "routes/types";
+import { handleSick } from "../../actions/story";
 import styles from "./styles.module.css";
 
 export default function Onboard(props) {
@@ -21,7 +21,7 @@ export default function Onboard(props) {
           variant="extended"
           className="fab sick-btn"
           onClick={() => {
-            handleClick("sick");
+            handleClick(sicknessStatus.SICK);
             props.history.push("/alert");
           }}
         >
@@ -32,7 +32,7 @@ export default function Onboard(props) {
           variant="extended"
           className="fab not-sick-btn"
           onClick={() => {
-            handleClick("not sick");
+            handleClick(sicknessStatus.NOT_SICK);
             props.history.push("/confirm");
           }}
         >
@@ -43,7 +43,7 @@ export default function Onboard(props) {
           variant="extended"
           className="fab not-sick-btn"
           onClick={() => {
-            handleClick("recovered");
+            handleClick(sicknessStatus.RECOVERED);
             props.history.push("/confirm");
           }}
         >

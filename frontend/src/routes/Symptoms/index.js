@@ -1,24 +1,17 @@
-import React from "react";
+import { Checkbox, Fab, FormControl, FormControlLabel, FormGroup, TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Fab,
-  FormGroup,
-  FormControlLabel,
-  FormControl,
-  Checkbox,
-  TextField,
-} from "@material-ui/core";
-import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
+import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import CheckCircle from "@material-ui/icons/CheckCircle";
 import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
-import { useSelector } from "react-redux";
-import Text from "text.json";
+import { fetchSymptoms, submitSymptoms } from "actions/symptoms";
+import { SUCCESS } from "actions/types";
 import Wrapper from "components/Wrapper";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import paths from "routes/paths";
+import { sicknessStatus } from "routes/types";
 import styles from "./styles.module.css";
-import paths from 'routes/paths';
-
-const symptoms = Text["Symptoms"];
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -58,21 +51,41 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Symptoms(props) {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchSymptoms());
+  }, [dispatch]);
+
+  const symptoms = useSelector((state) => state.symptoms);
+  const [selectedSymptoms, setSelectedSymptoms] = useState([]);
+
+  const navigate = (path) => () =>
+    dispatch(submitSymptoms(selectedSymptoms, path));
+
+  const toggleSymptom = (id) => {
+    setSelectedSymptoms(
+      selectedSymptoms.includes(id)
+        ? selectedSymptoms.filter((symptom) => symptom !== id)
+        : selectedSymptoms.concat([id])
+    );
+  };
+
   const classes = useStyles();
-  const isSick = useSelector((state) => state.post.sick);
+  const isSick = useSelector((state) => state.story.sick);
   const subtitle =
-    isSick === "recovered"
+    isSick === sicknessStatus.RECOVERED
       ? "When you were sick, which of the following symptoms did you have?"
       : "Are you having now, or did you recently have:";
   return (
     <Wrapper>
       <h1 className="title"> MY COVID STORY</h1>
+      {symptoms.status.type !== SUCCESS && symptoms.status.detail}
       <p className={styles.subtitle}>{subtitle}</p>
       <FormControl className={classes.root} component="fieldset">
         <FormGroup className={classes.group} aria-label="position" row>
-          {symptoms.map((option) => (
+          {symptoms.all.map(({ id, name }) => (
             <FormControlLabel
-              value={option}
+              value={id}
               control={
                 <Checkbox
                   style={{ color: "white" }}
@@ -80,9 +93,10 @@ export default function Symptoms(props) {
                   checkedIcon={<CheckCircle style={{ fontSize: 30 }} />}
                 />
               }
-              label={option}
-              key={option}
+              label={name}
+              key={`symptom-${id}`}
               labelPlacement="top"
+              onClick={() => toggleSymptom(id)}
             />
           ))}
         </FormGroup>
@@ -101,7 +115,7 @@ export default function Symptoms(props) {
       <Fab
         style={{ background: "#EA2027" }}
         aria-label="Go to next page"
-        onClick={() => props.history.push(paths.healthMeasurements)}
+        onClick={navigate(paths.healthMeasurements)}
         size="medium"
         className="fab next-btn"
       >
@@ -110,7 +124,7 @@ export default function Symptoms(props) {
       <Fab
         style={{ background: "#9206FF" }}
         aria-label="Go to previous page"
-        onClick={() => props.history.push(paths.feeling)}
+        onClick={navigate(paths.criticalQuestions)}
         size="medium"
         className="fab back-btn"
       >

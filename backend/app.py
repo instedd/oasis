@@ -1,11 +1,11 @@
 import os
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
-from fastapi.middleware.cors import CORSMiddleware
 
-from router import users
+from router import api
 
 
 async def homepage(request, exec):
@@ -34,4 +34,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(users.router, prefix="/api", tags=["users"])
+app.include_router(api.router, prefix="/api")
