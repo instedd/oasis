@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import paths from "routes/paths";
 import { sicknessStatus, testStatus } from "routes/types";
 import styles from "./styles.module.css";
+import { getStorySuggestions } from "actions/story";
 
 const status = {
   [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
@@ -60,21 +61,6 @@ function Dashboard(props) {
       );
   }, []);
 
-  let donate_link = null;
-
-  if (sick === sicknessStatus.RECOVERED && tested === testStatus.POSITIVE) {
-    donate_link = (
-      <Link
-        href="https://med.stanford.edu/id/covid19/lambda.html"
-        style={{ color: "#EB5757" }}
-      >
-        Donate your blood to help others
-      </Link>
-    );
-  }
-
-  const preventDefault = (event) => event.preventDefault();
-
   return (
     <div className="Dashboard">
       <Breadcrumbs aria-label="breadcrumb" className="breadcrumbs">
@@ -116,33 +102,20 @@ function Dashboard(props) {
         </div>
       </div>
       <div className="row">
-        <div className="col suggestions-wrapper">
+        <div className={classNames("col", styles.wrapper)}>
           <h3>SUGGESTIONS</h3>
-          <div style={{ color: "gray" }}>Stay at home</div>
-          <Link
-            href="https://earth2-covid.ucsd.edu/homebound"
-            style={{ color: "#2D9CDB" }}
-          >
-            Download HomeBound
-          </Link>
-          {story &&
-            story.location == "Mexico" &&
-            story.citizenship == "United States of America" && (
-              <Link
-                href="https://mx.usembassy.gov/u-s-citizen-services/covid-19-information/"
-                style={{ color: "#FFFFFF" }}
-                target="_blank"
-              >
-                Information for US Citizens
-              </Link>
-            )}
-          <Link href="#" onClick={preventDefault} style={{ color: "#F2C94C" }}>
-            Join a clinical trial
-          </Link>
-          {donate_link}
-          <Link onClick={preventDefault} style={{ color: "#FFFFFF" }}>
-            Learn more about COVID-19
-          </Link>
+          <div>Stay at home</div>
+          {getStorySuggestions(story).map((suggestion) => (
+            <Link
+              href={suggestion.site}
+              {...(suggestion.color
+                ? { style: { color: suggestion.color } }
+                : {})}
+              target="_blank"
+            >
+              {suggestion.text}
+            </Link>
+          ))}
         </div>
         <div className="col">
           <SpeedDial
