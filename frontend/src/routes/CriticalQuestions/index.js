@@ -10,8 +10,9 @@ import Pop from 'components/PopUp';
 import Wrapper from "components/Wrapper";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import paths from 'routes/paths';
 import Text from 'text.json';
-import { sicknessStatus, testStatus } from '../types';
+import { sicknessStatus } from '../types';
 import styles from './styles.module.css';
 
 const contactText = Text["Close Contacts"].texts
@@ -159,13 +160,9 @@ function CriticalQuestions(props) {
     let nextPage;
     const {sick, tested} = useSelector(state => state.story)
     if (sick === sicknessStatus.NOT_SICK) {
-        nextPage = "/dashboard";
-    }
-    else if (tested === testStatus.POSITIVE) {
-        nextPage = "/symptoms"
-    }
-    else {
-        nextPage = "/symptoms"
+        nextPage = paths.dashboard;
+    } else {
+        nextPage = paths.symptoms
     }
 
     return (
