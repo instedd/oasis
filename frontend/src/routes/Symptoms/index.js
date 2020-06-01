@@ -11,6 +11,7 @@ import styles from './styles.module.css';
 import { fetchSymptoms, submitSymptoms } from 'actions/symptoms';
 import paths from 'routes/paths';
 import { SUCCESS } from 'actions/types';
+import { sicknessStatus } from 'routes/types';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -74,7 +75,7 @@ export default function Symptoms(props) {
 
     const classes = useStyles();
     const isSick = useSelector(state => state.story.sick)
-    const subtitle = isSick === "recovered"
+    const subtitle = isSick === sicknessStatus.RECOVERED
         ? "When you were sick, which of the following symptoms did you have?"
         : "Are you having now, or did you recently have:"
     return (
