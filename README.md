@@ -4,7 +4,7 @@ UCSD Oasis platform
 
 ## Local project setup
 
-1. Install [Docker Compose](https://docs.docker.com/compose/install/)
+1. Install [Docker Compose](https://docs.docker.com/compose/install/) and [Yarn](https://yarnpkg.com/getting-started/install) globally
 2. Clone the project and go to the project folder in your console
 3. Run `./dev-setup` to build the project
     - **Tip:** Make sure to run this command regularly, or at least, every time you start something fresh from `master`!

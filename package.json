@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "husky": "^4.2.5",
     "pre-commit": "^1.2.2",
     "prettier": "^2.0.5"
   }
