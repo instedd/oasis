@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # set up precommit hooks (this actually needs to happen outside of docker!)
-yarn add pre-commit
+yarn
 /Applications/Python\ 2.7/Install\ Certificates.command
 pre-commit install -f
 
