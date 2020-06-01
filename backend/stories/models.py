@@ -26,18 +26,18 @@ class Story(Base):
     @property
     def medical_problems(self):
         return json.loads(self._medical_problems)
-        
+
     @medical_problems.setter
     def medical_problems(self, value):
         self._medical_problems = json.dumps(value)
 
 
 class StorySymptom(Base):
-    __tablename__ = 'story_symptoms'
-    
-    story_id = Column(ForeignKey('stories.id'))
-    symptom_id = Column(ForeignKey('symptoms.id'))
-    
+    __tablename__ = "story_symptoms"
+
+    story_id = Column(ForeignKey("stories.id"))
+    symptom_id = Column(ForeignKey("symptoms.id"))
+
 
 class Symptom(Base):
     __tablename__ = "symptoms"

@@ -38,16 +38,19 @@ class StoryCreate(BaseModel):
     sickness_start: str = None
     sickness_end: str = None
 
+
 class Story(StoryCreate):
     id: int
     token: str = None
     user: User = None
+
     class Config:
         orm_mode = True
-        
+
 
 class SymptomBase(BaseModel):
     name: str
+
 
 class Symptom(SymptomBase):
     id: int
@@ -66,6 +69,6 @@ class StorySymptomCreate(BaseModel):
 
 class StorySymptom(StorySymptomCreate):
     id: int
-    
+
     class Config:
         orm_mode = True

@@ -10,6 +10,7 @@ SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{os.environ['DATABASE_USER']}:{os.en
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+
 def get_db():
     db = SessionLocal()
     try:
@@ -17,11 +18,17 @@ def get_db():
     finally:
         db.close()
 
+
 BaseModel = declarative_base()
-    
+
+
 class Base(BaseModel):
     __abstract__ = True
 
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    updated_at = Column(
+        DateTime,
+        default=datetime.datetime.utcnow,
+        onupdate=datetime.datetime.utcnow,
+    )

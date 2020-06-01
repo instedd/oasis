@@ -13,25 +13,25 @@ async def homepage(request, exec):
     context = {"request": request}
     return templates.TemplateResponse(template, context)
 
-app = FastAPI(exception_handlers={
-    404: homepage
-})
 
-templates = Jinja2Templates(directory='templates')
+app = FastAPI(exception_handlers={404: homepage})
+
+templates = Jinja2Templates(directory="templates")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-origins = [
-        'http://ui.oasis.lvh.me:3000',
-        'http://localhost:3000'
-    ] if os.environ.get('DEV') else []
+origins = (
+    ["http://ui.oasis.lvh.me:3000", "http://localhost:3000"]
+    if os.environ.get("DEV")
+    else []
+)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["DELETE", "GET", "POST", "PUT"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
 app.include_router(api.router, prefix="/api")

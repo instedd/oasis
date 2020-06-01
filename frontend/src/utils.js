@@ -1,4 +1,4 @@
-import {store} from './redux';
+import { store } from "./redux";
 
 import { ERROR } from "actions/types";
 import history from "./history";
@@ -7,10 +7,10 @@ import paths from "routes/paths";
 const api = async (path, payload = {}, explicitBody = false) => {
   const { auth } = await store.getState();
   const fullPayload = {
-    method: 'GET',
+    method: "GET",
     ...payload,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...payload.headers,
     },
   };
@@ -18,24 +18,29 @@ const api = async (path, payload = {}, explicitBody = false) => {
     fullPayload.body = explicitBody
       ? payload.body
       : JSON.stringify(
-        Array.isArray(payload.body)
-          ? payload.body.map(obj => parseObjectKeys(obj, camelToSnakeCase))
-          :parseObjectKeys(payload.body || {}, camelToSnakeCase)
-      )
+          Array.isArray(payload.body)
+            ? payload.body.map((obj) => parseObjectKeys(obj, camelToSnakeCase))
+            : parseObjectKeys(payload.body || {}, camelToSnakeCase)
+        );
   }
 
-  if (auth && auth.token) fullPayload.headers['Authorization'] = `Bearer ${auth.token}`;
+  if (auth && auth.token)
+    fullPayload.headers["Authorization"] = `Bearer ${auth.token}`;
 
-  let response = await fetch(`${process.env.REACT_APP_API || ''}/api/${path}`, fullPayload);
-  if (response.status === 401) 
-    history.push(paths.signIn);
+  let response = await fetch(
+    `${process.env.REACT_APP_API || ""}/api/${path}`,
+    fullPayload
+  );
+  if (response.status === 401) history.push(paths.signIn);
   // if everything was correct, process data
   if (response.status >= 200 && response.status < 300) {
     response = await response.json();
-    if (Array.isArray(response)) 
-      return response.map(element => parseObjectKeys(element, snakeToCamelCase))
+    if (Array.isArray(response))
+      return response.map((element) =>
+        parseObjectKeys(element, snakeToCamelCase)
+      );
     return parseObjectKeys(response, snakeToCamelCase);
-  };
+  }
 
   // if we had a known error, return the proper status
   const body = await response.json();
@@ -43,24 +48,22 @@ const api = async (path, payload = {}, explicitBody = false) => {
     error: {
       code: response.status,
       type: ERROR,
-      detail: body.detail || 'Unknown error! Please try again',
-    }
-  }
-}
+      detail: body.detail || "Unknown error! Please try again",
+    },
+  };
+};
 
+const parseObjectKeys = (object, method) =>
+  Object.keys(object).reduce((acc, key) => {
+    acc[method(key)] = object[key];
+    return acc;
+  }, {});
 
-const parseObjectKeys = (object, method) => Object.keys(object).reduce((acc, key) => {
-  acc[method(key)] = object[key];
-  return acc;
-}, {});
+const snakeToCamelCase = (str) =>
+  str.replace(/([-_][a-z])/g, (group) =>
+    group.toUpperCase().replace("-", "").replace("_", "")
+  );
 
-const snakeToCamelCase = (str) => str.replace(
-  /([-_][a-z])/g,
-  (group) => group.toUpperCase()
-                  .replace('-', '')
-                  .replace('_', '')
-);
-
-const camelToSnakeCase = (str) => str.replace( /([A-Z])/g, "_$1").toLowerCase();
+const camelToSnakeCase = (str) => str.replace(/([A-Z])/g, "_$1").toLowerCase();
 
 export default api;

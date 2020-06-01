@@ -1,9 +1,13 @@
-import { LOADING, FETCH_SYMPTOMS_START, FETCH_SYMPTOMS } from '../actions/types';
+import {
+  LOADING,
+  FETCH_SYMPTOMS_START,
+  FETCH_SYMPTOMS,
+} from "../actions/types";
 const initialState = {
   status: {},
   all: [],
   selected: [],
-}
+};
 
 const symptoms = (state = initialState, action) => {
   switch (action.type) {
@@ -12,17 +16,17 @@ const symptoms = (state = initialState, action) => {
         ...state,
         status: {
           type: LOADING,
-          detail: "We're fetching all relevant symptoms..."
+          detail: "We're fetching all relevant symptoms...",
         },
       };
     case FETCH_SYMPTOMS:
       return {
         ...state,
-        ...action.payload
+        ...action.payload,
       };
     default:
       return state;
   }
-}
+};
 
 export default symptoms;
