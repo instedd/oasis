@@ -87,7 +87,6 @@ export default function Map() {
       .then((resp) => resp.json())
       .then(function (dat) {
         data = dat;
-        // console.log(dat);
       })
       .catch(function (error) {
         console.log(error);

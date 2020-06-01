@@ -1,13 +1,12 @@
-import React from "react";
-import Link from "@material-ui/core/Link";
-import Breadcrumbs from "@material-ui/core/Breadcrumbs";
-import SpeedDial from "@material-ui/lab/SpeedDial";
-import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
-import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
-import { useSelector } from "react-redux";
-import classNames from "classnames";
-import styles from "./styles.module.css";
-import paths from "routes/paths";
+import React from 'react';
+import Link from '@material-ui/core/Link';
+import SpeedDial from '@material-ui/lab/SpeedDial';
+import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
+import SpeedDialAction from '@material-ui/lab/SpeedDialAction'
+import { useSelector } from 'react-redux'
+import classNames from 'classnames';
+import styles from './styles.module.css';
+import paths from 'routes/paths';
 
 const status = {
   positive: { name: "Tested Positive", color: "red" },
@@ -19,12 +18,8 @@ const status = {
 };
 
 const actions = [
-  { name: " ADD MY STORY ", href: paths.myStory, classes: "MuiFab-extended" },
-  {
-    name: " DAILY ASSESSMENT ",
-    href: paths.symptoms,
-    classes: classNames("MuiFab-extended assessment", styles.assessment),
-  },
+    { name: ' ADD MY STORY ', href: paths.myStory, classes: "MuiFab-extended" },
+    { name: ' DAILY ASSESSMENT ', href: paths.feeling, classes: classNames("MuiFab-extended assessment", styles.assessment) },
 ];
 
 function Dashboard(props) {
@@ -76,11 +71,6 @@ function Dashboard(props) {
 
   return (
     <div className="Dashboard">
-      <Breadcrumbs aria-label="breadcrumb" className="breadcrumbs">
-        <Link color="inherit">myTrials</Link>
-        <Link color="inherit">myDonations</Link>
-        <Link color="inherit">myRecords</Link>
-      </Breadcrumbs>
       <div className="row status-wrapper">
         <div className="col">
           <div className="row">
@@ -125,8 +115,8 @@ function Dashboard(props) {
             Download HomeBound
           </Link>
           {story &&
-            story.location == "Mexico" &&
-            story.citizenship == "United States of America" && (
+            story.location === "Mexico" &&
+            story.citizenship === "United States of America" && (
               <Link
                 href="https://mx.usembassy.gov/u-s-citizen-services/covid-19-information/"
                 style={{ color: "#FFFFFF" }}

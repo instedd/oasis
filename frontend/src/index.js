@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Router, Route, Switch, Link } from "react-router-dom";
-// pick a date util library
 import MomentUtils from "@date-io/moment";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { Provider } from "react-redux";
@@ -21,6 +20,7 @@ import Dashboard from "routes/Dashboard";
 import HealthMeasurements from "routes/HealthMeasurements";
 import SignUp from "routes/SignUp";
 import MyStory from "routes/MyStory";
+import Feeling from 'routes/Feeling';
 import paths from "routes/paths";
 
 import Map from "components/Map";
@@ -28,6 +28,7 @@ import * as serviceWorker from "./serviceWorker";
 
 import history from "./history";
 import styles from "styles.module.css";
+
 
 ReactDOM.render(
   <React.StrictMode>
@@ -58,6 +59,7 @@ ReactDOM.render(
                 />
                 <Route path={paths.signUp} component={SignUp} />
                 <Route path={paths.myStory} component={MyStory} />
+                <Route path={paths.feeling} component={Feeling} />
               </Switch>
             </main>
           </Router>
@@ -68,7 +70,4 @@ ReactDOM.render(
   document.getElementById("root")
 );
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();

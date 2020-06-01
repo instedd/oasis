@@ -36,8 +36,8 @@ export default function Pop({ label, title, texts, listIndex, linkIndex }) {
           horizontal: "center",
         }}
         transformOrigin={{
-          vertical: "center",
-          horizontal: "center",
+          vertical: 'bottom',
+          horizontal: 'center',
         }}
         onClose={handleClose}
         aria-live="polite"
