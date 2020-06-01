@@ -1,4 +1,14 @@
-import { Checkbox, Fab, FormControl, Input, InputLabel, ListItemText, MenuItem, Select, TextField } from "@material-ui/core";
+import {
+  Checkbox,
+  Fab,
+  FormControl,
+  Input,
+  InputLabel,
+  ListItemText,
+  MenuItem,
+  Select,
+  TextField,
+} from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
@@ -22,7 +32,7 @@ const travelText = Text["Recent Travel"].texts;
 const travelListIndex = Text["Recent Travel"].listIndex;
 const travelLinkIndex = Text["Recent Travel"].linkIndex;
 const professions = Text["Profession"];
-const medicalProblems = Text["Medical Problems"];
+const medicalConditions = Text["Medical Conditions"];
 
 const ethnicGroups = [
   {
@@ -49,7 +59,7 @@ function CriticalQuestions(props) {
     location: "",
     citizenship: "",
     profession: "",
-    selectedMedicalProblems: [],
+    selectedMedicalConditions: [],
     sicknessStart: null,
     sicknessEnd: null,
   });
@@ -87,7 +97,7 @@ function CriticalQuestions(props) {
       profession: formValues.profession,
       sick: sick,
       tested: tested,
-      medicalProblems: formValues.selectedMedicalProblems,
+      medicalConditions: formValues.selectedMedicalConditions,
       sicknessStart: formValues.sicknessStart,
       sicknessEnd: formValues.sicknessEnd,
       currentLocation: formValues.location,
@@ -264,19 +274,23 @@ function CriticalQuestions(props) {
             ))}
           </TextField>
           <FormControl>
-            <InputLabel id="medical-problems">Medical Problems</InputLabel>
+            <InputLabel id="medical-conditions">Medical Conditions</InputLabel>
             <Select
-              labelId="medical-problems"
-              id="medical-problems-checkbox"
+              labelId="medical-conditions"
+              id="medical-conditions-checkbox"
               multiple
-              value={formValues.selectedMedicalProblems}
+              value={formValues.selectedMedicalConditions}
               input={<Input />}
-              onChange={handleFormChange("selectedMedicalProblems")}
+              onChange={handleFormChange("selectedMedicalConditions")}
               renderValue={(selected) => selected.join(", ")}
             >
-              {medicalProblems.map((name) => (
+              {medicalConditions.map((name) => (
                 <MenuItem key={name} value={name}>
-                  <Checkbox checked={formValues.selectedMedicalProblems.indexOf(name) > -1} />
+                  <Checkbox
+                    checked={
+                      formValues.selectedMedicalConditions.indexOf(name) > -1
+                    }
+                  />
                   <ListItemText
                     primary={name}
                     className={classNames(
