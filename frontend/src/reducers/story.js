@@ -28,11 +28,7 @@ const story = (state = initialState, action) => {
       return {
         ...state,
         story: {
-          id: savedStory.id,
-          citizenship: savedStory.countryOfOrigin,
-          location: savedStory.currentLocation,
-          age: savedStory.age,
-          sex: savedStory.sex,
+          ...savedStory,
         },
       };
     case HANDLE_SICK:

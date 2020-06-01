@@ -24,3 +24,25 @@
   margin-right: 10px;
 }
 
+
+.wrapper {
+    left: 5%;
+    width: 90%;
+    position: absolute;
+    bottom: 5%;
+}
+
+.wrapper a {
+    font-size: 18px;
+    line-height: 26px;
+    text-decoration: underline;
+    color: white;
+}
+  
+.wrapper div {
+    font-size: 18px;
+    line-height: 26px;
+    width: fit-content;
+    color: gray;
+}
+  

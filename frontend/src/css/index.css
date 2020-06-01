@@ -79,18 +79,6 @@ a, a:link, a:visited, a:hover, a:active {
   line-height: 1.5rem;
 }
 
-.suggestions-wrapper a {
-  font-size: 18px;
-  line-height: 26px;
-  text-decoration: underline;
-}
-
-.suggestions-wrapper div {
-  font-size: 18px;
-  line-height: 26px;
-  width: fit-content;
-}
-
 .col {
   display: flex;
   flex-direction: column;
@@ -107,13 +95,6 @@ a, a:link, a:visited, a:hover, a:active {
   position: absolute;
   top: 10%;
   left: 5%
-}
-
-.suggestions-wrapper {
-  left: 5%;
-  width: 90%;
-  position: absolute;
-  bottom: 5%;
 }
 
 .status-item {
