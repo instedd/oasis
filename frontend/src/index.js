@@ -1,33 +1,28 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { Router, Route, Switch, Link } from "react-router-dom";
-// pick a date util library
 import MomentUtils from "@date-io/moment";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
-import { Provider } from "react-redux";
-import { PersistGate } from "redux-persist/integration/react";
-
-import { store, persistor } from "./redux";
+import Map from "components/Map";
 import "css/index.css";
-
-import Home from "routes/Home";
-import SignIn from "routes/SignIn";
-import Onboard from "routes/Onboard";
+import React from "react";
+import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+import { Link, Route, Router, Switch } from "react-router-dom";
+import { PersistGate } from "redux-persist/integration/react";
 import Alert from "routes/Alert";
-import CriticalQuestions from "routes/CriticalQuestions";
-import Symptoms from "routes/Symptoms";
 import Confirm from "routes/Confirm";
+import CriticalQuestions from "routes/CriticalQuestions";
 import Dashboard from "routes/Dashboard";
 import HealthMeasurements from "routes/HealthMeasurements";
-import SignUp from "routes/SignUp";
+import Home from "routes/Home";
 import MyStory from "routes/MyStory";
+import Onboard from "routes/Onboard";
 import paths from "routes/paths";
-
-import Map from "components/Map";
-import * as serviceWorker from "./serviceWorker";
-
-import history from "./history";
+import SignIn from "routes/SignIn";
+import SignUp from "routes/SignUp";
+import Symptoms from "routes/Symptoms";
 import styles from "styles.module.css";
+import history from "./history";
+import { persistor, store } from "./redux";
+import * as serviceWorker from "./serviceWorker";
 
 ReactDOM.render(
   <React.StrictMode>
@@ -68,7 +63,4 @@ ReactDOM.render(
   document.getElementById("root")
 );
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();

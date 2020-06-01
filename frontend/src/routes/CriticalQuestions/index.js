@@ -1,14 +1,4 @@
-import {
-  Checkbox,
-  Fab,
-  FormControl,
-  Input,
-  InputLabel,
-  ListItemText,
-  MenuItem,
-  Select,
-  TextField,
-} from "@material-ui/core";
+import { Checkbox, Fab, FormControl, Input, InputLabel, ListItemText, MenuItem, Select, TextField } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
@@ -286,11 +276,7 @@ function CriticalQuestions(props) {
             >
               {medicalProblems.map((name) => (
                 <MenuItem key={name} value={name}>
-                  <Checkbox
-                    checked={
-                      formValues.selectedMedicalProblems.indexOf(name) > -1
-                    }
-                  />
+                  <Checkbox checked={formValues.selectedMedicalProblems.indexOf(name) > -1} />
                   <ListItemText
                     primary={name}
                     className={classNames(

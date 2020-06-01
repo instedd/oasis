@@ -1,24 +1,17 @@
-import React, { useEffect, useState } from "react";
-import {
-  Checkbox,
-  Fab,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  TextField,
-} from "@material-ui/core";
+import { Checkbox, Fab, FormControl, FormControlLabel, FormGroup, TextField } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import CheckCircle from "@material-ui/icons/CheckCircle";
 import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
-import { useSelector, useDispatch } from "react-redux";
-import Wrapper from "components/Wrapper";
-import styles from "./styles.module.css";
 import { fetchSymptoms, submitSymptoms } from "actions/symptoms";
-import paths from "routes/paths";
 import { SUCCESS } from "actions/types";
+import Wrapper from "components/Wrapper";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import paths from "routes/paths";
 import { sicknessStatus } from "routes/types";
+import styles from "./styles.module.css";
 
 const useStyles = makeStyles((theme) => ({
   root: {

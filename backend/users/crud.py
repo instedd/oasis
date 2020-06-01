@@ -1,8 +1,9 @@
-import bcrypt
 import os
+
 from sqlalchemy.orm import Session
 
-from database import get_db
+import bcrypt
+
 from . import models, schemas
 
 

@@ -5,8 +5,8 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from database import Base
-from users import models as user_models
 from stories import models as story_models
+from users import models as user_models
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -14,7 +14,9 @@ config = context.config
 
 config.set_main_option(
     "sqlalchemy.url",
-    f"mysql+pymysql://{os.environ['DATABASE_USER']}:{os.environ['DATABASE_PASSWORD']}@{os.environ['DATABASE_HOST']}/{os.environ['DATABASE_NAME']}",
+    f"mysql+pymysql://{os.environ['DATABASE_USER']}"
+    f":{os.environ['DATABASE_PASSWORD']}"
+    f"@{os.environ['DATABASE_HOST']}/{os.environ['DATABASE_NAME']}",
 )
 
 # Interpret the config file for Python logging.

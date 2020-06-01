@@ -3,46 +3,49 @@
   flex-direction: column;
   align-items: center;
   width: 100vw;
-  max-height: 65%;
+  max-height: calc(80% - 100px);
   overflow: auto;
   top: 15%;
   justify-content: normal;
 }
 
-
-div::before{
+div::before {
   border-bottom: 1px solid white !important;
 }
-.grid-3 > div{
-  width:calc((90% - 8px*2));
-  margin:8px;
+
+.grid-3>div {
+  width: calc((90% - 8px*2));
+  margin: 8px;
   text-align: left;
 }
 
-.grid-1 > div{
-  width:calc((90% - 8px*6)/3);
-  margin:8px;
+.grid-1>div {
+  width: calc((90% - 8px*6)/3);
+  margin: 8px;
   text-align: left;
 }
 
-.grid-2 > div{
-  width:calc((90% - 8px*4)/2);;
-  margin:8px;
+.grid-2>div {
+  width: calc((90% - 8px*4)/2);
+  ;
+  margin: 8px;
   text-align: left;
 }
 
-.root label{
+.root label {
   color: white;
   width: max-content;
 }
-.root > div{
+
+.root>div {
   width: 100%;
 }
-.root div{
-  color:white;
+
+.root div {
+  color: white;
 }
 
-.root .MuiFormControl-root{
+.root .MuiFormControl-root {
   text-align: left;
 }
 
@@ -55,3 +58,19 @@ div::before{
   max-width: calc(85% - 8px);
 }
 
+.location-wrapper {
+  margin-top: 10px;
+  position: relative;
+}
+
+.location-wrapper span {
+  position: absolute;
+  left: calc(5% + 8px);
+  padding-top: 5px
+}
+
+.location-wrapper p{
+  font-size:14px;
+  color:grey
+
+}

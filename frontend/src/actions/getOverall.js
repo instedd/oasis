@@ -1,10 +1,9 @@
-import { GET_OVERALL } from "./types";
 import axios from "axios";
+import { GET_OVERALL } from "./types";
 // axios.defaults.withCredentials = true
 
 export function getOverall() {
   return function (dispatch) {
-    console.log("hi");
     axios
       .get("https://covid19api.herokuapp.com/latest")
       .then((res) => {

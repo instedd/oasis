@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import mapboxgl from "mapbox-gl";
 import chroma from "chroma-js";
 import classNames from "classnames";
-
+import mapboxgl from "mapbox-gl";
+import React, { useEffect, useState } from "react";
 import styles from "./styles.module.css";
+
 
 mapboxgl.accessToken =
   "pk.eyJ1Ijoic3RlNTE5IiwiYSI6ImNrOHc1aHlvYTB0N2ozam51MHFiazE3bmcifQ.AHtFuA-pAqau_AJIy-hzOg";
@@ -87,7 +87,6 @@ export default function Map() {
       .then((resp) => resp.json())
       .then(function (dat) {
         data = dat;
-        // console.log(dat);
       })
       .catch(function (error) {
         console.log(error);

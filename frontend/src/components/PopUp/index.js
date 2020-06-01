@@ -1,6 +1,6 @@
-import React from "react";
-import Popover from "@material-ui/core/Popover";
 import Button from "@material-ui/core/Button";
+import Popover from "@material-ui/core/Popover";
+import React from "react";
 
 export default function Pop({ label, title, texts, listIndex, linkIndex }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
