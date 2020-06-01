@@ -1,17 +1,17 @@
+import React, { useEffect, useState } from 'react'
 import { Checkbox, Fab, FormControl, FormControlLabel, FormGroup, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import CheckCircle from '@material-ui/icons/CheckCircle';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import { useSelector, useDispatch } from 'react-redux';
 import Wrapper from 'components/Wrapper';
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { sicknessStatus } from 'routes/types';
-import Text from 'text.json';
 import styles from './styles.module.css';
-
-const symptoms = Text["Symptoms"]
+import { fetchSymptoms, submitSymptoms } from 'actions/symptoms';
+import paths from 'routes/paths';
+import { SUCCESS } from 'actions/types';
+import { sicknessStatus } from 'routes/types';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -54,22 +54,47 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function Symptoms(props) {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(fetchSymptoms());
+    }, [dispatch]);
+    
+    const symptoms = useSelector(state => state.symptoms);
+    const [selectedSymptoms, setSelectedSymptoms] = useState([]);
+
+    const navigate = (path) => () => 
+        dispatch(submitSymptoms(selectedSymptoms, path))
+
+    const toggleSymptom = (id) => {
+        setSelectedSymptoms(
+            selectedSymptoms.includes(id)
+                ? selectedSymptoms.filter(symptom => symptom !== id)
+                : selectedSymptoms.concat([id])
+        );
+    }
+
     const classes = useStyles();
-    const sick = useSelector(state => state.story.sick)
-    const subtitle = sick === sicknessStatus.RECOVERED ? "When you were sick, which of the following symptoms did you have?" : "Are you having now, or did you recently have:"
+    const isSick = useSelector(state => state.story.sick)
+    const subtitle = isSick === sicknessStatus.RECOVERED
+        ? "When you were sick, which of the following symptoms did you have?"
+        : "Are you having now, or did you recently have:"
     return (
         <Wrapper>
             <h1 className="title"> MY COVID STORY</h1>
+            {(
+                symptoms.status.type !== SUCCESS && symptoms.status.detail
+            )}
             <p className={styles.subtitle}>{subtitle}</p>
             <FormControl className={classes.root} component="fieldset">
                 <FormGroup className={classes.group} aria-label="position" row>
-                    {symptoms.map((option) => (
+                    {symptoms.all.map(({id, name}) => (
                         <FormControlLabel
-                            value={option}
+                            value={id}
                             control={<Checkbox style={{ color: "white" }} icon={<RadioButtonUncheckedIcon style={{ fontSize: 30 }} />} checkedIcon={<CheckCircle style={{ fontSize: 30 }} />} />}
-                            label={option}
-                            key={option}
+                            label={name}
+                            key={`symptom-${id}`}
                             labelPlacement="top"
+                            onClick={() => toggleSymptom(id)}
                         />
                     ))}
 
@@ -86,10 +111,10 @@ export default function Symptoms(props) {
                     }}
                 />
             </div>
-            <Fab style={{ background: "#EA2027" }} aria-label="Go to next page" onClick={() => props.history.push("/measurements")} size="medium" className="fab next-btn">
+            <Fab style={{ background: "#EA2027" }} aria-label="Go to next page" onClick={navigate(paths.healthMeasurements)} size="medium" className="fab next-btn">
                 <ArrowRightIcon />
             </Fab>
-            <Fab style={{ background: "#9206FF" }} aria-label="Go to previous page" onClick={() => props.history.push("/questions")} size="medium" className="fab back-btn">
+            <Fab style={{ background: "#9206FF" }} aria-label="Go to previous page" onClick={navigate(paths.criticalQuestions)} size="medium" className="fab back-btn">
                 <ArrowLeftIcon />
             </Fab>
         </Wrapper>

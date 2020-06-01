@@ -6,9 +6,10 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 import jwt
-from database.database import get_db
+from database import get_db
 from jwt import PyJWTError
-from users import crud
+from users.crud import get_user_by_email
+from stories.crud import get_story
 
 from . import schemas
 
@@ -35,8 +36,7 @@ async def get_token_contents(token: str = Depends(oauth2_scheme)):
           return schemas.UserToken(email=email)
         if story_id:
           return schemas.StoryToken(story_id=story_id)
-        if not (story_id or email):
-          return None
+        return None
     except PyJWTError:
         return None
     return token_data
@@ -51,7 +51,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     token_data = get_token_contents(token=token)
     if token_data is None:
         raise credentials_exception
-    user = crud.get_user_by_email(get_db, email=token_data.email)
+    user = get_user_by_email(get_db, email=token_data.email)
     if user is None:
         raise credentials_exception
     return user
@@ -63,8 +63,12 @@ async def get_current_story(token: str = Depends(oauth2_scheme), db: Session = D
     token_data = await get_token_contents(token=token)
     if token_data is None:
         raise credentials_exception
-    user = get_user_by_email(db, email=token_data.email)
-    story = get_story(db, story_id=token_data.story_id) if token_data.story_id else None
+    user = None
+    story = None
+    if isinstance(token_data, schemas.UserToken):
+        user = get_user_by_email(db, email=token_data.email)
+    if isinstance(token_data, schemas.StoryToken):
+        story = get_story(db, story_id=token_data.story_id) if token_data.story_id else None
     if not story:
         if not (user and user.story): # no story nor user match the token data
             raise HTTPException(status_code=404, detail="Story not found")

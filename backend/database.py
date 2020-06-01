@@ -1,5 +1,7 @@
+import datetime
 import os
-from sqlalchemy import create_engine
+
+from sqlalchemy import create_engine, Column, DateTime, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -15,5 +17,11 @@ def get_db():
     finally:
         db.close()
 
-Base = declarative_base()
+BaseModel = declarative_base()
     
+class Base(BaseModel):
+    __abstract__ = True
+
+    id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)

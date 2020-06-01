@@ -1,0 +1,19 @@
+{
+  "symptoms": [
+    { "name": "Fever/Chills" },
+    { "name": "Cough" },
+    { "name": "Shortness of breath" },
+    { "name": "Chest pressure/pain" },
+    { "name": "Fatigue/exhaustion" },
+    { "name": "Muscle pain" },
+    { "name": "Headache" },
+    { "name": "Sore throat" },
+    { "name": "Nasal congestion" },
+    { "name": "Sneezing" },
+    { "name": "Loss of taste/smell" },
+    { "name": "Dizziness" },
+    { "name": "Nausea" },
+    { "name": "Vomiting" },
+    { "name": "Diarrhea" }
+  ]
+}

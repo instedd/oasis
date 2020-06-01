@@ -24,7 +24,7 @@ export const submitStory = (dto) => async (dispatch, getState) => {
         type: SIGN_IN,
         payload: {
             status: {type: SUCCESS},
-            token: response.token,
+            token: response && response.token,
         }
     });
     
