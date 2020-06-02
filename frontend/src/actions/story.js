@@ -1,3 +1,4 @@
+import { sicknessStatus, testStatus } from "routes/types";
 import api from "utils";
 import history from "../history";
 import {
@@ -8,7 +9,6 @@ import {
   SIGN_IN,
   SUCCESS,
 } from "./types";
-import { sicknessStatus, testStatus } from "routes/types";
 
 export const submitStory = (dto) => async (dispatch, getState) => {
   const { token } = getState().auth;
@@ -60,7 +60,7 @@ export function handleTested(option) {
 
 export const getStorySuggestions = (story) => {
   const suggestions = [];
-  if (story.age > 64 || story.medicalProblems.length)
+  if (story.age > 64 || story.medicalConditions.length)
     suggestions.push({
       site:
         "https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/people-at-higher-risk.html",

@@ -101,12 +101,17 @@
         "Coronavirus.gov",
         "Who.net/covid-19"
     ],
-    "Medical Problems": [
-        "Cancer",
+    "Medical Conditions": [
+        "Asthma (moderate-to-severe)",
+        "Chronic kidney disease being treated with dialysis",
+        "Chronic lung disease",
         "Diabetes",
-        "Heart disease",
-        "Hypertension",
-        "Smoker",
-        "Take medications that affect your immune system"
+        "Hemoglobin Disorder",
+        "Immunocompromised",
+        "Liver disease",
+        "Serious heart condition",
+        "Severe obesity",
+        "Live in a nursing home or long-term care facility",
+        "Active Smoker"
     ]
 }

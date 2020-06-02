@@ -1,8 +1,8 @@
+from datetime import date
 from enum import Enum
 from typing import List
 
 from pydantic import BaseModel
-from datetime import timedelta, date
 
 from users.schemas import User
 
@@ -31,7 +31,7 @@ class StoryCreate(BaseModel):
     ethnicity: str
     country_of_origin: str
     profession: str
-    medical_problems: List[str] = []
+    medical_conditions: List[str] = []
     sick: MedicalSituation
     tested: TestSituation
     current_location: str

@@ -1,4 +1,14 @@
-import { Checkbox, Fab, FormControl, Input, InputLabel, ListItemText, MenuItem, Select, TextField } from "@material-ui/core";
+import {
+  Checkbox,
+  Fab,
+  FormControl,
+  Input,
+  InputLabel,
+  ListItemText,
+  MenuItem,
+  Select,
+  TextField,
+} from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
@@ -22,7 +32,7 @@ const travelText = Text["Recent Travel"].texts;
 const travelListIndex = Text["Recent Travel"].listIndex;
 const travelLinkIndex = Text["Recent Travel"].linkIndex;
 const professions = Text["Profession"];
-const medicalProblems = Text["Medical Problems"];
+const medicalConditions = Text["Medical Conditions"];
 
 const ethnicGroups = [
   {
@@ -46,10 +56,10 @@ function CriticalQuestions(props) {
     age: null,
     sex: "",
     ethnicity: "",
-    location: "",
-    citizenship: "",
+    currentLocation: "",
+    countryOfOrigin: "",
     profession: "",
-    selectedMedicalProblems: [],
+    selectedMedicalConditions: [],
     sicknessStart: null,
     sicknessEnd: null,
   });
@@ -83,14 +93,14 @@ function CriticalQuestions(props) {
       age: formValues.age,
       sex: formValues.sex,
       ethnicity: formValues.ethnicity,
-      countryOfOrigin: formValues.citizenship,
+      countryOfOrigin: formValues.countryOfOrigin,
       profession: formValues.profession,
       sick: sick,
       tested: tested,
-      medicalProblems: formValues.selectedMedicalProblems,
+      medicalConditions: formValues.selectedMedicalConditions,
       sicknessStart: formValues.sicknessStart,
       sicknessEnd: formValues.sicknessEnd,
-      currentLocation: formValues.location,
+      currentLocation: formValues.currentLocation,
     };
     const dto = { story, nextPage };
     dispatch(submitStory(dto));
@@ -139,7 +149,7 @@ function CriticalQuestions(props) {
     locations.push(
       <div key={i}>
         <div className={classNames("grid-3", styles["grid-3"])}>
-          <TextField label="Location" />
+          <TextField label="Current location" />
         </div>
         <div className={classNames("grid-3", styles["grid-3"])}>
           <DatePicker
@@ -227,9 +237,9 @@ function CriticalQuestions(props) {
         <div className={classNames("grid-2", styles["grid-2"])}>
           <TextField
             select
-            label="Current Location"
-            value={formValues.location}
-            onChange={handleFormChange("location")}
+            label="Current location"
+            value={formValues.currentLocation}
+            onChange={handleFormChange("currentLocation")}
           >
             {countries.map((option) => (
               <MenuItem key={option.name} value={option.name}>
@@ -240,8 +250,8 @@ function CriticalQuestions(props) {
           <TextField
             select
             label="Citizenship"
-            value={formValues.citizenship}
-            onChange={handleFormChange("citizenship")}
+            value={formValues.countryOfOrigin}
+            onChange={handleFormChange("countryOfOrigin")}
           >
             {countries.map((option) => (
               <MenuItem key={option.name} value={option.name}>
@@ -264,19 +274,23 @@ function CriticalQuestions(props) {
             ))}
           </TextField>
           <FormControl>
-            <InputLabel id="medical-problems">Medical Problems</InputLabel>
+            <InputLabel id="medical-conditions">Medical Conditions</InputLabel>
             <Select
-              labelId="medical-problems"
-              id="medical-problems-checkbox"
+              labelId="medical-conditions"
+              id="medical-conditions-checkbox"
               multiple
-              value={formValues.selectedMedicalProblems}
+              value={formValues.selectedMedicalConditions}
               input={<Input />}
-              onChange={handleFormChange("selectedMedicalProblems")}
+              onChange={handleFormChange("selectedMedicalConditions")}
               renderValue={(selected) => selected.join(", ")}
             >
-              {medicalProblems.map((name) => (
+              {medicalConditions.map((name) => (
                 <MenuItem key={name} value={name}>
-                  <Checkbox checked={formValues.selectedMedicalProblems.indexOf(name) > -1} />
+                  <Checkbox
+                    checked={
+                      formValues.selectedMedicalConditions.indexOf(name) > -1
+                    }
+                  />
                   <ListItemText
                     primary={name}
                     className={classNames(

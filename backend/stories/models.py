@@ -1,6 +1,6 @@
 import json
 
-from sqlalchemy import JSON, Column, Integer, String, ForeignKey
+from sqlalchemy import JSON, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -16,7 +16,7 @@ class Story(Base):
     profession = Column(String(128))
     sick = Column(String(64))
     tested = Column(String(64))
-    _medical_problems = Column(JSON)
+    _medical_conditions = Column(JSON)
     sickness_start = Column(String(64))
     sickness_end = Column(String(64))
     current_location = Column(String(128))
@@ -24,12 +24,12 @@ class Story(Base):
     symptoms = relationship("Symptom", secondary="story_symptoms")
 
     @property
-    def medical_problems(self):
-        return json.loads(self._medical_problems)
+    def medical_conditions(self):
+        return json.loads(self._medical_conditions)
 
-    @medical_problems.setter
-    def medical_problems(self, value):
-        self._medical_problems = json.dumps(value)
+    @medical_conditions.setter
+    def medical_conditions(self, value):
+        self._medical_conditions = json.dumps(value)
 
 
 class StorySymptom(Base):
