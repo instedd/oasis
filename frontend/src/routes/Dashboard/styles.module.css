@@ -1,3 +1,9 @@
+.root {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .assessment {
     color:white !important;
     background-color: var(--primary) !important;
@@ -23,7 +29,6 @@
   display: inline-block;
   margin-right: 10px;
 }
-
 
 .wrapper {
     left: 5%;

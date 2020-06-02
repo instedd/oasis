@@ -1,8 +1,7 @@
 import { ERROR } from "actions/types";
 import paths from "routes/paths";
 import history from "./history";
-import { store } from "./redux";
-
+import store from "store/configureStore";
 
 const api = async (path, payload = {}, explicitBody = false) => {
   const { auth } = await store.getState();

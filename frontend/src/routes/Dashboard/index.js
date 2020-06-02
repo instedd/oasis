@@ -4,14 +4,15 @@ import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
 import classNames from "classnames";
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import paths from "routes/paths";
 import { sicknessStatus, testStatus } from "routes/types";
 import styles from "./styles.module.css";
-import { getStorySuggestions } from "actions/story";
+import { getStorySuggestions, fetchStory } from "actions/story";
+import { LOADING } from "actions/types";
 
-const status = {
+const statusMapping = {
   [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
   [testStatus.NEGATIVE]: { name: "Tested Negative", color: "purple" },
   [testStatus.NOT_TESTED]: { name: "Not Tested", color: "blue" },
@@ -21,9 +22,9 @@ const status = {
 };
 
 const actions = [
-  { name: " ADD MY STORY ", href: paths.myStory, classes: "MuiFab-extended" },
+  { name: "ADD MY STORY", href: paths.myStory, classes: "MuiFab-extended" },
   {
-    name: " DAILY ASSESSMENT ",
+    name: "DAILY ASSESSMENT",
     href: paths.symptoms,
     classes: classNames("MuiFab-extended assessment", styles.assessment),
   },
@@ -31,10 +32,12 @@ const actions = [
 
 function Dashboard(props) {
   const [open, setOpen] = React.useState(false);
+  const { story, status } = useSelector((state) => state.story);
+  const dispatch = useDispatch();
 
-  const sick = useSelector((state) => state.story.sick);
-  const tested = useSelector((state) => state.story.tested);
-  const story = useSelector((state) => state.story.story);
+  useEffect(() => {
+    if (!story) dispatch(fetchStory());
+  }, [dispatch, story, status]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -44,25 +47,22 @@ function Dashboard(props) {
     setOpen(false);
   };
 
-  const [data, setData] = React.useState({
+  const [data, setData] = useState({
     confirmed: null,
     deaths: null,
     recovered: null,
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetch("https://covid19api.herokuapp.com/latest")
       .then((res) => res.json())
-      .then(
-        (result) => {
-          setData(result);
-        },
-        (error) => {}
-      );
+      .then((result) => setData(result));
   }, []);
 
-  return (
-    <div className="Dashboard">
+  return status.type === LOADING || !story ? (
+    <div className={styles.root}>{status.detail}</div>
+  ) : (
+    <>
       <Breadcrumbs aria-label="breadcrumb" className="breadcrumbs">
         <Link color="inherit">myTrials</Link>
         <Link color="inherit">myDonations</Link>
@@ -78,16 +78,16 @@ function Dashboard(props) {
             <div className="row status-item">
               <span
                 className={styles.dot}
-                style={{ background: status[sick].color }}
-              ></span>
-              {status[sick].name}
+                style={{ background: statusMapping[story.sick].color }}
+              />
+              {statusMapping[story.sick].name}
             </div>
             <div className="row status-item">
               <span
                 className={styles.dot}
-                style={{ background: status[tested].color }}
-              ></span>
-              {status[tested].name}
+                style={{ background: statusMapping[story.tested].color }}
+              />
+              {statusMapping[story.tested].name}
             </div>
             <div></div>
           </div>
@@ -119,7 +119,7 @@ function Dashboard(props) {
         </div>
         <div className="col">
           <SpeedDial
-            ariaLabel="SpeedDial tooltip example"
+            ariaLabel="Daily actions"
             className={classNames("speeddial", styles.speeddial)}
             icon={<SpeedDialIcon />}
             onClose={handleClose}
@@ -138,7 +138,7 @@ function Dashboard(props) {
           </SpeedDial>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 export default Dashboard;

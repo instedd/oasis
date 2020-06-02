@@ -6,7 +6,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { Link, Route, Router, Switch } from "react-router-dom";
-import { PersistGate } from "redux-persist/integration/react";
 import Alert from "routes/Alert";
 import Confirm from "routes/Confirm";
 import CriticalQuestions from "routes/CriticalQuestions";
@@ -21,9 +20,10 @@ import SignUp from "routes/SignUp";
 import Symptoms from "routes/Symptoms";
 import styles from "styles.module.css";
 import history from "./history";
-import { store } from "./store/configureStore";
+import store from "store/configureStore";
 import * as serviceWorker from "./serviceWorker";
-
+import { saveState } from "store/localStorage";
+import { throttle } from "lodash";
 
 store.subscribe(
   throttle(() => {
@@ -33,12 +33,13 @@ store.subscribe(
   }, 1000)
 );
 
-
 ReactDOM.render(
   <Provider store={store}>
     <MuiPickersUtilsProvider utils={MomentUtils}>
       <Router history={history}>
-        <Link to={paths.home} className={styles.header}>OASIS</Link>
+        <Link to={paths.home} className={styles.header}>
+          OASIS
+        </Link>
         <Map></Map>
         <main className={styles.root}>
           <Switch>
@@ -46,11 +47,17 @@ ReactDOM.render(
             <Route path={paths.signIn} component={SignIn} />
             <Route path={paths.onboard} component={Onboard} />
             <Route path={paths.alert} component={Alert} />
-            <Route path={paths.criticalQuestions} component={CriticalQuestions} />
+            <Route
+              path={paths.criticalQuestions}
+              component={CriticalQuestions}
+            />
             <Route path={paths.symptoms} component={Symptoms} />
             <Route path={paths.dashboard} component={Dashboard} />
             <Route path={paths.confirm} component={Confirm} />
-            <Route path={paths.healthMeasurements} component={HealthMeasurements} />
+            <Route
+              path={paths.healthMeasurements}
+              component={HealthMeasurements}
+            />
             <Route path={paths.signUp} component={SignUp} />
             <Route path={paths.myStory} component={MyStory} />
           </Switch>
@@ -58,7 +65,7 @@ ReactDOM.render(
       </Router>
     </MuiPickersUtilsProvider>
   </Provider>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 serviceWorker.unregister();

@@ -1,10 +1,10 @@
 from typing import List
 
-from fastapi import Depends, FastAPI, APIRouter, HTTPException, Header, status
+from fastapi import Depends, APIRouter, HTTPException, Header, status
 from sqlalchemy.orm import Session
 from database import get_db
 from auth import main
-from stories import crud, models, schemas
+from stories import crud, schemas
 
 router = APIRouter()
 
@@ -32,12 +32,10 @@ async def create_story(
     return crud.create_story(db=db, story=story, token_data=token_data)
 
 
-@router.get("/{story_id}", response_model=schemas.Story)
+@router.get("/", response_model=schemas.Story)
 def read_story(
-    story_id: int,
     current_story: schemas.Story = Depends(main.get_current_story),
 ):
-    check_permissions(current_story, story_id)
     return current_story
 
 
