@@ -46,7 +46,6 @@ export const signIn = (loginDTO) => async (dispatch) => {
     type: SIGN_IN,
     payload: {
       status: response.error || { type: SUCCESS },
-      user: (!response.error && { token: response.access_token }) || null,
     },
   });
 

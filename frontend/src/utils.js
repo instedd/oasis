@@ -1,12 +1,11 @@
 import { ERROR } from "actions/types";
 import paths from "routes/paths";
 import history from "./history";
-import store from "store/configureStore";
 
 const api = async (path, payload = {}, explicitBody = false) => {
-  const { auth } = await store.getState();
   const fullPayload = {
     method: "GET",
+    credentials: "include",
     ...payload,
     headers: {
       "Content-Type": "application/json",
@@ -22,9 +21,6 @@ const api = async (path, payload = {}, explicitBody = false) => {
             : parseObjectKeys(payload.body || {}, camelToSnakeCase)
         );
   }
-
-  if (auth && auth.token)
-    fullPayload.headers["Authorization"] = `Bearer ${auth.token}`;
 
   let response = await fetch(
     `${process.env.REACT_APP_API || ""}/api/${path}`,

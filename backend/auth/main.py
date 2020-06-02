@@ -1,9 +1,13 @@
 import os
+from typing import Optional
 from datetime import datetime, timedelta
 
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.openapi.models import OAuthFlows as OAuthFlowsModel
+from fastapi.security import OAuth2
 from sqlalchemy.orm import Session
+from starlette.requests import Request
+from fastapi.security.utils import get_authorization_scheme_param
 
 import jwt
 from database import get_db
@@ -13,7 +17,60 @@ from stories.crud import get_story
 
 from . import schemas
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth")
+
+class OAuth2PasswordBearerCookie(OAuth2):
+    def __init__(
+        self,
+        tokenUrl: str,
+        scheme_name: str = None,
+        scopes: dict = None,
+        auto_error: bool = True,
+    ):
+        if not scopes:
+            scopes = {}
+        flows = OAuthFlowsModel(
+            password={"tokenUrl": tokenUrl, "scopes": scopes}
+        )
+        super().__init__(
+            flows=flows, scheme_name=scheme_name, auto_error=auto_error
+        )
+
+    async def __call__(self, request: Request) -> Optional[str]:
+        header_authorization: str = request.headers.get("Authorization")
+        cookie_authorization: str = request.cookies.get("Authorization")
+
+        header_scheme, header_param = get_authorization_scheme_param(
+            header_authorization
+        )
+        cookie_scheme, cookie_param = get_authorization_scheme_param(
+            cookie_authorization
+        )
+
+        if header_scheme.lower() == "bearer":
+            authorization = True
+            scheme = header_scheme
+            param = header_param
+
+        elif cookie_scheme.lower() == "bearer":
+            authorization = True
+            scheme = cookie_scheme
+            param = cookie_param
+
+        else:
+            authorization = False
+
+        if not authorization or scheme.lower() != "bearer":
+            if self.auto_error:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Not authenticated",
+                )
+            else:
+                return None
+        return param
+
+
+oauth2_scheme = OAuth2PasswordBearerCookie(tokenUrl="api/auth")
 
 
 def create_access_token(*, data: dict, expires_delta: timedelta = None):

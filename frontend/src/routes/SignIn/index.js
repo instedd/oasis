@@ -44,11 +44,11 @@ export default function SignIn() {
     event.preventDefault();
     dispatch(signIn(formValues));
   };
-
+  console.log(status.detail);
   return (
     <AuthPaper>
       <h1 className={styles.title}>Sign In</h1>
-      {status.detail && (
+      {status && status.detail && (
         <p
           className={classNames(
             styles.status,
