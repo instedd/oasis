@@ -1,10 +1,7 @@
-import json
 from typing import List
-from datetime import timedelta
 
 from sqlalchemy.orm import Session
 
-from auth import main
 from auth.schemas import UserToken
 from users.crud import get_user_by_email
 from users.models import User
@@ -37,7 +34,8 @@ def update_story(db: Session, story_id: int, story: schemas.StoryCreate):
 
 def create_story(db: Session, story: schemas.StoryCreate, token_data: str):
     user = None
-    # if the story was submitted with an auth token, we want to associate it to the token's user
+    # if the story was submitted with an auth token,
+    # we want to associate it to the token's user
     if token_data and isinstance(token_data, UserToken):
         user = get_user_by_email(db, email=token_data.email)
 
@@ -50,7 +48,8 @@ def create_story(db: Session, story: schemas.StoryCreate, token_data: str):
     db.commit()
     db.refresh(db_story)
 
-    # if the story was submitted with an auth token, we want to associate it to the token's user
+    # if the story was submitted with an auth token,
+    # we want to associate it to the token's user
     if user and not user.story:
         db.query(User).filter(User.id == user.id).update(
             {"story_id": db_story.id}
@@ -58,9 +57,6 @@ def create_story(db: Session, story: schemas.StoryCreate, token_data: str):
         db.commit()
         db.refresh(db_story)
 
-    db_story.token = main.create_access_token(
-        data={"story_id": db_story.id}, expires_delta=timedelta(days=5)
-    )
     return db_story
 
 

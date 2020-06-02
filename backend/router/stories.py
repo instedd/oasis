@@ -1,7 +1,12 @@
 from typing import List
+from datetime import timedelta
 
-from fastapi import Depends, APIRouter, HTTPException, Header, status
+from fastapi import Depends, APIRouter, HTTPException, status
 from sqlalchemy.orm import Session
+from starlette.responses import JSONResponse
+from fastapi.security.utils import get_authorization_scheme_param
+from starlette.requests import Request
+
 from database import get_db
 from auth import main
 from stories import crud, schemas
@@ -21,22 +26,41 @@ def check_permissions(current_story, story_id):
 @router.post("/", response_model=schemas.Story)
 async def create_story(
     story: schemas.StoryCreate,
+    request: Request,
     db: Session = Depends(get_db),
-    authorization: str = Header(None),
 ):
+    cookie_authorization: str = request.cookies.get("Authorization")
+    cookie_scheme, cookie_param = get_authorization_scheme_param(
+        cookie_authorization
+    )
     token_data = (
-        await main.get_token_contents(authorization[7:])
-        if authorization is not None
+        await main.get_token_contents(cookie_param)
+        if cookie_authorization and cookie_param
         else None
     )
-    return crud.create_story(db=db, story=story, token_data=token_data)
+    db_story = crud.create_story(db=db, story=story, token_data=token_data)
+    response = JSONResponse(
+        schemas.Story.from_orm(db_story).json(), status_code=200
+    )
+    if not cookie_authorization:
+        access_token = main.create_access_token(
+            data={"story_id": db_story.id}, expires_delta=timedelta(days=5)
+        )
+        response.set_cookie(
+            "Authorization",
+            value=f"Bearer {access_token}",
+            httponly=True,
+            max_age=1800,
+            expires=1800,
+        )
+    return response
 
 
 @router.get("/", response_model=schemas.Story)
 def read_story(
     current_story: schemas.Story = Depends(main.get_current_story),
 ):
-    return current_story
+    return schemas.Story.from_orm(current_story)
 
 
 @router.get("/{story_id}/symptoms", response_model=List[schemas.Symptom])

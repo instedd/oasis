@@ -6,14 +6,12 @@ import {
   SET_TESTED_STATUS,
   SAVED_STORY,
   SAVE_STORY_START,
-  SIGN_IN,
   SUCCESS,
   FETCH_STORY_START,
   FETCH_STORY,
 } from "./types";
 
-export const submitStory = (dto) => async (dispatch, getState) => {
-  const { token } = getState().auth;
+export const submitStory = (dto) => async (dispatch) => {
   dispatch({ type: SAVE_STORY_START });
   const { story, nextPage } = dto;
   const response = await api(`stories/`, {
@@ -28,16 +26,6 @@ export const submitStory = (dto) => async (dispatch, getState) => {
       story: (!response.error && response) || null,
     },
   });
-
-  // if there was no token identifying a user, we need to store the story auth for future data validation
-  if (!token)
-    dispatch({
-      type: SIGN_IN,
-      payload: {
-        status: { type: SUCCESS },
-        token: response && response.token,
-      },
-    });
 
   if (!response.error) history.push(nextPage);
 };

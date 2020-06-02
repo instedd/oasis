@@ -14,7 +14,7 @@ from database import get_db
 from jwt import PyJWTError
 from users.crud import get_user_by_email
 from stories.crud import get_story
-
+from stories import schemas as story_schemas
 from . import schemas
 
 
@@ -83,7 +83,7 @@ def create_access_token(*, data: dict, expires_delta: timedelta = None):
     encoded_jwt = jwt.encode(
         to_encode, os.environ["JWT_SECRET"], algorithm="HS512"
     )
-    return encoded_jwt
+    return encoded_jwt.decode("utf-8")
 
 
 async def get_token_contents(token: str = Depends(oauth2_scheme)):
@@ -93,6 +93,8 @@ async def get_token_contents(token: str = Depends(oauth2_scheme)):
         )
         email: str = payload.get("email")
         story_id: str = payload.get("story_id")
+        print(f"email is {email}")
+        print(f"story is {story_id}")
         if email:
             return schemas.UserToken(email=email)
         if story_id:
@@ -126,7 +128,9 @@ async def get_current_user(
 async def get_current_story(
     token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
+    print(f"token is {token}")
     token_data = await get_token_contents(token=token)
+    print(f"token data is {token_data}")
     if token_data is None:
         raise credentials_exception
     user = None
@@ -143,7 +147,7 @@ async def get_current_story(
         if not (user and user.story):  # no story nor user match the token data
             raise HTTPException(status_code=404, detail="Story not found")
         else:  # there's a user with a story
-            return schemas.Story.from_module(user.story)
+            return story_schemas.Story.from_orm(user.story)
     if (
         not user
     ):  # the token has no user data, so we're operating anonymously. That's ok
