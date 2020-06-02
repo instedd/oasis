@@ -14,7 +14,6 @@ from database import get_db
 from jwt import PyJWTError
 from users.crud import get_user_by_email
 from stories.crud import get_story
-from stories import schemas as story_schemas
 from . import schemas
 
 
@@ -62,7 +61,7 @@ class OAuth2PasswordBearerCookie(OAuth2):
         if not authorization or scheme.lower() != "bearer":
             if self.auto_error:
                 raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
+                    status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="Not authenticated",
                 )
             else:
@@ -73,7 +72,22 @@ class OAuth2PasswordBearerCookie(OAuth2):
 oauth2_scheme = OAuth2PasswordBearerCookie(tokenUrl="api/auth")
 
 
-def create_access_token(*, data: dict, expires_delta: timedelta = None):
+async def get_token_if_present(request: Request):
+    cookie_authorization: str = request.cookies.get("Authorization")
+    cookie_scheme, cookie_param = get_authorization_scheme_param(
+        cookie_authorization
+    )
+    token_data = (
+        await get_token_contents(cookie_param)
+        if cookie_authorization and cookie_param
+        else None
+    )
+    return token_data
+
+
+def create_access_token(
+    *, data: dict, expires_delta: timedelta = timedelta(days=5)
+):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now() + expires_delta
@@ -93,8 +107,6 @@ async def get_token_contents(token: str = Depends(oauth2_scheme)):
         )
         email: str = payload.get("email")
         story_id: str = payload.get("story_id")
-        print(f"email is {email}")
-        print(f"story is {story_id}")
         if email:
             return schemas.UserToken(email=email)
         if story_id:
@@ -128,9 +140,7 @@ async def get_current_user(
 async def get_current_story(
     token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
-    print(f"token is {token}")
     token_data = await get_token_contents(token=token)
-    print(f"token data is {token_data}")
     if token_data is None:
         raise credentials_exception
     user = None
@@ -147,14 +157,12 @@ async def get_current_story(
         if not (user and user.story):  # no story nor user match the token data
             raise HTTPException(status_code=404, detail="Story not found")
         else:  # there's a user with a story
-            return story_schemas.Story.from_orm(user.story)
-    if (
-        not user
-    ):  # the token has no user data, so we're operating anonymously. That's ok
+            return user.story
+    if not user:
+        # the token has no user data, so we're operating anonymously. That's ok
         return story
-    elif (
-        user.story.id != story.id
-    ):  # there's user data in the token but it doesn't match the story data
+    elif user.story.id != story.id:
+        # there's user data in the token but it doesn't match the story data
         raise credentials_exception
     # there's user data and it matches user data
     return story
