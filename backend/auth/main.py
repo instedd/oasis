@@ -40,10 +40,9 @@ async def get_token_contents(token: str = Depends(oauth2_scheme)):
             return schemas.UserToken(email=email)
         if story_id:
             return schemas.StoryToken(story_id=story_id)
-        return None
     except PyJWTError:
         return None
-    return token_data
+    return None
 
 
 credentials_exception = HTTPException(
@@ -53,11 +52,13 @@ credentials_exception = HTTPException(
 )
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-    token_data = get_token_contents(token=token)
+async def get_current_user(
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+):
+    token_data = await get_token_contents(token=token)
     if token_data is None:
         raise credentials_exception
-    user = get_user_by_email(get_db, email=token_data.email)
+    user = get_user_by_email(db, email=token_data.email)
     if user is None:
         raise credentials_exception
     return user
@@ -88,7 +89,7 @@ async def get_current_story(
             return schemas.Story.from_module(user.story)
     if (
         not user
-    ):  # the token has no user data, so we're operating anonymously. That's ok!
+    ):  # the token has no user data, so we're operating anonymously. That's ok
         return story
     elif (
         user.story.id != story.id

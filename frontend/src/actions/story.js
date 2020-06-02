@@ -57,6 +57,10 @@ export const setTestedStatus = (option) => (dispatch) => {
 };
 
 export const fetchStory = () => async (dispatch) => {
+  await getCurrentStory(dispatch);
+};
+
+export const getCurrentStory = async (dispatch) => {
   dispatch({ type: FETCH_STORY_START });
   const response = await api("stories/");
 
@@ -67,6 +71,7 @@ export const fetchStory = () => async (dispatch) => {
       story: (!response.error && response) || null,
     },
   });
+  return response;
 };
 
 export const getStorySuggestions = (story) => {
