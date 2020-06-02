@@ -1,8 +1,7 @@
-import { createStore, applyMiddleware, compose } from 'redux';
-import thunk from 'redux-thunk';
-import { createLogger } from 'redux-logger';
-import rootReducer from 'reducers';
-import { loadState } from './localStorage';
+import { createStore, applyMiddleware, compose } from "redux";
+import thunk from "redux-thunk";
+import { createLogger } from "redux-logger";
+import rootReducer from "reducers";
 
 function configureStore(initialState) {
   const middleware = [];
@@ -11,12 +10,12 @@ function configureStore(initialState) {
 
   // Logging Middleware
   const logger = createLogger({
-    level: 'info',
+    level: "info",
     collapsed: true,
   });
 
   // Skip redux logs in console during the tests
-  if (process.env.NODE_ENV !== 'test') {
+  if (process.env.NODE_ENV !== "test") {
     middleware.push(logger);
   }
 
@@ -31,5 +30,5 @@ function configureStore(initialState) {
   return createStore(rootReducer, initialState, enhancer);
 }
 
-const store = configureStore(loadState())
+const store = configureStore({});
 export default store;

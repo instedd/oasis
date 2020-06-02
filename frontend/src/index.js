@@ -22,16 +22,6 @@ import styles from "styles.module.css";
 import history from "./history";
 import store from "store/configureStore";
 import * as serviceWorker from "./serviceWorker";
-import { saveState } from "store/localStorage";
-import { throttle } from "lodash";
-
-store.subscribe(
-  throttle(() => {
-    saveState({
-      auth: store.getState().auth,
-    });
-  }, 1000)
-);
 
 ReactDOM.render(
   <Provider store={store}>

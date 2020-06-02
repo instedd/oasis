@@ -14,7 +14,6 @@
     "@testing-library/user-event": "^7.1.2",
     "chroma-js": "^2.1.0",
     "classnames": "^2.2.6",
-    "lodash": "^4.17.15",
     "mapbox-gl": "^1.10.0",
     "moment": "^2.24.0",
     "react": "^16.13.1",
