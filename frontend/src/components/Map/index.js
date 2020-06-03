@@ -7,7 +7,7 @@ import styles from "./styles.module.css";
 mapboxgl.accessToken =
   "pk.eyJ1Ijoic3RlNTE5IiwiYSI6ImNrOHc1aHlvYTB0N2ozam51MHFiazE3bmcifQ.AHtFuA-pAqau_AJIy-hzOg";
 
-export default function Map() {
+export default function Map({ draggable = true }) {
   const [state] = useState({
     lng: -119.6,
     lat: 36.7,
@@ -630,9 +630,9 @@ export default function Map() {
   }, []);
 
   return (
-    <div>
-      <div className={classNames(styles.fill, styles.mask)}></div>
+    <div className={styles.root}>
       <div className={classNames(styles.fill)} id="map"></div>
+      {!draggable && <div className={classNames(styles.fill, styles.mask)} />}
     </div>
   );
 }
