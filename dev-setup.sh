@@ -7,6 +7,7 @@ pre-commit install -f
 
 # lift & update containers
 docker-compose build
+docker-compose up db
 docker-compose exec -T db mysql <<< "CREATE DATABASE IF NOT EXISTS covid;"
 docker-compose exec -T db mysql <<< "CREATE DATABASE IF NOT EXISTS dbtest;"
 docker-compose run --rm api pip install -r requirements.txt
