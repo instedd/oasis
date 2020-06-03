@@ -2,6 +2,7 @@ import {
   Checkbox,
   Fab,
   FormControl,
+  FormHelperText,
   Input,
   InputLabel,
   ListItemText,
@@ -57,6 +58,7 @@ function CriticalQuestions(props) {
     sex: "",
     ethnicity: "",
     currentLocation: "",
+    postalCode: null,
     countryOfOrigin: "",
     profession: "",
     selectedMedicalConditions: [],
@@ -185,7 +187,10 @@ function CriticalQuestions(props) {
 
   return (
     <Wrapper>
-      <h1 className="title"> MY COVID STORY</h1>
+      <h1 className="title" style={{ margin: 0 }}>
+        {" "}
+        MY COVID STORY
+      </h1>
       <div className={classNames("root", styles.root)}>
         <div className={classNames("grid-3", styles["grid-3"])}>
           <DatePicker
@@ -234,33 +239,54 @@ function CriticalQuestions(props) {
             ))}
           </TextField>
         </div>
-        <div className={classNames("grid-2", styles["grid-2"])}>
-          <TextField
-            select
-            label="Current location"
-            value={formValues.currentLocation}
-            onChange={handleFormChange("currentLocation")}
-          >
-            {countries.map((option) => (
-              <MenuItem key={option.name} value={option.name}>
-                {option.name}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            select
-            label="Citizenship"
-            value={formValues.countryOfOrigin}
-            onChange={handleFormChange("countryOfOrigin")}
-          >
-            {countries.map((option) => (
-              <MenuItem key={option.name} value={option.name}>
-                {option.name}
-              </MenuItem>
-            ))}
-          </TextField>
+        <div
+          className={classNames("location-wrapper", styles["location-wrapper"])}
+        >
+          <span>Current Location</span>
+          <div className={classNames("grid-1", styles["grid-1"])}>
+            <FormControl>
+              <TextField
+                select
+                label=" "
+                value={formValues.currentLocation}
+                onChange={handleFormChange("currentLocation")}
+              >
+                {countries.map((option) => (
+                  <MenuItem key={option.name} value={option.name}>
+                    {option.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <FormHelperText>Country</FormHelperText>
+            </FormControl>
+            <FormControl>
+              <TextField
+                label=" "
+                value={formValues.postalCode}
+                onChange={handleFormChange("postalCode")}
+                type="number"
+                InputProps={{ inputProps: { min: 0 } }}
+              />
+              <FormHelperText>Postal Code</FormHelperText>
+            </FormControl>
+            <TextField
+              select
+              label="Citizenship"
+              value={formValues.countryOfOrigin}
+              onChange={handleFormChange("countryOfOrigin")}
+            >
+              {countries.map((option) => (
+                <MenuItem key={option.name} value={option.name}>
+                  {option.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </div>
         </div>
-        <div className={classNames("grid-2", styles["grid-2"])}>
+        <div
+          className={classNames("grid-2", styles["grid-2"])}
+          style={{ paddingTop: 0 }}
+        >
           <TextField
             select
             label="Profession"
