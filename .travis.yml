@@ -10,7 +10,7 @@ before_script:
   - docker-compose run --rm api pip install -r requirements.txt
   - docker-compose run --rm api pip install -r requirements.dev.txt
 
-  script:
+script:
   - docker-compose run --rm -e DATABASE_NAME='dbtest' api pytest
 
 deploy:
