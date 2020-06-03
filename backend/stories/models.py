@@ -19,6 +19,7 @@ class Story(Base):
     _medical_conditions = Column(JSON)
     sickness_start = Column(String(64))
     sickness_end = Column(String(64))
+    postal_code = Column(String(64))
     current_location = Column(String(128))
     user = relationship("User", uselist=False, back_populates="story")
     symptoms = relationship("Symptom", secondary="story_symptoms")

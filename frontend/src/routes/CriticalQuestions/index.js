@@ -91,19 +91,10 @@ function CriticalQuestions(props) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const story = {
-      age: formValues.age,
-      sex: formValues.sex,
-      ethnicity: formValues.ethnicity,
-      countryOfOrigin: formValues.countryOfOrigin,
-      profession: formValues.profession,
-      sick: sick,
-      tested: tested,
-      medicalConditions: formValues.selectedMedicalConditions,
-      sicknessStart: formValues.sicknessStart,
-      sicknessEnd: formValues.sicknessEnd,
-      currentLocation: formValues.currentLocation,
-    };
+    const { selectedMedicalConditions, ...story } = formValues;
+    story.medicalConditions = selectedMedicalConditions;
+    story.sick = sick;
+    story.tested = tested;
     const dto = { story, nextPage };
     dispatch(submitStory(dto));
   };
