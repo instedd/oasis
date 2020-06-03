@@ -1,6 +1,6 @@
 import MomentUtils from "@date-io/moment";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
-import Map from "components/Map";
+// import Map from "components/Map";
 import "css/index.css";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -12,6 +12,7 @@ import CriticalQuestions from "routes/CriticalQuestions";
 import Dashboard from "routes/Dashboard";
 import HealthMeasurements from "routes/HealthMeasurements";
 import Home from "routes/Home";
+import MyMap from "routes/MyMap";
 import MyStory from "routes/MyStory";
 import Onboard from "routes/Onboard";
 import paths from "routes/paths";
@@ -30,7 +31,7 @@ ReactDOM.render(
         <Link to={paths.home} className={styles.header}>
           OASIS
         </Link>
-        <Map></Map>
+        {/* <Map></Map> */}
         <main className={styles.root}>
           <Switch>
             <Route exact path={paths.home} component={Home} />
@@ -50,6 +51,8 @@ ReactDOM.render(
             />
             <Route path={paths.signUp} component={SignUp} />
             <Route path={paths.myStory} component={MyStory} />
+            <Route path="/mymap" component={MyMap} />
+
           </Switch>
         </main>
       </Router>

@@ -4,7 +4,6 @@ import mapboxgl from "mapbox-gl";
 import React, { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 
-
 mapboxgl.accessToken =
   "pk.eyJ1Ijoic3RlNTE5IiwiYSI6ImNrOHc1aHlvYTB0N2ozam51MHFiazE3bmcifQ.AHtFuA-pAqau_AJIy-hzOg";
 
@@ -633,7 +632,7 @@ export default function Map() {
   return (
     <div>
       <div className={classNames(styles.fill, styles.mask)}></div>
-      <div className={classNames(styles.fill, styles.map)} id="map"></div>
+      <div className={classNames(styles.fill)} id="map"></div>
     </div>
   );
 }
