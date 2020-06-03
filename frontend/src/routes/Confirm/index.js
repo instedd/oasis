@@ -6,17 +6,17 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import paths from "routes/paths";
 import { sicknessStatus, testStatus } from "routes/types";
-import { handleTested } from "../../actions/story";
+import { setTestedStatus } from "../../actions/story";
 import styles from "./styles.module.css";
 
-export default function Confirm(props) {
+export default function Confirm({ history }) {
   const sick = useSelector((state) => state.story.sick);
 
   const dispatch = useDispatch();
-  function handleClick(selected) {
-    localStorage.setItem("tested", selected);
-    dispatch(handleTested(selected));
-  }
+  const handleClick = (selected) => () => {
+    dispatch(setTestedStatus(selected));
+    history.push(paths.criticalQuestions);
+  };
 
   return (
     <Wrapper>
@@ -30,10 +30,7 @@ export default function Confirm(props) {
           size="large"
           className="fab"
           variant="extended"
-          onClick={() => {
-            handleClick(testStatus.POSITIVE);
-            props.history.push(paths.criticalQuestions);
-          }}
+          onClick={handleClick(testStatus.POSITIVE)}
         >
           <span>YES, TESTED POSITIVE</span>
         </Fab>
@@ -42,10 +39,7 @@ export default function Confirm(props) {
           size="large"
           className="fab"
           variant="extended"
-          onClick={() => {
-            handleClick(testStatus.NEGATIVE);
-            props.history.push(paths.criticalQuestions);
-          }}
+          onClick={handleClick(testStatus.NEGATIVE)}
         >
           <span>YES, TESTED NEGATIVE</span>
         </Fab>
@@ -54,10 +48,7 @@ export default function Confirm(props) {
           size="large"
           className="fab"
           variant="extended"
-          onClick={() => {
-            handleClick(testStatus.NOT_TESTED);
-            props.history.push(paths.criticalQuestions);
-          }}
+          onClick={handleClick(testStatus.NOT_TESTED)}
         >
           <span>NO, I HAVE NOT</span>
         </Fab>
@@ -67,7 +58,7 @@ export default function Confirm(props) {
         size="medium"
         className="fab back-btn"
         onClick={() =>
-          props.history.push(
+          history.push(
             sick === sicknessStatus.SICK ? paths.alert : paths.onboard
           )
         }

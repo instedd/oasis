@@ -178,7 +178,7 @@ function CriticalQuestions(props) {
   React.useEffect(scrollToBottom, [locations]);
   React.useEffect(scrollToBottom, [contacts]);
   let nextPage;
-  const { sick, tested } = useSelector((state) => state.story);
+  const { sick, tested } = useSelector((state) => state.story.story);
   if (sick === sicknessStatus.NOT_SICK) {
     nextPage = paths.dashboard;
   } else {

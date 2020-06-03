@@ -1,15 +1,15 @@
 import {
-  HANDLE_SICK,
-  HANDLE_TESTED,
+  SET_SICK_STATUS,
+  SET_TESTED_STATUS,
   LOADING,
   SAVED_STORY,
   SAVE_STORY_START,
+  FETCH_STORY_START,
+  FETCH_STORY,
 } from "../actions/types";
 
 const initialState = {
   status: {},
-  sick: null,
-  tested: null,
   story: null,
 };
 
@@ -24,22 +24,38 @@ const story = (state = initialState, action) => {
         },
       };
     case SAVED_STORY:
-      const savedStory = action.payload.story;
+      return {
+        ...state,
+        ...action.payload,
+      };
+    case SET_SICK_STATUS:
       return {
         ...state,
         story: {
-          ...savedStory,
+          ...state.story,
+          sick: action.payload,
         },
       };
-    case HANDLE_SICK:
+    case SET_TESTED_STATUS:
       return {
         ...state,
-        sick: action.sick,
+        story: {
+          ...state.story,
+          tested: action.payload,
+        },
       };
-    case HANDLE_TESTED:
+    case FETCH_STORY_START:
       return {
         ...state,
-        tested: action.tested,
+        status: {
+          type: LOADING,
+          detail: "We're finding your story...",
+        },
+      };
+    case FETCH_STORY:
+      return {
+        ...state,
+        ...action.payload,
       };
     default:
       return state;

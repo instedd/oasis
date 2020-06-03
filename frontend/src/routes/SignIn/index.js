@@ -48,7 +48,7 @@ export default function SignIn() {
   return (
     <AuthPaper>
       <h1 className={styles.title}>Sign In</h1>
-      {status.detail && (
+      {status && status.detail && (
         <p
           className={classNames(
             styles.status,

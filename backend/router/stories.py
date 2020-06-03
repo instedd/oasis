@@ -1,10 +1,15 @@
 from typing import List
+import os
 
-from fastapi import Depends, FastAPI, APIRouter, HTTPException, Header, status
+from fastapi import Depends, APIRouter, HTTPException, status
 from sqlalchemy.orm import Session
+from starlette.responses import JSONResponse
+from starlette.requests import Request
+
 from database import get_db
 from auth import main
-from stories import crud, models, schemas
+from stories import crud, schemas
+
 
 router = APIRouter()
 
@@ -18,27 +23,32 @@ def check_permissions(current_story, story_id):
         )
 
 
+@router.get("/", response_model=schemas.Story)
+def read_story(current_story: schemas.Story = Depends(main.get_current_story)):
+    return current_story
+
+
 @router.post("/", response_model=schemas.Story)
 async def create_story(
     story: schemas.StoryCreate,
+    request: Request,
     db: Session = Depends(get_db),
-    authorization: str = Header(None),
 ):
-    token_data = (
-        await main.get_token_contents(authorization[7:])
-        if authorization is not None
-        else None
+    token_data = await main.get_token_if_present(request)
+    db_story = crud.create_story(db=db, story=story, token_data=token_data)
+    response = JSONResponse(
+        schemas.Story.from_orm(db_story).dict(), status_code=200
     )
-    return crud.create_story(db=db, story=story, token_data=token_data)
-
-
-@router.get("/{story_id}", response_model=schemas.Story)
-def read_story(
-    story_id: int,
-    current_story: schemas.Story = Depends(main.get_current_story),
-):
-    check_permissions(current_story, story_id)
-    return current_story
+    if not token_data:
+        access_token = main.create_access_token(data={"story_id": db_story.id})
+        response.set_cookie(
+            "Authorization",
+            value=f"Bearer {access_token}",
+            httponly=True,
+            max_age=os.environ["COOKIE_EXPIRATION_SECONDS"],
+            expires=os.environ["COOKIE_EXPIRATION_SECONDS"],
+        )
+    return response
 
 
 @router.get("/{story_id}/symptoms", response_model=List[schemas.Symptom])

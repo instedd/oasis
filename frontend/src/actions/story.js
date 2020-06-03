@@ -2,16 +2,16 @@ import { sicknessStatus, testStatus } from "routes/types";
 import api from "utils";
 import history from "../history";
 import {
-  HANDLE_SICK,
-  HANDLE_TESTED,
+  SET_SICK_STATUS,
+  SET_TESTED_STATUS,
   SAVED_STORY,
   SAVE_STORY_START,
-  SIGN_IN,
   SUCCESS,
+  FETCH_STORY_START,
+  FETCH_STORY,
 } from "./types";
 
-export const submitStory = (dto) => async (dispatch, getState) => {
-  const { token } = getState().auth;
+export const submitStory = (dto) => async (dispatch) => {
   dispatch({ type: SAVE_STORY_START });
   const { story, nextPage } = dto;
   const response = await api(`stories/`, {
@@ -27,36 +27,40 @@ export const submitStory = (dto) => async (dispatch, getState) => {
     },
   });
 
-  // if there was no token identifying a user, we need to store the story auth for future data validation
-  if (!token)
-    dispatch({
-      type: SIGN_IN,
-      payload: {
-        status: { type: SUCCESS },
-        token: response && response.token,
-      },
-    });
-
   if (!response.error) history.push(nextPage);
 };
 
-export function handleSick(option) {
-  return (dispatch) => {
-    dispatch({
-      type: HANDLE_SICK,
-      sick: option,
-    });
-  };
-}
+export const setSickStatus = (option) => (dispatch) => {
+  dispatch({
+    type: SET_SICK_STATUS,
+    payload: option,
+  });
+};
 
-export function handleTested(option) {
-  return (dispatch) => {
-    dispatch({
-      type: HANDLE_TESTED,
-      tested: option,
-    });
-  };
-}
+export const setTestedStatus = (option) => (dispatch) => {
+  dispatch({
+    type: SET_TESTED_STATUS,
+    payload: option,
+  });
+};
+
+export const fetchStory = () => async (dispatch) => {
+  await getCurrentStory(dispatch);
+};
+
+export const getCurrentStory = async (dispatch) => {
+  dispatch({ type: FETCH_STORY_START });
+  const response = await api("stories/");
+
+  dispatch({
+    type: FETCH_STORY,
+    payload: {
+      status: response.error || { type: SUCCESS },
+      story: (!response.error && response) || null,
+    },
+  });
+  return response;
+};
 
 export const getStorySuggestions = (story) => {
   const suggestions = [];
