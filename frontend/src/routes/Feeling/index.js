@@ -3,7 +3,6 @@ import { withStyles } from "@material-ui/core/styles";
 import { Fab, Slider, Typography } from "@material-ui/core";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
-import Wrapper from "components/Wrapper";
 import styles from "./styles.module.css";
 import paths from "routes/paths";
 

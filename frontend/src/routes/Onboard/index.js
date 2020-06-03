@@ -1,6 +1,5 @@
 import { Fab } from "@material-ui/core";
 import classNames from "classnames";
-import Wrapper from "components/Wrapper";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { sicknessStatus } from "routes/types";

@@ -1,7 +1,6 @@
 import { Fab } from "@material-ui/core";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import classNames from "classnames";
-import Wrapper from "components/Wrapper";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import paths from "routes/paths";
