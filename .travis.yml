@@ -6,10 +6,9 @@ install:
 
 before_script:
   - docker-compose build
-  - docker-compose up -d db && sleep 5
-  - docker-compose exec -T db mysql --protocol=tcp <<< "CREATE DATABASE IF NOT EXISTS dbtest;"
   - docker-compose run --rm api pip install -r requirements.txt
   - docker-compose run --rm api pip install -r requirements.dev.txt
+  - docker-compose run --rm api python init_db.py
 
 script:
   - docker-compose run --rm -e DATABASE_NAME='dbtest' api pytest
