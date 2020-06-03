@@ -1,5 +1,7 @@
 # oasis
+
 [![Build Status](https://travis-ci.org/instedd/oasis.svg?branch=master)](https://travis-ci.org/instedd/oasis)
+
 UCSD Oasis platform
 
 ## Local project setup
@@ -54,7 +56,7 @@ When possible, keep the migration name descriptive!
 When a new migration file is available, apply it by running
 
 ```zsh
-./dev-setup.**sh**
+./dev-setup.sh
 ```
 If you want to run them manually you can also do:
 
@@ -81,7 +83,7 @@ interested in, by checking the "files to be imported" at the top of the script.
 
 ### Running backend tests
 
-All tests for the backed are within the `/backend/tests` folder. You can run them by doing:
+All tests for the backed are within the `/backend/tests` folder, and they're run automatically on branches and PRs by Travis. You can run them by doing:
 
 ```zsh
 docker-compose run --rm -e DATABASE_NAME='dbtest' api pytest

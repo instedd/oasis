@@ -3,9 +3,15 @@ services:
 
 install:
   - docker-compose pull
-  
-script:
-  - docker-compose build # For now, let's just check we can _build_ the images
+
+before_script:
+  - docker-compose build
+  - docker-compose exec -T db mysql <<< "CREATE DATABASE IF NOT EXISTS dbtest;"
+  - docker-compose run --rm api pip install -r requirements.txt
+  - docker-compose run --rm api pip install -r requirements.dev.txt
+
+  script:
+  - docker-compose run --rm -e DATABASE_NAME='dbtest' api pytest
 
 deploy:
   provider: script
