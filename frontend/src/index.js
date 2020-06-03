@@ -23,6 +23,7 @@ import styles from "styles.module.css";
 import history from "./history";
 import store from "store/configureStore";
 import * as serviceWorker from "./serviceWorker";
+import Wrapper from "components/Wrapper";
 
 ReactDOM.render(
   <Provider store={store}>
@@ -31,28 +32,30 @@ ReactDOM.render(
         <Link to={paths.home} className={styles.header}>
           OASIS
         </Link>
-        {/* <Map></Map> */}
         <main className={styles.root}>
           <Switch>
-            <Route exact path={paths.home} component={Home} />
-            <Route path={paths.signIn} component={SignIn} />
-            <Route path={paths.onboard} component={Onboard} />
-            <Route path={paths.alert} component={Alert} />
-            <Route
-              path={paths.criticalQuestions}
-              component={CriticalQuestions}
-            />
-            <Route path={paths.symptoms} component={Symptoms} />
-            <Route path={paths.dashboard} component={Dashboard} />
-            <Route path={paths.confirm} component={Confirm} />
-            <Route
-              path={paths.healthMeasurements}
-              component={HealthMeasurements}
-            />
-            <Route path={paths.signUp} component={SignUp} />
-            <Route path={paths.myStory} component={MyStory} />
+            <Wrapper>
+              <Route exact path={paths.home} component={Home} />
+              <Route path={paths.signIn} component={SignIn} />
+              <Route path={paths.onboard} component={Onboard} />
+              <Route path={paths.alert} component={Alert} />
+              <Route
+                path={paths.criticalQuestions}
+                component={CriticalQuestions}
+              />
+              <Route path={paths.symptoms} component={Symptoms} />
+              <Route path={paths.confirm} component={Confirm} />
+              <Route
+                path={paths.healthMeasurements}
+                component={HealthMeasurements}
+              />
+              <Route path={paths.signUp} component={SignUp} />
+              <Route path={paths.myStory} component={MyStory} />
+            </Wrapper>
+            <Wrapper draggableMap={true}>
+              <Route path={paths.dashboard} component={Dashboard} />
+            </Wrapper>
             <Route path="/mymap" component={MyMap} />
-
           </Switch>
         </main>
       </Router>

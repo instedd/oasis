@@ -17,7 +17,7 @@ export default function Onboard({ history }) {
   };
 
   return (
-    <Wrapper>
+    <>
       <h1 className="title">MY COVID STORY</h1>
       <div className={classNames("btn-group", styles.buttons)}>
         <Fab
@@ -45,6 +45,6 @@ export default function Onboard({ history }) {
           <span>I AM RECOVERED</span>
         </Fab>
       </div>
-    </Wrapper>
+    </>
   );
 }

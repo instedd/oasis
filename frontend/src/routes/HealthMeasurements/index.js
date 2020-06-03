@@ -88,7 +88,7 @@ function HealthMeasurements(props) {
   }
 
   return (
-    <Wrapper>
+    <>
       <h1 className="title"> MY COVID STORY</h1>
       <div className="sliders-wrapper">
         <Typography id="temp-slider" gutterBottom>
@@ -157,7 +157,7 @@ function HealthMeasurements(props) {
       >
         <ArrowLeftIcon />
       </Fab>
-    </Wrapper>
+    </>
   );
 }
 

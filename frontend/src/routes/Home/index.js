@@ -79,7 +79,7 @@ function App(props) {
   const listIndex = Text["Terms and Conditions"].listIndex;
   const linkIndex = Text["Terms and Conditions"].linkIndex;
   return (
-    <Wrapper>
+    <>
       <h1 className={styles.title}>FIGHT COVID-19 PUT YOUR STORY ON THE MAP</h1>
       <div>
         <SpeedDial
@@ -133,7 +133,7 @@ function App(props) {
           ))}
         </SpeedDial>
       </div>
-    </Wrapper>
+    </>
   );
 }
 

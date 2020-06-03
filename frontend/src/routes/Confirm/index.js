@@ -19,7 +19,7 @@ export default function Confirm({ history }) {
   };
 
   return (
-    <Wrapper>
+    <>
       <h1 className={classNames("title", styles.title)}>
         HAVE YOUR BEEN TESTED FOR COVID-19?
       </h1>
@@ -65,6 +65,6 @@ export default function Confirm({ history }) {
       >
         <ArrowLeftIcon />
       </Fab>
-    </Wrapper>
+    </>
   );
 }

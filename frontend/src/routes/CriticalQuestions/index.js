@@ -177,8 +177,11 @@ function CriticalQuestions(props) {
   React.useEffect(scrollToBottom, [contacts]);
 
   return (
-    <Wrapper>
-      <h1 className="title">MY COVID STORY</h1>
+    <>
+      <h1 className="title" style={{ margin: 0 }}>
+        {" "}
+        MY COVID STORY
+      </h1>
       <div className={classNames("root", styles.root)}>
         <div className={classNames("grid-3", styles["grid-3"])}>
           <DatePicker
@@ -379,7 +382,7 @@ function CriticalQuestions(props) {
       >
         <ArrowLeftIcon />
       </Fab>
-    </Wrapper>
+    </>
   );
 }
 

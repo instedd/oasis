@@ -22,7 +22,7 @@ export default function MyStory(props) {
   })(TextField);
 
   return (
-    <Wrapper>
+    <>
       <h1 className="title">MY COVID-19 STORY</h1>
       <h3 className="subtitle">Your COVID-19 story in your own words</h3>
       <StyledTextField
@@ -53,6 +53,6 @@ export default function MyStory(props) {
       >
         <ArrowLeftIcon />
       </Fab>
-    </Wrapper>
+    </>
   );
 }
