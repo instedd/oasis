@@ -26,17 +26,18 @@ class TestSituation(str, Enum):
 
 
 class StoryCreate(BaseModel):
-    age: int
+    age: int = None
     sex: Sex = None
-    ethnicity: str
-    country_of_origin: str
-    profession: str
+    ethnicity: str = None
+    country_of_origin: str = None
+    profession: str = None
     medical_conditions: List[str] = []
     sick: MedicalSituation
     tested: TestSituation
-    current_location: str
+    current_location: str = None
     sickness_start: str = None
     sickness_end: str = None
+    postal_code: str = None
 
 
 class Story(StoryCreate):

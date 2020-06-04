@@ -37,7 +37,7 @@ function Dashboard(props) {
 
   useEffect(() => {
     if (!story) dispatch(fetchStory());
-  }, [dispatch, story, status]);
+  }, [dispatch, story]);
 
   const handleOpen = () => {
     setOpen(true);
