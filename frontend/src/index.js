@@ -34,6 +34,7 @@ ReactDOM.render(
         </Link>
         <main className={styles.root}>
           <Switch>
+            <Route path={"/mymap"} component={MyMap} />
             <Wrapper>
               <Route exact path={paths.home} component={Home} />
               <Route path={paths.signIn} component={SignIn} />
@@ -55,7 +56,6 @@ ReactDOM.render(
             <Wrapper draggableMap={true}>
               <Route path={paths.dashboard} component={Dashboard} />
             </Wrapper>
-            <Route path="/mymap" component={MyMap} />
           </Switch>
         </main>
       </Router>

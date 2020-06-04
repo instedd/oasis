@@ -1,10 +1,12 @@
 import Map from "components/Map";
 import React from "react";
 
-export default function MyMap(props) {
+function MyMap(props) {
   return (
     <div>
-      <Map></Map>
+      <Map />
     </div>
   );
 }
+
+export default MyMap;
