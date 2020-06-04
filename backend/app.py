@@ -46,4 +46,4 @@ app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 async def not_found_exception_handler(
     request: Request, exc: NotFoundException
 ):
-    return JSONResponse(status_code=404, content={"message": exc.message},)
+    return JSONResponse(status_code=404, content={"detail": exc.message},)
