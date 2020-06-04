@@ -59,65 +59,67 @@ function Dashboard(props) {
       .then((result) => setData(result));
   }, []);
 
-  return status.type === LOADING || !story ? (
-    <div className={styles.root}>{status.detail}</div>
-  ) : (
-    <>
-      <Breadcrumbs aria-label="breadcrumb" className="breadcrumbs">
-        <Link color="inherit">myTrials</Link>
-        <Link color="inherit">myDonations</Link>
-        <Link color="inherit">myRecords</Link>
-      </Breadcrumbs>
-      <div className="row status-wrapper">
-        <div className="col">
-          <div className="row">
+  return (
+    <div className={styles.root}>
+      {status.type === LOADING || !story ? (
+        status.detail
+      ) : (
+        <>
+          <Breadcrumbs aria-label="breadcrumb" className={styles.breadcrumbs}>
+            <Link color="inherit">myTrials</Link>
+            <Link color="inherit">myDonations</Link>
+            <Link color="inherit">myRecords</Link>
+          </Breadcrumbs>
+          <div className={classNames(styles.box, styles.top, styles.left)}>
             <h3>MY STATUS</h3>
-          </div>
-
-          <div className="status-list">
-            <div className="row status-item">
-              <span
-                className={styles.dot}
-                style={{ background: statusMapping[story.sick].color }}
-              />
-              {statusMapping[story.sick].name}
+            <div className="status-list">
+              <div className="row status-item">
+                <span
+                  className={styles.dot}
+                  style={{ background: statusMapping[story.sick].color }}
+                />
+                {statusMapping[story.sick].name}
+              </div>
+              <div className="row status-item">
+                <span
+                  className={styles.dot}
+                  style={{ background: statusMapping[story.tested].color }}
+                />
+                {statusMapping[story.tested].name}
+              </div>
+              <div></div>
             </div>
-            <div className="row status-item">
-              <span
-                className={styles.dot}
-                style={{ background: statusMapping[story.tested].color }}
-              />
-              {statusMapping[story.tested].name}
+          </div>
+          <div className={classNames(styles.box, styles.top, styles.right)}>
+            <h3>LATEST UPDATE</h3>
+            <div>
+              <div>COVID-19 Cases: {data.confirmed}</div>
+              <div>Total Deaths: {data.deaths}</div>
+              <div>Total Recovered: {data.recovered}</div>
             </div>
-            <div></div>
           </div>
-        </div>
-        <div className="col update-list" style={{ textAlign: "right" }}>
-          <h3>LATEST UPDATE</h3>
-          <div>
-            <div>COVID-19 Cases: {data.confirmed}</div>
-            <div>Total Deaths: {data.deaths}</div>
-            <div>Total Recovered: {data.recovered}</div>
+          <div
+            className={classNames(
+              styles.box,
+              styles.bottom,
+              styles.left,
+              styles.wrapper
+            )}
+          >
+            <h3>SUGGESTIONS</h3>
+            <div>Stay at home</div>
+            {getStorySuggestions(story).map((suggestion) => (
+              <Link
+                href={suggestion.site}
+                {...(suggestion.color
+                  ? { style: { color: suggestion.color } }
+                  : {})}
+                target="_blank"
+              >
+                {suggestion.text}
+              </Link>
+            ))}
           </div>
-        </div>
-      </div>
-      <div className="row">
-        <div className={classNames("col", styles.wrapper)}>
-          <h3>SUGGESTIONS</h3>
-          <div>Stay at home</div>
-          {getStorySuggestions(story).map((suggestion) => (
-            <Link
-              href={suggestion.site}
-              {...(suggestion.color
-                ? { style: { color: suggestion.color } }
-                : {})}
-              target="_blank"
-            >
-              {suggestion.text}
-            </Link>
-          ))}
-        </div>
-        <div className="col">
           <SpeedDial
             ariaLabel="Daily actions"
             className={classNames("speeddial", styles.speeddial)}
@@ -136,9 +138,9 @@ function Dashboard(props) {
               ></SpeedDialAction>
             ))}
           </SpeedDial>
-        </div>
-      </div>
-    </>
+        </>
+      )}
+    </div>
   );
 }
 export default Dashboard;

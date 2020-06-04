@@ -102,14 +102,6 @@ a, a:link, a:visited, a:hover, a:active {
   margin-bottom: 10px;
 }
 
-.breadcrumbs .MuiBreadcrumbs-ol {
-  color: white;
-  font-family: Abel;
-  position: absolute;
-  right: 5%;
-  top: 28px;
-}
-
 .terms-wrapper {
   overflow-y: scroll;
   padding: 1rem 2rem;

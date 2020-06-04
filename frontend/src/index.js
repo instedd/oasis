@@ -32,32 +32,28 @@ ReactDOM.render(
         <Link to={paths.home} className={styles.header}>
           OASIS
         </Link>
-        <main className={styles.root}>
+        <Wrapper draggableMapRoutes={[paths.dashboard, "/mymap"]}>
           <Switch>
+            <Route exact path={paths.home} component={Home} />
+            <Route path={paths.signIn} component={SignIn} />
+            <Route path={paths.onboard} component={Onboard} />
+            <Route path={paths.alert} component={Alert} />
+            <Route
+              path={paths.criticalQuestions}
+              component={CriticalQuestions}
+            />
+            <Route path={paths.symptoms} component={Symptoms} />
+            <Route path={paths.confirm} component={Confirm} />
+            <Route
+              path={paths.healthMeasurements}
+              component={HealthMeasurements}
+            />
+            <Route path={paths.signUp} component={SignUp} />
+            <Route path={paths.myStory} component={MyStory} />
+            <Route path={paths.dashboard} component={Dashboard} />
             <Route path={"/mymap"} component={MyMap} />
-            <Wrapper>
-              <Route exact path={paths.home} component={Home} />
-              <Route path={paths.signIn} component={SignIn} />
-              <Route path={paths.onboard} component={Onboard} />
-              <Route path={paths.alert} component={Alert} />
-              <Route
-                path={paths.criticalQuestions}
-                component={CriticalQuestions}
-              />
-              <Route path={paths.symptoms} component={Symptoms} />
-              <Route path={paths.confirm} component={Confirm} />
-              <Route
-                path={paths.healthMeasurements}
-                component={HealthMeasurements}
-              />
-              <Route path={paths.signUp} component={SignUp} />
-              <Route path={paths.myStory} component={MyStory} />
-            </Wrapper>
-            <Wrapper draggableMap={true}>
-              <Route path={paths.dashboard} component={Dashboard} />
-            </Wrapper>
           </Switch>
-        </main>
+        </Wrapper>
       </Router>
     </MuiPickersUtilsProvider>
   </Provider>,
