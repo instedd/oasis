@@ -23,7 +23,9 @@ const api = async (path, payload = {}, explicitBody = false) => {
   }
 
   let response = await fetch(
-    `${process.env.REACT_APP_API || ""}/api/${path}`,
+    `${
+      process.env.REACT_APP_API || `https://${window.location.host}`
+    }/api/${path}`,
     fullPayload
   );
   if (response.status === 401) history.push(paths.signIn);
