@@ -39,5 +39,8 @@ export const submitSymptoms = (symptoms, nextPath) => async (
       status: response.error || { type: SUCCESS },
     },
   });
-  if (!response.error) history.push(nextPath);
+  if (!response.error) {
+    if (nextPath) history.push(nextPath);
+    else history.goBack();
+  }
 };
