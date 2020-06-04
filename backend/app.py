@@ -1,6 +1,7 @@
 import os
 
 from fastapi import FastAPI
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
@@ -35,3 +36,5 @@ app.add_middleware(
 )
 
 app.include_router(api.router, prefix="/api")
+
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
