@@ -121,5 +121,15 @@ export const getStorySuggestions = (story) => {
       });
   }
 
+  if (
+    story.sick === sicknessStatus.RECOVERED ||
+    story.sick === sicknessStatus.SICK
+  )
+    suggestions.push({
+      site:
+        "https://www.cdc.gov/coronavirus/2019-ncov/symptoms-testing/symptoms.html",
+      text: "Check your symptoms",
+    });
+
   return suggestions;
 };
