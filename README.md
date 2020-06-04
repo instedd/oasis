@@ -1,5 +1,7 @@
 # oasis
+
 [![Build Status](https://travis-ci.org/instedd/oasis.svg?branch=master)](https://travis-ci.org/instedd/oasis)
+
 UCSD Oasis platform
 
 ## Local project setup
@@ -53,8 +55,8 @@ When possible, keep the migration name descriptive!
 
 When a new migration file is available, apply it by running
 
-```
-./dev-setup
+```zsh
+./dev-setup.sh
 ```
 If you want to run them manually you can also do:
 
@@ -72,12 +74,20 @@ docker-compose run api alembic downgrade -1
 
 To populate development database with seed data, which is located in `/backend/almebic/seed_data` directory, run:
 
-```
+```zsh
 docker-compose run --rm api python alembic/seed.py
 ```
 
 To add seed data or modify existing one, apply changes in `<entity>.json` file for the target entity in aforementioned `/backend/alembic/seed_data` directory. Make sure that the script uses the data you are
 interested in, by checking the "files to be imported" at the top of the script.
+
+### Running backend tests
+
+All tests for the backed are within the `/backend/tests` folder, and they're run automatically on branches and PRs by Travis. You can run them by doing:
+
+```zsh
+docker-compose run --rm -e DATABASE_NAME='dbtest' api pytest
+```
 
 ## Building & deploying
 

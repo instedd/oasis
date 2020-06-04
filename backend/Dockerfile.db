@@ -1,3 +1,1 @@
 FROM mysql:5.7
-# this following line will add the coviddatabase dump into a folder that auto-runs sqls on container startup!
-# ADD Coviddatabase.sql /docker-entrypoint-initdb.d/Coviddatabase.sql 

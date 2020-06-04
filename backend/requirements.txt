@@ -9,3 +9,4 @@ alembic
 bcrypt
 pyjwt
 python-multipart
+requests
