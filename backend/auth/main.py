@@ -17,6 +17,11 @@ from stories.crud import get_story
 from . import schemas
 
 
+class NotFoundException(Exception):
+    def __init__(self, message: str):
+        self.message = message
+
+
 class OAuth2PasswordBearerCookie(OAuth2):
     def __init__(
         self,
@@ -155,7 +160,7 @@ async def get_current_story(
         )
     if not story:
         if not (user and user.story):  # no story nor user match the token data
-            raise HTTPException(status_code=404, detail="Story not found")
+            raise NotFoundException(message="Story not found")
         else:  # there's a user with a story
             return user.story
     if not user:
