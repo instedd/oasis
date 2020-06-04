@@ -16,16 +16,18 @@ export default function Alert(props) {
     <Wrapper>
       <h1 className={styles.title}>WARNING</h1>
       <div className={styles.warnings}>
-        {texts.map((x, i) => {
-          if (listIndex.indexOf(i) >= 0) return <p key={i}>● {x}</p>;
-          else if (linkIndex.indexOf(i) >= 0)
-            return (
-              <a key={i} href={x}>
-                {x}
-              </a>
-            );
-          else return <p key={i}>{x}</p>;
-        })}
+        <ul>
+          {texts.map((x, i) => {
+            if (listIndex.indexOf(i) >= 0) return <li key={i}>{x}</li>;
+            else if (linkIndex.indexOf(i) >= 0)
+              return (
+                <a key={i} href={x} target="_blank">
+                  {x}
+                </a>
+              );
+            else return <p key={i}>{x}</p>;
+          })}
+        </ul>
         <Fab
           style={{ background: "#9206FF" }}
           aria-label="Go to next page"
