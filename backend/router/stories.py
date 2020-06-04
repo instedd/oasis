@@ -79,3 +79,14 @@ def create_story_symptoms(
 ):
     check_permissions(current_story, story_id)
     return crud.create_story_symptoms(db, symptoms=symptoms)
+
+
+@router.post("/{story_id}/travels", response_model=List[schemas.Travel])
+def create_travels(
+    story_id: int,
+    travels: List[schemas.Travel],
+    current_story: schemas.Story = Depends(main.get_current_story),
+    db: Session = Depends(get_db),
+):
+    check_permissions(current_story, story_id)
+    return crud.create_travels(db, travels=travels)

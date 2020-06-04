@@ -73,3 +73,16 @@ class StorySymptom(StorySymptomCreate):
 
     class Config:
         orm_mode = True
+
+
+class TravelCreate(BaseModel):
+    story_id: int
+    location: str
+    date_of_return: date
+
+
+class Travel(TravelCreate):
+    id: int
+
+    class Config:
+        orm_mode = True

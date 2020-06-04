@@ -55,3 +55,10 @@ def create_story_symptoms(
     db.add_all(db_symptoms)
     db.commit()
     return db_symptoms
+
+
+def create_travels(db: Session, travels: List[schemas.TravelCreate]):
+    db_travels = [models.Travel(**travel.dict()) for travel in travels]
+    db.add_all(db_travels)
+    db.commit()
+    return db_travels
