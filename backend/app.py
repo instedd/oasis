@@ -1,6 +1,7 @@
 import os
 
 from fastapi import FastAPI
+from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
 from starlette.templating import Jinja2Templates
@@ -33,5 +34,8 @@ app.add_middleware(
     allow_methods=["DELETE", "GET", "POST", "PUT"],
     allow_headers=["*"],
 )
+
+if not os.environ.get("DEV"):
+    app.add_middleware(HTTPSRedirectMiddleware)
 
 app.include_router(api.router, prefix="/api")
