@@ -75,13 +75,8 @@ function CriticalQuestions(props) {
   let nextPage;
   const { story } = useSelector((state) => state.story);
   useEffect(() => {
-    if (!story) {
-      dispatch(fetchStory());
-    } else {
-      setFormValues({ ...formValues, ...story });
-      if (story.sick === sicknessStatus.NOT_SICK) nextPage = paths.dashboard;
-      else nextPage = paths.symptoms;
-    }
+    if (!story) dispatch(fetchStory());
+    else setFormValues({ ...formValues, ...story });
   }, [dispatch, story]);
 
   const handleFormChange = (key) => (event) => {
@@ -105,6 +100,8 @@ function CriticalQuestions(props) {
     event.preventDefault();
     const { selectedMedicalConditions, ...story } = formValues;
     story.medicalConditions = selectedMedicalConditions;
+    if (story.sick === sicknessStatus.NOT_SICK) nextPage = paths.dashboard;
+    else nextPage = paths.symptoms;
     const dto = { story, nextPage };
     dispatch(submitStory(dto));
   };

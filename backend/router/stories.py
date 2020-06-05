@@ -35,7 +35,16 @@ async def create_story(
     db: Session = Depends(get_db),
 ):
     token_data = await main.get_token_if_present(request)
-    db_story = crud.create_story(db=db, story=story, token_data=token_data)
+
+    user = main.get_user_from_token(db, token_data)
+    story_to_update = main.get_existing_story(user, token_data, db)
+
+    if story_to_update:
+        db_story = crud.update_story(db, story_to_update, story)
+    else:
+        db_story = crud.create_story(db=db, story=story, user=user)
+
+    # prepare response
     response = JSONResponse(
         schemas.Story.from_orm(db_story).dict(), status_code=200
     )
