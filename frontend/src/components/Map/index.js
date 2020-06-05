@@ -41,7 +41,7 @@ export default function Map({ draggable = true }) {
     map.on("load", function () {
       addWorldLayer(map, covidData);
       addUSStatesLayer(map, data);
-      addUSCountyLayer(map);
+      // addUSCountyLayer(map);
     });
   }, []);
 
@@ -189,17 +189,6 @@ function addUSStatesLayer(map, data) {
 }
 
 function addUSCountyLayer(map) {
-  // var countyData ={}
-  // var url ="http://13.57.220.143/getcounty";
-  // fetch(url,{ method: 'post'}).then((resp) => resp.json())
-  //   .then(function(data) {
-  //     countyData=data;
-  //     console.log(data);
-  //   })
-  //   .catch(function(error) {
-  //     console.log(error);
-  //   });
-
   const countyData = [
     {
       deaths: 69,
