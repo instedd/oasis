@@ -5,6 +5,8 @@ import jenkspy
 
 
 COVID_WORLD_API_URL = "https://api.covid19api.com/summary"
+CLUSTERS = 5
+CLUSTERS_LABELS = [0.2, 0.4, 0.6, 0.8, 1]
 
 router = APIRouter()
 
@@ -25,12 +27,12 @@ def get_covid_world_data():
     )
     df = pd.DataFrame(confirmed)
 
-    breaks = jenkspy.jenks_breaks(df["confirmed"], nb_class=5)
+    breaks = jenkspy.jenks_breaks(df["confirmed"], nb_class=CLUSTERS)
 
     df["group"] = pd.cut(
         df["confirmed"],
         bins=breaks,
-        labels=[0.2, 0.4, 0.6, 0.8, 1],
+        labels=CLUSTERS_LABELS,
         include_lowest=True,
     )
 
