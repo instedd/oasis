@@ -12,19 +12,11 @@ export default function MyStory(props) {
     setStory(event.target.value);
   };
 
-  const StyledTextField = withStyles({
-    root: {
-      "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-        borderColor: "#3f51b5 !important",
-      },
-    },
-  })(TextField);
-
   return (
     <>
       <h1 className="title">MY COVID-19 STORY</h1>
-      <h3 className="subtitle">Your COVID-19 story in your own words</h3>
-      <StyledTextField
+      <p className="subtitle">Your COVID-19 story in your own words</p>
+      <TextField
         id="outlined-multiline-static"
         placeholder="Tell a little about yourself, how you think you got sick and what the experience has been like"
         multiline
