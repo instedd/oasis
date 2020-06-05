@@ -84,7 +84,7 @@ def create_story_symptoms(
 @router.post("/{story_id}/travels", response_model=List[schemas.Travel])
 def create_travels(
     story_id: int,
-    travels: List[schemas.Travel],
+    travels: List[schemas.TravelCreate],
     current_story: schemas.Story = Depends(main.get_current_story),
     db: Session = Depends(get_db),
 ):

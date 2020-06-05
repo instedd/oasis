@@ -46,7 +46,7 @@ class Symptom(Base):
     name = Column(String(128), unique=True, index=True)
 
 
-class Travels(Base):
+class Travel(Base):
     __tablename__ = "travels"
 
     story_id = Column(ForeignKey("stories.id"))
