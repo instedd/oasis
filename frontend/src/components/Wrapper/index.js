@@ -14,7 +14,7 @@ function Wrapper({ children, draggableMapRoutes = [] }) {
     let shouldDragMap = draggableMapRoutes.includes(location.pathname);
     if (shouldDragMap !== draggableMap)
       setDraggableMap(draggableMapRoutes.includes(location.pathname));
-  }, location);
+  }, [location]);
 
   return (
     <main className={styles.root}>
