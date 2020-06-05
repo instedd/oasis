@@ -7,13 +7,15 @@ import styles from "./styles.module.css";
 mapboxgl.accessToken =
   "pk.eyJ1Ijoic3RlNTE5IiwiYSI6ImNrOHc1aHlvYTB0N2ozam51MHFiazE3bmcifQ.AHtFuA-pAqau_AJIy-hzOg";
 
+const countryMinZoom = 3;
+const statesMinZoom = 5;
+
 export default function Map({ draggable = true }) {
   const [state] = useState({
     lng: -119.6,
     lat: 36.7,
     zoom: 5,
   });
-  const zoomThreshold = 4;
 
   useEffect(() => {
     const map = new mapboxgl.Map({
@@ -34,9 +36,26 @@ export default function Map({ draggable = true }) {
         console.log(error);
       });
 
+    var covidData = {};
+    // const obj = entry => ({country:entry["Country"], confirmed:entry["TotalConfirmed"]})
+    const covidApiUrl = "https://api.covid19api.com/summary";
+    fetch(covidApiUrl)
+      .then((resp) => resp.json())
+      .then(function (body) {
+        const countries = body["Countries"];
+        covidData = countries.map((entry) => ({
+          country: entry["Country"],
+          confirmed: entry["TotalConfirmed"],
+        }));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
     map.on("load", function () {
-      addUSCountryLayer(map, zoomThreshold, data);
-      addUSCountyLayer(map, zoomThreshold);
+      addWorldLayer(map, covidData);
+      addUSStatesLayer(map, data);
+      addUSCountyLayer(map);
     });
   }, []);
 
@@ -48,7 +67,54 @@ export default function Map({ draggable = true }) {
   );
 }
 
-function addUSCountryLayer(map, zoomThreshold, data) {
+function addWorldLayer(map, data) {
+  // Add source for admin-1 Boundaries
+  //  map.addSource('admin-1', {
+  //   type: 'vector',
+  //   url: 'mapbox://mapbox.boundaries-adm1-v3'
+  // });
+
+  // exclude states outside the 50 states
+  // const expression = ["match", ["get", "STATE_ID"]];
+  // const expression = []
+  const confirmedValues = data.map((entry) => entry.confirmed);
+  const max = Math.max(...confirmedValues);
+  const min = Math.min(...confirmedValues);
+  function normalizeValue(value) {
+    return (value - min) / (max - min);
+  }
+  const expression = data.map(function (row) {
+    var red = normalizeValue(row.confirmed) * 255;
+    var color = "rgba(" + red + ", " + 0 + ", " + 0 + ", 1)";
+    return [row.country, color];
+  });
+
+  map.addLayer(
+    {
+      id: "maine",
+      type: "fill",
+      layout: {},
+      maxzoom: countryMinZoom,
+      paint: {
+        "fill-color": {
+          type: "categorical",
+          property: "name",
+          stops: expression,
+        },
+        "fill-opacity": 0.7,
+        "fill-outline-color": "rgba(86, 101, 115, 0.5)",
+      },
+      source: {
+        type: "vector",
+        url: "mapbox://saurabhp.countries_tileset",
+      },
+      "source-layer": "countries",
+    },
+    "waterway-label"
+  );
+}
+
+function addUSStatesLayer(map, data) {
   const stateToFIPS = {
     AK: "02",
     AL: "01",
@@ -131,22 +197,20 @@ function addUSCountryLayer(map, zoomThreshold, data) {
   expression.push("rgba(0,0,0,0)");
 
   // Add layer from the vector tile source with data-driven style
-  map.addLayer(
-    {
-      id: "states-join",
-      type: "fill",
-      source: "states",
-      maxzoom: zoomThreshold,
-      "source-layer": "states",
-      paint: {
-        "fill-color": expression,
-      },
-    }
-    // 'road-label'
-  );
+  map.addLayer({
+    id: "states-join",
+    type: "fill",
+    source: "states",
+    minzoom: countryMinZoom,
+    maxzoom: statesMinZoom,
+    "source-layer": "states",
+    paint: {
+      "fill-color": expression,
+    },
+  });
 }
 
-function addUSCountyLayer(map, zoomThreshold) {
+function addUSCountyLayer(map) {
   // var countyData ={}
   // var url ="http://13.57.220.143/getcounty";
   // fetch(url,{ method: 'post'}).then((resp) => resp.json())
@@ -626,7 +690,7 @@ function addUSCountyLayer(map, zoomThreshold) {
   map.addLayer({
     id: "counties",
     type: "fill",
-    minzoom: zoomThreshold,
+    minzoom: statesMinZoom,
     source: {
       type: "vector",
       tiles: [
