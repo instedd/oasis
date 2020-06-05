@@ -92,16 +92,17 @@
     .top {
         top: 4rem;
         min-height: 150px;
-    }
-    .box {
         padding-top: 0;
+    }
+    .bottom { bottom: 0; }
+    .box {
         border-radius: 0;
     }
     .breadcrumbs {
         top: 0;
         left: 0;
         right: 0;
-        height: 5rem;
+        height: 4rem;
         background-color: rgba(0,0,0, 0.5);
         padding: 0 1rem;
     }

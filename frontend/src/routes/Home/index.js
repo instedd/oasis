@@ -19,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
       width: "max-content",
       padding: 2,
     },
-    width: 240,
   },
   button: {
     "&:hover": {

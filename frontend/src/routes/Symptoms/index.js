@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: "90vw",
     overflow: "auto",
-    height: "max-content",
+    margin: "auto",
   },
   group: {
     "& > *": {
