@@ -15,10 +15,6 @@ export default function MyStory(props) {
 
   const StyledTextField = withStyles({
     root: {
-      "& .MuiInputLabel-shrink": {
-        width: 420,
-        textAlign: "left",
-      },
       "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
         borderColor: "#3f51b5 !important",
       },
@@ -31,7 +27,7 @@ export default function MyStory(props) {
       <h3 className="subtitle">Your COVID-19 story in your own words</h3>
       <StyledTextField
         id="outlined-multiline-static"
-        label="Tell a little about yourself, how you think you got sick and what the experience has been like"
+        placeholder="Tell a little about yourself, how you think you got sick and what the experience has been like"
         multiline
         rowsMax={10}
         value={story}
@@ -46,7 +42,7 @@ export default function MyStory(props) {
         className="fab"
         variant="extended"
       >
-        SUBMIT
+        SHARE MY STORY
       </Fab>
       <Fab
         style={{ background: "#9206FF" }}

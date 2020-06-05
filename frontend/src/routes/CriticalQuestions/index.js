@@ -15,11 +15,11 @@ import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 import { DatePicker } from "@material-ui/pickers";
-import { submitStory } from "actions/story";
+import { submitStory, fetchStory } from "actions/story";
 import classNames from "classnames";
 import Pop from "components/PopUp";
 import Wrapper from "components/Wrapper";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import paths from "routes/paths";
 import Text from "text.json";
@@ -72,6 +72,18 @@ function CriticalQuestions(props) {
   const [contactCount, setContactCount] = useState(0);
   const [locationCount, setLocationCount] = useState(0);
 
+  let nextPage;
+  const { story } = useSelector((state) => state.story);
+  useEffect(() => {
+    if (!story) {
+      dispatch(fetchStory());
+    } else {
+      setFormValues({ ...formValues, ...story });
+      if (story.sick === sicknessStatus.NOT_SICK) nextPage = paths.dashboard;
+      else nextPage = paths.symptoms;
+    }
+  }, [dispatch, story]);
+
   const handleFormChange = (key) => (event) => {
     const intFields = ["age"];
     const nonValueFields = ["sicknessStart", "sicknessEnd"];
@@ -93,13 +105,11 @@ function CriticalQuestions(props) {
     event.preventDefault();
     const { selectedMedicalConditions, ...story } = formValues;
     story.medicalConditions = selectedMedicalConditions;
-    story.sick = sick;
-    story.tested = tested;
     const dto = { story, nextPage };
     dispatch(submitStory(dto));
   };
 
-  const [countries, setCountries] = React.useState([]);
+  const [countries, setCountries] = useState([]);
 
   const sicknessEndPicker = (
     <DatePicker
@@ -112,7 +122,7 @@ function CriticalQuestions(props) {
     />
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetch("https://restcountries.eu/rest/v2/all?fields=name")
       .then((res) => res.json())
       .then(
@@ -168,20 +178,10 @@ function CriticalQuestions(props) {
 
   React.useEffect(scrollToBottom, [locations]);
   React.useEffect(scrollToBottom, [contacts]);
-  let nextPage;
-  const { sick, tested } = useSelector((state) => state.story.story);
-  if (sick === sicknessStatus.NOT_SICK) {
-    nextPage = paths.dashboard;
-  } else {
-    nextPage = paths.symptoms;
-  }
 
   return (
     <Wrapper>
-      <h1 className="title" style={{ margin: 0 }}>
-        {" "}
-        MY COVID STORY
-      </h1>
+      <h1 className="title">MY COVID STORY</h1>
       <div className={classNames("root", styles.root)}>
         <div className={classNames("grid-3", styles["grid-3"])}>
           <DatePicker
@@ -192,7 +192,9 @@ function CriticalQuestions(props) {
             value={formValues.sicknessStart}
             onChange={handleFormChange("sicknessStart")}
           />
-          {sick === sicknessStatus.RECOVERED ? sicknessEndPicker : null}
+          {story && story.sick === sicknessStatus.RECOVERED
+            ? sicknessEndPicker
+            : null}
         </div>
         <div className={classNames("grid-1", styles["grid-1"])}>
           <TextField
@@ -233,12 +235,11 @@ function CriticalQuestions(props) {
         <div
           className={classNames("location-wrapper", styles["location-wrapper"])}
         >
-          <span>Current Location</span>
           <div className={classNames("grid-1", styles["grid-1"])}>
             <FormControl>
               <TextField
                 select
-                label=" "
+                label="Current location"
                 value={formValues.currentLocation}
                 onChange={handleFormChange("currentLocation")}
               >
@@ -252,13 +253,12 @@ function CriticalQuestions(props) {
             </FormControl>
             <FormControl>
               <TextField
-                label=" "
+                label="Postal code"
                 value={formValues.postalCode}
                 onChange={handleFormChange("postalCode")}
                 type="number"
                 InputProps={{ inputProps: { min: 0 } }}
               />
-              <FormHelperText>Postal Code</FormHelperText>
             </FormControl>
             <TextField
               select

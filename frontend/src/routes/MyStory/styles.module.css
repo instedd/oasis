@@ -22,6 +22,9 @@
     height: 40%;
 }
 
-.textarea>div {
+.textarea > div {
     height: 100%;
+    color: white;
+    align-items: flex-start;
+    background-color: rgba(0,0,0,0.5);
 }

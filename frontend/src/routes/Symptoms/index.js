@@ -1,4 +1,11 @@
-import { Checkbox, Fab, FormControl, FormControlLabel, FormGroup, TextField } from "@material-ui/core";
+import {
+  Checkbox,
+  Fab,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  TextField,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
@@ -124,7 +131,7 @@ export default function Symptoms(props) {
       <Fab
         style={{ background: "#9206FF" }}
         aria-label="Go to previous page"
-        onClick={navigate(paths.criticalQuestions)}
+        onClick={navigate()}
         size="medium"
         className="fab back-btn"
       >
