@@ -8,8 +8,14 @@ import api from "utils";
 mapboxgl.accessToken =
   "pk.eyJ1Ijoic3RlNTE5IiwiYSI6ImNrOHc1aHlvYTB0N2ozam51MHFiazE3bmcifQ.AHtFuA-pAqau_AJIy-hzOg";
 
-const countryMinZoom = 4;
+const countryMinZoom = 3.5;
 const statesMinZoom = 5;
+const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
+
+const dataScope = {
+  WORLD: "world",
+  US_STATES: "us-states",
+};
 
 export default function Map({ draggable = true }) {
   const [state] = useState({
@@ -26,21 +32,11 @@ export default function Map({ draggable = true }) {
       zoom: state.zoom,
     });
 
-    var data = {};
-    const url = "https://covidtracking.com/api/states";
-    fetch(url)
-      .then((resp) => resp.json())
-      .then(function (dat) {
-        data = dat;
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-
-    const covidData = fetchCovidData();
+    const worldData = fetchCovidData(dataScope.WORLD);
+    const usStatesData = fetchCovidData(dataScope.US_STATES);
     map.on("load", function () {
-      addWorldLayer(map, covidData);
-      addUSStatesLayer(map, data);
+      addWorldLayer(map, worldData);
+      addUSStatesLayer(map, usStatesData);
       // addUSCountyLayer(map);
     });
   }, []);
@@ -53,17 +49,16 @@ export default function Map({ draggable = true }) {
   );
 }
 
-async function fetchCovidData() {
-  return await api(`data/world`, {
+async function fetchCovidData(scope) {
+  return await api(`data/` + scope, {
     method: "GET",
   });
 }
 
-async function addWorldLayer(map, data) {
+function addWorldLayer(map, data) {
   data.then(function (covidData) {
     const expression = covidData.map(function (row) {
-      var color = "rgba(" + row.group * 255 + ", " + 0 + ", " + 0 + ", 1)";
-      return [row.country, color];
+      return [row.country, get_color(row.group)];
     });
 
     map.addLayer(
@@ -79,7 +74,7 @@ async function addWorldLayer(map, data) {
             stops: expression,
           },
           "fill-opacity": 0.7,
-          "fill-outline-color": "rgba(86, 101, 115, 0.5)",
+          "fill-outline-color": fillOutlineColor,
         },
         source: {
           type: "vector",
@@ -90,6 +85,10 @@ async function addWorldLayer(map, data) {
       "waterway-label"
     );
   });
+}
+
+function get_color(group) {
+  return "rgba(" + group * 255 + ", " + 0 + ", " + 0 + ", 1)";
 }
 
 function addUSStatesLayer(map, data) {
@@ -151,40 +150,39 @@ function addUSStatesLayer(map, data) {
     WY: "56",
   };
 
-  // Add source for state polygons hosted on Mapbox, based on US Census Data:
-  // https://www.census.gov/geo/maps-data/data/cbf/cbf_state.html
-  map.addSource("states", {
-    type: "vector",
-    url: "mapbox://mapbox.us_census_states_2015",
-  });
+  data.then(function (usData) {
+    // Add source for state polygons hosted on Mapbox, based on US Census Data:
+    // https://www.census.gov/geo/maps-data/data/cbf/cbf_state.html
+    map.addSource("states", {
+      type: "vector",
+      url: "mapbox://mapbox.us_census_states_2015",
+    });
 
-  // exclude states outside the 50 states
-  const expression = ["match", ["get", "STATE_ID"]];
-  // var maxValue= data.reduce((max,b) => Math.max(max, b.death), data[0].death);
-  const normalizerValue = 5000;
-  data.forEach(function (row) {
-    var stateID = row.state;
-    if (stateID in stateToFIPS) {
-      var red = (row.death / normalizerValue) * 255;
-      var color = "rgba(" + red + ", " + 0 + ", " + 0 + ", 1)";
-      expression.push(stateToFIPS[stateID], color);
-    }
-  });
+    // exclude states outside the 50 states
+    const expression = ["match", ["get", "STATE_ID"]];
+    usData.forEach(function (row) {
+      var stateID = row.state;
+      if (stateID in stateToFIPS) {
+        expression.push(stateToFIPS[stateID], get_color(row.group));
+      }
+    });
+    expression.push("rgba(0,0,0,0)"); // Last value is the default, used where there is no data
 
-  // Last value is the default, used where there is no data
-  expression.push("rgba(0,0,0,0)");
-
-  // Add layer from the vector tile source with data-driven style
-  map.addLayer({
-    id: "states-join",
-    type: "fill",
-    source: "states",
-    minzoom: countryMinZoom,
-    maxzoom: statesMinZoom,
-    "source-layer": "states",
-    paint: {
-      "fill-color": expression,
-    },
+    map.addLayer(
+      {
+        id: "states-join",
+        type: "fill",
+        source: "states",
+        minzoom: countryMinZoom,
+        // maxzoom: statesMinZoom,
+        "source-layer": "states",
+        paint: {
+          "fill-color": expression,
+          "fill-outline-color": fillOutlineColor,
+        },
+      },
+      "waterway-label"
+    );
   });
 }
 
