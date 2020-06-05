@@ -1,12 +1,14 @@
 import os
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
+from starlette.responses import JSONResponse
 from starlette.templating import Jinja2Templates
 
 from router import api
+from auth.main import NotFoundException
 
 
 async def homepage(request, exec):
@@ -38,3 +40,10 @@ app.add_middleware(
 app.include_router(api.router, prefix="/api")
 
 app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
+
+
+@app.exception_handler(NotFoundException)
+async def not_found_exception_handler(
+    request: Request, exc: NotFoundException
+):
+    return JSONResponse(status_code=404, content={"detail": exc.message},)
