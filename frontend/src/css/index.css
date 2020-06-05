@@ -39,21 +39,6 @@ a, a:link, a:visited, a:hover, a:active {
   color: white !important;
 }
 
-.form-row {
-  padding: 1.5rem 1rem 0rem 0rem;
-  display: flex;
-  align-items: center;
-}
-
-.contacts div, .travels div {
-  height: 24px;
-  margin-left: 5px;
-}
-
-.form-row .fab {
-  margin-right: 1rem !important;
-}
-
 #menu- .MuiMenu-paper {
   top: 30% !important
 }

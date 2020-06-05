@@ -56,11 +56,8 @@ function CriticalQuestions(props) {
 
   const [formValues, setFormValues] = useState(initialFieldsState());
 
-  const [travelDates, setTravelDates] = useState({ 0: null });
-  const [travelDatesIndex, setTravelDatesIndex] = useState(0);
-
   const [contactCount, setContactCount] = useState(0);
-  const [locationCount, setLocationCount] = useState(0);
+  const [recentTravels, setRecentTravels] = useState([]);
 
   let nextPage;
   const { story, status } = useSelector((state) => state.story);
@@ -84,16 +81,24 @@ function CriticalQuestions(props) {
     }
   };
 
-  function handleTravelDateChange(date) {
-    setTravelDates({ ...travelDates, [travelDatesIndex]: date });
-  }
+  const handleRecentTravelChange = (key, index) => (event) => {
+    const newTravel = recentTravels[index];
+    if (key === "dateOfReturn")
+      newTravel[key] = new Date(event)
+        .toISOString()
+        .substring(0, 10);
+    else newTravel[key] = event.target.value;
+    const newTravels = [...recentTravels];
+    newTravels[index] = newTravel;
+    setRecentTravels(newTravels);
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const { ...story } = formValues;
     if (story.sick === sicknessStatus.NOT_SICK) nextPage = paths.dashboard;
     else nextPage = paths.symptoms;
-    const dto = { story, nextPage };
+    const dto = { story, nextPage, travels: recentTravels };
     dispatch(submitStory(dto));
   };
 
@@ -154,36 +159,12 @@ function CriticalQuestions(props) {
     );
   }
 
-  const locations = [];
-  for (let i = 0; i < locationCount; i++) {
-    locations.push(
-      <div key={i}>
-        <div className={classNames("grid-3", styles["grid-3"])}>
-          <TextField label="Current location" />
-        </div>
-        <div className={classNames("grid-3", styles["grid-3"])}>
-          <DatePicker
-            label="Date"
-            key={i}
-            id={`hi-${i}`}
-            clearable
-            disableFuture
-            value={travelDates[i]}
-            onOpen={() => setTravelDatesIndex(i)}
-            onChange={(date) => handleTravelDateChange(date)}
-          />
-        </div>
-      </div>
-    );
-  }
-
   const pageBottomRef = React.useRef(null);
 
   const scrollToBottom = () => {
     pageBottomRef.current.scrollIntoView({ behavior: "smooth" });
   };
 
-  React.useEffect(scrollToBottom, [locations]);
   React.useEffect(scrollToBottom, [contacts]);
 
   return (
@@ -328,12 +309,12 @@ function CriticalQuestions(props) {
             </Select>
           </FormControl>
         </div>
-        <div className={classNames("form-row contacts", styles.contacts)}>
+        <div className={styles.formrow}>
           <Fab
             style={{ background: "#EA2027" }}
             aria-label="add"
             size="medium"
-            className="fab"
+            className={styles.fab}
             onClick={() => setContactCount(contactCount + 1)}
           >
             <AddIcon />
@@ -348,13 +329,13 @@ function CriticalQuestions(props) {
           />
         </div>
         {contacts}
-        <div className={classNames("form-row travels", styles.travels)}>
+        <div className={styles.formrow}>
           <Fab
             style={{ background: "#EA2027" }}
             aria-label="add"
             size="medium"
-            className="fab"
-            onClick={() => setLocationCount(locationCount + 1)}
+            className={styles.fab}
+            onClick={() => setRecentTravels([...recentTravels, {}])}
           >
             <AddIcon />
           </Fab>
@@ -367,7 +348,28 @@ function CriticalQuestions(props) {
             listIndex={travelListIndex}
           />
         </div>
-        {locations}
+        {recentTravels.map((travel, i) => (
+          <div key={i}>
+            <div className={classNames("grid-3", styles["grid-3"])}>
+              <TextField
+                label="Where did you travel to?"
+                value={recentTravels[i].location || ""}
+                onChange={handleRecentTravelChange("location", i)}
+              />
+            </div>
+            <div className={classNames("grid-3", styles["grid-3"])}>
+              <DatePicker
+                label="When did you return?"
+                key={i}
+                id={`travel-date-${i}`}
+                clearable
+                disableFuture
+                value={recentTravels[i].dateOfReturn || null}
+                onChange={handleRecentTravelChange("dateOfReturn", i)}
+              />
+            </div>
+          </div>
+        ))}
         <div style={{ height: "30px" }} ref={pageBottomRef}></div>
       </div>
       <Fab
