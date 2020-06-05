@@ -18,7 +18,7 @@ import { DatePicker } from "@material-ui/pickers";
 import { submitStory, fetchStory } from "actions/story";
 import classNames from "classnames";
 import Pop from "components/PopUp";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import paths from "routes/paths";
 import Text from "text.json";

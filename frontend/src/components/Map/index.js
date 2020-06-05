@@ -3,11 +3,12 @@ import classNames from "classnames";
 import mapboxgl from "mapbox-gl";
 import React, { useEffect, useState } from "react";
 import styles from "./styles.module.css";
+import api from "utils";
 
 mapboxgl.accessToken =
   "pk.eyJ1Ijoic3RlNTE5IiwiYSI6ImNrOHc1aHlvYTB0N2ozam51MHFiazE3bmcifQ.AHtFuA-pAqau_AJIy-hzOg";
 
-const countryMinZoom = 3;
+const countryMinZoom = 4;
 const statesMinZoom = 5;
 
 export default function Map({ draggable = true }) {
@@ -36,22 +37,7 @@ export default function Map({ draggable = true }) {
         console.log(error);
       });
 
-    var covidData = {};
-    // const obj = entry => ({country:entry["Country"], confirmed:entry["TotalConfirmed"]})
-    const covidApiUrl = "https://api.covid19api.com/summary";
-    fetch(covidApiUrl)
-      .then((resp) => resp.json())
-      .then(function (body) {
-        const countries = body["Countries"];
-        covidData = countries.map((entry) => ({
-          country: entry["Country"],
-          confirmed: entry["TotalConfirmed"],
-        }));
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-
+    const covidData = fetchCovidData();
     map.on("load", function () {
       addWorldLayer(map, covidData);
       addUSStatesLayer(map, data);
@@ -67,51 +53,43 @@ export default function Map({ draggable = true }) {
   );
 }
 
-function addWorldLayer(map, data) {
-  // Add source for admin-1 Boundaries
-  //  map.addSource('admin-1', {
-  //   type: 'vector',
-  //   url: 'mapbox://mapbox.boundaries-adm1-v3'
-  // });
-
-  // exclude states outside the 50 states
-  // const expression = ["match", ["get", "STATE_ID"]];
-  // const expression = []
-  const confirmedValues = data.map((entry) => entry.confirmed);
-  const max = Math.max(...confirmedValues);
-  const min = Math.min(...confirmedValues);
-  function normalizeValue(value) {
-    return (value - min) / (max - min);
-  }
-  const expression = data.map(function (row) {
-    var red = normalizeValue(row.confirmed) * 255;
-    var color = "rgba(" + red + ", " + 0 + ", " + 0 + ", 1)";
-    return [row.country, color];
+async function fetchCovidData() {
+  return await api(`data/world`, {
+    method: "GET",
   });
+}
 
-  map.addLayer(
-    {
-      id: "maine",
-      type: "fill",
-      layout: {},
-      maxzoom: countryMinZoom,
-      paint: {
-        "fill-color": {
-          type: "categorical",
-          property: "name",
-          stops: expression,
+async function addWorldLayer(map, data) {
+  data.then(function (covidData) {
+    const expression = covidData.map(function (row) {
+      var color = "rgba(" + row.group * 255 + ", " + 0 + ", " + 0 + ", 1)";
+      return [row.country, color];
+    });
+
+    map.addLayer(
+      {
+        id: "maine",
+        type: "fill",
+        layout: {},
+        maxzoom: countryMinZoom,
+        paint: {
+          "fill-color": {
+            type: "categorical",
+            property: "name",
+            stops: expression,
+          },
+          "fill-opacity": 0.7,
+          "fill-outline-color": "rgba(86, 101, 115, 0.5)",
         },
-        "fill-opacity": 0.7,
-        "fill-outline-color": "rgba(86, 101, 115, 0.5)",
+        source: {
+          type: "vector",
+          url: "mapbox://saurabhp.countries_tileset",
+        },
+        "source-layer": "countries",
       },
-      source: {
-        type: "vector",
-        url: "mapbox://saurabhp.countries_tileset",
-      },
-      "source-layer": "countries",
-    },
-    "waterway-label"
-  );
+      "waterway-label"
+    );
+  });
 }
 
 function addUSStatesLayer(map, data) {

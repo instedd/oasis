@@ -10,3 +10,5 @@ bcrypt
 pyjwt
 python-multipart
 requests
+pandas
+jenkspy
