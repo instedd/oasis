@@ -121,6 +121,21 @@ async def get_token_contents(token: str = Depends(oauth2_scheme)):
     return None
 
 
+def get_user_from_token(db, token_data):
+    if token_data and isinstance(token_data, schemas.UserToken):
+        return get_user_by_email(db, email=token_data.email)
+    else:
+        return None
+
+
+def get_existing_story(user, token_data, db):
+    if user and user.story:
+        return user.story.id
+    if isinstance(token_data, schemas.StoryToken):
+        return token_data.story_id
+    return None
+
+
 credentials_exception = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Could not validate credentials",
@@ -134,7 +149,7 @@ async def get_current_user(
     token_data = await get_token_contents(token=token)
     if token_data is None:
         raise credentials_exception
-    user = get_user_by_email(db, email=token_data.email)
+    user = get_user_from_token(db, token_data)
     if user is None:
         raise credentials_exception
     return user
@@ -148,26 +163,10 @@ async def get_current_story(
     token_data = await get_token_contents(token=token)
     if token_data is None:
         raise credentials_exception
-    user = None
-    story = None
-    if isinstance(token_data, schemas.UserToken):
-        user = get_user_by_email(db, email=token_data.email)
-    if isinstance(token_data, schemas.StoryToken):
-        story = (
-            get_story(db, story_id=token_data.story_id)
-            if token_data.story_id
-            else None
-        )
+    user = get_user_from_token(db, token_data)
+    story_id = get_existing_story(user, token_data, db)
+    story = get_story(db, story_id)
     if not story:
-        if not (user and user.story):  # no story nor user match the token data
-            raise NotFoundException(message="Story not found")
-        else:  # there's a user with a story
-            return user.story
-    if not user:
-        # the token has no user data, so we're operating anonymously. That's ok
-        return story
-    elif user.story.id != story.id:
-        # there's user data in the token but it doesn't match the story data
-        raise credentials_exception
-    # there's user data and it matches user data
+        # no story nor user match the token data
+        raise NotFoundException(message="Story not found")
     return story

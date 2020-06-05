@@ -7,8 +7,7 @@ from starlette.responses import JSONResponse
 from starlette.requests import Request
 
 from database import get_db
-from auth import main, schemas as auth_schemas
-from users.crud import get_user_by_email
+from auth import main
 from stories import crud, schemas
 
 
@@ -36,17 +35,10 @@ async def create_story(
     db: Session = Depends(get_db),
 ):
     token_data = await main.get_token_if_present(request)
-    story_to_update = None
-    user = None
-    if token_data:
-        # if there was token data associated with the request,
-        # we probably wanted to do an update
-        if isinstance(token_data, auth_schemas.UserToken):
-            user = get_user_by_email(db, email=token_data.email)
-            if user.story:
-                story_to_update = user.story.id
-        else:
-            story_to_update = token_data.story_id
+
+    user = main.get_user_from_token(db, token_data)
+    story_to_update = main.get_existing_story(user, token_data, db)
+
     if story_to_update:
         db_story = crud.update_story(db, story_to_update, story)
     else:
