@@ -18,7 +18,6 @@ import { DatePicker } from "@material-ui/pickers";
 import { submitStory, fetchStory } from "actions/story";
 import classNames from "classnames";
 import Pop from "components/PopUp";
-import Wrapper from "components/Wrapper";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import paths from "routes/paths";
@@ -177,8 +176,11 @@ function CriticalQuestions(props) {
   React.useEffect(scrollToBottom, [contacts]);
 
   return (
-    <Wrapper>
-      <h1 className="title">MY COVID STORY</h1>
+    <>
+      <h1 className="title" style={{ margin: 0 }}>
+        {" "}
+        MY COVID STORY
+      </h1>
       <div className={classNames("root", styles.root)}>
         <div className={classNames("grid-3", styles["grid-3"])}>
           <DatePicker
@@ -379,7 +381,7 @@ function CriticalQuestions(props) {
       >
         <ArrowLeftIcon />
       </Fab>
-    </Wrapper>
+    </>
   );
 }
 

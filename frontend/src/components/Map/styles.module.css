@@ -1,16 +1,22 @@
-.fill {
+.root {
   position: fixed;
   top: 0;
   bottom: 0;
   right: 0;
+  left: 0;
+}
+
+.fill {
   width: 100%;
-  height:100%;
+  height: 100%;
+  position: absolute;
 }
 
 .mask {
   background: rgba(0, 0, 0, 0.40);
+  z-index: 2
 }
 
 .map {
-  z-index: -1;
+  z-index: 1;
 }

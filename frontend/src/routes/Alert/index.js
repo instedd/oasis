@@ -3,7 +3,6 @@ import { Fab } from "@material-ui/core";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 
-import Wrapper from "components/Wrapper";
 import styles from "./styles.module.css";
 import Text from "text.json";
 
@@ -13,7 +12,7 @@ const linkIndex = Text["Warning Signs"].linkIndex;
 
 export default function Alert(props) {
   return (
-    <Wrapper>
+    <>
       <h1 className={styles.title}>WARNING</h1>
       <div className={styles.warnings}>
         <ul>
@@ -47,6 +46,6 @@ export default function Alert(props) {
           <ArrowRightIcon />
         </Fab>
       </div>
-    </Wrapper>
+    </>
   );
 }

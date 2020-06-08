@@ -1,6 +1,5 @@
 import { Fab } from "@material-ui/core";
 import classNames from "classnames";
-import Wrapper from "components/Wrapper";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { sicknessStatus } from "routes/types";
@@ -17,7 +16,7 @@ export default function Onboard({ history }) {
   };
 
   return (
-    <Wrapper>
+    <>
       <h1 className="title">MY COVID STORY</h1>
       <div className={classNames("btn-group", styles.buttons)}>
         <Fab
@@ -45,6 +44,6 @@ export default function Onboard({ history }) {
           <span>I AM RECOVERED</span>
         </Fab>
       </div>
-    </Wrapper>
+    </>
   );
 }

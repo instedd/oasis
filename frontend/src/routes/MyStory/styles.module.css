@@ -18,8 +18,9 @@
 }
 
 .textarea {
-    width: 340px;
-    height: 40%;
+    width: 90vw;
+    height: 40vh;
+    display: flex;
 }
 
 .textarea > div {

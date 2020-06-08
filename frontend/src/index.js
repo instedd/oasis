@@ -1,6 +1,5 @@
 import MomentUtils from "@date-io/moment";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
-import Map from "components/Map";
 import "css/index.css";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -22,6 +21,7 @@ import styles from "styles.module.css";
 import history from "./history";
 import store from "store/configureStore";
 import * as serviceWorker from "./serviceWorker";
+import Wrapper from "components/Wrapper";
 
 ReactDOM.render(
   <Provider store={store}>
@@ -30,8 +30,7 @@ ReactDOM.render(
         <Link to={paths.home} className={styles.header}>
           OASIS
         </Link>
-        <Map></Map>
-        <main className={styles.root}>
+        <Wrapper draggableMapRoutes={[paths.dashboard]}>
           <Switch>
             <Route exact path={paths.home} component={Home} />
             <Route path={paths.signIn} component={SignIn} />
@@ -42,7 +41,6 @@ ReactDOM.render(
               component={CriticalQuestions}
             />
             <Route path={paths.symptoms} component={Symptoms} />
-            <Route path={paths.dashboard} component={Dashboard} />
             <Route path={paths.confirm} component={Confirm} />
             <Route
               path={paths.healthMeasurements}
@@ -50,8 +48,9 @@ ReactDOM.render(
             />
             <Route path={paths.signUp} component={SignUp} />
             <Route path={paths.myStory} component={MyStory} />
+            <Route path={paths.dashboard} component={Dashboard} />
           </Switch>
-        </main>
+        </Wrapper>
       </Router>
     </MuiPickersUtilsProvider>
   </Provider>,

@@ -3,7 +3,6 @@ import { Fab, Typography, Slider } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
-import Wrapper from "components/Wrapper";
 
 const CustomSlider = withStyles({
   root: {
@@ -88,7 +87,7 @@ function HealthMeasurements(props) {
   }
 
   return (
-    <Wrapper>
+    <>
       <h1 className="title"> MY COVID STORY</h1>
       <div className="sliders-wrapper">
         <Typography id="temp-slider" gutterBottom>
@@ -157,7 +156,7 @@ function HealthMeasurements(props) {
       >
         <ArrowLeftIcon />
       </Fab>
-    </Wrapper>
+    </>
   );
 }
 

@@ -1,7 +1,6 @@
 import { Fab } from "@material-ui/core";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import classNames from "classnames";
-import Wrapper from "components/Wrapper";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import paths from "routes/paths";
@@ -19,7 +18,7 @@ export default function Confirm({ history }) {
   };
 
   return (
-    <Wrapper>
+    <>
       <h1 className={classNames("title", styles.title)}>
         HAVE YOUR BEEN TESTED FOR COVID-19?
       </h1>
@@ -65,6 +64,6 @@ export default function Confirm({ history }) {
       >
         <ArrowLeftIcon />
       </Fab>
-    </Wrapper>
+    </>
   );
 }

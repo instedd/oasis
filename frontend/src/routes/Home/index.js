@@ -6,7 +6,6 @@ import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import { makeStyles } from "@material-ui/core/styles";
 
-import Wrapper from "components/Wrapper";
 import Text from "../../text.json";
 import Pop from "components/PopUp";
 import paths from "routes/paths";
@@ -20,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
       width: "max-content",
       padding: 2,
     },
-    width: 240,
   },
   button: {
     "&:hover": {
@@ -79,7 +77,7 @@ function App(props) {
   const listIndex = Text["Terms and Conditions"].listIndex;
   const linkIndex = Text["Terms and Conditions"].linkIndex;
   return (
-    <Wrapper>
+    <>
       <h1 className={styles.title}>FIGHT COVID-19 PUT YOUR STORY ON THE MAP</h1>
       <div>
         <SpeedDial
@@ -133,7 +131,7 @@ function App(props) {
           ))}
         </SpeedDial>
       </div>
-    </Wrapper>
+    </>
   );
 }
 
