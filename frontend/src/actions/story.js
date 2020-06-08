@@ -126,7 +126,7 @@ export const getStorySuggestions = (story) => {
     story.sick === sicknessStatus.SICK
   ) {
     let checkSymptomsLink = "https://landing.google.com/screener/covid19";
-    if (story.countryOfOrigin === "United States of America")
+    if (story.currentLocation === "United States of America")
       checkSymptomsLink =
         "https://www.cdc.gov/coronavirus/2019-ncov/symptoms-testing/symptoms.html";
     suggestions.push({
