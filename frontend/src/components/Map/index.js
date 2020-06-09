@@ -61,7 +61,6 @@ async function addWorldLayer(map, data) {
       id: "maine",
       type: "fill",
       layout: {},
-      maxzoom: countryMinZoom,
       paint: {
         "fill-color": {
           type: "categorical",
@@ -168,11 +167,11 @@ async function addUSStatesLayer(map, data) {
       type: "fill",
       source: "states",
       minzoom: countryMinZoom,
-      // maxzoom: statesMinZoom,
       "source-layer": "states",
       paint: {
         "fill-color": expression,
         "fill-outline-color": fillOutlineColor,
+        "fill-opacity": 1,
       },
     },
     "waterway-label"
