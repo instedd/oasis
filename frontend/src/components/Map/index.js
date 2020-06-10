@@ -15,27 +15,58 @@ const dataScope = {
   US_STATES: "us-states",
 };
 
+const fetchUserLocation = async () => {
+  const response = await fetch(`http://ip-api.com/json`);
+  if (response.status >= 200 && response.status < 300) {
+    const jsonResponse = await response.json();
+    return { lat: jsonResponse.lat, lng: jsonResponse.lon };
+  }
+};
+
 export default function Map({ draggable = true }) {
   const [state] = useState({
-    lng: -119.6,
-    lat: 36.7,
+    location: {
+      lng: -119.6,
+      lat: 36.7,
+    },
     zoom: 5,
   });
 
-  useEffect(() => {
-    const map = new mapboxgl.Map({
-      container: "map",
-      style: "mapbox://styles/mapbox/dark-v10",
-      center: [state.lng, state.lat],
-      zoom: state.zoom,
-    });
+  const getUserLocation = async () => {
+    const userLocation = await fetchUserLocation();
+    if (userLocation) {
+      return {
+        lng: userLocation.lng,
+        lat: userLocation.lat,
+      };
+    }
+  };
 
+  const addLayers = async (pMap) => {
     const worldData = fetchCovidData(dataScope.WORLD);
     const usStatesData = fetchCovidData(dataScope.US_STATES);
+    const map = await pMap;
+
     map.on("load", function () {
       addWorldLayer(map, worldData);
       addUSStatesLayer(map, usStatesData);
     });
+  };
+
+  useEffect(() => {
+    const initializeMap = async () => {
+      const userLocation = await getUserLocation();
+      const location = userLocation ? userLocation : state.location;
+      return new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/mapbox/dark-v10",
+        center: [location.lng, location.lat],
+        zoom: state.zoom,
+      });
+    };
+
+    const map = initializeMap();
+    addLayers(map);
   }, []);
 
   return (
