@@ -130,18 +130,11 @@ function CriticalQuestions(props) {
   );
 
   const shouldDisplaySicknessPicker = (picker) => {
-    const validStatus = ((picker) => {
-      switch (picker) {
-        case "start":
-          return [sicknessStatus.RECOVERED, sicknessStatus.SICK];
-        case "end":
-          return [sicknessStatus.RECOVERED];
-        default:
-          return [];
-      }
-    })(picker);
+    const validStatus = new Map();
+    validStatus.set("start", [sicknessStatus.RECOVERED, sicknessStatus.SICK]);
+    validStatus.set("end", [sicknessStatus.RECOVERED]);
 
-    return story && validStatus.includes(story.sick);
+    return story && validStatus.get(picker).includes(story.sick);
   };
 
   useEffect(() => {
@@ -209,8 +202,8 @@ function CriticalQuestions(props) {
       </h1>
       <div className={classNames("root", styles.root)}>
         <div className={classNames("grid-3", styles["grid-3"])}>
-          {shouldDisplaySicknessPicker("start") ? sicknessStartPicker : null}
-          {shouldDisplaySicknessPicker("end") ? sicknessEndPicker : null}
+          {shouldDisplaySicknessPicker("start") && sicknessStartPicker}
+          {shouldDisplaySicknessPicker("end") && sicknessEndPicker}
         </div>
         <div className={classNames("grid-1", styles["grid-1"])}>
           <TextField
