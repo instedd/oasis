@@ -8,6 +8,8 @@ mapboxgl.accessToken =
   "pk.eyJ1Ijoic3RlNTE5IiwiYSI6ImNrOHc1aHlvYTB0N2ozam51MHFiazE3bmcifQ.AHtFuA-pAqau_AJIy-hzOg";
 
 const countryMinZoom = 3.5;
+const initialZoom = 5;
+const focusZoom = 6;
 const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
 
 const dataScope = {
@@ -24,28 +26,26 @@ const fetchUserLocation = async () => {
 };
 
 export default function Map({ draggable = true }) {
-  const [state] = useState({
-    location: {
-      lng: -119.6,
-      lat: 36.7,
-    },
-    zoom: 5,
+  const [map, setMap] = useState(null);
+  const [location, setLocation] = useState({
+    lng: -119.6,
+    lat: 36.7,
   });
 
   const getUserLocation = async () => {
     const userLocation = await fetchUserLocation();
     if (userLocation) {
-      return {
+      setLocation({
+        ...location,
         lng: userLocation.lng,
         lat: userLocation.lat,
-      };
+      });
     }
   };
 
-  const addLayers = async (pMap) => {
+  const addLayers = (map) => {
     const worldData = fetchCovidData(dataScope.WORLD);
     const usStatesData = fetchCovidData(dataScope.US_STATES);
-    const map = await pMap;
 
     map.on("load", function () {
       addWorldLayer(map, worldData);
@@ -54,20 +54,28 @@ export default function Map({ draggable = true }) {
   };
 
   useEffect(() => {
-    const initializeMap = async () => {
-      const userLocation = await getUserLocation();
-      const location = userLocation ? userLocation : state.location;
-      return new mapboxgl.Map({
-        container: "map",
-        style: "mapbox://styles/mapbox/dark-v10",
-        center: [location.lng, location.lat],
-        zoom: state.zoom,
-      });
-    };
+    getUserLocation();
 
-    const map = initializeMap();
+    const map = new mapboxgl.Map({
+      container: "map",
+      style: "mapbox://styles/mapbox/dark-v10",
+      center: [location.lng, location.lat],
+      zoom: initialZoom,
+    });
+
     addLayers(map);
+    setMap(map);
   }, []);
+
+  useEffect(() => {
+    map &&
+      map.flyTo({
+        center: [location.lng, location.lat],
+        zoom: focusZoom,
+        speed: 0.6,
+        curve: 1, // change the speed at which it zooms out
+      });
+  }, [location]);
 
   return (
     <div className={styles.root}>
