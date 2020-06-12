@@ -118,6 +118,25 @@ function CriticalQuestions(props) {
     />
   );
 
+  const sicknessStartPicker = (
+    <DatePicker
+      autoOk
+      label="When did you first start feeling sick?"
+      clearable
+      disableFuture
+      value={formValues.sicknessStart}
+      onChange={handleFormChange("sicknessStart")}
+    />
+  );
+
+  const shouldDisplaySicknessPicker = (picker) => {
+    const validStatus = new Map();
+    validStatus.set("start", [sicknessStatus.RECOVERED, sicknessStatus.SICK]);
+    validStatus.set("end", [sicknessStatus.RECOVERED]);
+
+    return story && validStatus.get(picker).includes(story.sick);
+  };
+
   useEffect(() => {
     fetch("https://restcountries.eu/rest/v2/all?fields=name")
       .then((res) => res.json())
@@ -183,17 +202,8 @@ function CriticalQuestions(props) {
       </h1>
       <div className={classNames("root", styles.root)}>
         <div className={classNames("grid-3", styles["grid-3"])}>
-          <DatePicker
-            autoOk
-            label="When did you first start feeling sick?"
-            clearable
-            disableFuture
-            value={formValues.sicknessStart}
-            onChange={handleFormChange("sicknessStart")}
-          />
-          {story && story.sick === sicknessStatus.RECOVERED
-            ? sicknessEndPicker
-            : null}
+          {shouldDisplaySicknessPicker("start") && sicknessStartPicker}
+          {shouldDisplaySicknessPicker("end") && sicknessEndPicker}
         </div>
         <div className={classNames("grid-1", styles["grid-1"])}>
           <TextField
