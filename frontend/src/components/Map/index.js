@@ -72,10 +72,10 @@ export default function Map({ draggable = true }) {
   };
 
   const fetchUserLocation = async () => {
-    const response = await fetch(`http://ip-api.com/json`);
+    const response = await fetch(`https://freegeoip.app/json/`);
     if (response.status >= 200 && response.status < 300) {
       const jsonResponse = await response.json();
-      return { lat: jsonResponse.lat, lng: jsonResponse.lon };
+      return { lat: jsonResponse.latitude, lng: jsonResponse.longitude };
     }
   };
 
