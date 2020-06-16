@@ -16,6 +16,7 @@ export default function Map({ draggable = true }) {
   const dataScope = {
     WORLD: "world",
     US_STATES: "us-states",
+    ALL: "all",
   };
 
   const [map, setMap] = useState(null);
@@ -61,9 +62,10 @@ export default function Map({ draggable = true }) {
     }
   };
 
-  const addLayers = (map) => {
-    const worldData = fetchCovidData(dataScope.WORLD);
-    const usStatesData = fetchCovidData(dataScope.US_STATES);
+  const addLayers = async (map) => {
+    const data = await fetchCovidData(dataScope.ALL);
+    const worldData = data["adm0"];
+    const usStatesData = data["adm1"]["US"];
 
     map.on("load", function () {
       addWorldLayer(map, worldData);
@@ -80,9 +82,10 @@ export default function Map({ draggable = true }) {
   };
 
   const fetchCovidData = async (scope) => {
-    return await api(`data/${scope}`, {
+    const body = await api(`data/${scope}`, {
       method: "GET",
     });
+    return body["data"];
   };
 
   const getColor = (group) => {
@@ -91,10 +94,7 @@ export default function Map({ draggable = true }) {
 
   const addWorldLayer = async (map, data) => {
     const covidData = await data;
-    const expression = covidData.map((row) => [
-      row.country,
-      getColor(row.group),
-    ]);
+    const expression = covidData.map((row) => [row.name, getColor(row.group)]);
 
     map.addLayer(
       {
@@ -190,7 +190,7 @@ export default function Map({ draggable = true }) {
     // exclude states outside the 50 states
     const expression = ["match", ["get", "STATE_ID"]];
     usData.forEach(function (row) {
-      var stateID = row.state;
+      var stateID = row.name;
       if (stateID in stateToFIPS) {
         expression.push(stateToFIPS[stateID], getColor(row.group));
       }
