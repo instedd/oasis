@@ -102,15 +102,13 @@ def get_all_data():
         },
     )
 
-    groupped_data = functools.reduce(
-        group_by_scope, clustered_data["data"], {}
+    grouped_data = functools.reduce(group_by_scope, clustered_data["data"], {})
+
+    grouped_data[DataScope.ADM1] = group_by_parent(
+        grouped_data[DataScope.ADM1]
     )
 
-    groupped_data[DataScope.ADM1] = group_by_parent(
-        groupped_data[DataScope.ADM1]
-    )
-
-    return {"data": groupped_data, "clusters": clustered_data["clusters"]}
+    return {"data": grouped_data, "clusters": clustered_data["clusters"]}
 
 
 def group_by_scope(base, entry):
