@@ -93,13 +93,11 @@ def get_covid_us_states_data():
 def get_all_data():
     countries = fetch_world_data()
     us_states = fetch_us_states_data()
+    cluster_labels = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
 
     clustered_data = cluster_data(
         countries + us_states,
-        clusters_config={
-            "clusters": 10,
-            "labels": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
-        },
+        clusters_config={"clusters": 10, "labels": cluster_labels},
     )
 
     grouped_data = functools.reduce(group_by_scope, clustered_data["data"], {})
@@ -108,7 +106,11 @@ def get_all_data():
         grouped_data[DataScope.ADM1]
     )
 
-    return {"data": grouped_data, "clusters": clustered_data["clusters"]}
+    return {
+        "data": grouped_data,
+        "clusters": clustered_data["clusters"],
+        "groups": cluster_labels,
+    }
 
 
 def group_by_scope(base, entry):
