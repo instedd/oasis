@@ -59,7 +59,7 @@ export default function Map({ draggable = true }) {
       clusters &&
       clusters.map((range, i) => {
         return {
-          label: range[1],
+          label: `${range[0].toLocaleString()} - ${range[1].toLocaleString()}`,
           color: getColor(colorGroups[i]),
         };
       });
@@ -237,7 +237,7 @@ export default function Map({ draggable = true }) {
         return (
           <div className={classNames(styles.legendItem)} key={i}>
             <span style={{ backgroundColor: range.color }}></span>
-            {range.label.toLocaleString()}
+            {range.label}
           </div>
         );
       })}

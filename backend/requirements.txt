@@ -12,3 +12,4 @@ python-multipart
 requests
 pandas
 jenkspy
+sigfig
