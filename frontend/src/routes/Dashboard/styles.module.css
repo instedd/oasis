@@ -23,12 +23,12 @@
 }
 
 .dot {
-  height: 25px;
-  width: 25px;
+  height: 1em;
+  width: 1em;
   background-color: #bbb;
   border-radius: 50%;
   display: inline-block;
-  margin-right: 10px;
+  margin-right: 5px;
 }
 
 .box {
@@ -55,8 +55,7 @@
 
 .box h3 { margin-top: 0; }
 
-.top { top: 5rem; }
-
+.top { top: 1rem; }
 
 .left {
     left: 3rem;
@@ -72,6 +71,35 @@
     bottom: 2rem;
 }
 
+.header {
+    text-align: left;
+    right: 3rem;
+}
+
+.header h3{
+    margin-block-end: 0.5em;
+}
+
+.statusList {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.statusItem {
+    align-items: center;
+    margin-bottom: 10px;
+    display: inline-flex;
+    margin-right: 20px;
+}
+
+.latestTotals {
+    display: inline-flex;
+}
+
+.totalItem {
+    margin-right: 15px;
+}
+
 @media (max-width: 1024px) {
     .left { left: 0; right: 50%; }
     .right { right: 0; left: 50%;}
@@ -84,5 +112,10 @@
     .bottom { bottom: 0; }
     .box {
         border-radius: 0;
+    }
+    .header{
+        width: 100%;
+        text-align: left;
+        left: 0rem;
     }
 }
