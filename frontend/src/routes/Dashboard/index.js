@@ -65,9 +65,7 @@ function Dashboard(props) {
         status.detail
       ) : (
         <>
-          <Breadcrumbs aria-label="breadcrumb" className={styles.breadcrumbs} />
           <div className={classNames(styles.box, styles.top, styles.left)}>
-            <h3>MY STATUS</h3>
             <div className="status-list">
               <div className="row status-item">
                 <span

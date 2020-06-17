@@ -5,19 +5,6 @@
     height: 100%;
 }
 
-.breadcrumbs {
-    position: absolute;
-    right: 5%;
-    top: 28px;
-    justify-content: flex-end;
-    display: flex;
-    align-items: center;
-}
-.breadcrumbs * {
-    color: white;
-    font-family: Abel;
-}
-
 .assessment {
     color:white !important;
     background-color: var(--primary) !important;
@@ -90,20 +77,12 @@
     .right { right: 0; left: 50%;}
     .wrapper { right: 0; }
     .top {
-        top: 4rem;
+        top: 0rem;
         min-height: 150px;
-        padding-top: 0;
+        padding-top: 4rem;
     }
     .bottom { bottom: 0; }
     .box {
         border-radius: 0;
-    }
-    .breadcrumbs {
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4rem;
-        background-color: rgba(0,0,0, 0.5);
-        padding: 0 1rem;
     }
 }
