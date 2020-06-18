@@ -83,13 +83,22 @@ function Dashboard(props) {
       <h3>LATEST TOTALS</h3>
       <div className="row">
         <div className={classNames(styles.totalItem)}>
-          Actives: {data.confirmed && data.confirmed.toLocaleString()}
+          ACTIVES
+          <div className={classNames(styles.totalItemNum)}>
+            {data.confirmed && data.confirmed.toLocaleString()}
+          </div>
         </div>
         <div className={classNames(styles.totalItem)}>
-          Deaths: {data.deaths && data.deaths.toLocaleString()}
+          DEATHS
+          <div className={classNames(styles.totalItemNum)}>
+            {data.deaths && data.deaths.toLocaleString()}
+          </div>
         </div>
         <div className={classNames(styles.totalItem)}>
-          Recovered: {data.recovered && data.recovered.toLocaleString()}
+          RECOVERED
+          <div className={classNames(styles.totalItemNum)}>
+            {data.recovered && data.recovered.toLocaleString()}
+          </div>
         </div>
       </div>
     </div>

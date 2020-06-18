@@ -96,8 +96,12 @@
     display: inline-flex;
 }
 
+.totalItemNum {
+    font-size: 1rem;
+}
 .totalItem {
     margin-right: 15px;
+    font-size: 0.8rem;
 }
 
 @media (max-width: 1024px) {
