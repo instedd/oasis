@@ -12,15 +12,18 @@ import {
   INVALID_STORY,
   ERROR,
 } from "./types";
+import { fields } from "../routes/CriticalQuestions/fields";
 
-const mandatoryFields = ["currentLocation"];
+const mandatoryFields = [fields.CURRENT_LOCATION];
 
 const isValidStory = (dto) => {
   return invalidFields(dto.story).length === 0;
 };
 
 const invalidFields = (dto) => {
-  return mandatoryFields.filter((field) => !(field in dto && dto[field]));
+  return mandatoryFields.filter(
+    (field) => !(field.name in dto && dto[field.name])
+  );
 };
 
 export const submitStory = (dto) => async (dispatch) => {
@@ -47,7 +50,9 @@ export const submitStory = (dto) => async (dispatch) => {
       payload: {
         status: {
           type: ERROR,
-          detail: `Please complete the following fields: ${invalidFields(dto)}`,
+          detail: `Please complete the following fields: ${invalidFields(dto)
+            .map((field) => field.label)
+            .join(", ")}`,
         },
       },
     });
