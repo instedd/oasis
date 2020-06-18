@@ -79,7 +79,7 @@ function Dashboard(props) {
   );
 
   const latestUpdate = () => (
-    <div>
+    <>
       <h3>LATEST TOTALS</h3>
       <div className="row">
         <div className={classNames(styles.totalItem)}>
@@ -101,13 +101,13 @@ function Dashboard(props) {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 
   const suggestions = () => (
-    <div>
+    <>
       <h3>SUGGESTIONS</h3>
-      <div>Stay at home</div>
+      <p>Stay at home</p>
       {getStorySuggestions(story).map((suggestion) => (
         <Link
           href={suggestion.site}
@@ -117,7 +117,7 @@ function Dashboard(props) {
           {suggestion.text}
         </Link>
       ))}
-    </div>
+    </>
   );
 
   const informationHeader = () => (

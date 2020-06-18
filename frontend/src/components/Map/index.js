@@ -233,14 +233,12 @@ export default function Map({ draggable = true }) {
   const legend = (
     <div className={classNames(styles.legend)} id="legend">
       <h4>Active cases</h4>
-      {legendRanges.map((range, i) => {
-        return (
-          <div className={classNames(styles.legendItem)} key={i}>
-            <span style={{ backgroundColor: range.color }}></span>
-            {range.label}
-          </div>
-        );
-      })}
+      {legendRanges.map((range, i) => (
+        <div className={classNames(styles.legendItem)} key={i}>
+          <span style={{ backgroundColor: range.color }}></span>
+          {range.label}
+        </div>
+      ))}
     </div>
   );
 
