@@ -76,7 +76,7 @@ div::before {
 }
 .status {
   color: grey;
-  margin: 0;
+  margin-bottom: 20px;
 }
 
 .status.error {
