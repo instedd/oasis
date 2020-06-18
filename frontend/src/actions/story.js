@@ -9,25 +9,49 @@ import {
   SUCCESS,
   FETCH_STORY_START,
   FETCH_STORY,
+  INVALID_STORY,
+  ERROR,
 } from "./types";
 
+const mandatoryFields = ["currentLocation"];
+
+const isValidStory = (dto) => {
+  return invalidFields(dto.story).length === 0;
+};
+
+const invalidFields = (dto) => {
+  return mandatoryFields.filter((field) => !(field in dto && dto[field]));
+};
+
 export const submitStory = (dto) => async (dispatch) => {
-  dispatch({ type: SAVE_STORY_START });
-  const { story, nextPage } = dto;
-  const response = await api(`stories/`, {
-    method: "POST",
-    body: story,
-  });
+  if (isValidStory(dto)) {
+    dispatch({ type: SAVE_STORY_START });
+    const { story, nextPage } = dto;
+    const response = await api(`stories/`, {
+      method: "POST",
+      body: story,
+    });
 
-  dispatch({
-    type: SAVED_STORY,
-    payload: {
-      status: response.error || { type: SUCCESS },
-      story: (!response.error && response) || null,
-    },
-  });
+    dispatch({
+      type: SAVED_STORY,
+      payload: {
+        status: response.error || { type: SUCCESS },
+        story: (!response.error && response) || null,
+      },
+    });
 
-  if (!response.error) history.push(nextPage);
+    if (!response.error) history.push(nextPage);
+  } else {
+    dispatch({
+      type: INVALID_STORY,
+      payload: {
+        status: {
+          type: ERROR,
+          detail: `Please complete the following fields: ${invalidFields(dto)}`,
+        },
+      },
+    });
+  }
 };
 
 export const setSickStatus = (option) => (dispatch) => {

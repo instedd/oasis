@@ -24,6 +24,7 @@ import paths from "routes/paths";
 import Text from "text.json";
 import { sicknessStatus } from "../types";
 import styles from "./styles.module.css";
+import { ERROR } from "actions/types";
 
 const contactText = Text["Close Contacts"].texts;
 const contactListIndex = Text["Close Contacts"].listIndex;
@@ -72,7 +73,7 @@ function CriticalQuestions(props) {
   const [locationCount, setLocationCount] = useState(0);
 
   let nextPage;
-  const { story } = useSelector((state) => state.story);
+  const { story, status } = useSelector((state) => state.story);
   useEffect(() => {
     if (!story) dispatch(fetchStory());
     else setFormValues({ ...formValues, ...story });
@@ -196,8 +197,12 @@ function CriticalQuestions(props) {
 
   return (
     <>
+      {status && status.type == ERROR && (
+        <p className={classNames(styles.status, styles.error)}>
+          {status.detail}
+        </p>
+      )}
       <h1 className="title" style={{ margin: 0 }}>
-        {" "}
         MY COVID STORY
       </h1>
       <div className={classNames("root", styles.root)}>

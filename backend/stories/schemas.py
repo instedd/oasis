@@ -34,7 +34,7 @@ class StoryCreate(BaseModel):
     medical_conditions: List[str] = []
     sick: MedicalSituation
     tested: TestSituation
-    current_location: str = None
+    current_location: str
     sickness_start: str = None
     sickness_end: str = None
     postal_code: str = None
