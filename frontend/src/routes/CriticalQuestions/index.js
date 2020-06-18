@@ -54,7 +54,7 @@ function CriticalQuestions(props) {
 
   const [formValues, setFormValues] = useState({
     age: null,
-    sex: "",
+    sex: null,
     ethnicity: "",
     currentLocation: "",
     postalCode: null,
