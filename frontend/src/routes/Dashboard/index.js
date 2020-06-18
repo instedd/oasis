@@ -105,7 +105,7 @@ function Dashboard(props) {
   );
 
   const suggestions = () => (
-    <div className={classNames(styles.box, styles.top, styles.header)}>
+    <div>
       <h3>SUGGESTIONS</h3>
       <div>Stay at home</div>
       {getStorySuggestions(story).map((suggestion) => (
@@ -117,6 +117,12 @@ function Dashboard(props) {
           {suggestion.text}
         </Link>
       ))}
+    </div>
+  );
+
+  const informationHeader = () => (
+    <div className={classNames(styles.box, styles.top, styles.header)}>
+      {suggestions()}
       {userStatus()}
       {latestUpdate()}
     </div>
@@ -128,7 +134,7 @@ function Dashboard(props) {
         status.detail
       ) : (
         <>
-          {suggestions()}
+          {informationHeader()}
           <SpeedDial
             ariaLabel="Daily actions"
             className={classNames("speeddial", styles.speeddial)}
