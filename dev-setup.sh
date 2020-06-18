@@ -7,7 +7,6 @@ pre-commit install -f
 
 # lift & update containers
 docker-compose build
-docker-compose up db
 docker-compose run --rm api pip install -r requirements.txt
 docker-compose run --rm api pip install -r requirements.dev.txt
 docker-compose run --rm api python init_db.py

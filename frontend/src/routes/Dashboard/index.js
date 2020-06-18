@@ -1,4 +1,3 @@
-import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import Link from "@material-ui/core/Link";
 import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
@@ -59,63 +58,83 @@ function Dashboard(props) {
       .then((result) => setData(result));
   }, []);
 
+  const userStatus = () => (
+    <div className={classNames(styles.statusList)}>
+      <div className={classNames("row", styles.statusItem)}>
+        <span
+          className={styles.dot}
+          style={{ background: statusMapping[story.sick].color }}
+        />
+        {statusMapping[story.sick].name.toUpperCase()}
+      </div>
+      <div className={classNames("row", styles.statusItem)}>
+        <span
+          className={styles.dot}
+          style={{ background: statusMapping[story.tested].color }}
+        />
+        {statusMapping[story.tested].name.toUpperCase()}
+      </div>
+      <div></div>
+    </div>
+  );
+
+  const latestUpdate = () => (
+    <>
+      <h3>LATEST TOTALS</h3>
+      <div className="row">
+        <div className={classNames(styles.totalItem)}>
+          ACTIVES
+          <div className={classNames(styles.totalItemNum)}>
+            {data.confirmed && data.confirmed.toLocaleString()}
+          </div>
+        </div>
+        <div className={classNames(styles.totalItem)}>
+          DEATHS
+          <div className={classNames(styles.totalItemNum)}>
+            {data.deaths && data.deaths.toLocaleString()}
+          </div>
+        </div>
+        <div className={classNames(styles.totalItem)}>
+          RECOVERED
+          <div className={classNames(styles.totalItemNum)}>
+            {data.recovered && data.recovered.toLocaleString()}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
+  const suggestions = () => (
+    <>
+      <h3>SUGGESTIONS</h3>
+      <p>Stay at home</p>
+      {getStorySuggestions(story).map((suggestion) => (
+        <Link
+          href={suggestion.site}
+          {...(suggestion.color ? { style: { color: suggestion.color } } : {})}
+          target="_blank"
+        >
+          {suggestion.text}
+        </Link>
+      ))}
+    </>
+  );
+
+  const informationHeader = () => (
+    <div className={classNames(styles.box, styles.top, styles.header)}>
+      {suggestions()}
+      {userStatus()}
+      {latestUpdate()}
+    </div>
+  );
+
   return (
     <div className={styles.root}>
       {status.type === LOADING || !story ? (
         status.detail
       ) : (
         <>
-          <Breadcrumbs aria-label="breadcrumb" className={styles.breadcrumbs} />
-          <div className={classNames(styles.box, styles.top, styles.left)}>
-            <h3>MY STATUS</h3>
-            <div className="status-list">
-              <div className="row status-item">
-                <span
-                  className={styles.dot}
-                  style={{ background: statusMapping[story.sick].color }}
-                />
-                {statusMapping[story.sick].name}
-              </div>
-              <div className="row status-item">
-                <span
-                  className={styles.dot}
-                  style={{ background: statusMapping[story.tested].color }}
-                />
-                {statusMapping[story.tested].name}
-              </div>
-              <div></div>
-            </div>
-          </div>
-          <div className={classNames(styles.box, styles.top, styles.right)}>
-            <h3>LATEST UPDATE</h3>
-            <div>
-              <div>COVID-19 Cases: {data.confirmed}</div>
-              <div>Total Deaths: {data.deaths}</div>
-              <div>Total Recovered: {data.recovered}</div>
-            </div>
-          </div>
-          <div
-            className={classNames(
-              styles.box,
-              styles.bottom,
-              styles.left,
-              styles.wrapper
-            )}
-          >
-            <h3>SUGGESTIONS</h3>
-            <div>Stay at home</div>
-            {getStorySuggestions(story).map((suggestion) => (
-              <Link
-                href={suggestion.site}
-                {...(suggestion.color
-                  ? { style: { color: suggestion.color } }
-                  : {})}
-                target="_blank"
-              >
-                {suggestion.text}
-              </Link>
-            ))}
-          </div>
+          {informationHeader()}
           <SpeedDial
             ariaLabel="Daily actions"
             className={classNames("speeddial", styles.speeddial)}

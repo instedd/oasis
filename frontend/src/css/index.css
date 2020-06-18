@@ -97,11 +97,6 @@ a, a:link, a:visited, a:hover, a:active {
   left: 5%
 }
 
-.status-item {
-  align-items: center;
-  margin-bottom: 10px;
-}
-
 .terms-wrapper {
   overflow-y: scroll;
   padding: 1rem 2rem;

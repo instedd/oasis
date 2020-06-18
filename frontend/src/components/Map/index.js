@@ -24,6 +24,7 @@ export default function Map({ draggable = true }) {
     lng: -119.6,
     lat: 36.7,
   });
+  const [legendRanges, setLegendRanges] = useState([]);
 
   useEffect(() => {
     getUserLocation();
@@ -51,6 +52,19 @@ export default function Map({ draggable = true }) {
       });
   }, [location, map]);
 
+  const addLegend = (data) => {
+    const clusters = data.clusters;
+    const colorGroups = data.groups;
+    const newRanges =
+      clusters &&
+      clusters.map((range, i) => {
+        return {
+          label: `${range[0].toLocaleString()} - ${range[1].toLocaleString()}`,
+          color: getColor(colorGroups[i]),
+        };
+      });
+    newRanges && setLegendRanges(newRanges);
+  };
   const getUserLocation = async () => {
     const userLocation = await fetchUserLocation();
     if (userLocation) {
@@ -64,8 +78,10 @@ export default function Map({ draggable = true }) {
 
   const addLayers = async (map) => {
     const data = await fetchCovidData(dataScope.ALL);
-    const worldData = data["adm0"];
-    const usStatesData = data["adm1"]["US"];
+    const worldData = data["data"]["adm0"];
+    const usStatesData = data["data"]["adm1"]["US"];
+
+    addLegend(data);
 
     map.on("load", function () {
       addWorldLayer(map, worldData);
@@ -85,7 +101,7 @@ export default function Map({ draggable = true }) {
     const body = await api(`data/${scope}`, {
       method: "GET",
     });
-    return body["data"];
+    return body;
   };
 
   const getColor = (group) => {
@@ -214,10 +230,28 @@ export default function Map({ draggable = true }) {
     );
   };
 
+  const legend = (
+    <div className={classNames(styles.legend)} id="legend">
+      <h4>Active cases</h4>
+      {legendRanges.map((range, i) => (
+        <div className={classNames(styles.legendItem)} key={i}>
+          <span style={{ backgroundColor: range.color }}></span>
+          {range.label}
+        </div>
+      ))}
+    </div>
+  );
+
+  const draggableDependantFeatures = () => {
+    if (draggable) {
+      return legendRanges.length !== 0 ? legend : null;
+    }
+    return <div className={classNames(styles.fill, styles.mask)} />;
+  };
   return (
     <div className={styles.root}>
       <div className={classNames(styles.fill)} id="map"></div>
-      {!draggable && <div className={classNames(styles.fill, styles.mask)} />}
+      {draggableDependantFeatures()}
     </div>
   );
 }
