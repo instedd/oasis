@@ -69,7 +69,7 @@ def cluster_data(confirmed, clusters_config=None):
 
     df["group"] = pd.cut(
         df["confirmed"],
-        bins=rounded_breaks,
+        bins=breaks,
         labels=clusters_config["labels"],
         include_lowest=True,
     )
