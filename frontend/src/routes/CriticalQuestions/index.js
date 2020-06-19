@@ -70,17 +70,17 @@ function CriticalQuestions(props) {
     else setFormValues({ ...formValues, ...story });
   }, [dispatch, story]);
 
-  const handleFormChange = (key) => (event) => {
+  const handleFormChange = (field) => (event) => {
     const intFields = [fields.AGE];
     const nonValueFields = [fields.SICKNESS_START, fields.SICKNESS_END];
-    const keyName = key.name;
+    const key = field.key;
 
-    if (intFields.includes(key)) {
-      setFormValues({ ...formValues, [keyName]: parseInt(event.target.value) });
-    } else if (nonValueFields.includes(key)) {
-      setFormValues({ ...formValues, [keyName]: event });
+    if (intFields.includes(field)) {
+      setFormValues({ ...formValues, [key]: parseInt(event.target.value) });
+    } else if (nonValueFields.includes(field)) {
+      setFormValues({ ...formValues, [key]: event });
     } else {
-      setFormValues({ ...formValues, [keyName]: event.target.value });
+      setFormValues({ ...formValues, [key]: event.target.value });
     }
   };
 
@@ -105,7 +105,7 @@ function CriticalQuestions(props) {
       label={fields.SICKNESS_END.label}
       clearable
       disableFuture
-      value={formValues[fields.SICKNESS_END.name]}
+      value={formValues[fields.SICKNESS_END.key]}
       onChange={handleFormChange(fields.SICKNESS_END)}
     />
   );
@@ -116,7 +116,7 @@ function CriticalQuestions(props) {
       label={fields.SICKNESS_START.label}
       clearable
       disableFuture
-      value={formValues[fields.SICKNESS_START.name]}
+      value={formValues[fields.SICKNESS_START.key]}
       onChange={handleFormChange(fields.SICKNESS_START)}
     />
   );
@@ -203,19 +203,19 @@ function CriticalQuestions(props) {
         </div>
         <div className={classNames("grid-1", styles["grid-1"])}>
           <TextField
-            id={fields.AGE.name}
+            id={fields.AGE.key}
             label={fields.AGE.label}
             type="number"
-            value={formValues[fields.AGE.name]}
+            value={formValues[fields.AGE.key]}
             onChange={handleFormChange(fields.AGE)}
             InputProps={{ inputProps: { min: 0 } }}
           />
 
           <TextField
-            id={fields.SEX.name}
+            id={fields.SEX.key}
             select
             label={fields.SEX.label}
-            value={formValues[fields.SEX.name]}
+            value={formValues[fields.SEX.key]}
             onChange={handleFormChange(fields.SEX)}
           >
             <MenuItem value={"male"}>Male</MenuItem>
@@ -227,7 +227,7 @@ function CriticalQuestions(props) {
           <TextField
             select
             label={fields.ETHNICITY.label}
-            value={formValues[fields.ETHNICITY.name]}
+            value={formValues[fields.ETHNICITY.key]}
             onChange={handleFormChange(fields.ETHNICITY)}
           >
             {ethnicGroups.map((option) => (
@@ -245,7 +245,7 @@ function CriticalQuestions(props) {
               <TextField
                 select
                 label={fields.CURRENT_LOCATION.label}
-                value={formValues[fields.CURRENT_LOCATION.name]}
+                value={formValues[fields.CURRENT_LOCATION.key]}
                 onChange={handleFormChange(fields.CURRENT_LOCATION)}
               >
                 {countries.map((option) => (
@@ -259,7 +259,7 @@ function CriticalQuestions(props) {
             <FormControl>
               <TextField
                 label={fields.POSTAL_CODE.label}
-                value={formValues[fields.POSTAL_CODE.name]}
+                value={formValues[fields.POSTAL_CODE.key]}
                 onChange={handleFormChange(fields.POSTAL_CODE)}
                 type="number"
                 InputProps={{ inputProps: { min: 0 } }}
@@ -268,7 +268,7 @@ function CriticalQuestions(props) {
             <TextField
               select
               label={fields.COUNTRY_OF_ORIGIN.label}
-              value={formValues[fields.COUNTRY_OF_ORIGIN.name]}
+              value={formValues[fields.COUNTRY_OF_ORIGIN.key]}
               onChange={handleFormChange(fields.COUNTRY_OF_ORIGIN)}
             >
               {countries.map((option) => (
@@ -286,7 +286,7 @@ function CriticalQuestions(props) {
           <TextField
             select
             label={fields.PROFESSION.label}
-            value={formValues[fields.PROFESSION.name]}
+            value={formValues[fields.PROFESSION.key]}
             onChange={handleFormChange(fields.PROFESSION)}
           >
             {professions.map((option) => (
@@ -303,7 +303,7 @@ function CriticalQuestions(props) {
               labelId="medical-conditions"
               id="medical-conditions-checkbox"
               multiple
-              value={formValues[fields.MEDICAL_CONDITIONS.name]}
+              value={formValues[fields.MEDICAL_CONDITIONS.key]}
               input={<Input />}
               onChange={handleFormChange(fields.MEDICAL_CONDITIONS)}
               renderValue={(selected) => selected.join(", ")}
@@ -312,7 +312,7 @@ function CriticalQuestions(props) {
                 <MenuItem key={name} value={name}>
                   <Checkbox
                     checked={
-                      formValues[fields.MEDICAL_CONDITIONS.name].indexOf(name) >
+                      formValues[fields.MEDICAL_CONDITIONS.key].indexOf(name) >
                       -1
                     }
                   />

@@ -16,36 +16,14 @@ import { fields } from "../routes/CriticalQuestions/fields";
 
 const mandatoryFields = [fields.CURRENT_LOCATION];
 
-const isValidStory = (dto) => {
-  return invalidFields(dto.story).length === 0;
-};
+const isValidStory = (dto) => invalidFields(dto.story).length === 0;
 
-const invalidFields = (dto) => {
-  return mandatoryFields.filter(
-    (field) => !(field.name in dto && dto[field.name])
-  );
-};
+const invalidFields = (dto) =>
+  mandatoryFields.filter((field) => !(field.key in dto && dto[field.key]));
 
 export const submitStory = (dto) => async (dispatch) => {
-  if (isValidStory(dto)) {
-    dispatch({ type: SAVE_STORY_START });
-    const { story, nextPage } = dto;
-    const response = await api(`stories/`, {
-      method: "POST",
-      body: story,
-    });
-
-    dispatch({
-      type: SAVED_STORY,
-      payload: {
-        status: response.error || { type: SUCCESS },
-        story: (!response.error && response) || null,
-      },
-    });
-
-    if (!response.error) history.push(nextPage);
-  } else {
-    dispatch({
+  if (!isValidStory(dto)) {
+    return dispatch({
       type: INVALID_STORY,
       payload: {
         status: {
@@ -57,6 +35,23 @@ export const submitStory = (dto) => async (dispatch) => {
       },
     });
   }
+
+  dispatch({ type: SAVE_STORY_START });
+  const { story, nextPage } = dto;
+  const response = await api(`stories/`, {
+    method: "POST",
+    body: story,
+  });
+
+  dispatch({
+    type: SAVED_STORY,
+    payload: {
+      status: response.error || { type: SUCCESS },
+      story: (!response.error && response) || null,
+    },
+  });
+
+  if (!response.error) history.push(nextPage);
 };
 
 export const setSickStatus = (option) => (dispatch) => {
