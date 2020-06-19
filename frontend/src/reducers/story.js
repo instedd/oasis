@@ -6,6 +6,7 @@ import {
   SAVE_STORY_START,
   FETCH_STORY_START,
   FETCH_STORY,
+  INVALID_STORY,
 } from "../actions/types";
 
 const initialState = {
@@ -53,6 +54,11 @@ const story = (state = initialState, action) => {
         },
       };
     case FETCH_STORY:
+      return {
+        ...state,
+        ...action.payload,
+      };
+    case INVALID_STORY:
       return {
         ...state,
         ...action.payload,

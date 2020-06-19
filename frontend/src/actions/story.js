@@ -9,9 +9,33 @@ import {
   SUCCESS,
   FETCH_STORY_START,
   FETCH_STORY,
+  INVALID_STORY,
+  ERROR,
 } from "./types";
+import { fields } from "../routes/CriticalQuestions/fields";
+
+const mandatoryFields = [fields.CURRENT_LOCATION];
+
+const isValidStory = (dto) => invalidFields(dto.story).length === 0;
+
+const invalidFields = (dto) =>
+  mandatoryFields.filter((field) => !(field.key in dto && dto[field.key]));
 
 export const submitStory = (dto) => async (dispatch) => {
+  if (!isValidStory(dto)) {
+    return dispatch({
+      type: INVALID_STORY,
+      payload: {
+        status: {
+          type: ERROR,
+          detail: `Please complete the following fields: ${invalidFields(dto)
+            .map((field) => field.label)
+            .join(", ")}`,
+        },
+      },
+    });
+  }
+
   dispatch({ type: SAVE_STORY_START });
   const { story, nextPage } = dto;
   const response = await api(`stories/`, {

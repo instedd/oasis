@@ -74,3 +74,11 @@ div::before {
   color:grey
 
 }
+.status {
+  color: grey;
+  margin-bottom: 20px;
+}
+
+.status.error {
+  color: red;
+}
