@@ -1,5 +1,4 @@
 import { sicknessStatus, testStatus } from "routes/types";
-import story from "reducers/story";
 
 export const getStorySuggestions = (story) => {
   const suggestions = [
@@ -25,7 +24,7 @@ export const getStorySuggestions = (story) => {
         "https://www.cdc.gov/coronavirus/2019-ncov/symptoms-testing/testing.html",
     },
     {
-      text: "More information about COVID-19",
+      text: "More about COVID-19",
       site: moreInfoAboutCovid(story),
     },
     {
@@ -58,7 +57,10 @@ export const getStorySuggestions = (story) => {
   return suggestions.filter((suggestion) => Boolean(suggestion.site));
 };
 
-const clinicalTrials = (story) => {
+const withStory = (storyDependantFunc) => (story) =>
+  story && storyDependantFunc(story);
+
+const clinicalTrials = withStory((story) => {
   const healthcare = {
     predicate:
       story.currentLocation === countries.USA &&
@@ -66,10 +68,10 @@ const clinicalTrials = (story) => {
     link: "https://heroesresearch.org",
   };
 
-  return mostRelevant(story, [healthcare]);
-};
+  return mostRelevant([healthcare]);
+});
 
-const checkSymptoms = (story) => {
+const checkSymptoms = withStory((story) => {
   const baseCondition = [
     sicknessStatus.RECOVERED,
     sicknessStatus.SICK,
@@ -86,20 +88,20 @@ const checkSymptoms = (story) => {
     link: "https://landing.google.com/screener/covid19",
   };
 
-  return mostRelevant(story, [isCurrentlyOnUS, isSickOrRecovered]);
-};
+  return mostRelevant([isCurrentlyOnUS, isSickOrRecovered]);
+});
 
-const peopleHigherRisk = (story) => {
+const peopleHigherRisk = withStory((story) => {
   const peopleAtRisk = {
     predicate: story.age > 64 || story.medicalConditions.length,
     link:
       "https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/people-at-higher-risk.html",
   };
 
-  return mostRelevant(story, [peopleAtRisk]);
-};
+  return mostRelevant([peopleAtRisk]);
+});
 
-const donateBlood = (story) => {
+const donateBlood = withStory((story) => {
   const testedRecovered = {
     predicate:
       story.sick === sicknessStatus.RECOVERED &&
@@ -109,10 +111,10 @@ const donateBlood = (story) => {
       "https://www.redcrossblood.org/donate-blood/dlp/plasma-donations-from-recovered-covid-19-patients.html#donorform",
   };
 
-  return mostRelevant(story, [testedRecovered]);
-};
+  return mostRelevant([testedRecovered]);
+});
 
-const informationForUSCitizens = (story) => {
+const informationForUSCitizens = withStory((story) => {
   const usCitizenInMexico = {
     predicate:
       story.countryOfOrigin === countries.USA &&
@@ -120,10 +122,10 @@ const informationForUSCitizens = (story) => {
     link: "https://mx.usembassy.gov/u-s-citizen-services/covid-19-information/",
   };
 
-  return mostRelevant(story, [usCitizenInMexico]);
-};
+  return mostRelevant([usCitizenInMexico]);
+});
 
-const informationForUSTravelers = (story) => {
+const informationForUSTravelers = withStory((story) => {
   const usCitizenAbroad = {
     predicate:
       story.countryOfOrigin === countries.USA &&
@@ -132,28 +134,28 @@ const informationForUSTravelers = (story) => {
       "https://travel.state.gov/content/travel/en/international-travel/emergencies/what-state-dept-can-cant-do-crisis.html",
   };
 
-  return mostRelevant(story, [usCitizenAbroad]);
-};
+  return mostRelevant([usCitizenAbroad]);
+});
 
-const preventGettingSick = (story) => {
+const preventGettingSick = withStory((story) => {
   const notSick = {
     predicate: story.sick === sicknessStatus.NOT_SICK,
     link:
       "https://www.cdc.gov/coronavirus/2019-ncov/prevent-getting-sick/index.html",
   };
-  return mostRelevant(story, [notSick]);
-};
+  return mostRelevant([notSick]);
+});
 
-const whenSick = (story) => {
+const whenSick = withStory((story) => {
   const sick = {
     predicate: story.sick === sicknessStatus.SICK,
     link:
       "https://www.cdc.gov/coronavirus/2019-ncov/if-you-are-sick/steps-when-sick.html",
   };
-  return mostRelevant(story, [sick]);
-};
+  return mostRelevant([sick]);
+});
 
-const moreInfoAboutCovid = (story) => {
+const moreInfoAboutCovid = withStory((story) => {
   const moreAboutCovid = "https://www.cdc.gov/coronavirus/2019-nCoV/index.html";
   const currentlyOnUS = {
     predicate: story.currentLocation === countries.USA,
@@ -163,15 +165,11 @@ const moreInfoAboutCovid = (story) => {
     predicate: story.countryOfOrigin === countries.USA,
     link: moreAboutCovid,
   };
-  return mostRelevant(story, [currentlyOnUS, usCitizen]);
-};
+  return mostRelevant([currentlyOnUS, usCitizen]);
+});
 
-const mostRelevantOrElse = (story, options) => (defaultLink) => {
-  return mostRelevant(story, options) || defaultLink;
-};
-
-const mostRelevant = (story, options) => {
-  const option = story && options.find((op) => op.predicate);
+const mostRelevant = (options) => {
+  const option = options.find((op) => op.predicate);
   return option && option.link;
 };
 
