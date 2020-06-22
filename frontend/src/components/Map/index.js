@@ -248,9 +248,17 @@ export default function Map({ draggable = true }) {
     }
     return <div className={classNames(styles.fill, styles.mask)} />;
   };
+
+  const mapClasses = () => {
+    const base = [styles.fill, styles.map];
+    if (!draggable) {
+      return base.concat(styles.opaque);
+    }
+    return base;
+  };
   return (
     <div className={styles.root}>
-      <div className={classNames(styles.fill)} id="map"></div>
+      <div className={classNames(mapClasses())} id="map"></div>
       {draggableDependantFeatures()}
     </div>
   );

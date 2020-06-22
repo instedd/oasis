@@ -13,13 +13,18 @@
 }
 
 .mask {
-  background: rgba(0, 0, 0, 0.40);
-  z-index: 2
+  z-index: 2;
+}
+
+.opaque {
+  filter: saturate(0) contrast(0.4) brightness(0.4);
 }
 
 .map {
   z-index: 1;
+  transition: all 0.5s;
 }
+
 .legend {
   background-color: rgba(153, 149, 149, 0.6);
   border-radius: 3px;
