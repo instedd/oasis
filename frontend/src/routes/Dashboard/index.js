@@ -8,7 +8,8 @@ import { useSelector, useDispatch } from "react-redux";
 import paths from "routes/paths";
 import { sicknessStatus, testStatus } from "routes/types";
 import styles from "./styles.module.css";
-import { getStorySuggestions, fetchStory } from "actions/story";
+import { fetchStory } from "actions/story";
+import { getStorySuggestions } from "actions/suggestions";
 import { LOADING } from "actions/types";
 
 const statusMapping = {
