@@ -49,6 +49,7 @@ const ethnicGroups = [
     label: "Native Hawaiian or Other Pacific Islander",
   },
   { value: "White", label: "White" },
+  { value: null, label: "I prefer not to state" },
 ];
 
 function CriticalQuestions(props) {
