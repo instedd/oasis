@@ -1,4 +1,3 @@
-import { sicknessStatus, testStatus } from "routes/types";
 import api from "utils";
 import history from "../history";
 import {
