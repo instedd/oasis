@@ -7,7 +7,6 @@ import {
   MenuItem,
   TextField,
 } from "@material-ui/core";
-import { withStyles } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/Add";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
@@ -24,6 +23,7 @@ import { sicknessStatus } from "../types";
 import styles from "./styles.module.css";
 import { ERROR } from "actions/types";
 import { fields, initialFieldsState } from "./fields";
+import Select from "../../components/Select";
 
 const contactText = Text["Close Contacts"].texts;
 const contactListIndex = Text["Close Contacts"].listIndex;
@@ -49,29 +49,6 @@ const ethnicGroups = [
   { value: "White", label: "White" },
   { label: "I prefer not to state" },
 ];
-
-const customStyles = (theme) => ({
-  icon: {
-    color: "white",
-  },
-});
-
-const CustomTextFieldSelect = withStyles(customStyles)((props) => {
-  const { classes, SelectProps, ...other } = props;
-  return (
-    <TextField
-      select
-      SelectProps={{
-        classes: {
-          icon: classes.icon,
-        },
-        displayEmpty: true,
-        ...SelectProps,
-      }}
-      {...other}
-    ></TextField>
-  );
-});
 
 function CriticalQuestions(props) {
   const dispatch = useDispatch();
@@ -233,7 +210,7 @@ function CriticalQuestions(props) {
             InputProps={{ inputProps: { min: 0 } }}
           />
 
-          <CustomTextFieldSelect
+          <Select
             id={fields.SEX.key}
             label={fields.SEX.label}
             value={formValues[fields.SEX.key]}
@@ -246,9 +223,9 @@ function CriticalQuestions(props) {
             <MenuItem value={"female"}>Female</MenuItem>
             <MenuItem value={"other"}>Other</MenuItem>
             <MenuItem>I prefer not to state</MenuItem>
-          </CustomTextFieldSelect>
+          </Select>
 
-          <CustomTextFieldSelect
+          <Select
             label={fields.ETHNICITY.label}
             value={formValues[fields.ETHNICITY.key]}
             onChange={handleFormChange(fields.ETHNICITY)}
@@ -261,14 +238,14 @@ function CriticalQuestions(props) {
                 {option.label}
               </MenuItem>
             ))}
-          </CustomTextFieldSelect>
+          </Select>
         </div>
         <div
           className={classNames("location-wrapper", styles["location-wrapper"])}
         >
           <div className={classNames("grid-1", styles["grid-1"])}>
             <FormControl>
-              <CustomTextFieldSelect
+              <Select
                 label={fields.CURRENT_LOCATION.label}
                 value={formValues[fields.CURRENT_LOCATION.key]}
                 onChange={handleFormChange(fields.CURRENT_LOCATION)}
@@ -278,7 +255,7 @@ function CriticalQuestions(props) {
                     {option.name}
                   </MenuItem>
                 ))}
-              </CustomTextFieldSelect>
+              </Select>
               <FormHelperText>Country</FormHelperText>
             </FormControl>
             <FormControl>
@@ -290,7 +267,7 @@ function CriticalQuestions(props) {
                 InputProps={{ inputProps: { min: 0 } }}
               />
             </FormControl>
-            <CustomTextFieldSelect
+            <Select
               label={fields.COUNTRY_OF_ORIGIN.label}
               value={formValues[fields.COUNTRY_OF_ORIGIN.key]}
               onChange={handleFormChange(fields.COUNTRY_OF_ORIGIN)}
@@ -300,14 +277,14 @@ function CriticalQuestions(props) {
                   {option.name}
                 </MenuItem>
               ))}
-            </CustomTextFieldSelect>
+            </Select>
           </div>
         </div>
         <div
           className={classNames("grid-2", styles["grid-2"])}
           style={{ paddingTop: 0 }}
         >
-          <CustomTextFieldSelect
+          <Select
             label={fields.PROFESSION.label}
             value={formValues[fields.PROFESSION.key]}
             onChange={handleFormChange(fields.PROFESSION)}
@@ -317,9 +294,9 @@ function CriticalQuestions(props) {
                 {option}
               </MenuItem>
             ))}
-          </CustomTextFieldSelect>
+          </Select>
           <FormControl>
-            <CustomTextFieldSelect
+            <Select
               label={fields.MEDICAL_CONDITIONS.label}
               value={formValues[fields.MEDICAL_CONDITIONS.key]}
               onChange={handleFormChange(fields.MEDICAL_CONDITIONS)}
@@ -345,7 +322,7 @@ function CriticalQuestions(props) {
                   />
                 </MenuItem>
               ))}
-            </CustomTextFieldSelect>
+            </Select>
           </FormControl>
         </div>
         <div className={classNames("form-row contacts", styles.contacts)}>
