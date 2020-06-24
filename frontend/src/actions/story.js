@@ -97,18 +97,28 @@ export const getCurrentStory = async (dispatch) => {
 const submitTravels = (travels, storyId, nextPage) => async (dispatch) => {
   dispatch({ type: SUBMIT_TRAVELS_START });
   let parsedTravels = travels.map((travel) => ({ ...travel, storyId }));
-  const response = await api(`stories/${storyId}/travels`, {
+  const newTravels = parsedTravels.filter((travel) => !("id" in travel));
+  const updatedTravels = parsedTravels.filter((travel) => "id" in travel);
+  const postResponse = await api(`stories/${storyId}/travels`, {
     method: "POST",
-    body: parsedTravels,
+    body: newTravels,
+  });
+  const putResponse = await api(`stories/${storyId}/travels`, {
+    method: "PUT",
+    body: updatedTravels,
   });
 
+  const errors = postResponse.error || putResponse.error;
+  const responseTravels = {
+    travels: (postResponse.travels || []).concat(putResponse.travels || []),
+  };
   dispatch({
     type: SUBMIT_TRAVELS,
     payload: {
-      status: response.error || { type: SUCCESS },
-      story: (!response.error && response) || null,
+      status: errors || { type: SUCCESS },
+      story: (!errors && responseTravels) || null,
     },
   });
 
-  if (!response.error) history.push(nextPage);
+  if (!errors) history.push(nextPage);
 };

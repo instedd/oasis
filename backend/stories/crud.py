@@ -65,3 +65,14 @@ def create_travels(db: Session, travels: List[schemas.TravelCreate]):
     db.add_all(db_travels)
     db.commit()
     return db_travels
+
+
+def update_travel(db: Session, travel: schemas.Travel):
+    travel_as_dict = dict(travel)
+    db_travel = (
+        db.query(models.Travel).filter(models.Travel.id == travel.id).first()
+    )
+    for k, v in travel_as_dict.items():
+        setattr(db_travel, k, v)
+    db.commit()
+    return db_travel

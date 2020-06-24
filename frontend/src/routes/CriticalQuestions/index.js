@@ -66,7 +66,7 @@ function CriticalQuestions(props) {
     if (!story) {
       dispatch(fetchStory());
     } else {
-      setFormValues({ ...formValues, ...story });
+      setFormValues({ ...story });
       setRecentTravels(travels);
     }
   }, [dispatch, story, travels]);
@@ -173,7 +173,7 @@ function CriticalQuestions(props) {
 
   return (
     <>
-      {status && status.type == ERROR && (
+      {status && status.type === ERROR && (
         <p className={classNames(styles.status, styles.error)}>
           {status.detail}
         </p>

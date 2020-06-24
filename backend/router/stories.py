@@ -39,11 +39,13 @@ async def create_story(
     user = main.get_user_from_token(db, token_data)
     story_to_update = main.get_existing_story(user, token_data, db)
 
+    print(story)
     if story_to_update:
         db_story = crud.update_story(db, story_to_update, story)
     else:
         db_story = crud.create_story(db=db, story=story, user=user)
 
+    print(schemas.Story.from_orm(db_story).dict())
     # prepare response
     response = JSONResponse(
         schemas.Story.from_orm(db_story).dict(), status_code=200
@@ -90,3 +92,14 @@ def create_travels(
 ):
     check_permissions(current_story, story_id)
     return crud.create_travels(db, travels=travels)
+
+
+@router.put("/{story_id}/travels", response_model=List[schemas.Travel])
+def update_travels(
+    story_id: int,
+    travels: List[schemas.Travel],
+    current_story: schemas.Story = Depends(main.get_current_story),
+    db: Session = Depends(get_db),
+):
+    check_permissions(current_story, story_id)
+    return [crud.update_travel(db, travel=travel) for travel in travels]
