@@ -49,6 +49,7 @@ const ethnicGroups = [
     label: "Native Hawaiian or Other Pacific Islander",
   },
   { value: "White", label: "White" },
+  { value: null, label: "I prefer not to state" },
 ];
 
 function CriticalQuestions(props) {
@@ -221,7 +222,7 @@ function CriticalQuestions(props) {
             <MenuItem value={"male"}>Male</MenuItem>
             <MenuItem value={"female"}>Female</MenuItem>
             <MenuItem value={"other"}>Other</MenuItem>
-            <MenuItem value={null}>I don't want to answer</MenuItem>
+            <MenuItem value={null}>I prefer not to state</MenuItem>
           </TextField>
 
           <TextField
