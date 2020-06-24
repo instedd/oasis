@@ -12,7 +12,7 @@ export const fields = {
   ETHNICITY: {
     label: "Ethnicity",
     key: "ethnicity",
-    initialValue: "",
+    initialValue: null,
   },
   CURRENT_LOCATION: {
     label: "Current location",

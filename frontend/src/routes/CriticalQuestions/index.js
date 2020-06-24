@@ -47,7 +47,7 @@ const ethnicGroups = [
     label: "Native Hawaiian or Other Pacific Islander",
   },
   { value: "White", label: "White" },
-  { value: null, label: "I prefer not to state" },
+  { label: "I prefer not to state" },
 ];
 
 const customStyles = (theme) => ({
@@ -65,6 +65,7 @@ const CustomTextFieldSelect = withStyles(customStyles)((props) => {
         classes: {
           icon: classes.icon,
         },
+        displayEmpty: true,
         ...SelectProps,
       }}
       {...other}
@@ -237,17 +238,23 @@ function CriticalQuestions(props) {
             label={fields.SEX.label}
             value={formValues[fields.SEX.key]}
             onChange={handleFormChange(fields.SEX)}
+            InputLabelProps={{
+              shrink: formValues[fields.SEX.key] === null ? false : true,
+            }}
           >
             <MenuItem value={"male"}>Male</MenuItem>
             <MenuItem value={"female"}>Female</MenuItem>
             <MenuItem value={"other"}>Other</MenuItem>
-            <MenuItem value={null}>I prefer not to state</MenuItem>
+            <MenuItem>I prefer not to state</MenuItem>
           </CustomTextFieldSelect>
 
           <CustomTextFieldSelect
             label={fields.ETHNICITY.label}
             value={formValues[fields.ETHNICITY.key]}
             onChange={handleFormChange(fields.ETHNICITY)}
+            InputLabelProps={{
+              shrink: formValues[fields.ETHNICITY.key] === null ? false : true,
+            }}
           >
             {ethnicGroups.map((option) => (
               <MenuItem key={option.value} value={option.value}>
