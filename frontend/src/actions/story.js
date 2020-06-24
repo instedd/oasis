@@ -1,4 +1,4 @@
-import api from "utils";
+import api, { snakeToCamelCase, parseObjectKeys } from "utils";
 import history from "../history";
 import {
   SET_SICK_STATUS,
@@ -78,16 +78,20 @@ export const fetchStory = () => async (dispatch) => {
 
 export const getCurrentStory = async (dispatch) => {
   dispatch({ type: FETCH_STORY_START });
-  const response = await api("stories/");
+  const { error, travels, ...story } = await api("stories/");
 
   dispatch({
     type: FETCH_STORY,
     payload: {
-      status: response.error || { type: SUCCESS },
-      story: (!response.error && response) || null,
+      status: error || { type: SUCCESS },
+      story: (!error && story) || null,
+      travels:
+        (!error &&
+          travels.map((travel) => parseObjectKeys(travel, snakeToCamelCase))) ||
+        [],
     },
   });
-  return response;
+  return story;
 };
 
 const submitTravels = (travels, storyId, nextPage) => async (dispatch) => {

@@ -60,12 +60,16 @@ function CriticalQuestions(props) {
   const [recentTravels, setRecentTravels] = useState([]);
 
   let nextPage;
-  const { story, status } = useSelector((state) => state.story);
+  const { story, status, travels } = useSelector((state) => state.story);
 
   useEffect(() => {
-    if (!story) dispatch(fetchStory());
-    else setFormValues({ ...formValues, ...story });
-  }, [dispatch, story]);
+    if (!story) {
+      dispatch(fetchStory());
+    } else {
+      setFormValues({ ...formValues, ...story });
+      setRecentTravels(travels);
+    }
+  }, [dispatch, story, travels]);
 
   const handleFormChange = (field) => (event) => {
     const intFields = [fields.AGE];

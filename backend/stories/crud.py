@@ -1,6 +1,6 @@
 from typing import List
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from users.models import User
 from . import models, schemas
@@ -8,7 +8,10 @@ from . import models, schemas
 
 def get_story(db: Session, story_id: int):
     db_story = (
-        db.query(models.Story).filter(models.Story.id == story_id).first()
+        db.query(models.Story)
+        .filter(models.Story.id == story_id)
+        .options(joinedload("travels"))
+        .first()
     )
     return db_story
 
