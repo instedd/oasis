@@ -222,7 +222,7 @@ function CriticalQuestions(props) {
             <MenuItem value={"male"}>Male</MenuItem>
             <MenuItem value={"female"}>Female</MenuItem>
             <MenuItem value={"other"}>Other</MenuItem>
-            <MenuItem value={null}>I don't want to answer</MenuItem>
+            <MenuItem value={null}>I prefer not to state</MenuItem>
           </TextField>
 
           <TextField
