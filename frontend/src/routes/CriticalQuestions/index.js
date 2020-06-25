@@ -3,11 +3,8 @@ import {
   Fab,
   FormControl,
   FormHelperText,
-  Input,
-  InputLabel,
   ListItemText,
   MenuItem,
-  Select,
   TextField,
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
@@ -26,6 +23,7 @@ import { sicknessStatus } from "../types";
 import styles from "./styles.module.css";
 import { ERROR } from "actions/types";
 import { fields, initialFieldsState } from "./fields";
+import Select from "../../components/Select";
 
 const contactText = Text["Close Contacts"].texts;
 const contactListIndex = Text["Close Contacts"].listIndex;
@@ -49,7 +47,7 @@ const ethnicGroups = [
     label: "Native Hawaiian or Other Pacific Islander",
   },
   { value: "White", label: "White" },
-  { value: null, label: "I prefer not to state" },
+  { label: "I prefer not to state" },
 ];
 
 function CriticalQuestions(props) {
@@ -189,7 +187,7 @@ function CriticalQuestions(props) {
 
   return (
     <>
-      {status && status.type == ERROR && (
+      {status && status.type === ERROR && (
         <p className={classNames(styles.status, styles.error)}>
           {status.detail}
         </p>
@@ -212,39 +210,42 @@ function CriticalQuestions(props) {
             InputProps={{ inputProps: { min: 0 } }}
           />
 
-          <TextField
+          <Select
             id={fields.SEX.key}
-            select
             label={fields.SEX.label}
             value={formValues[fields.SEX.key]}
             onChange={handleFormChange(fields.SEX)}
+            InputLabelProps={{
+              shrink: formValues[fields.SEX.key] === null ? false : true,
+            }}
           >
             <MenuItem value={"male"}>Male</MenuItem>
             <MenuItem value={"female"}>Female</MenuItem>
             <MenuItem value={"other"}>Other</MenuItem>
-            <MenuItem value={null}>I prefer not to state</MenuItem>
-          </TextField>
+            <MenuItem>I prefer not to state</MenuItem>
+          </Select>
 
-          <TextField
-            select
+          <Select
             label={fields.ETHNICITY.label}
             value={formValues[fields.ETHNICITY.key]}
             onChange={handleFormChange(fields.ETHNICITY)}
+            InputLabelProps={{
+              shrink: formValues[fields.ETHNICITY.key] === null ? false : true,
+            }}
           >
             {ethnicGroups.map((option) => (
               <MenuItem key={option.value} value={option.value}>
                 {option.label}
               </MenuItem>
             ))}
-          </TextField>
+          </Select>
         </div>
         <div
           className={classNames("location-wrapper", styles["location-wrapper"])}
         >
           <div className={classNames("grid-1", styles["grid-1"])}>
             <FormControl>
-              <TextField
-                select
+              <Select
                 label={fields.CURRENT_LOCATION.label}
                 value={formValues[fields.CURRENT_LOCATION.key]}
                 onChange={handleFormChange(fields.CURRENT_LOCATION)}
@@ -254,7 +255,7 @@ function CriticalQuestions(props) {
                     {option.name}
                   </MenuItem>
                 ))}
-              </TextField>
+              </Select>
               <FormHelperText>Country</FormHelperText>
             </FormControl>
             <FormControl>
@@ -266,8 +267,7 @@ function CriticalQuestions(props) {
                 InputProps={{ inputProps: { min: 0 } }}
               />
             </FormControl>
-            <TextField
-              select
+            <Select
               label={fields.COUNTRY_OF_ORIGIN.label}
               value={formValues[fields.COUNTRY_OF_ORIGIN.key]}
               onChange={handleFormChange(fields.COUNTRY_OF_ORIGIN)}
@@ -277,15 +277,14 @@ function CriticalQuestions(props) {
                   {option.name}
                 </MenuItem>
               ))}
-            </TextField>
+            </Select>
           </div>
         </div>
         <div
           className={classNames("grid-2", styles["grid-2"])}
           style={{ paddingTop: 0 }}
         >
-          <TextField
-            select
+          <Select
             label={fields.PROFESSION.label}
             value={formValues[fields.PROFESSION.key]}
             onChange={handleFormChange(fields.PROFESSION)}
@@ -295,19 +294,16 @@ function CriticalQuestions(props) {
                 {option}
               </MenuItem>
             ))}
-          </TextField>
+          </Select>
           <FormControl>
-            <InputLabel id="medical-conditions">
-              {fields.MEDICAL_CONDITIONS.label}
-            </InputLabel>
             <Select
-              labelId="medical-conditions"
-              id="medical-conditions-checkbox"
-              multiple
+              label={fields.MEDICAL_CONDITIONS.label}
               value={formValues[fields.MEDICAL_CONDITIONS.key]}
-              input={<Input />}
               onChange={handleFormChange(fields.MEDICAL_CONDITIONS)}
-              renderValue={(selected) => selected.join(", ")}
+              SelectProps={{
+                multiple: true,
+                renderValue: (selected) => selected.join(", "),
+              }}
             >
               {medicalConditions.map((name) => (
                 <MenuItem key={name} value={name}>
