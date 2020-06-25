@@ -1,7 +1,7 @@
 import { sicknessStatus, testStatus } from "routes/types";
 
-export const getStorySuggestions = (story) => {
-  const suggestions = [
+export const getStoryResources = (story) => {
+  const resources = [
     {
       text: "Information for people in higher risk",
       site: peopleHigherRisk(story),
@@ -53,8 +53,8 @@ export const getStorySuggestions = (story) => {
     },
   ];
 
-  // Only keep the suggestions that matched the requirements, thus, the site is present
-  return suggestions.filter((suggestion) => Boolean(suggestion.site));
+  // Only keep the resources that matched the requirements, thus, the site is present
+  return resources.filter((resource) => Boolean(resource.site));
 };
 
 const withStory = (storyDependantFunc) => (story) =>

@@ -9,7 +9,7 @@ import paths from "routes/paths";
 import { sicknessStatus, testStatus } from "routes/types";
 import styles from "./styles.module.css";
 import { fetchStory } from "actions/story";
-import { getStorySuggestions } from "actions/suggestions";
+import { getStoryResources } from "actions/resources";
 import { LOADING } from "actions/types";
 
 const statusMapping = {
@@ -105,17 +105,17 @@ function Dashboard(props) {
     </>
   );
 
-  const suggestions = () => (
+  const resources = () => (
     <>
-      <h3>SUGGESTIONS</h3>
+      <h3>RESOURCES</h3>
       <p>Stay at home</p>
-      {getStorySuggestions(story).map((suggestion) => (
+      {getStoryResources(story).map((resource) => (
         <Link
-          href={suggestion.site}
-          {...(suggestion.color ? { style: { color: suggestion.color } } : {})}
+          href={resource.site}
+          {...(resource.color ? { style: { color: resource.color } } : {})}
           target="_blank"
         >
-          {suggestion.text}
+          {resource.text}
         </Link>
       ))}
     </>
@@ -123,7 +123,7 @@ function Dashboard(props) {
 
   const informationHeader = () => (
     <div className={classNames(styles.box, styles.top, styles.header)}>
-      {suggestions()}
+      {resources()}
       {userStatus()}
       {latestUpdate()}
     </div>
