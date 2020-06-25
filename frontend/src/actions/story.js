@@ -109,14 +109,14 @@ const submitTravels = (travels, storyId, nextPage) => async (dispatch) => {
   });
 
   const errors = postResponse.error || putResponse.error;
-  const responseTravels = {
-    travels: (postResponse.travels || []).concat(putResponse.travels || []),
-  };
+  const responseTravels = (postResponse.travels || []).concat(
+    putResponse.travels || []
+  );
   dispatch({
     type: SUBMIT_TRAVELS,
     payload: {
       status: errors || { type: SUCCESS },
-      story: (!errors && responseTravels) || null,
+      travels: (!errors && responseTravels) || null,
     },
   });
 

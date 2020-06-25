@@ -63,7 +63,7 @@ const story = (state = initialState, action) => {
     case SUBMIT_TRAVELS:
       return {
         ...state,
-        travels: action.payload,
+        ...action.payload,
       };
     case INVALID_STORY:
       return {

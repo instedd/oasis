@@ -66,9 +66,10 @@ function CriticalQuestions(props) {
     if (!story) {
       dispatch(fetchStory());
     } else {
-      setFormValues({ ...story });
+      setFormValues({ ...formValues, ...story });
       setRecentTravels(travels);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, story, travels]);
 
   const handleFormChange = (field) => (event) => {
