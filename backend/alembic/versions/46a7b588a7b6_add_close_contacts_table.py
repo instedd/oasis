@@ -1,7 +1,7 @@
 """add close contacts table
 
 Revision ID: 46a7b588a7b6
-Revises: 8f83994fb19e
+Revises: 93833e7cdbd5
 Create Date: 2020-06-25 18:00:56.655546
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "46a7b588a7b6"
-down_revision = "8f83994fb19e"
+down_revision = "93833e7cdbd5"
 branch_labels = None
 depends_on = None
 

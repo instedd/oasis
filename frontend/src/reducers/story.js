@@ -9,6 +9,8 @@ import {
   INVALID_STORY,
   SUBMIT_TRAVELS_START,
   SUBMIT_TRAVELS,
+  SUBMIT_CLOSE_CONTACTS,
+  SUBMIT_CLOSE_CONTACTS_START,
 } from "../actions/types";
 
 const initialState = {
@@ -60,6 +62,19 @@ const story = (state = initialState, action) => {
         },
       };
     case SUBMIT_TRAVELS:
+      return {
+        ...state,
+        ...action.payload,
+      };
+    case SUBMIT_CLOSE_CONTACTS_START:
+      return {
+        ...state,
+        status: {
+          type: LOADING,
+          detail: "We're saving your close contacts info...",
+        },
+      };
+    case SUBMIT_CLOSE_CONTACTS:
       return {
         ...state,
         ...action.payload,

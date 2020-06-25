@@ -73,3 +73,18 @@ def create_travels(db: Session, travels: List[schemas.TravelCreate]):
 
 def update_travel(db: Session, travel: schemas.Travel):
     return update(travel.id, travel, models.Travel, db)
+
+
+def create_close_contacts(
+    db: Session, close_contacts: List[schemas.CloseContactCreate]
+):
+    db_contacts = [
+        models.CloseContact(**contact.dict()) for contact in close_contacts
+    ]
+    db.add_all(db_contacts)
+    db.commit()
+    return db_contacts
+
+
+def update_close_contact(db: Session, close_contact: schemas.CloseContact):
+    return update(close_contact.id, close_contact, models.CloseContact, db)

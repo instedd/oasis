@@ -102,3 +102,28 @@ def update_travels(
 ):
     check_permissions(current_story, story_id)
     return [crud.update_travel(db, travel=travel) for travel in travels]
+
+
+@router.post("/{story_id}/contacts", response_model=List[schemas.CloseContact])
+def create_close_contacts(
+    story_id: int,
+    close_contacts: List[schemas.CloseContactCreate],
+    current_story: schemas.Story = Depends(main.get_current_story),
+    db: Session = Depends(get_db),
+):
+    check_permissions(current_story, story_id)
+    return crud.create_close_contacts(db, close_contacts=close_contacts)
+
+
+@router.put("/{story_id}/contacts", response_model=List[schemas.CloseContact])
+def update_close_contacts(
+    story_id: int,
+    close_contacts: List[schemas.CloseContactCreate],
+    current_story: schemas.Story = Depends(main.get_current_story),
+    db: Session = Depends(get_db),
+):
+    check_permissions(current_story, story_id)
+    return [
+        crud.update_close_contact(db, close_contact=contact)
+        for contact in close_contacts
+    ]

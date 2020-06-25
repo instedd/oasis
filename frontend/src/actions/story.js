@@ -1,4 +1,4 @@
-import api, { snakeToCamelCase, parseObjectKeys } from "utils";
+import api from "utils";
 import history from "../history";
 import {
   SET_SICK_STATUS,
@@ -12,6 +12,8 @@ import {
   ERROR,
   SUBMIT_TRAVELS_START,
   SUBMIT_TRAVELS,
+  SUBMIT_CLOSE_CONTACTS_START,
+  SUBMIT_CLOSE_CONTACTS,
 } from "./types";
 import { fields } from "../routes/CriticalQuestions/fields";
 
@@ -38,7 +40,7 @@ export const submitStory = (dto) => async (dispatch) => {
   }
 
   dispatch({ type: SAVE_STORY_START });
-  const { story, nextPage, travels } = dto;
+  const { story, nextPage, travels, closeContacts } = dto;
   const response = await api(`stories/`, {
     method: "POST",
     body: story,
@@ -52,10 +54,18 @@ export const submitStory = (dto) => async (dispatch) => {
     },
   });
 
-  if (!response.error) {
-    if (travels.length)
-      dispatch(submitTravels(travels, story, response.id, nextPage));
-    else history.push(nextPage);
+  const storyId = response.id;
+  const sendTravels = () =>
+    travels.length && dispatch(submitTravels(travels, story, storyId));
+  const sendCloseContacts = () =>
+    closeContacts.length &&
+    dispatch(submitCloseContacts(closeContacts, story, storyId));
+  const error = [sendTravels, sendCloseContacts].reduce(
+    (error, func) => !error && func(),
+    response.error
+  );
+  if (!error) {
+    history.push(nextPage);
   }
 };
 
@@ -90,9 +100,7 @@ export const getCurrentStory = async (dispatch) => {
   return story;
 };
 
-const submitTravels = (travels, story, storyId, nextPage) => async (
-  dispatch
-) => {
+const submitTravels = (travels, story, storyId) => async (dispatch) => {
   dispatch({ type: SUBMIT_TRAVELS_START });
   let parsedTravels = travels.map((travel) => ({ ...travel, storyId }));
   const newTravels = parsedTravels.filter((travel) => !("id" in travel));
@@ -122,5 +130,39 @@ const submitTravels = (travels, story, storyId, nextPage) => async (
     },
   });
 
-  if (!errors) history.push(nextPage);
+  return errors;
+};
+
+const submitCloseContacts = (closeContacts, story, storyId) => async (
+  dispatch
+) => {
+  dispatch({ type: SUBMIT_CLOSE_CONTACTS_START });
+  let parsedContacts = closeContacts.map((contact) => ({
+    ...contact,
+    storyId,
+  }));
+  const newContacts = parsedContacts.filter((contact) => !("id" in contact));
+  const updatedContacts = parsedContacts.filter((contact) => "id" in contact);
+  const postResponse = await api(`stories/${storyId}/contacts`, {
+    method: "POST",
+    body: newContacts,
+  });
+  const putResponse = await api(`stories/${storyId}/contacts`, {
+    method: "PUT",
+    body: updatedContacts,
+  });
+
+  const errors = postResponse.error || putResponse.error;
+  const responseContacts = (postResponse.travels || []).concat(
+    putResponse.travels || []
+  );
+  dispatch({
+    type: SUBMIT_CLOSE_CONTACTS,
+    payload: {
+      status: errors || { type: SUCCESS },
+      story: { ...story, closeContacts: (!errors && responseContacts) || [] },
+    },
+  });
+
+  return errors;
 };
