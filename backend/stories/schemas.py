@@ -38,6 +38,19 @@ class Travel(TravelCreate):
         orm_mode = True
 
 
+class CloseContactCreate(BaseModel):
+    story_id: int
+    email: str
+    phone_number: str = None
+
+
+class CloseContact(CloseContactCreate):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
 class StoryCreate(BaseModel):
     age: int = None
     sex: Sex = None
@@ -51,6 +64,7 @@ class StoryCreate(BaseModel):
     tested: TestSituation
     sickness_start: str = None
     sickness_end: str = None
+    close_contacts: List[CloseContact] = []
 
 
 class Story(StoryCreate):

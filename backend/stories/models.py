@@ -25,6 +25,7 @@ class Story(Base):
     user = relationship("User", uselist=False, back_populates="story")
     symptoms = relationship("Symptom", secondary="story_symptoms")
     travels = relationship("Travel", lazy="select")
+    close_contacts = relationship("CloseContact", lazy="select")
 
     @property
     def medical_conditions(self):
@@ -54,3 +55,11 @@ class Travel(Base):
     story_id = Column(ForeignKey("stories.id"))
     location = Column(String(128))
     date_of_return = Column(Date)
+
+
+class CloseContact(Base):
+    __tablename__ = "close_contacts"
+
+    story_id = Column(ForeignKey("stories.id"))
+    email = Column(String(128))
+    phone_number = Column(String(64))
