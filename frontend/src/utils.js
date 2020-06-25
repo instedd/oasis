@@ -50,13 +50,13 @@ const api = async (path, payload = {}, explicitBody = false) => {
   };
 };
 
-const parseObjectKeys = (object, method) =>
+export const parseObjectKeys = (object, method) =>
   Object.keys(object).reduce((acc, key) => {
     acc[method(key)] = object[key];
     return acc;
   }, {});
 
-const snakeToCamelCase = (str) =>
+export const snakeToCamelCase = (str) =>
   str.replace(/([-_][a-z])/g, (group) =>
     group.toUpperCase().replace("-", "").replace("_", "")
   );

@@ -7,11 +7,14 @@ import {
   FETCH_STORY_START,
   FETCH_STORY,
   INVALID_STORY,
+  SUBMIT_TRAVELS_START,
+  SUBMIT_TRAVELS,
 } from "../actions/types";
 
 const initialState = {
   status: {},
   story: null,
+  travels: [],
 };
 
 const story = (state = initialState, action) => {
@@ -32,18 +35,12 @@ const story = (state = initialState, action) => {
     case SET_SICK_STATUS:
       return {
         ...state,
-        story: {
-          ...state.story,
-          sick: action.payload,
-        },
+        story: { ...state.story, sick: action.payload },
       };
     case SET_TESTED_STATUS:
       return {
         ...state,
-        story: {
-          ...state.story,
-          tested: action.payload,
-        },
+        story: { ...state.story, tested: action.payload },
       };
     case FETCH_STORY_START:
       return {
@@ -54,6 +51,16 @@ const story = (state = initialState, action) => {
         },
       };
     case FETCH_STORY:
+      return { ...state, ...action.payload };
+    case SUBMIT_TRAVELS_START:
+      return {
+        ...state,
+        status: {
+          type: LOADING,
+          detail: "We're saving your travel info...",
+        },
+      };
+    case SUBMIT_TRAVELS:
       return {
         ...state,
         ...action.payload,

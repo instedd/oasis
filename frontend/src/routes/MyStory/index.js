@@ -3,7 +3,6 @@ import { TextField, Fab } from "@material-ui/core";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import classNames from "classnames";
 import styles from "./styles.module.css";
-import { withStyles } from "@material-ui/core/styles";
 
 export default function MyStory(props) {
   const [story, setStory] = React.useState("");

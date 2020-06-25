@@ -54,8 +54,21 @@ div::before {
   white-space: normal;
 }
 
-.contacts, .travels {
+.formrow {
   max-width: calc(85% - 8px);
+  padding: 1.5rem 1rem 0rem 0rem;
+  display: flex;
+  align-items: center;
+}
+
+.formrow div {
+  height: 24px;
+  margin-left: 5px;
+}
+
+.formrow .fab {
+  margin-right: 1rem !important;
+  color: white !important;
 }
 
 .location-wrapper {

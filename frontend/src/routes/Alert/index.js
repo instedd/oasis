@@ -20,7 +20,7 @@ export default function Alert(props) {
             if (listIndex.indexOf(i) >= 0) return <li key={i}>{x}</li>;
             else if (linkIndex.indexOf(i) >= 0)
               return (
-                <a key={i} href={x} target="_blank">
+                <a key={i} href={x} target="_blank" rel="noopener noreferrer">
                   {x}
                 </a>
               );

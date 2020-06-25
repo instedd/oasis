@@ -25,6 +25,19 @@ class TestSituation(str, Enum):
     not_tested = "not_tested"
 
 
+class TravelCreate(BaseModel):
+    story_id: int
+    location: str
+    date_of_return: date
+
+
+class Travel(TravelCreate):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
 class StoryCreate(BaseModel):
     age: int = None
     sex: Sex = None
@@ -44,6 +57,7 @@ class Story(StoryCreate):
     id: int
     token: str = None
     user: User = None
+    travels: List[Travel] = []
 
     class Config:
         orm_mode = True
