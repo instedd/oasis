@@ -2,8 +2,18 @@ from typing import List
 
 from sqlalchemy.orm import Session, joinedload
 
+from database import Base
 from users.models import User
 from . import models, schemas
+
+
+def update(model_id: int, dto: schemas.BaseModel, model: Base, db: Session):
+    item_as_dict = dict(dto)
+    db_item = db.query(model).filter(model.id == model_id).first()
+    for k, v in item_as_dict.items():
+        setattr(db_item, k, v)
+    db.commit()
+    return db_item
 
 
 def get_story(db: Session, story_id: int):
@@ -17,14 +27,7 @@ def get_story(db: Session, story_id: int):
 
 
 def update_story(db: Session, story_id: int, story: schemas.StoryCreate):
-    story_as_dict = dict(story)
-    db_story = (
-        db.query(models.Story).filter(models.Story.id == story_id).first()
-    )
-    for k, v in story_as_dict.items():
-        setattr(db_story, k, v)
-    db.commit()
-    return db_story
+    return update(story_id, story, models.Story, db)
 
 
 def create_story(db: Session, story: schemas.StoryCreate, user):
@@ -68,11 +71,4 @@ def create_travels(db: Session, travels: List[schemas.TravelCreate]):
 
 
 def update_travel(db: Session, travel: schemas.Travel):
-    travel_as_dict = dict(travel)
-    db_travel = (
-        db.query(models.Travel).filter(models.Travel.id == travel.id).first()
-    )
-    for k, v in travel_as_dict.items():
-        setattr(db_travel, k, v)
-    db.commit()
-    return db_travel
+    return update(travel.id, travel, models.Travel, db)
