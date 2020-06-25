@@ -131,7 +131,7 @@ const informationForUSTravelers = withStory((story) => {
       story.countryOfOrigin === countries.USA &&
       ![countries.USA, countries.MEX].includes(story.currentLocation),
     link:
-      "https://travel.state.gov/content/travel/en/international-travel/emergencies/what-state-dept-can-cant-do-crisis.html",
+      "https://travel.state.gov/content/travel/en/traveladvisories/ea/covid-19-information.html",
   };
 
   return mostRelevant([usCitizenAbroad]);
