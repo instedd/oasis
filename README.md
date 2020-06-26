@@ -48,7 +48,7 @@ That's about it! Migrations should auto-generate correctly with that set up!
 As part of our everyday work, data models may change from time to time. When you change a model in the backend, make sure to run the following code to generate any necessary Alembic migrations:
 
 ```python
-docker-compose run api alembic revision --autogenerate -m "Migration name here!"
+docker-compose run --rm api alembic revision --autogenerate -m "Migration name here!"
 ```
 
 When possible, keep the migration name descriptive!
@@ -60,14 +60,14 @@ When a new migration file is available, apply it by running
 ```
 If you want to run them manually you can also do:
 
-```python
-docker-compose run api alembic upgrade head
+```zsh
+docker-compose run --rm api alembic upgrade head
 ```
 
 You can also roll back migrations by doing
 
-```python
-docker-compose run api alembic downgrade -1
+```zsh
+docker-compose run --rm api alembic downgrade -1
 ```
 
 ### Seeding data
@@ -99,4 +99,8 @@ Builds are generated automatically whenever we:
 
 After doing any of these actions, you can head over to [Travis](https://travis-ci.org/github/instedd/oasis) to see  how the build is faring.
 
-With the build ready, head over to [Rancher](https://rancher.instedd.org/) to upgrade the Oasis instances in the environment you need to deploy to. Make sure to add any necessary **environment variables** while you're upgrading and run any **migrations** afterwards!
+With the build ready, head over to [Rancher](https://rancher.instedd.org/) to upgrade the Oasis instances in the environment you need to deploy to. 
+
+Make sure to:
+1. first upgrade  the `db-migration` container if there is any **new migration**, 
+2. then the `app` container adding any necessary **environment variables**
