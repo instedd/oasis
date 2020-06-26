@@ -5,6 +5,7 @@ from fastapi import Depends, APIRouter, HTTPException, status
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 from starlette.requests import Request
+from fastapi.encoders import jsonable_encoder
 
 from database import get_db
 from auth import main
@@ -44,10 +45,10 @@ async def create_story(
     else:
         db_story = crud.create_story(db=db, story=story, user=user)
 
+    jsonStory = jsonable_encoder(schemas.Story.from_orm(db_story))
+
     # prepare response
-    response = JSONResponse(
-        schemas.Story.from_orm(db_story).dict(), status_code=200
-    )
+    response = JSONResponse(jsonStory, status_code=200)
     if not token_data:
         access_token = main.create_access_token(data={"story_id": db_story.id})
         response.set_cookie(

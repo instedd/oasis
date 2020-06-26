@@ -79,7 +79,6 @@ export const fetchStory = () => async (dispatch) => {
 export const getCurrentStory = async (dispatch) => {
   dispatch({ type: FETCH_STORY_START });
   const { error, travels, ...story } = await api("stories/");
-
   dispatch({
     type: FETCH_STORY,
     payload: {
@@ -99,19 +98,21 @@ const submitTravels = (travels, storyId, nextPage) => async (dispatch) => {
   let parsedTravels = travels.map((travel) => ({ ...travel, storyId }));
   const newTravels = parsedTravels.filter((travel) => !("id" in travel));
   const updatedTravels = parsedTravels.filter((travel) => "id" in travel);
-  const postResponse = await api(`stories/${storyId}/travels`, {
-    method: "POST",
-    body: newTravels,
-  });
-  const putResponse = await api(`stories/${storyId}/travels`, {
-    method: "PUT",
-    body: updatedTravels,
-  });
+  const postResponse =
+    newTravels.length &&
+    (await api(`stories/${storyId}/travels`, {
+      method: "POST",
+      body: newTravels,
+    }));
+  const putResponse =
+    updatedTravels.length &&
+    (await api(`stories/${storyId}/travels`, {
+      method: "PUT",
+      body: updatedTravels,
+    }));
 
   const errors = postResponse.error || putResponse.error;
-  const responseTravels = (postResponse.travels || []).concat(
-    putResponse.travels || []
-  );
+  const responseTravels = (postResponse || []).concat(putResponse || []);
   dispatch({
     type: SUBMIT_TRAVELS,
     payload: {
