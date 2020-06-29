@@ -213,7 +213,6 @@ function CriticalQuestions(props) {
           <div className={classNames("grid-1", styles["grid-1"])}>
             <FormControl>
               <TextField
-                id={fields.CITY.key}
                 label={fields.CITY.label}
                 value={formValues[fields.CITY.key]}
                 onChange={handleFormChange(fields.CITY)}
@@ -223,6 +222,13 @@ function CriticalQuestions(props) {
                 Current Location
               </FormHelperText>
             </FormControl>
+
+            <TextField
+              label={fields.STATE.label}
+              value={formValues[fields.STATE.key]}
+              onChange={handleFormChange(fields.STATE_CODE)}
+              InputProps={{ inputProps: { min: 0 } }}
+            />
 
             <Select
               label={fields.COUNTRY.label}
@@ -235,13 +241,6 @@ function CriticalQuestions(props) {
                 </MenuItem>
               ))}
             </Select>
-
-            <TextField
-              label={fields.POSTAL_CODE.label}
-              value={formValues[fields.POSTAL_CODE.key]}
-              onChange={handleFormChange(fields.POSTAL_CODE)}
-              InputProps={{ inputProps: { min: 0 } }}
-            />
           </div>
         </div>
         <div

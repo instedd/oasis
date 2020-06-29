@@ -12,17 +12,17 @@ export const fields = {
   CITY: {
     label: "City",
     key: "city",
-    initialValue: null,
+    initialValue: "",
+  },
+  STATE: {
+    label: "State",
+    key: "state",
+    initialValue: "",
   },
   COUNTRY: {
     label: "Country",
     key: "country",
     initialValue: "",
-  },
-  POSTAL_CODE: {
-    label: "Postal code",
-    key: "postalCode",
-    initialValue: null,
   },
   COUNTRY_OF_ORIGIN: {
     label: "Citizenship",
