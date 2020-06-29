@@ -52,7 +52,13 @@ const api = async (path, payload = {}, explicitBody = false) => {
 
 export const parseObjectKeys = (object, method) =>
   Object.keys(object).reduce((acc, key) => {
-    acc[method(key)] = object[key];
+    if (Array.isArray(object[key])) {
+      acc[method(key)] = object[key].map((element) =>
+        parseObjectKeys(element, snakeToCamelCase)
+      );
+    } else {
+      acc[method(key)] = object[key];
+    }
     return acc;
   }, {});
 

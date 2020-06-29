@@ -13,6 +13,7 @@ def update(model_id: int, dto: schemas.BaseModel, model: Base, db: Session):
     for k, v in item_as_dict.items():
         setattr(db_item, k, v)
     db.commit()
+    db.refresh(db_item)
     return db_item
 
 

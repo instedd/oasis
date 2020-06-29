@@ -53,7 +53,8 @@ export const submitStory = (dto) => async (dispatch) => {
   });
 
   if (!response.error) {
-    if (travels.length) dispatch(submitTravels(travels, response.id, nextPage));
+    if (travels.length)
+      dispatch(submitTravels(travels, story, response.id, nextPage));
     else history.push(nextPage);
   }
 };
@@ -78,45 +79,44 @@ export const fetchStory = () => async (dispatch) => {
 
 export const getCurrentStory = async (dispatch) => {
   dispatch({ type: FETCH_STORY_START });
-  const { error, travels, ...story } = await api("stories/");
-
+  const { error, ...story } = await api("stories/");
   dispatch({
     type: FETCH_STORY,
     payload: {
       status: error || { type: SUCCESS },
       story: (!error && story) || null,
-      travels:
-        (!error &&
-          travels.map((travel) => parseObjectKeys(travel, snakeToCamelCase))) ||
-        [],
     },
   });
   return story;
 };
 
-const submitTravels = (travels, storyId, nextPage) => async (dispatch) => {
+const submitTravels = (travels, story, storyId, nextPage) => async (
+  dispatch
+) => {
   dispatch({ type: SUBMIT_TRAVELS_START });
   let parsedTravels = travels.map((travel) => ({ ...travel, storyId }));
   const newTravels = parsedTravels.filter((travel) => !("id" in travel));
   const updatedTravels = parsedTravels.filter((travel) => "id" in travel);
-  const postResponse = await api(`stories/${storyId}/travels`, {
-    method: "POST",
-    body: newTravels,
-  });
-  const putResponse = await api(`stories/${storyId}/travels`, {
-    method: "PUT",
-    body: updatedTravels,
-  });
+  const postResponse =
+    newTravels.length &&
+    (await api(`stories/${storyId}/travels`, {
+      method: "POST",
+      body: newTravels,
+    }));
+  const putResponse =
+    updatedTravels.length &&
+    (await api(`stories/${storyId}/travels`, {
+      method: "PUT",
+      body: updatedTravels,
+    }));
 
   const errors = postResponse.error || putResponse.error;
-  const responseTravels = (postResponse.travels || []).concat(
-    putResponse.travels || []
-  );
+  const responseTravels = (postResponse || []).concat(putResponse || []);
   dispatch({
     type: SUBMIT_TRAVELS,
     payload: {
       status: errors || { type: SUCCESS },
-      travels: (!errors && responseTravels) || null,
+      story: { ...story, travels: (!errors && responseTravels) || [] },
     },
   });
 
