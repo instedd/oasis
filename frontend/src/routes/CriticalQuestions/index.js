@@ -34,22 +34,6 @@ const travelLinkIndex = Text["Recent Travel"].linkIndex;
 const professions = Text["Profession"];
 const medicalConditions = Text["Medical Conditions"];
 
-const ethnicGroups = [
-  {
-    value: "American Indian or Alaska Native",
-    label: "American Indian or Alaska Native",
-  },
-  { value: "Asian", label: "Asian" },
-  { value: "Black or African American", label: "Black or African American" },
-  { value: "Hispanic or Latino", label: "Hispanic or Latino" },
-  {
-    value: "Native Hawaiian or Other Pacific Islander",
-    label: "Native Hawaiian or Other Pacific Islander",
-  },
-  { value: "White", label: "White" },
-  { label: "I prefer not to state" },
-];
-
 function CriticalQuestions(props) {
   const dispatch = useDispatch();
 
@@ -212,16 +196,13 @@ function CriticalQuestions(props) {
           </Select>
 
           <Select
-            label={fields.ETHNICITY.label}
-            value={formValues[fields.ETHNICITY.key]}
-            onChange={handleFormChange(fields.ETHNICITY)}
-            InputLabelProps={{
-              shrink: formValues[fields.ETHNICITY.key] === null ? false : true,
-            }}
+            label={fields.COUNTRY_OF_ORIGIN.label}
+            value={formValues[fields.COUNTRY_OF_ORIGIN.key]}
+            onChange={handleFormChange(fields.COUNTRY_OF_ORIGIN)}
           >
-            {ethnicGroups.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
+            {countries.map((option) => (
+              <MenuItem key={option.name} value={option.name}>
+                {option.name}
               </MenuItem>
             ))}
           </Select>
@@ -231,32 +212,22 @@ function CriticalQuestions(props) {
         >
           <div className={classNames("grid-1", styles["grid-1"])}>
             <FormControl>
-              <Select
-                label={fields.CURRENT_LOCATION.label}
-                value={formValues[fields.CURRENT_LOCATION.key]}
-                onChange={handleFormChange(fields.CURRENT_LOCATION)}
-              >
-                {countries.map((option) => (
-                  <MenuItem key={option.name} value={option.name}>
-                    {option.name}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>Country</FormHelperText>
-            </FormControl>
-            <FormControl>
               <TextField
-                label={fields.POSTAL_CODE.label}
-                value={formValues[fields.POSTAL_CODE.key]}
-                onChange={handleFormChange(fields.POSTAL_CODE)}
-                type="number"
+                id={fields.CITY.key}
+                label={fields.CITY.label}
+                value={formValues[fields.CITY.key]}
+                onChange={handleFormChange(fields.CITY)}
                 InputProps={{ inputProps: { min: 0 } }}
               />
+              <FormHelperText style={{ fontSize: 12 }}>
+                Current Location
+              </FormHelperText>
             </FormControl>
+
             <Select
-              label={fields.COUNTRY_OF_ORIGIN.label}
-              value={formValues[fields.COUNTRY_OF_ORIGIN.key]}
-              onChange={handleFormChange(fields.COUNTRY_OF_ORIGIN)}
+              label={fields.COUNTRY.label}
+              value={formValues[fields.COUNTRY.key]}
+              onChange={handleFormChange(fields.COUNTRY)}
             >
               {countries.map((option) => (
                 <MenuItem key={option.name} value={option.name}>
@@ -264,6 +235,13 @@ function CriticalQuestions(props) {
                 </MenuItem>
               ))}
             </Select>
+
+            <TextField
+              label={fields.POSTAL_CODE.label}
+              value={formValues[fields.POSTAL_CODE.key]}
+              onChange={handleFormChange(fields.POSTAL_CODE)}
+              InputProps={{ inputProps: { min: 0 } }}
+            />
           </div>
         </div>
         <div

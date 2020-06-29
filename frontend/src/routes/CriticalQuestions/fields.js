@@ -9,14 +9,14 @@ export const fields = {
     key: "sex",
     initialValue: null,
   },
-  ETHNICITY: {
-    label: "Ethnicity",
-    key: "ethnicity",
+  CITY: {
+    label: "City",
+    key: "city",
     initialValue: null,
   },
-  CURRENT_LOCATION: {
-    label: "Current location",
-    key: "currentLocation",
+  COUNTRY: {
+    label: "Country",
+    key: "country",
     initialValue: "",
   },
   POSTAL_CODE: {

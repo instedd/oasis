@@ -41,13 +41,13 @@ class Travel(TravelCreate):
 class StoryCreate(BaseModel):
     age: int = None
     sex: Sex = None
-    ethnicity: str = None
+    city: str = None
     country_of_origin: str = None
     profession: str = None
     medical_conditions: List[str] = []
     sick: MedicalSituation
     tested: TestSituation
-    current_location: str
+    country: str = None
     sickness_start: str = None
     sickness_end: str = None
     postal_code: str = None

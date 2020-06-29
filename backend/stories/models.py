@@ -11,7 +11,7 @@ class Story(Base):
 
     age = Column(Integer)
     sex = Column(String(64))
-    ethnicity = Column(String(128))
+    city = Column(String(128))
     country_of_origin = Column(String(128))
     profession = Column(String(128))
     sick = Column(String(64))
@@ -20,7 +20,7 @@ class Story(Base):
     sickness_start = Column(String(64))
     sickness_end = Column(String(64))
     postal_code = Column(String(64))
-    current_location = Column(String(128))
+    country = Column(String(128))
     user = relationship("User", uselist=False, back_populates="story")
     symptoms = relationship("Symptom", secondary="story_symptoms")
     travels = relationship("Travel", lazy="noload")
