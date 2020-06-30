@@ -72,15 +72,21 @@ div::before {
 }
 
 .location-wrapper {
-  margin-top: 10px;
+  margin-top: 20px;
   position: relative;
 }
 
-.location-wrapper p{
-  font-size:14px;
-  color:grey
-
+.location-wrapper p {
+  font-size: 14px;
+  color: grey
 }
+
+.location-wrapper ul {
+  width: calc(90vw - 16px);
+  background: #49494c;
+  padding: 0
+}
+
 .status {
   color: grey;
   margin-bottom: 20px;

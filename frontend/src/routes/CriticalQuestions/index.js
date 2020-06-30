@@ -170,17 +170,15 @@ function CriticalQuestions(props) {
       query +
       ".json?access_token=" +
       MAPBOX_APIKEY;
-
+    setFormValues({
+      ...formValues,
+      city: query,
+    });
     fetch(url)
       .then((response) => response.json())
       .then((jsondata) => {
-        setFormValues({
-          ...formValues,
-          city: query,
-        });
         if ("features" in jsondata && jsondata.features.length > 0) {
           const places = jsondata.features;
-
           places.map((place) => {
             const place_name = place.place_name;
             var address = place_name.split(",");
@@ -204,7 +202,8 @@ function CriticalQuestions(props) {
         } else {
           setListItems([]);
         }
-      });
+      })
+      .then((error) => console.log(error));
   };
 
   return (
@@ -274,20 +273,22 @@ function CriticalQuestions(props) {
                 Current Location
               </FormHelperText>
               <List dense>
-                {locationList.map((item) => (
+                {locationList.map((item, index) => (
                   <ListItem
+                    key={index}
                     button
-                    onClick={() =>
+                    onClick={() => {
                       setFormValues({
                         ...formValues,
                         city: item.city,
                         state: item.state,
                         country: item.country,
-                      })
-                    }
+                      });
+                      setListItems([]);
+                    }}
                   >
                     <ListItemText>
-                      {item.city} {item.state} {item.country}
+                      {item.city}, {item.state}, {item.country}
                     </ListItemText>
                   </ListItem>
                 ))}
