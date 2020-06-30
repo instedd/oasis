@@ -10,12 +10,12 @@ export const fields = {
     initialValue: null,
   },
   CITY: {
-    label: "City",
+    label: "City / Town",
     key: "city",
     initialValue: "",
   },
   STATE: {
-    label: "State",
+    label: "State / Province",
     key: "state",
     initialValue: "",
   },
