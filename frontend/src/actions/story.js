@@ -60,10 +60,11 @@ export const submitStory = (dto) => async (dispatch) => {
   const sendCloseContacts = () =>
     closeContacts.length &&
     dispatch(submitCloseContacts(closeContacts, story, storyId));
-  const error = [sendTravels, sendCloseContacts].reduce(
-    (error, func) => !error && func(),
+  const error = await [sendTravels, sendCloseContacts].reduce(
+    async (error, func) => !(await error) && func(),
     response.error
   );
+
   if (!error) {
     history.push(nextPage);
   }
@@ -100,69 +101,70 @@ export const getCurrentStory = async (dispatch) => {
   return story;
 };
 
-const submitTravels = (travels, story, storyId) => async (dispatch) => {
-  dispatch({ type: SUBMIT_TRAVELS_START });
-  let parsedTravels = travels.map((travel) => ({ ...travel, storyId }));
-  const newTravels = parsedTravels.filter((travel) => !("id" in travel));
-  const updatedTravels = parsedTravels.filter((travel) => "id" in travel);
-  const postResponse =
-    newTravels.length &&
-    (await api(`stories/${storyId}/travels`, {
-      method: "POST",
-      body: newTravels,
-    }));
-  const putResponse =
-    updatedTravels.length &&
-    (await api(`stories/${storyId}/travels`, {
-      method: "PUT",
-      body: updatedTravels,
-    }));
-
-  const errors = postResponse.error || putResponse.error;
-  const responseTravels = (!postResponse.error ? postResponse : []).concat(
-    !putResponse.error ? putResponse : []
+const submitTravels = (travels, story, storyId) =>
+  submitStoryComponents(storyId)(
+    "travels",
+    travels,
+    { type: SUBMIT_TRAVELS_START },
+    (errors, response) => ({
+      type: SUBMIT_TRAVELS,
+      payload: {
+        status: errors || { type: SUCCESS },
+        story: { ...story, travels: (!errors && response) || [] },
+      },
+    })
   );
-  dispatch({
-    type: SUBMIT_TRAVELS,
-    payload: {
-      status: errors || { type: SUCCESS },
-      story: { ...story, travels: (!errors && responseTravels) || [] },
-    },
-  });
 
-  return errors;
-};
+const submitCloseContacts = (closeContacts, story, storyId) =>
+  submitStoryComponents(storyId)(
+    "contacts",
+    closeContacts,
+    { type: SUBMIT_CLOSE_CONTACTS_START },
+    (errors, response) => ({
+      type: SUBMIT_CLOSE_CONTACTS,
+      payload: {
+        status: errors || { type: SUCCESS },
+        story: { ...story, closeContacts: (!errors && response) || [] },
+      },
+    })
+  );
 
-const submitCloseContacts = (closeContacts, story, storyId) => async (
-  dispatch
-) => {
-  dispatch({ type: SUBMIT_CLOSE_CONTACTS_START });
-  let parsedContacts = closeContacts.map((contact) => ({
-    ...contact,
+const submitStoryComponents = (storyId) => (
+  path,
+  components,
+  before,
+  after
+) => async (dispatch) => {
+  dispatch(before);
+
+  let parsedComponents = components.map((component) => ({
+    ...component,
     storyId,
   }));
-  const newContacts = parsedContacts.filter((contact) => !("id" in contact));
-  const updatedContacts = parsedContacts.filter((contact) => "id" in contact);
-  const postResponse = await api(`stories/${storyId}/contacts`, {
-    method: "POST",
-    body: newContacts,
-  });
-  const putResponse = await api(`stories/${storyId}/contacts`, {
-    method: "PUT",
-    body: updatedContacts,
-  });
+  const newComponents = parsedComponents.filter(
+    (component) => !("id" in component)
+  );
+  const updatedComponents = parsedComponents.filter(
+    (component) => "id" in component
+  );
+  const postResponse =
+    newComponents.length &&
+    (await api(`stories/${storyId}/${path}`, {
+      method: "POST",
+      body: newComponents,
+    }));
+  const putResponse =
+    updatedComponents.length &&
+    (await api(`stories/${storyId}/${path}`, {
+      method: "PUT",
+      body: updatedComponents,
+    }));
 
   const errors = postResponse.error || putResponse.error;
-  const responseContacts = (postResponse.travels || []).concat(
-    putResponse.travels || []
+  const response = (!postResponse.error ? postResponse : []).concat(
+    !putResponse.error ? putResponse : []
   );
-  dispatch({
-    type: SUBMIT_CLOSE_CONTACTS,
-    payload: {
-      status: errors || { type: SUCCESS },
-      story: { ...story, closeContacts: (!errors && responseContacts) || [] },
-    },
-  });
 
+  dispatch(after(errors, response));
   return errors;
 };
