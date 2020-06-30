@@ -76,12 +76,6 @@ div::before {
   position: relative;
 }
 
-.location-wrapper span {
-  position: absolute;
-  left: calc(5% + 8px);
-  padding-top: 5px
-}
-
 .location-wrapper p{
   font-size:14px;
   color:grey
