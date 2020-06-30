@@ -226,7 +226,7 @@ function CriticalQuestions(props) {
             <TextField
               label={fields.STATE.label}
               value={formValues[fields.STATE.key]}
-              onChange={handleFormChange(fields.STATE_CODE)}
+              onChange={handleFormChange(fields.STATE)}
               InputProps={{ inputProps: { min: 0 } }}
             />
 
