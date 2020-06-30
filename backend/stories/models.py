@@ -13,7 +13,7 @@ class Story(Base):
     sex = Column(String(64))
     country_of_origin = Column(String(128))
     city = Column(String(128))
-    state = Column(String(64))
+    state = Column(String(128))
     country = Column(String(128))
     profession = Column(String(128))
     sick = Column(String(64))
