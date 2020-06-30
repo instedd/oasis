@@ -24,7 +24,7 @@ class Story(Base):
 
     user = relationship("User", uselist=False, back_populates="story")
     symptoms = relationship("Symptom", secondary="story_symptoms")
-    travels = relationship("Travel", lazy="noload")
+    travels = relationship("Travel", lazy="select")
 
     @property
     def medical_conditions(self):
