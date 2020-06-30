@@ -169,7 +169,7 @@ function CriticalQuestions(props) {
       .then((response) => response.json())
       .then((jsondata) => {
         console.log(jsondata);
-        if (jsondata.features.length > 0) {
+        if ("features" in jsondata && jsondata.features.length > 0) {
           const place = jsondata.features[0];
           const place_name = place.place_name;
           var address = place_name.split(",");
@@ -191,7 +191,7 @@ function CriticalQuestions(props) {
             country: country,
           });
         } else {
-          etFormValues({
+          setFormValues({
             ...formValues,
             city: query,
             state: "",
@@ -272,7 +272,7 @@ function CriticalQuestions(props) {
             <TextField
               label={fields.STATE.label}
               value={formValues[fields.STATE.key]}
-              onChange={handleFormChange(fields.STATE_CODE)}
+              onChange={handleFormChange(fields.STATE)}
               InputProps={{ inputProps: { min: 0 } }}
             />
 
