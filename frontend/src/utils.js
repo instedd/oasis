@@ -54,7 +54,9 @@ export const parseObjectKeys = (object, method) =>
   Object.keys(object).reduce((acc, key) => {
     if (Array.isArray(object[key])) {
       acc[method(key)] = object[key].map((element) =>
-        parseObjectKeys(element, snakeToCamelCase)
+        typeof element === "object" && element !== null
+          ? parseObjectKeys(element, method)
+          : element
       );
     } else {
       acc[method(key)] = object[key];
