@@ -160,6 +160,7 @@ const submitStoryComponents = (storyId) => (
       method: "POST",
       body: newComponents,
     }));
+
   const putResponse =
     updatedComponents.length &&
     (await api(`stories/${storyId}/${path}`, {
@@ -168,9 +169,10 @@ const submitStoryComponents = (storyId) => (
     }));
 
   const errors = postResponse.error || putResponse.error;
-  const response = (!postResponse.error ? postResponse : []).concat(
-    !putResponse.error ? putResponse : []
-  );
+  const response = (!postResponse.error && postResponse
+    ? postResponse
+    : []
+  ).concat(!putResponse.error && putResponse ? putResponse : []);
 
   dispatch(after(errors, response));
   return errors;
