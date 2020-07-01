@@ -118,7 +118,7 @@ def create_close_contacts(
 @router.put("/{story_id}/contacts", response_model=List[schemas.CloseContact])
 def update_close_contacts(
     story_id: int,
-    close_contacts: List[schemas.CloseContactCreate],
+    close_contacts: List[schemas.CloseContact],
     current_story: schemas.Story = Depends(main.get_current_story),
     db: Session = Depends(get_db),
 ):

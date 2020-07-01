@@ -72,6 +72,7 @@ class Story(StoryCreate):
     token: str = None
     user: User = None
     travels: List[Travel] = []
+    close_contacts: List[CloseContact] = []
 
     class Config:
         orm_mode = True
