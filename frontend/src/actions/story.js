@@ -111,7 +111,9 @@ const submitTravels = (travels, story, storyId, nextPage) => async (
     }));
 
   const errors = postResponse.error || putResponse.error;
-  const responseTravels = (postResponse || []).concat(putResponse || []);
+  const responseTravels = (!postResponse.error ? postResponse : []).concat(
+    !putResponse.error ? putResponse : []
+  );
   dispatch({
     type: SUBMIT_TRAVELS,
     payload: {
