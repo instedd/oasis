@@ -41,7 +41,12 @@ export const submitStory = (dto) => async (dispatch) => {
 
   dispatch({ type: SAVE_STORY_START });
   const { story, nextPage, travels, closeContacts } = dto;
-  const response = await api(`stories/`, {
+  const {
+    error,
+    travels: _travels,
+    closeContacts: _closeContacts,
+    ...updatedStory
+  } = await api(`stories/`, {
     method: "POST",
     body: story,
   });
@@ -49,23 +54,23 @@ export const submitStory = (dto) => async (dispatch) => {
   dispatch({
     type: SAVED_STORY,
     payload: {
-      status: response.error || { type: SUCCESS },
-      story: (!response.error && response) || null,
+      status: error || { type: SUCCESS },
+      story: (!error && updatedStory) || null,
     },
   });
 
-  const storyId = response.id;
+  const storyId = updatedStory.id;
   const sendTravels = () =>
-    travels.length && dispatch(submitTravels(travels, story, storyId));
+    travels.length && dispatch(submitTravels(travels, storyId));
   const sendCloseContacts = () =>
     closeContacts.length &&
-    dispatch(submitCloseContacts(closeContacts, story, storyId));
-  const error = await [sendTravels, sendCloseContacts].reduce(
+    dispatch(submitCloseContacts(closeContacts, storyId));
+  const anyError = await [sendTravels, sendCloseContacts].reduce(
     async (error, func) => !(await error) && func(),
-    response.error
+    error
   );
 
-  if (!error) {
+  if (!anyError) {
     history.push(nextPage);
   }
 };
@@ -90,18 +95,20 @@ export const fetchStory = () => async (dispatch) => {
 
 export const getCurrentStory = async (dispatch) => {
   dispatch({ type: FETCH_STORY_START });
-  const { error, ...story } = await api("stories/");
+  const { error, travels, closeContacts, ...story } = await api("stories/");
   dispatch({
     type: FETCH_STORY,
     payload: {
       status: error || { type: SUCCESS },
       story: (!error && story) || null,
+      travels: (!error && travels) || [],
+      closeContacts: (!error && closeContacts) || [],
     },
   });
   return story;
 };
 
-const submitTravels = (travels, story, storyId) =>
+const submitTravels = (travels, storyId) =>
   submitStoryComponents(storyId)(
     "travels",
     travels,
@@ -110,12 +117,12 @@ const submitTravels = (travels, story, storyId) =>
       type: SUBMIT_TRAVELS,
       payload: {
         status: errors || { type: SUCCESS },
-        story: { ...story, travels: (!errors && response) || [] },
+        travels: (!errors && response) || [],
       },
     })
   );
 
-const submitCloseContacts = (closeContacts, story, storyId) =>
+const submitCloseContacts = (closeContacts, storyId) =>
   submitStoryComponents(storyId)(
     "contacts",
     closeContacts,
@@ -124,7 +131,7 @@ const submitCloseContacts = (closeContacts, story, storyId) =>
       type: SUBMIT_CLOSE_CONTACTS,
       payload: {
         status: errors || { type: SUCCESS },
-        story: { ...story, closeContacts: (!errors && response) || [] },
+        closeContacts: (!errors && response) || [],
       },
     })
   );

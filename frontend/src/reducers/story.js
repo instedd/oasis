@@ -16,6 +16,8 @@ import {
 const initialState = {
   status: {},
   story: null,
+  travels: [],
+  closeContacts: [],
 };
 
 const story = (state = initialState, action) => {

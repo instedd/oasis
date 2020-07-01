@@ -43,15 +43,17 @@ function CriticalQuestions(props) {
   const [recentTravels, setRecentTravels] = useState([]);
 
   let nextPage;
-  const { story, status } = useSelector((state) => state.story);
+  const { story, status, travels, closeContacts } = useSelector(
+    (state) => state.story
+  );
 
   useEffect(() => {
     if (!story) {
       dispatch(fetchStory());
     } else {
       setFormValues({ ...formValues, ...story });
-      if (story.travels) setRecentTravels(story.travels);
-      if (story.closeContacts) setContacts(story.closeContacts);
+      if (travels.length) setRecentTravels(travels);
+      if (closeContacts.length) setContacts(closeContacts);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, story]);
@@ -148,7 +150,7 @@ function CriticalQuestions(props) {
       );
   }, []);
 
-  const closeContacts = () => (
+  const closeContactsSection = () => (
     <>
       <div className={styles.formrow}>
         <Fab
@@ -190,7 +192,7 @@ function CriticalQuestions(props) {
     </>
   );
 
-  const travels = () => (
+  const travelsSection = () => (
     <>
       <div className={styles.formrow}>
         <Fab
@@ -377,8 +379,8 @@ function CriticalQuestions(props) {
             </Select>
           </FormControl>
         </div>
-        {closeContacts()}
-        {travels()}
+        {closeContactsSection()}
+        {travelsSection()}
         <div style={{ height: "30px" }} ref={pageBottomRef}></div>
       </div>
       <Fab
