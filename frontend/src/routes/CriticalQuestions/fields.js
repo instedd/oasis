@@ -9,20 +9,20 @@ export const fields = {
     key: "sex",
     initialValue: null,
   },
-  ETHNICITY: {
-    label: "Ethnicity",
-    key: "ethnicity",
-    initialValue: null,
-  },
-  CURRENT_LOCATION: {
-    label: "Current location",
-    key: "currentLocation",
+  CITY: {
+    label: "City",
+    key: "city",
     initialValue: "",
   },
-  POSTAL_CODE: {
-    label: "Postal code",
-    key: "postalCode",
-    initialValue: null,
+  STATE: {
+    label: "State",
+    key: "state",
+    initialValue: "",
+  },
+  COUNTRY: {
+    label: "Country",
+    key: "country",
+    initialValue: "",
   },
   COUNTRY_OF_ORIGIN: {
     label: "Citizenship",
