@@ -1,4 +1,4 @@
-import api, { snakeToCamelCase, parseObjectKeys } from "utils";
+import api from "utils";
 import history from "../history";
 import {
   SET_SICK_STATUS,
@@ -12,6 +12,8 @@ import {
   ERROR,
   SUBMIT_TRAVELS_START,
   SUBMIT_TRAVELS,
+  SUBMIT_CLOSE_CONTACTS_START,
+  SUBMIT_CLOSE_CONTACTS,
 } from "./types";
 import { fields } from "../routes/CriticalQuestions/fields";
 
@@ -38,8 +40,13 @@ export const submitStory = (dto) => async (dispatch) => {
   }
 
   dispatch({ type: SAVE_STORY_START });
-  const { story, nextPage, travels } = dto;
-  const response = await api(`stories/`, {
+  const { story, nextPage, travels, closeContacts } = dto;
+  const {
+    error,
+    travels: _travels,
+    closeContacts: _closeContacts,
+    ...updatedStory
+  } = await api(`stories/`, {
     method: "POST",
     body: story,
   });
@@ -47,15 +54,24 @@ export const submitStory = (dto) => async (dispatch) => {
   dispatch({
     type: SAVED_STORY,
     payload: {
-      status: response.error || { type: SUCCESS },
-      story: (!response.error && response) || null,
+      status: error || { type: SUCCESS },
+      story: (!error && updatedStory) || null,
     },
   });
 
-  if (!response.error) {
-    if (travels.length)
-      dispatch(submitTravels(travels, story, response.id, nextPage));
-    else history.push(nextPage);
+  const storyId = updatedStory.id;
+  const sendTravels = () =>
+    travels.length && dispatch(submitTravels(travels, storyId));
+  const sendCloseContacts = () =>
+    closeContacts.length &&
+    dispatch(submitCloseContacts(closeContacts, storyId));
+  const anyError = await [sendTravels, sendCloseContacts].reduce(
+    async (error, func) => !(await error) && func(),
+    error
+  );
+
+  if (!anyError) {
+    history.push(nextPage);
   }
 };
 
@@ -79,48 +95,85 @@ export const fetchStory = () => async (dispatch) => {
 
 export const getCurrentStory = async (dispatch) => {
   dispatch({ type: FETCH_STORY_START });
-  const { error, ...story } = await api("stories/");
+  const { error, travels, closeContacts, ...story } = await api("stories/");
   dispatch({
     type: FETCH_STORY,
     payload: {
       status: error || { type: SUCCESS },
       story: (!error && story) || null,
+      travels: (!error && travels) || [],
+      closeContacts: (!error && closeContacts) || [],
     },
   });
   return story;
 };
 
-const submitTravels = (travels, story, storyId, nextPage) => async (
-  dispatch
-) => {
-  dispatch({ type: SUBMIT_TRAVELS_START });
-  let parsedTravels = travels.map((travel) => ({ ...travel, storyId }));
-  const newTravels = parsedTravels.filter((travel) => !("id" in travel));
-  const updatedTravels = parsedTravels.filter((travel) => "id" in travel);
+const submitTravels = (travels, storyId) =>
+  submitStoryComponents(storyId)(
+    "travels",
+    travels,
+    { type: SUBMIT_TRAVELS_START },
+    (errors, response) => ({
+      type: SUBMIT_TRAVELS,
+      payload: {
+        status: errors || { type: SUCCESS },
+        travels: (!errors && response) || [],
+      },
+    })
+  );
+
+const submitCloseContacts = (closeContacts, storyId) =>
+  submitStoryComponents(storyId)(
+    "contacts",
+    closeContacts,
+    { type: SUBMIT_CLOSE_CONTACTS_START },
+    (errors, response) => ({
+      type: SUBMIT_CLOSE_CONTACTS,
+      payload: {
+        status: errors || { type: SUCCESS },
+        closeContacts: (!errors && response) || [],
+      },
+    })
+  );
+
+const submitStoryComponents = (storyId) => (
+  path,
+  components,
+  before,
+  after
+) => async (dispatch) => {
+  dispatch(before);
+
+  let parsedComponents = components.map((component) => ({
+    ...component,
+    storyId,
+  }));
+  const newComponents = parsedComponents.filter(
+    (component) => !("id" in component)
+  );
+  const updatedComponents = parsedComponents.filter(
+    (component) => "id" in component
+  );
   const postResponse =
-    newTravels.length &&
-    (await api(`stories/${storyId}/travels`, {
+    newComponents.length &&
+    (await api(`stories/${storyId}/${path}`, {
       method: "POST",
-      body: newTravels,
+      body: newComponents,
     }));
+
   const putResponse =
-    updatedTravels.length &&
-    (await api(`stories/${storyId}/travels`, {
+    updatedComponents.length &&
+    (await api(`stories/${storyId}/${path}`, {
       method: "PUT",
-      body: updatedTravels,
+      body: updatedComponents,
     }));
 
   const errors = postResponse.error || putResponse.error;
-  const responseTravels = (!postResponse.error ? postResponse : []).concat(
-    !putResponse.error ? putResponse : []
-  );
-  dispatch({
-    type: SUBMIT_TRAVELS,
-    payload: {
-      status: errors || { type: SUCCESS },
-      story: { ...story, travels: (!errors && responseTravels) || [] },
-    },
-  });
+  const response = (!postResponse.error && postResponse
+    ? postResponse
+    : []
+  ).concat(!putResponse.error && putResponse ? putResponse : []);
 
-  if (!errors) history.push(nextPage);
+  dispatch(after(errors, response));
+  return errors;
 };
