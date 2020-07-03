@@ -13,4 +13,3 @@ requests
 pandas
 jenkspy
 sigfig
-fastapi-mail

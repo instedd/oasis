@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from stories import models, schemas
 import sys
+from emails import email_sender, contents
 
 
 class ExposureNotifier:
@@ -45,9 +46,6 @@ class ExposureNotifier:
             )
         ]
 
-        print(
-            "Already existing relations: {}".format(already_existing_relations)
-        )
         new_story_notifications = [
             models.StoryNotification(
                 story_id=self.story_id, notification_id=notification.id
@@ -55,11 +53,6 @@ class ExposureNotifier:
             for notification in notifications
             if notification.id not in already_existing_relations
         ]
-        print(
-            "New relations: {}".format(
-                [r.notification_id for r in new_story_notifications]
-            )
-        )
 
         self.db.add_all(new_story_notifications)
         self.db.flush()
@@ -67,12 +60,8 @@ class ExposureNotifier:
         all_relationships = [
             r.notification_id for r in new_story_notifications
         ] + already_existing_relations
-        print("All relationships: {}".format(all_relationships))
 
         return all_relationships
-
-    def _send_emails(self, emails: List[str]):
-        print("Sending emails to: {}".format(emails))
 
     def _update_notifications(
         self,
@@ -81,8 +70,6 @@ class ExposureNotifier:
     ):
         today = datetime.date.today()
         ids_to_update = [n.id for n in notifications_to_update]
-        print("IDS to update: {}".format(ids_to_update))
-        print("New emails to create: {}".format(new_emails))
 
         # update notified at for existing but recently notified notifications
         self.db.query(models.ExposureNotification).filter(
@@ -101,10 +88,19 @@ class ExposureNotifier:
         self.db.add_all(new_notifications)
         self.db.flush()
 
+    def _send_emails(self, emails: List[str]):
+
+        for email in emails:
+            email_sender.send(
+                email,
+                contents.EXPOSURE_NOTIFICATION_SUBJECT,
+                contents.EXPOSURE_NOTIFICATION_TEXT_CONTENT,
+                contents.EXPOSURE_NOTIFICATION_HTML_CONTENT,
+            )
+
     def notify(self):
         existing_notifications = self._get_existing_notifications()
         already_notified_emails = self._emails(existing_notifications)
-        print("Existing emails: {}".format(already_notified_emails))
 
         updateable_notifications = [
             n
