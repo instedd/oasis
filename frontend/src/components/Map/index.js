@@ -65,6 +65,7 @@ export default function Map({ draggable = true }) {
       });
     newRanges && setLegendRanges(newRanges);
   };
+
   const getUserLocation = async () => {
     const userLocation = await fetchUserLocation();
     if (userLocation) {
@@ -78,13 +79,17 @@ export default function Map({ draggable = true }) {
 
   const addLayers = async (map) => {
     const data = await fetchCovidData(dataScope.ALL);
+    const usData = [data["data"]["adm0"][177]];
+    //world data expcets US for world layer
     const worldData = data["data"]["adm0"];
+    // US data for state layer
     const usStatesData = data["data"]["adm1"]["US"];
 
     addLegend(data);
 
     map.on("load", function () {
       addWorldLayer(map, worldData);
+      addNonUSLayer(map, worldData);
       addUSStatesLayer(map, usStatesData);
     });
   };
@@ -114,9 +119,46 @@ export default function Map({ draggable = true }) {
 
     map.addLayer(
       {
-        id: "maine",
+        id: "world-layer",
         type: "fill",
         layout: {},
+        maxzoom: countryMinZoom,
+        paint: {
+          "fill-color": {
+            type: "categorical",
+            property: "name",
+            stops: expression,
+          },
+          "fill-opacity": 0.7,
+          "fill-outline-color": fillOutlineColor,
+        },
+        source: {
+          type: "vector",
+          url: "mapbox://saurabhp.countries_tileset",
+        },
+        "source-layer": "countries",
+      },
+      "waterway-label"
+    );
+  };
+
+  const addNonUSLayer = async (map, data) => {
+    const covidData = await data;
+    const allexpression = covidData.map((row) => [
+      row.name,
+      getColor(row.group),
+    ]);
+    // Delete US from the world expression(all expression)
+    const expression = allexpression
+      .slice(0, 177)
+      .concat(allexpression.slice(178, allexpression.length));
+
+    map.addLayer(
+      {
+        id: "non-us-layer",
+        type: "fill",
+        layout: {},
+        minzoom: countryMinZoom,
         paint: {
           "fill-color": {
             type: "categorical",
@@ -215,7 +257,7 @@ export default function Map({ draggable = true }) {
 
     map.addLayer(
       {
-        id: "states-join",
+        id: "us-states-layer",
         type: "fill",
         source: "states",
         minzoom: countryMinZoom,
