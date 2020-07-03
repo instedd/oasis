@@ -4,7 +4,6 @@ from typing import List
 from sqlalchemy.orm import Session
 
 from stories import models, schemas
-import sys
 from emails import email_sender, contents
 
 
@@ -121,12 +120,19 @@ class ExposureNotifier:
         self._update_relationships()
 
         self.db.commit()
-        sys.stdout.flush()
         return emails_to_notify
+
+
+def should_send_notification(story):
+    return (
+        story.sick == schemas.MedicalSituation.sick
+        and story.tested == schemas.TestSituation.positive
+    )
 
 
 def send_exposure_notification(
     story: schemas.Story, contacts: List[schemas.CloseContact], db: Session
 ):
-    notifier = ExposureNotifier(contacts, story.id, db)
-    notifier.notify()
+    if should_send_notification(story):
+        notifier = ExposureNotifier(contacts, story.id, db)
+        notifier.notify()
