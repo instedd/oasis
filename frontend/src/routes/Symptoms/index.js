@@ -90,7 +90,7 @@ export default function Symptoms(props) {
   };
 
   const classes = useStyles();
-  let isSick = useSelector((state) => state.story.sick);
+  const isSick = useSelector((state) => state.story.sick);
   const subtitle =
     isSick === sicknessStatus.RECOVERED
       ? "When you were sick, which of the following symptoms did you have?"
