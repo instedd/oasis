@@ -25,7 +25,7 @@ const actions = [
   { name: "ADD MY STORY", href: paths.myStory, classes: "MuiFab-extended" },
   {
     name: "DAILY ASSESSMENT",
-    href: paths.symptoms,
+    href: paths.sickcheck,
     classes: classNames("MuiFab-extended assessment", styles.assessment),
   },
 ];

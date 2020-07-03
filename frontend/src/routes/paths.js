@@ -10,6 +10,8 @@ const paths = {
   confirm: "/confirm",
   healthMeasurements: "/measurements",
   myStory: "/mystory",
+  sickcheck: "/sickcheck",
+  testcheck: "/testcheck",
 };
 
 export default paths;

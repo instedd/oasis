@@ -1,0 +1,7 @@
+.buttons {
+  height: 250px;
+}
+
+.buttons > button {
+  width: 200px;
+}

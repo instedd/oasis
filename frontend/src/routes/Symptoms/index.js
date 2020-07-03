@@ -18,7 +18,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import paths from "routes/paths";
 import { sicknessStatus } from "routes/types";
-import { setSickStatus } from "../../actions/story";
 import styles from "./styles.module.css";
 
 const useStyles = makeStyles((theme) => ({
@@ -64,21 +63,11 @@ export default function Symptoms(props) {
     dispatch(fetchSymptoms());
   }, [dispatch]);
 
-  const dispatchSet = useDispatch();
-
   const symptoms = useSelector((state) => state.symptoms);
   const [selectedSymptoms, setSelectedSymptoms] = useState([]);
 
-  let symptomCount = 0;
-
   const navigate = (path) => () =>
     dispatch(submitSymptoms(selectedSymptoms, path));
-
-  const checkSymptoms = (path) => () => {
-    console.log(symptomCount);
-    if (symptomCount === 0) dispatchSet(setSickStatus(sicknessStatus.NOT_SICK));
-    dispatch(submitSymptoms(selectedSymptoms, path));
-  };
 
   const toggleSymptom = (id) => {
     setSelectedSymptoms(
@@ -86,7 +75,6 @@ export default function Symptoms(props) {
         ? selectedSymptoms.filter((symptom) => symptom !== id)
         : selectedSymptoms.concat([id])
     );
-    symptomCount += 1;
   };
 
   const classes = useStyles();
@@ -134,7 +122,7 @@ export default function Symptoms(props) {
       <Fab
         style={{ background: "#EA2027" }}
         aria-label="Go to next page"
-        onClick={checkSymptoms(paths.healthMeasurements)}
+        onClick={navigate(paths.healthMeasurements)}
         size="medium"
         className="fab next-btn"
       >
