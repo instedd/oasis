@@ -63,3 +63,17 @@ class CloseContact(Base):
     story_id = Column(ForeignKey("stories.id"))
     email = Column(String(128))
     phone_number = Column(String(64))
+
+
+class ExposureNotification(Base):
+    __tablename__ = "exposure_notifications"
+
+    email = Column(String(128), unique=True)
+    notified_at = Column(Date)
+
+
+class StoryNotification(Base):
+    __tablename__ = "story_notifications"
+
+    story_id = Column(ForeignKey("stories.id"))
+    notification_id = Column(ForeignKey("exposure_notifications.id"))

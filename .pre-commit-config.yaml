@@ -11,7 +11,11 @@ repos:
     rev: ""
     hooks:
       - id: flake8
-        exclude: legacy/
+        exclude: >
+            (?x)^(
+                legacy/|
+                backend/emails/contents.py
+            )$ 
         language_version: python3.7
     # tried to to all the precommit work here, didn't work.
     # Leaving it as something we might want to look into
