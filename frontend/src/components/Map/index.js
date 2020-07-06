@@ -79,8 +79,7 @@ export default function Map({ draggable = true }) {
 
   const addLayers = async (map) => {
     const data = await fetchCovidData(dataScope.ALL);
-    const usData = [data["data"]["adm0"][177]];
-    //world data expcets US for world layer
+    //world data including US for world layer
     const worldData = data["data"]["adm0"];
     // US data for state layer
     const usStatesData = data["data"]["adm1"]["US"];
@@ -149,9 +148,7 @@ export default function Map({ draggable = true }) {
       getColor(row.group),
     ]);
     // Delete US from the world expression(all expression)
-    const expression = allexpression
-      .slice(0, 177)
-      .concat(allexpression.slice(178, allexpression.length));
+    const expression = covidData.filter(country => country.name !== "United States of America").map((row) => [row.name, getColor(row.group)]);
 
     map.addLayer(
       {
