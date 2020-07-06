@@ -1,46 +1,82 @@
-EXPOSURE_NOTIFICATION_SUBJECT = (
-    "COVID-19 - Important notification from University of California San Diego"
-)
+EXPOSURE_NOTIFICATION_SUBJECT = "COVID-19 - Important notification"
 
 EXPOSURE_NOTIFICATION_TEXT_CONTENT = """
-Hello. This is a notice informing that you may have been exposed to individuals (contacts) infected with the COVID-19 virus
+Hello. This is a notice from Oasis, a citizen-led global community working to stop the spread of COVID-19.
+Oasis community volunteers document their symptoms and COVID-19 test results on the Oasis platform.
+In addition, they can provide contact information of people whom they have been near and who may have been exposed to the virus.
+This notification is to let you know that you may have been exposed to the COVID-19 virus (https://www.cdc.gov/coronavirus/2019-ncov/faq.html) and we offer a few suggestions on what you can do.
 
-Someone that has been tested positive, has informed that they might have been in contact with you and provided your email address. To protect everybody's privacy we keep these notifications anonymous. We only have your email address and we will not use it for anything else other than this notification.
+To protect everyone’s privacy, we keep all notifications confidential - that means we do not share information about who has symptoms,
+who has confirmed infection or who has been in contact with people who may be infected. We only use your contact information to notify
+you now of possible COVID exposure and will never use personal information for anything else.
 
-Please go to 1oasis.org for more information and to report how you are feeling.
-You are encouraged to stay home and maintain social distance from others (at least 6 feet) until 14 days after your last exposure, in case you also become ill.
+Because you may have been exposed to the COVID-19 virus, we encourage you to self-monitor for symptoms. Actions you can take now follow:
+ - Wear a facial covering to prevent infection of others. People can spread COVID-19 even without having symptoms, and we all need to protect those around us.
+ - Monitor yourself by checking your temperature twice daily and watching for new symptoms like:
+    - Fever
+    - Cough or shortness of breath.
+    - Fatigue
+    - Muscle or body aches
+    - Headache
+    - Loss of taste or smell
+    - Sore throat
+    - Congestion or runny nose
+    - Nausea or vomiting
+    - Diarrhea
+ - Wash your hands frequently and avoid touching your face.
+ - Disinfect areas that you touch.
 
-You should monitor yourself by checking your temperature twice daily and watching for cough or shortness of breath.
+If you have symptoms:
+ - check with your healthcare provider about the need for medical care or testing
+ - self-quarantine until you know you are not infectious
+ - maintain social distance from others (at least 6 feet) for 14 days or, until cleared by a medical professional.
 
-If you develop symptoms you should promptly isolate yourself and notify your doctor or public health staff.
-
-You should be promptly evaluated for infection and for the need for medical care.
-You can learn more about how to care for yourself if you’ve been exposed here: link
-
-https://www.cdc.gov/coronavirus/2019-ncov/php/public-health-recommendations.html
+Please go to the Oasis website (http://1oasis.org/) to access COVID-19 information and, if you choose, you can report how you are feeling.
+You can learn more from the CDC (https://www.cdc.gov/coronavirus/2019-ncov/if-you-are-sick/quarantine.html?CDC_AA_refVal=https%3A%2F%2Fwww.cdc.gov%2Fcoronavirus%2F2019-ncov%2Fif-you-are-sick%2Fquarantine-isolation.html) about how to care for yourself if you’ve been exposed to COVID-19.
 """
 
 EXPOSURE_NOTIFICATION_HTML_CONTENT = """
 <html>
 <head></head>
 <body>
-<p>Hello. This is a notice informing that you may have been exposed to individuals (contacts) infected with the COVID-19 virus</p>
+<p>Hello. This is a notice from Oasis, a citizen-led global community working to stop the spread of COVID-19.
+Oasis community volunteers document their symptoms and COVID-19 test results on the Oasis platform.
+In addition, they can provide contact information of people whom they have been near and who may have been exposed to the virus.
+This notification is to let you know that <b>you may have been exposed</b> to the <a href='https://www.cdc.gov/coronavirus/2019-ncov/faq.html'>COVID-19 virus</a> and we offer a few suggestions on what you can do.</p>
 
-<p>Someone that has been tested positive, has informed that they might have been in contact with you and provided your email address. 
-To protect everybody's privacy we keep these notifications anonymous. 
-We only have your email address and we will not use it for anything else other than this notification.</p>
+<p>To protect everyone’s privacy, we keep all notifications confidential - that means we do not share information about who has symptoms,
+who has confirmed infection or who has been in contact with people who may be infected. We only use your contact information to notify you now of possible COVID exposure and will never use personal information for anything else.</p>
 
-<p>Please go to <a href='http://1oasis.org/'>Oasis</a> for more information and to report how you are feeling. 
-You are encouraged to stay home and maintain social distance from others (at least 6 feet) 
-until 14 days after your last exposure, in case you also become ill.</p>
+<p>Because <b>you may have been exposed</b> to the COVID-19 virus, we encourage you to self-monitor for symptoms. Actions you can take now follow:</p>
+<ul>
+    <li>Wear a facial covering to prevent infection of others. People can spread COVID-19 even without having symptoms, and we all need to protect those around us.</li>
+    <li>Monitor yourself by checking your temperature twice daily and watching for new symptoms like:
+        <ul>
+            <li>Fever</li>
+            <li>Cough or shortness of breath.</li>
+            <li>Fatigue</li>
+            <li>Muscle or body aches</li>
+            <li>Headache</li>
+            <li>Loss of taste or smell</li>
+            <li>Sore throat</li>
+            <li>Congestion or runny nose</li>
+            <li>Nausea or vomiting</li>
+            <li>Diarrhea</li>
+        </UL>
+    </li>
+    <li>Wash your hands frequently and avoid touching your face.</li>
+    <li>Disinfect areas that you touch.</li>
+</ul>
 
-<p>You should monitor yourself by checking your temperature twice daily and watching for cough or shortness of breath.</p>
+<p><b>If you have symptoms:</b></p>
+<ul>
+    <li>check with your healthcare provider about the need for medical care or testing</li>
+    <li>self-quarantine until you know you are not infectious</li>
+    <li>maintain social distance from others (at least 6 feet) for 14 days or, until cleared by a medical professional.</li>
+</ul>
 
-<p>If you develop symptoms you should promptly isolate yourself and notify your doctor or public health staff.</p>
-
-<p>You should be promptly evaluated for infection and for the need for medical care. 
-You can learn more about how to care for yourself if you’ve been exposed here: <a href='https://www.cdc.gov/coronavirus/2019-ncov/php/public-health-recommendations.html'>cdc recommendations</a></p>
-
+<p>Please go to the <a href='http://1oasis.org/'>Oasis website</a> to access COVID-19 information and, if you choose, you can report how you are feeling.
+You can learn more from the <a href='https://www.cdc.gov/coronavirus/2019-ncov/if-you-are-sick/quarantine.html?CDC_AA_refVal=https%3A%2F%2Fwww.cdc.gov%2Fcoronavirus%2F2019-ncov%2Fif-you-are-sick%2Fquarantine-isolation.html'>CDC</a> about how to care for yourself if you’ve been exposed to COVID-19. </p>
 </body>
 </html>
 """
