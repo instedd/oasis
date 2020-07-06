@@ -143,10 +143,6 @@ export default function Map({ draggable = true }) {
 
   const addNonUSLayer = async (map, data) => {
     const covidData = await data;
-    const allexpression = covidData.map((row) => [
-      row.name,
-      getColor(row.group),
-    ]);
     // Delete US from the world expression(all expression)
     const expression = covidData.filter(country => country.name !== "United States of America").map((row) => [row.name, getColor(row.group)]);
 
