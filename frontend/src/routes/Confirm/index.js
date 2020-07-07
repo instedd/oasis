@@ -4,17 +4,20 @@ import classNames from "classnames";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import paths from "routes/paths";
-import { sicknessStatus, testStatus } from "routes/types";
+import { sicknessStatus, testStatus, onboardStatus } from "routes/types";
 import { setTestedStatus } from "../../actions/story";
 import styles from "./styles.module.css";
 
 export default function Confirm({ history }) {
-  const sick = useSelector((state) => state.story.sick);
+  const { story } = useSelector((state) => state.story);
 
   const dispatch = useDispatch();
   const handleClick = (selected) => () => {
     dispatch(setTestedStatus(selected));
-    history.push(paths.criticalQuestions);
+    if (story.onboard === onboardStatus.NOT_DONE)
+      history.push(paths.criticalQuestions);
+    else if (story.sick === sicknessStatus.SICK) history.push(paths.symptoms);
+    else history.push(paths.dashboard);
   };
 
   return (
@@ -58,7 +61,7 @@ export default function Confirm({ history }) {
         className="fab back-btn"
         onClick={() =>
           history.push(
-            sick === sicknessStatus.SICK ? paths.alert : paths.onboard
+            story.sick === sicknessStatus.SICK ? paths.alert : paths.onboard
           )
         }
       >

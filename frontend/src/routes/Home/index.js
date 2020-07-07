@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import classNames from "classnames";
 import { Checkbox } from "@material-ui/core";
 import SpeedDial from "@material-ui/lab/SpeedDial";
@@ -12,6 +13,9 @@ import paths from "routes/paths";
 
 import styles from "./styles.module.css";
 import history from "../../history";
+
+import { onboardStatus } from "routes/types";
+import { setOnboardStatus } from "../../actions/story";
 
 const useStyles = makeStyles((theme) => ({
   speedDial: {
@@ -73,6 +77,13 @@ function App(props) {
     setOpen(false);
   };
 
+  const dispatch = useDispatch();
+  const handleClick = (path) => () => {
+    dispatch(setOnboardStatus(onboardStatus.NOT_DONE));
+    //console.log(path);
+    props.history.push(path);
+  };
+
   const texts = Text["Terms and Conditions"].texts;
   const listIndex = Text["Terms and Conditions"].listIndex;
   const linkIndex = Text["Terms and Conditions"].linkIndex;
@@ -124,9 +135,10 @@ function App(props) {
               tooltipTitle={action.name}
               className={action.classes}
               TooltipClasses={classesTooltip}
-              onClick={() => {
-                history.push(action.href);
-              }}
+              // onClick={() => {
+              //   history.push(action.href);
+              // }}
+              onClick={handleClick(action.href)}
             />
           ))}
         </SpeedDial>

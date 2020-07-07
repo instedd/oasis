@@ -1,6 +1,7 @@
 import {
   SET_SICK_STATUS,
   SET_TESTED_STATUS,
+  SET_ONBOARD_STATUS,
   LOADING,
   SAVED_STORY,
   SAVE_STORY_START,
@@ -44,6 +45,11 @@ const story = (state = initialState, action) => {
       return {
         ...state,
         story: { ...state.story, tested: action.payload },
+      };
+    case SET_ONBOARD_STATUS:
+      return {
+        ...state,
+        story: { ...state.story, onboard: action.payload },
       };
     case FETCH_STORY_START:
       return {

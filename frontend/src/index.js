@@ -16,8 +16,6 @@ import Onboard from "routes/Onboard";
 import paths from "routes/paths";
 import SignIn from "routes/SignIn";
 import SignUp from "routes/SignUp";
-import SickCheck from "routes/SickCheck";
-import TestCheck from "routes/TestCheck";
 import Symptoms from "routes/Symptoms";
 import styles from "styles.module.css";
 import history from "./history";
@@ -37,7 +35,6 @@ ReactDOM.render(
             <Route exact path={paths.home} component={Home} />
             <Route path={paths.signIn} component={SignIn} />
             <Route path={paths.onboard} component={Onboard} />
-            <Route path={paths.sickcheck} component={SickCheck} />
             <Route path={paths.alert} component={Alert} />
             <Route
               path={paths.criticalQuestions}
@@ -45,7 +42,6 @@ ReactDOM.render(
             />
             <Route path={paths.symptoms} component={Symptoms} />
             <Route path={paths.confirm} component={Confirm} />
-            <Route path={paths.testcheck} component={TestCheck} />
             <Route
               path={paths.healthMeasurements}
               component={HealthMeasurements}

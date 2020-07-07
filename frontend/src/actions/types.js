@@ -5,6 +5,7 @@ export const SIGN_IN = "SIGN_IN";
 export const SIGN_IN_START = "SIGN_IN_START";
 export const SET_SICK_STATUS = "SET_SICK_STATUS";
 export const SET_TESTED_STATUS = "SET_TESTED_STATUS";
+export const SET_ONBOARD_STATUS = "SET_ONBOARD_STATUS";
 export const SUCCESS = "SUCCESS";
 export const ERROR = "ERROR";
 export const LOADING = "LOADING";
