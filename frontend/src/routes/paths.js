@@ -1,3 +1,5 @@
+import { sicknessStatus } from "routes/types";
+
 const paths = {
   home: "/",
   signIn: "/signin",
@@ -10,6 +12,12 @@ const paths = {
   confirm: "/confirm",
   healthMeasurements: "/measurements",
   myStory: "/mystory",
+};
+
+export const getConfirmFlow = (state, sickness) => {
+  if (!state || state.onboard === false) return paths.criticalQuestions;
+  if (sickness === sicknessStatus.SICK) return paths.symptoms;
+  return paths.dashboard;
 };
 
 export default paths;

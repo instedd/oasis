@@ -9,8 +9,3 @@ export const testStatus = {
   NEGATIVE: "negative",
   NOT_TESTED: "not_tested",
 };
-
-export const onboardStatus = {
-  DONE: "done",
-  NOT_DONE: "not_done",
-};

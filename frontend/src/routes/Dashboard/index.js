@@ -6,8 +6,7 @@ import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import paths from "routes/paths";
-import { sicknessStatus, testStatus, onboardStatus } from "routes/types";
-import { setOnboardStatus } from "../../actions/story";
+import { sicknessStatus, testStatus } from "routes/types";
 import styles from "./styles.module.css";
 import { fetchStory } from "actions/story";
 import { getStoryResources } from "actions/resources";
@@ -27,6 +26,7 @@ const actions = [
   {
     name: "DAILY ASSESSMENT",
     href: paths.onboard,
+    state: { onboard: true },
     classes: classNames("MuiFab-extended assessment", styles.assessment),
   },
 ];
@@ -46,11 +46,6 @@ function Dashboard(props) {
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const handleClick = (path) => () => {
-    dispatch(setOnboardStatus(onboardStatus.DONE));
-    props.history.push(path);
   };
 
   const [data, setData] = useState({
@@ -156,7 +151,9 @@ function Dashboard(props) {
                 icon={action.name}
                 tooltipTitle={action.name}
                 className={action.classes}
-                onClick={handleClick(action.href)}
+                onClick={() =>
+                  props.history.push(action.href, action.state || {})
+                }
               ></SpeedDialAction>
             ))}
           </SpeedDial>

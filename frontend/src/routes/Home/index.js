@@ -1,5 +1,4 @@
 import React from "react";
-import { useDispatch } from "react-redux";
 import classNames from "classnames";
 import { Checkbox } from "@material-ui/core";
 import SpeedDial from "@material-ui/lab/SpeedDial";
@@ -13,9 +12,6 @@ import paths from "routes/paths";
 
 import styles from "./styles.module.css";
 import history from "../../history";
-
-import { onboardStatus } from "routes/types";
-import { setOnboardStatus } from "../../actions/story";
 
 const useStyles = makeStyles((theme) => ({
   speedDial: {
@@ -60,6 +56,7 @@ const actions = [
   {
     name: " CONTINUE AS GUEST ",
     href: paths.onboard,
+    state: { onboard: false },
     classes: "MuiFab-extended",
   },
 ];
@@ -75,13 +72,6 @@ function App(props) {
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const dispatch = useDispatch();
-  const handleClick = (path) => () => {
-    dispatch(setOnboardStatus(onboardStatus.NOT_DONE));
-    //console.log(path);
-    props.history.push(path);
   };
 
   const texts = Text["Terms and Conditions"].texts;
@@ -135,10 +125,9 @@ function App(props) {
               tooltipTitle={action.name}
               className={action.classes}
               TooltipClasses={classesTooltip}
-              // onClick={() => {
-              //   history.push(action.href);
-              // }}
-              onClick={handleClick(action.href)}
+              onClick={() => {
+                history.push(action.href, action.state || {});
+              }}
             />
           ))}
         </SpeedDial>

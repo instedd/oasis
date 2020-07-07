@@ -3,7 +3,6 @@ import history from "../history";
 import {
   SET_SICK_STATUS,
   SET_TESTED_STATUS,
-  SET_ONBOARD_STATUS,
   SAVED_STORY,
   SAVE_STORY_START,
   SUCCESS,
@@ -86,13 +85,6 @@ export const setSickStatus = (option) => (dispatch) => {
 export const setTestedStatus = (option) => (dispatch) => {
   dispatch({
     type: SET_TESTED_STATUS,
-    payload: option,
-  });
-};
-
-export const setOnboardStatus = (option) => (dispatch) => {
-  dispatch({
-    type: SET_ONBOARD_STATUS,
     payload: option,
   });
 };
