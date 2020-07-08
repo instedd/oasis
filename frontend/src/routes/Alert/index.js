@@ -5,12 +5,16 @@ import ArrowRightIcon from "@material-ui/icons/ArrowRight";
 
 import styles from "./styles.module.css";
 import Text from "text.json";
+import { useLocation } from "react-router-dom";
+
+import paths from "routes/paths";
 
 const texts = Text["Warning Signs"].texts;
 const listIndex = Text["Warning Signs"].listIndex;
 const linkIndex = Text["Warning Signs"].linkIndex;
 
 export default function Alert(props) {
+  const location = useLocation();
   return (
     <>
       <h1 className={styles.title}>WARNING</h1>
@@ -30,7 +34,9 @@ export default function Alert(props) {
         <Fab
           style={{ background: "#9206FF" }}
           aria-label="Go to next page"
-          onClick={() => props.history.push("/onboard")}
+          onClick={() =>
+            props.history.push(paths.onboard, location.state || {})
+          }
           size="medium"
           className="fab back-btn"
         >
@@ -39,7 +45,9 @@ export default function Alert(props) {
         <Fab
           style={{ background: "#EA2027" }}
           aria-label="Go to previous page"
-          onClick={() => props.history.push("/confirm")}
+          onClick={() =>
+            props.history.push(paths.confirm, location.state || {})
+          }
           size="medium"
           className="fab next-btn"
         >

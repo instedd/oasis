@@ -6,13 +6,17 @@ import { sicknessStatus } from "routes/types";
 import { setSickStatus } from "../../actions/story";
 import styles from "./styles.module.css";
 import paths from "routes/paths";
+import { useLocation } from "react-router-dom";
 
 export default function Onboard({ history }) {
   const dispatch = useDispatch();
+  const location = useLocation();
   const handleClick = (selected) => () => {
     dispatch(setSickStatus(selected));
-    if (selected === sicknessStatus.SICK) history.push(paths.alert);
-    else history.push(paths.confirm);
+    console.log(location.state);
+    if (selected === sicknessStatus.SICK)
+      history.push(paths.alert, location.state || {});
+    else history.push(paths.confirm, location.state || {});
   };
 
   return (

@@ -25,7 +25,8 @@ const actions = [
   { name: "ADD MY STORY", href: paths.myStory, classes: "MuiFab-extended" },
   {
     name: "DAILY ASSESSMENT",
-    href: paths.symptoms,
+    href: paths.onboard,
+    state: { onboard: true },
     classes: classNames("MuiFab-extended assessment", styles.assessment),
   },
 ];
@@ -150,7 +151,9 @@ function Dashboard(props) {
                 icon={action.name}
                 tooltipTitle={action.name}
                 className={action.classes}
-                onClick={() => props.history.push(action.href)}
+                onClick={() =>
+                  props.history.push(action.href, action.state || {})
+                }
               ></SpeedDialAction>
             ))}
           </SpeedDial>

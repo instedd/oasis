@@ -56,6 +56,7 @@ const actions = [
   {
     name: " CONTINUE AS GUEST ",
     href: paths.onboard,
+    state: { onboard: false },
     classes: "MuiFab-extended",
   },
 ];
@@ -125,7 +126,7 @@ function App(props) {
               className={action.classes}
               TooltipClasses={classesTooltip}
               onClick={() => {
-                history.push(action.href);
+                history.push(action.href, action.state || {});
               }}
             />
           ))}
