@@ -7,6 +7,7 @@
   overflow: auto;
   top: 15%;
   justify-content: normal;
+  font-size: 16px;
 }
 
 div::before {
@@ -35,6 +36,7 @@ div::before {
 .root label {
   color: white;
   width: max-content;
+  font-size: 14px;
 }
 
 .root>div {
@@ -72,21 +74,21 @@ div::before {
 }
 
 .location-wrapper {
-  margin-top: 10px;
+  margin-top: 20px;
   position: relative;
 }
 
-.location-wrapper span {
-  position: absolute;
-  left: calc(5% + 8px);
-  padding-top: 5px
+.location-wrapper p {
+  font-size: 14px;
+  color: grey
 }
 
-.location-wrapper p{
-  font-size:14px;
-  color:grey
-
+.location-wrapper ul {
+  width: calc(90vw - 16px);
+  background: #49494c;
+  padding: 0
 }
+
 .status {
   color: grey;
   margin-bottom: 20px;

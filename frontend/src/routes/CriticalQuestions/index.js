@@ -6,6 +6,8 @@ import {
   ListItemText,
   MenuItem,
   TextField,
+  List,
+  ListItem,
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
@@ -24,6 +26,7 @@ import styles from "./styles.module.css";
 import { ERROR } from "actions/types";
 import { fields, initialFieldsState } from "./fields";
 import Select from "../../components/Select";
+import MyStory from "../MyStory/index";
 
 const contactText = Text["Close Contacts"].texts;
 const contactListIndex = Text["Close Contacts"].listIndex;
@@ -34,6 +37,9 @@ const travelLinkIndex = Text["Recent Travel"].linkIndex;
 const professions = Text["Profession"];
 const medicalConditions = Text["Medical Conditions"];
 
+const MAPBOX_APIKEY =
+  "pk.eyJ1IjoieXVzMjUyIiwiYSI6ImNrYTZhM2VlcjA2M2UzMm1uOWh5YXhvdGoifQ.ZIzOiYbBfwJsV168m42iFg";
+
 function CriticalQuestions(props) {
   const dispatch = useDispatch();
 
@@ -41,6 +47,7 @@ function CriticalQuestions(props) {
 
   const [contacts, setContacts] = useState([]);
   const [recentTravels, setRecentTravels] = useState([]);
+  const [locationList, setListItems] = useState([]);
 
   let nextPage;
   const { story, status, travels, closeContacts } = useSelector(
@@ -246,6 +253,50 @@ function CriticalQuestions(props) {
 
   React.useEffect(scrollToBottom, [contacts]);
 
+  const onQuery = (event) => {
+    let tempList = [];
+    const query = event.target.value;
+    const url =
+      "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
+      query +
+      ".json?access_token=" +
+      MAPBOX_APIKEY;
+    setFormValues({
+      ...formValues,
+      city: query,
+    });
+    fetch(url)
+      .then((response) => response.json())
+      .then((jsondata) => {
+        if ("features" in jsondata && jsondata.features.length > 0) {
+          const places = jsondata.features;
+          places.map((place) => {
+            const place_name = place.place_name;
+            var address = place_name.split(",");
+            var city = "";
+            var state = "";
+            var country = "";
+            if (address.length > 0) {
+              country = address[address.length - 1].trim();
+            }
+
+            if (address.length > 1) {
+              state = address[address.length - 2].trim().split(" ")[0];
+            }
+            if (address.length > 2) {
+              city = address[address.length - 3].trim();
+            }
+
+            tempList.push({ city: city, state: state, country: country });
+          });
+          setListItems(tempList);
+        } else {
+          setListItems([]);
+        }
+      })
+      .then((error) => console.log(error));
+  };
+
   return (
     <>
       {status && status.type === ERROR && (
@@ -306,12 +357,33 @@ function CriticalQuestions(props) {
               <TextField
                 label={fields.CITY.label}
                 value={formValues[fields.CITY.key]}
-                onChange={handleFormChange(fields.CITY)}
+                onChange={onQuery}
                 InputProps={{ inputProps: { min: 0 } }}
               />
               <FormHelperText style={{ fontSize: 12 }}>
                 Current Location
               </FormHelperText>
+              <List dense>
+                {locationList.map((item, index) => (
+                  <ListItem
+                    key={index}
+                    button
+                    onClick={() => {
+                      setFormValues({
+                        ...formValues,
+                        city: item.city,
+                        state: item.state,
+                        country: item.country,
+                      });
+                      setListItems([]);
+                    }}
+                  >
+                    <ListItemText>
+                      {item.city}, {item.state}, {item.country}
+                    </ListItemText>
+                  </ListItem>
+                ))}
+              </List>
             </FormControl>
 
             <TextField
@@ -321,17 +393,12 @@ function CriticalQuestions(props) {
               InputProps={{ inputProps: { min: 0 } }}
             />
 
-            <Select
+            <TextField
               label={fields.COUNTRY.label}
               value={formValues[fields.COUNTRY.key]}
               onChange={handleFormChange(fields.COUNTRY)}
-            >
-              {countries.map((option) => (
-                <MenuItem key={option.name} value={option.name}>
-                  {option.name}
-                </MenuItem>
-              ))}
-            </Select>
+              InputProps={{ inputProps: { min: 0 } }}
+            />
           </div>
         </div>
         <div
