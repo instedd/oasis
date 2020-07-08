@@ -13,7 +13,7 @@ class Story(Base):
     sex = Column(String(64))
     country_of_origin = Column(String(128))
     city = Column(String(128))
-    state = Column(String(64))
+    state = Column(String(128))
     country = Column(String(128))
     profession = Column(String(128))
     sick = Column(String(64))
@@ -25,6 +25,7 @@ class Story(Base):
     user = relationship("User", uselist=False, back_populates="story")
     symptoms = relationship("Symptom", secondary="story_symptoms")
     travels = relationship("Travel", lazy="select")
+    close_contacts = relationship("CloseContact", lazy="select")
 
     @property
     def medical_conditions(self):
@@ -54,3 +55,25 @@ class Travel(Base):
     story_id = Column(ForeignKey("stories.id"))
     location = Column(String(128))
     date_of_return = Column(Date)
+
+
+class CloseContact(Base):
+    __tablename__ = "close_contacts"
+
+    story_id = Column(ForeignKey("stories.id"))
+    email = Column(String(128))
+    phone_number = Column(String(64))
+
+
+class ExposureNotification(Base):
+    __tablename__ = "exposure_notifications"
+
+    email = Column(String(128), unique=True)
+    notified_at = Column(Date)
+
+
+class StoryNotification(Base):
+    __tablename__ = "story_notifications"
+
+    story_id = Column(ForeignKey("stories.id"))
+    notification_id = Column(ForeignKey("exposure_notifications.id"))

@@ -45,19 +45,22 @@ function CriticalQuestions(props) {
 
   const [formValues, setFormValues] = useState(initialFieldsState());
 
-  const [contactCount, setContactCount] = useState(0);
+  const [contacts, setContacts] = useState([]);
   const [recentTravels, setRecentTravels] = useState([]);
   const [locationList, setListItems] = useState([]);
 
   let nextPage;
-  const { story, status } = useSelector((state) => state.story);
+  const { story, status, travels, closeContacts } = useSelector(
+    (state) => state.story
+  );
 
   useEffect(() => {
     if (!story) {
       dispatch(fetchStory());
     } else {
       setFormValues({ ...formValues, ...story });
-      setRecentTravels(story.travels);
+      if (travels.length) setRecentTravels(travels);
+      if (closeContacts.length) setContacts(closeContacts);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, story]);
@@ -88,12 +91,26 @@ function CriticalQuestions(props) {
     setRecentTravels(newTravels);
   };
 
+  const handleCloseContactChange = (key, index) => (event) => {
+    const contactToUpdate = contacts[index];
+    contactToUpdate[key] = event.target.value;
+    const newContacts = [...contacts];
+    newContacts[index] = contactToUpdate;
+    setContacts(newContacts);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const { ...story } = formValues;
     if (story.sick === sicknessStatus.NOT_SICK) nextPage = paths.dashboard;
     else nextPage = paths.symptoms;
-    const dto = { story, nextPage, travels: recentTravels };
+
+    const dto = {
+      story,
+      nextPage,
+      travels: recentTravels,
+      closeContacts: contacts,
+    };
     dispatch(submitStory(dto));
   };
 
@@ -140,19 +157,93 @@ function CriticalQuestions(props) {
       );
   }, []);
 
-  const contacts = [];
-  for (let i = 0; i < contactCount; i++) {
-    contacts.push(
-      <div key={i}>
-        <div className={classNames("grid-3", styles["grid-3"])}>
-          <TextField label="Email" />
-        </div>
-        <div className={classNames("grid-3", styles["grid-3"])}>
-          <TextField label="Phone Number" />
-        </div>
+  const closeContactsSection = () => (
+    <>
+      <div className={styles.formrow}>
+        <Fab
+          style={{ background: "#EA2027" }}
+          aria-label="add"
+          size="medium"
+          className={styles.fab}
+          onClick={() => setContacts([...contacts, {}])}
+        >
+          <AddIcon />
+        </Fab>
+        <p>Close Contacts</p>
+        <Pop
+          label={<ErrorOutlineIcon />}
+          title={<span></span>}
+          texts={contactText}
+          linkIndex={contactLinkIndex}
+          listIndex={contactListIndex}
+        />
       </div>
-    );
-  }
+      {contacts.map((contact, i) => (
+        <div key={i}>
+          <div className={classNames("grid-3", styles["grid-3"])}>
+            <TextField
+              label="Email"
+              value={contact.email}
+              onChange={handleCloseContactChange("email", i)}
+            />
+          </div>
+          <div className={classNames("grid-3", styles["grid-3"])}>
+            <TextField
+              label="Phone Number"
+              value={contact.phoneNumber}
+              onChange={handleCloseContactChange("phoneNumber", i)}
+            />
+          </div>
+        </div>
+      ))}
+    </>
+  );
+
+  const travelsSection = () => (
+    <>
+      <div className={styles.formrow}>
+        <Fab
+          style={{ background: "#EA2027" }}
+          aria-label="add"
+          size="medium"
+          className={styles.fab}
+          onClick={() => setRecentTravels([...recentTravels, {}])}
+        >
+          <AddIcon />
+        </Fab>
+        <p>Recent Travels</p>
+        <Pop
+          label={<ErrorOutlineIcon />}
+          title={<span></span>}
+          texts={travelText}
+          linkIndex={travelLinkIndex}
+          listIndex={travelListIndex}
+        />
+      </div>
+      {recentTravels.map((travel, i) => (
+        <div key={i}>
+          <div className={classNames("grid-3", styles["grid-3"])}>
+            <TextField
+              label="Where did you travel to?"
+              value={travel.location || ""}
+              onChange={handleRecentTravelChange("location", i)}
+            />
+          </div>
+          <div className={classNames("grid-3", styles["grid-3"])}>
+            <DatePicker
+              label="When did you return?"
+              key={i}
+              id={`travel-date-${i}`}
+              clearable
+              disableFuture
+              value={travel.dateOfReturn || null}
+              onChange={handleRecentTravelChange("dateOfReturn", i)}
+            />
+          </div>
+        </div>
+      ))}
+    </>
+  );
 
   const pageBottomRef = React.useRef(null);
 
@@ -355,67 +446,8 @@ function CriticalQuestions(props) {
             </Select>
           </FormControl>
         </div>
-        <div className={styles.formrow}>
-          <Fab
-            style={{ background: "#EA2027" }}
-            aria-label="add"
-            size="medium"
-            className={styles.fab}
-            onClick={() => setContactCount(contactCount + 1)}
-          >
-            <AddIcon />
-          </Fab>
-          <p>Close Contacts</p>
-          <Pop
-            label={<ErrorOutlineIcon />}
-            title={<span></span>}
-            texts={contactText}
-            linkIndex={contactLinkIndex}
-            listIndex={contactListIndex}
-          />
-        </div>
-        {contacts}
-        <div className={styles.formrow}>
-          <Fab
-            style={{ background: "#EA2027" }}
-            aria-label="add"
-            size="medium"
-            className={styles.fab}
-            onClick={() => setRecentTravels([...recentTravels, {}])}
-          >
-            <AddIcon />
-          </Fab>
-          <p>Recent Travels</p>
-          <Pop
-            label={<ErrorOutlineIcon />}
-            title={<span></span>}
-            texts={travelText}
-            linkIndex={travelLinkIndex}
-            listIndex={travelListIndex}
-          />
-        </div>
-        {recentTravels.map((travel, i) => (
-          <div key={i}>
-            <div className={classNames("grid-3", styles["grid-3"])}>
-              <TextField
-                label="Where did you travel to?"
-                value={recentTravels[i].location || ""}
-                onChange={handleRecentTravelChange("location", i)}
-              />
-            </div>
-            <div className={classNames("grid-3", styles["grid-3"])}>
-              <DatePicker
-                label="When did you return?"
-                key={i}
-                id={`travel-date-${i}`}
-                clearable
-                disableFuture
-                value={recentTravels[i].dateOfReturn || null}
-                onChange={handleRecentTravelChange("dateOfReturn", i)}
-              />
-            </div>
-          </div>
-        ))}
+        {closeContactsSection()}
+        {travelsSection()}
         <div style={{ height: "30px" }} ref={pageBottomRef}></div>
       </div>
       <Fab

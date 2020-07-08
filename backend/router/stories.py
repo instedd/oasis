@@ -1,7 +1,7 @@
 from typing import List
 import os
 
-from fastapi import Depends, APIRouter, HTTPException, status
+from fastapi import Depends, APIRouter, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 from starlette.requests import Request
@@ -9,7 +9,7 @@ from fastapi.encoders import jsonable_encoder
 
 from database import get_db
 from auth import main
-from stories import crud, schemas
+from stories import crud, schemas, background
 
 
 router = APIRouter()
@@ -102,3 +102,50 @@ def update_travels(
 ):
     check_permissions(current_story, story_id)
     return [crud.update_travel(db, travel=travel) for travel in travels]
+
+
+@router.post("/{story_id}/contacts", response_model=List[schemas.CloseContact])
+def create_close_contacts(
+    story_id: int,
+    close_contacts: List[schemas.CloseContactCreate],
+    background_tasks: BackgroundTasks,
+    current_story: schemas.Story = Depends(main.get_current_story),
+    db: Session = Depends(get_db),
+):
+    check_permissions(current_story, story_id)
+    new_contacts = crud.create_close_contacts(
+        db, close_contacts=close_contacts
+    )
+
+    background_tasks.add_task(
+        background.send_exposure_notification,
+        story=current_story,
+        contacts=new_contacts,
+        db=db,
+    )
+
+    return new_contacts
+
+
+@router.put("/{story_id}/contacts", response_model=List[schemas.CloseContact])
+def update_close_contacts(
+    story_id: int,
+    close_contacts: List[schemas.CloseContact],
+    background_tasks: BackgroundTasks,
+    current_story: schemas.Story = Depends(main.get_current_story),
+    db: Session = Depends(get_db),
+):
+    check_permissions(current_story, story_id)
+    updated_contacts = [
+        crud.update_close_contact(db, close_contact=contact)
+        for contact in close_contacts
+    ]
+
+    background_tasks.add_task(
+        background.send_exposure_notification,
+        story=current_story,
+        contacts=updated_contacts,
+        db=db,
+    )
+
+    return updated_contacts
