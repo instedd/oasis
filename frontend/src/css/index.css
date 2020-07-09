@@ -39,10 +39,6 @@ a, a:link, a:visited, a:hover, a:active {
   color: white !important;
 }
 
-#menu- .MuiMenu-paper {
-  top: 30% !important
-}
-
 .next-btn {
   position: fixed !important;
   right: 20px;

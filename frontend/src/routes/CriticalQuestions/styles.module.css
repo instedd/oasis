@@ -28,7 +28,6 @@ div::before {
 
 .grid-2>div {
   width: calc((90% - 8px*4)/2);
-  ;
   margin: 8px;
   text-align: left;
 }
@@ -74,7 +73,7 @@ div::before {
 }
 
 .location-wrapper {
-  margin-top: 20px;
+  margin-bottom: -10px;
   position: relative;
 }
 
