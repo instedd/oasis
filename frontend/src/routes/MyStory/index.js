@@ -1,14 +1,40 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { TextField, Fab } from "@material-ui/core";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import classNames from "classnames";
 import styles from "./styles.module.css";
+import { useSelector, useDispatch } from "react-redux";
+import { submitStory } from "actions/story";
 
 export default function MyStory(props) {
-  const [story, setStory] = React.useState("");
+  const [myStory, setMyStory] = React.useState("");
+  const { story } = useSelector((state) => state.story);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!story || !story["myStory"]) {
+      setMyStory("");
+    } else {
+      setMyStory(story["myStory"]);
+    }
+  }, [dispatch, story]);
 
   const handleChange = (event) => {
-    setStory(event.target.value);
+    setMyStory(event.target.value);
+  };
+
+  const handleSubmit = () => {
+    if (story["myStory"] !== myStory) {
+      story["myStory"] = myStory;
+      const dto = {
+        story,
+        travels: [],
+        closeContacts: [],
+      };
+      dispatch(submitStory(dto));
+    }
+
+    props.history.push("/dashboard");
   };
 
   return (
@@ -20,7 +46,7 @@ export default function MyStory(props) {
         placeholder="Tell a little about yourself, how you think you got sick and what the experience has been like"
         multiline
         rowsMax={10}
-        value={story}
+        value={myStory}
         onChange={handleChange}
         className={classNames("textarea", styles.textarea)}
         variant="outlined"
@@ -31,6 +57,7 @@ export default function MyStory(props) {
         size="medium"
         className="fab"
         variant="extended"
+        onClick={handleSubmit}
       >
         SHARE MY STORY
       </Fab>
