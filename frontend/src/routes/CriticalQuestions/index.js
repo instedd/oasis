@@ -253,6 +253,18 @@ function CriticalQuestions(props) {
 
   React.useEffect(scrollToBottom, [contacts]);
 
+  function removeDuplicates(array, key) {
+    let lookup = {};
+    let result = [];
+    array.forEach((element) => {
+      if (!lookup[element[key]]) {
+        lookup[element[key]] = true;
+        result.push(element);
+      }
+    });
+    return result;
+  }
+
   const onQuery = (event) => {
     let tempList = [];
     const query = event.target.value;
@@ -272,10 +284,10 @@ function CriticalQuestions(props) {
           const places = jsondata.features;
           places.map((place) => {
             const place_name = place.place_name;
-            var address = place_name.split(",");
-            var city = "";
-            var state = "";
-            var country = "";
+            const address = place_name.split(",");
+            let city = "";
+            let state = "";
+            let country = "";
             if (address.length > 0) {
               country = address[address.length - 1].trim();
             }
@@ -286,10 +298,10 @@ function CriticalQuestions(props) {
             if (address.length > 2) {
               city = address[address.length - 3].trim();
             }
-
-            tempList.push({ city: city, state: state, country: country });
+            const result = { city: city, state: state, country: country };
+            tempList.push(result);
           });
-          setListItems(tempList);
+          setListItems(removeDuplicates(tempList, "state"));
         } else {
           setListItems([]);
         }
