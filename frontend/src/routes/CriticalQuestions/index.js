@@ -17,6 +17,7 @@ import { DatePicker } from "@material-ui/pickers";
 import { submitStory, fetchStory } from "actions/story";
 import classNames from "classnames";
 import Pop from "components/PopUp";
+import Dial from "components/Dialog";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import paths from "routes/paths";
@@ -29,6 +30,7 @@ import Select from "../../components/Select";
 import MyStory from "../MyStory/index";
 
 const contactText = Text["Close Contacts"].texts;
+const contactNoticeText = Text["Close Contacts Notice"].texts;
 const contactListIndex = Text["Close Contacts"].listIndex;
 const contactLinkIndex = Text["Close Contacts"].linkIndex;
 const travelText = Text["Recent Travel"].texts;
@@ -157,18 +159,24 @@ function CriticalQuestions(props) {
       );
   }, []);
 
+  console.log({ contactText });
   const closeContactsSection = () => (
     <>
       <div className={styles.formrow}>
-        <Fab
-          style={{ background: "#EA2027" }}
-          aria-label="add"
-          size="medium"
-          className={styles.fab}
-          onClick={() => setContacts([...contacts, {}])}
-        >
-          <AddIcon />
-        </Fab>
+        <Dial
+          label={
+            <Fab
+              style={{ background: "#EA2027" }}
+              aria-label="add"
+              size="medium"
+              className={styles.fab}
+              // onClick={() => setContacts([...contacts, {}])}
+            >
+              <AddIcon />
+            </Fab>
+          }
+          texts={contactNoticeText}
+        />
         <p>Close Contacts</p>
         <Pop
           label={<ErrorOutlineIcon />}

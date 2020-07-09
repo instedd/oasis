@@ -56,6 +56,17 @@
             2
         ]
     },
+    "Close Contacts Notice": {
+        "texts": [
+            "An anon email will be send to contact entered"
+        ],
+        "listIndex": [
+            1
+        ],
+        "linkIndex": [
+            2
+        ]
+    },
     "Recent Travel": {
         "texts": [
             "Starting 48 hours before your first symptoms and until 3 days after symptoms resolved).",
