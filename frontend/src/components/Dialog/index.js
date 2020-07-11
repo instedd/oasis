@@ -1,13 +1,11 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
 
-export default function Dial({ label, texts }) {
+export default function AlertDialog({ label, text, submit }) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -20,28 +18,21 @@ export default function Dial({ label, texts }) {
 
   return (
     <div>
-      <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+      <Button color="primary" onClick={handleClickOpen}>
         {label}
       </Button>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle id="form-dialog-title">{texts}</DialogTitle>
         <DialogContent>
-          <DialogContentText></DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Email Address"
-            type="email"
-            fullWidth
-          />
+          <DialogContentText id="alert-dialog-description">
+            {text}
+          </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
-            Cancel
+            Disagree
           </Button>
-          <Button onClick={handleClose} color="primary">
-            Confirm
+          <Button onClick={submit} color="primary" autoFocus>
+            Agree
           </Button>
         </DialogActions>
       </Dialog>

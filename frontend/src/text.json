@@ -56,9 +56,12 @@
             2
         ]
     },
+
     "Close Contacts Notice": {
         "texts": [
-            "An anon email will be send to contact entered"
+            "By clicking agree you acknowledge that an anonymous email will be sent to this person.", 
+            "They will be told they may have been exposed to COVID-19 and given resources on what to do.", 
+            "We will never share your identity or the email of the person you have listed."
         ],
         "listIndex": [
             1
@@ -67,6 +70,7 @@
             2
         ]
     },
+
     "Recent Travel": {
         "texts": [
             "Starting 48 hours before your first symptoms and until 3 days after symptoms resolved).",

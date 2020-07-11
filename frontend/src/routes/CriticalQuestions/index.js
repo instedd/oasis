@@ -17,7 +17,6 @@ import { DatePicker } from "@material-ui/pickers";
 import { submitStory, fetchStory } from "actions/story";
 import classNames from "classnames";
 import Pop from "components/PopUp";
-import Dial from "components/Dialog";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import paths from "routes/paths";
@@ -27,7 +26,7 @@ import styles from "./styles.module.css";
 import { ERROR } from "actions/types";
 import { fields, initialFieldsState } from "./fields";
 import Select from "../../components/Select";
-import MyStory from "../MyStory/index";
+import AlertDialog from "components/Dialog";
 
 const contactText = Text["Close Contacts"].texts;
 const contactNoticeText = Text["Close Contacts Notice"].texts;
@@ -159,24 +158,18 @@ function CriticalQuestions(props) {
       );
   }, []);
 
-  console.log({ contactText });
   const closeContactsSection = () => (
     <>
       <div className={styles.formrow}>
-        <Dial
-          label={
-            <Fab
-              style={{ background: "#EA2027" }}
-              aria-label="add"
-              size="medium"
-              className={styles.fab}
-              // onClick={() => setContacts([...contacts, {}])}
-            >
-              <AddIcon />
-            </Fab>
-          }
-          texts={contactNoticeText}
-        />
+        <Fab
+          style={{ background: "#EA2027" }}
+          aria-label="add"
+          size="medium"
+          className={styles.fab}
+          onClick={() => setContacts([...contacts, {}])}
+        >
+          <AddIcon />
+        </Fab>
         <p>Close Contacts</p>
         <Pop
           label={<ErrorOutlineIcon />}
@@ -470,15 +463,20 @@ function CriticalQuestions(props) {
         {travelsSection()}
         <div style={{ height: "30px" }} ref={pageBottomRef}></div>
       </div>
-      <Fab
-        style={{ background: "#EA2027" }}
-        aria-label="Go to next page"
-        size="medium"
-        className="fab next-btn"
-        onClick={handleSubmit}
-      >
-        <ArrowRightIcon />
-      </Fab>
+      <AlertDialog
+        label={
+          <Fab
+            style={{ background: "#EA2027" }}
+            aria-label="Go to next page"
+            size="medium"
+            className="fab next-btn"
+          >
+            <ArrowRightIcon />
+          </Fab>
+        }
+        text={contactNoticeText}
+        submit={handleSubmit}
+      />
       <Fab
         style={{ background: "#9206FF" }}
         aria-label="Go to previous page"
