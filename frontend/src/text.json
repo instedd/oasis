@@ -59,7 +59,7 @@
 
     "Close Contacts Notice": {
         "texts": [
-            "By clicking agree you acknowledge that an anonymous email will be sent to this person.", 
+            "By clicking agree you acknowledge that anonymous emails will be sent to the list of close contacts you provided.", 
             "They will be told they may have been exposed to COVID-19 and given resources on what to do.", 
             "We will never share your identity or the email of the person you have listed."
         ],
