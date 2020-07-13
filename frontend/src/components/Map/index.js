@@ -144,7 +144,9 @@ export default function Map({ draggable = true }) {
   const addNonUSLayer = async (map, data) => {
     const covidData = await data;
     // Delete US from the world expression(all expression)
-    const expression = covidData.filter(country => country.name !== "United States of America").map((row) => [row.name, getColor(row.group)]);
+    const expression = covidData
+      .filter((country) => country.name !== "United States of America")
+      .map((row) => [row.name, getColor(row.group)]);
 
     map.addLayer(
       {
@@ -286,6 +288,9 @@ export default function Map({ draggable = true }) {
 
   return (
     <div className={styles.root}>
+      <div className={styles.refresh}>
+        Please refresh the page if the map is gray.
+      </div>
       <div
         className={classNames([
           styles.fill,
@@ -298,4 +303,3 @@ export default function Map({ draggable = true }) {
     </div>
   );
 }
-
