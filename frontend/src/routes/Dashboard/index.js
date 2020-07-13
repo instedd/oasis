@@ -49,13 +49,14 @@ function Dashboard(props) {
   };
 
   const [data, setData] = useState({
-    confirmed: null,
-    deaths: null,
-    recovered: null,
+    confirmed: {},
+    deaths: {},
+    recovered: {},
+    updatedAt: null,
   });
 
   useEffect(() => {
-    fetch("https://covid19api.herokuapp.com/latest")
+    fetch("https://covid19api.herokuapp.com/")
       .then((res) => res.json())
       .then((result) => setData(result));
   }, []);
@@ -87,20 +88,26 @@ function Dashboard(props) {
         <div className={classNames(styles.totalItem)}>
           ACTIVES
           <div className={classNames(styles.totalItemNum)}>
-            {data.confirmed && data.confirmed.toLocaleString()}
+            {data.confirmed.latest && data.confirmed.latest.toLocaleString()}
           </div>
         </div>
         <div className={classNames(styles.totalItem)}>
           DEATHS
           <div className={classNames(styles.totalItemNum)}>
-            {data.deaths && data.deaths.toLocaleString()}
+            {data.deaths.latest && data.deaths.latest.toLocaleString()}
           </div>
         </div>
         <div className={classNames(styles.totalItem)}>
           RECOVERED
           <div className={classNames(styles.totalItemNum)}>
-            {data.recovered && data.recovered.toLocaleString()}
+            {data.recovered.latest && data.recovered.latest.toLocaleString()}
           </div>
+        </div>
+      </div>
+      <div className={classNames(styles.totalItem)}>
+        LATEST UPDATE
+        <div className={classNames(styles.totalItemNum)}>
+          {String(data.updatedAt).substring(0, 10)}
         </div>
       </div>
     </>
