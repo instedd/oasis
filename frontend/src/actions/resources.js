@@ -75,7 +75,8 @@ const withStory = (storyDependantFunc) => (story) =>
 const clinicalTrials = withStory((story) => {
   const healthcare = {
     predicate:
-      story.country === countries.USA && story.profession === "Healthcare",
+      (story.country === countries.USA || story.country === countries.US) &&
+      story.profession === "Healthcare",
     link: "https://heroesresearch.org",
   };
 
@@ -89,7 +90,9 @@ const checkSymptoms = withStory((story) => {
   ].includes(story.sick);
 
   const isCurrentlyOnUS = {
-    predicate: baseCondition && story.country === countries.USA,
+    predicate:
+      baseCondition &&
+      (story.country === countries.USA || story.country === countries.US),
     link:
       "https://www.cdc.gov/coronavirus/2019-ncov/symptoms-testing/symptoms.html",
   };
@@ -117,7 +120,7 @@ const donateBlood = withStory((story) => {
     predicate:
       story.sick === sicknessStatus.RECOVERED &&
       story.tested === testStatus.POSITIVE &&
-      story.country === countries.USA,
+      (story.country === countries.USA || story.country === countries.US),
     link:
       "https://www.redcrossblood.org/donate-blood/dlp/plasma-donations-from-recovered-covid-19-patients.html#donorform",
   };
@@ -127,7 +130,7 @@ const donateBlood = withStory((story) => {
 
 const covidCali = withStory((story) => {
   const checkCali = {
-    predicate: story.state == states.CAL && story.country == countries.USA,
+    predicate: story.state === states.CAL && story.country == countries.USA,
     link: "https://covid19.ca.gov/",
   };
 
@@ -136,7 +139,7 @@ const covidCali = withStory((story) => {
 
 const bajaUpdate = withStory((story) => {
   const checkBaja = {
-    predicate: story.state == states.BAJA && story.country == countries.MEX,
+    predicate: story.state === states.BAJA && story.country == countries.MEX,
     link: "http://www.bajacalifornia.gob.mx/coronavirus?id=1",
   };
 
@@ -146,8 +149,9 @@ const bajaUpdate = withStory((story) => {
 const testCali = withStory((story) => {
   const checkState = {
     predicate:
-      (story.state == states.BAJA && story.country == countries.MEX) ||
-      (story.state == states.CAL && story.country == countries.USA),
+      (story.state === states.BAJA && story.country == countries.MEX) ||
+      (story.state === states.CAL &&
+        (story.country == countries.USA || story.country === countries.US)),
     link: "https://covid19.ca.gov/testing-and-treatment/",
   };
 
@@ -168,8 +172,9 @@ const informationForUSCitizens = withStory((story) => {
 const informationForUSTravelers = withStory((story) => {
   const usCitizenAbroad = {
     predicate:
-      story.countryOfOrigin === countries.USA &&
-      ![countries.USA, countries.MEX].includes(story.country),
+      (story.countryOfOrigin === countries.USA ||
+        story.country === countries.US) &&
+      ![countries.USA, countries.MEX, countries.US].includes(story.country),
     link:
       "https://travel.state.gov/content/travel/en/traveladvisories/ea/covid-19-information.html",
   };
@@ -198,11 +203,13 @@ const whenSick = withStory((story) => {
 const moreInfoAboutCovid = withStory((story) => {
   const moreAboutCovid = "https://www.cdc.gov/coronavirus/2019-nCoV/index.html";
   const currentlyOnUS = {
-    predicate: story.country === countries.USA,
+    predicate:
+      story.country === countries.USA || story.country === countries.US,
     link: moreAboutCovid,
   };
   const usCitizen = {
-    predicate: story.countryOfOrigin === countries.USA,
+    predicate:
+      story.countryOfOrigin === countries.USA || story.country === countries.US,
     link: moreAboutCovid,
   };
   return mostRelevant([currentlyOnUS, usCitizen]);
@@ -214,7 +221,8 @@ const mostRelevant = (options) => {
 };
 
 const countries = {
-  USA: "United States",
+  USA: "United States of America",
+  US: "United States",
   MEX: "Mexico",
 };
 
