@@ -38,7 +38,7 @@ def get_random_stories(db: Session, level: str, k: int):
             db.query(models.Story)
             .filter(_model == db_level)
             .order_by(func.rand())
-            .limit(1)
+            .limit(k)
             .all()
         )
 
