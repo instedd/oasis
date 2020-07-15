@@ -214,7 +214,7 @@ const mostRelevant = (options) => {
 };
 
 const countries = {
-  USA: "United States of America",
+  USA: "United States",
   MEX: "Mexico",
 };
 
