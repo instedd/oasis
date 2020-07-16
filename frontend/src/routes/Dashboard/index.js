@@ -1,4 +1,13 @@
-import Link from "@material-ui/core/Link";
+import {
+  Link,
+  IconButton,
+  Collapse,
+  Grid,
+  AppBar,
+  Toolbar,
+} from "@material-ui/core";
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
 import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
@@ -34,6 +43,10 @@ const actions = [
 function Dashboard(props) {
   const [open, setOpen] = React.useState(false);
   const { story, status } = useSelector((state) => state.story);
+  const [statusExpanded, setStatusExpanded] = React.useState(true);
+  const [updateExpanded, setUpdateExpanded] = React.useState(true);
+  const [resourceExpanded, setResourceExpanded] = React.useState(false);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -62,78 +75,112 @@ function Dashboard(props) {
   }, []);
 
   const userStatus = () => (
-    <div className={classNames(styles.statusList)}>
-      <div className={classNames("row", styles.statusItem)}>
-        <span
-          className={styles.dot}
-          style={{ background: statusMapping[story.sick].color }}
-        />
-        {statusMapping[story.sick].name.toUpperCase()}
-      </div>
-      <div className={classNames("row", styles.statusItem)}>
-        <span
-          className={styles.dot}
-          style={{ background: statusMapping[story.tested].color }}
-        />
-        {statusMapping[story.tested].name.toUpperCase()}
-      </div>
-      <div></div>
-    </div>
+    <AppBar position="fixed">
+      <Toolbar>
+        <div className={classNames(styles.statusItem)}>
+          <span
+            className={styles.dot}
+            style={{ background: statusMapping[story.sick].color }}
+          />
+          {statusMapping[story.sick].name.toUpperCase()}
+        </div>
+        <div className={classNames(styles.statusItem)}>
+          <span
+            className={styles.dot}
+            style={{ background: statusMapping[story.tested].color }}
+          />
+          {statusMapping[story.tested].name.toUpperCase()}
+        </div>
+      </Toolbar>
+    </AppBar>
   );
 
   const latestUpdate = () => (
-    <>
-      <h3>LATEST TOTALS</h3>
-      <div className="row">
-        <div className={classNames(styles.totalItem)}>
-          ACTIVES
-          <div className={classNames(styles.totalItemNum)}>
-            {data.confirmed.latest && data.confirmed.latest.toLocaleString()}
+    <div className={classNames(styles.box, styles.updates)}>
+      <IconButton
+        onClick={() => setUpdateExpanded(!updateExpanded)}
+        aria-expanded={updateExpanded}
+        aria-label="show updates"
+      >
+        <h5>LATEST TOTALS</h5>{" "}
+        {updateExpanded ? <ExpandLess /> : <ExpandMore />}
+      </IconButton>
+      <Collapse in={updateExpanded} timeout="auto" unmountOnExit>
+        <div className="row">
+          <div className={classNames("col", styles.statusCol)}>
+            <div className={classNames(styles.totalItem)}>
+              ACTIVES
+              <div className={classNames(styles.totalItemNum)}>
+                {data.confirmed.latest &&
+                  data.confirmed.latest.toLocaleString()}
+              </div>
+            </div>
+            <div className={classNames(styles.totalItem)}>
+              DEATHS
+              <div className={classNames(styles.totalItemNum)}>
+                {data.deaths.latest && data.deaths.latest.toLocaleString()}
+              </div>
+            </div>
+            <div className={classNames(styles.totalItem)}>
+              RECOVERED
+              <div className={classNames(styles.totalItemNum)}>
+                {data.recovered.latest &&
+                  data.recovered.latest.toLocaleString()}
+              </div>
+            </div>
+            <div className={classNames(styles.totalItem)}>
+              UPDATE AT
+              <div className={classNames(styles.totalItemNum)}>
+                {data.updatedAt && String(data.updatedAt).substring(0, 10)}
+              </div>
+            </div>
+          </div>
+          <div className={classNames("col", styles.statusCol)}>
+            <div className={classNames(styles.totalItem)}>
+              NEW CASES
+              <div className={classNames(styles.totalItemNum)}>100</div>
+            </div>
           </div>
         </div>
-        <div className={classNames(styles.totalItem)}>
-          DEATHS
-          <div className={classNames(styles.totalItemNum)}>
-            {data.deaths.latest && data.deaths.latest.toLocaleString()}
-          </div>
-        </div>
-        <div className={classNames(styles.totalItem)}>
-          RECOVERED
-          <div className={classNames(styles.totalItemNum)}>
-            {data.recovered.latest && data.recovered.latest.toLocaleString()}
-          </div>
-        </div>
-      </div>
-      <div className={classNames(styles.totalItem)}>
-        LATEST UPDATE
-        <div className={classNames(styles.totalItemNum)}>
-          {String(data.updatedAt).substring(0, 10)}
-        </div>
-      </div>
-    </>
+      </Collapse>
+    </div>
   );
 
   const resources = () => (
-    <>
-      <h3>RESOURCES</h3>
-      <p>Stay at home</p>
-      {getStoryResources(story).map((resource) => (
-        <Link
-          href={resource.site}
-          {...(resource.color ? { style: { color: resource.color } } : {})}
-          target="_blank"
-        >
-          {resource.text}
-        </Link>
-      ))}
-    </>
+    <div className={classNames(styles.box, styles.header)}>
+      <IconButton
+        onClick={() => setResourceExpanded(!resourceExpanded)}
+        aria-expanded={resourceExpanded}
+        aria-label="show resources"
+      >
+        <h5>MY RESOURCES</h5>{" "}
+        {resourceExpanded ? <ExpandLess /> : <ExpandMore />}
+      </IconButton>
+
+      <Collapse in={resourceExpanded} timeout="auto" unmountOnExit>
+        {getStoryResources(story).map((resource) => (
+          <Link
+            href={resource.site}
+            {...(resource.color ? { style: { color: resource.color } } : {})}
+            target="_blank"
+          >
+            {resource.text}
+          </Link>
+        ))}
+      </Collapse>
+    </div>
   );
 
-  const informationHeader = () => (
-    <div className={classNames(styles.box, styles.top, styles.header)}>
-      {resources()}
-      {userStatus()}
-      {latestUpdate()}
+  const modules = () => (
+    <div className={classNames(styles.grid)}>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          {latestUpdate()}
+        </Grid>
+        <Grid item xs={12}>
+          {resources()}
+        </Grid>
+      </Grid>
     </div>
   );
 
@@ -143,7 +190,8 @@ function Dashboard(props) {
         status.detail
       ) : (
         <>
-          {informationHeader()}
+          {userStatus()}
+          {modules()}
           <SpeedDial
             ariaLabel="Daily actions"
             className={classNames("speeddial", styles.speeddial)}
