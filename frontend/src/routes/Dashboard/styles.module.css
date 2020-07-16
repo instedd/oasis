@@ -124,6 +124,11 @@
     padding: 2px 0;
 }
 
+.totalItemTrend {
+    font-size: 0.8rem;
+    color:red;
+}
+
 .totalItem {
     margin: 2px 0;
     font-size: 10px;

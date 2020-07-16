@@ -68,10 +68,20 @@ function Dashboard(props) {
     updatedAt: null,
   });
 
+  const [newData, setNewData] = useState({
+    data: {},
+  });
+
   useEffect(() => {
     fetch("https://covid19api.herokuapp.com/")
       .then((res) => res.json())
       .then((result) => setData(result));
+  }, []);
+
+  useEffect(() => {
+    fetch("https://covid-api.com/api/reports/total")
+      .then((res) => res.json())
+      .then((result) => setNewData(result));
   }, []);
 
   const userStatus = () => (
@@ -102,43 +112,56 @@ function Dashboard(props) {
         aria-expanded={updateExpanded}
         aria-label="show updates"
       >
-        <h5>LATEST TOTALS</h5>{" "}
+        <h5>LATEST TOTALS</h5>
         {updateExpanded ? <ExpandLess /> : <ExpandMore />}
       </IconButton>
       <Collapse in={updateExpanded} timeout="auto" unmountOnExit>
         <div className="row">
-          <div className={classNames("col", styles.statusCol)}>
-            <div className={classNames(styles.totalItem)}>
-              ACTIVES
-              <div className={classNames(styles.totalItemNum)}>
-                {data.confirmed.latest &&
-                  data.confirmed.latest.toLocaleString()}
-              </div>
+          <div className={classNames(styles.totalItem)}>
+            ACTIVES
+            <div className={classNames(styles.totalItemNum)}>
+              {newData.data.confirmed &&
+                newData.data.confirmed.toLocaleString()}
             </div>
-            <div className={classNames(styles.totalItem)}>
-              DEATHS
-              <div className={classNames(styles.totalItemNum)}>
-                {data.deaths.latest && data.deaths.latest.toLocaleString()}
-              </div>
-            </div>
-            <div className={classNames(styles.totalItem)}>
-              RECOVERED
-              <div className={classNames(styles.totalItemNum)}>
-                {data.recovered.latest &&
-                  data.recovered.latest.toLocaleString()}
-              </div>
-            </div>
-            <div className={classNames(styles.totalItem)}>
-              UPDATE AT
-              <div className={classNames(styles.totalItemNum)}>
-                {data.updatedAt && String(data.updatedAt).substring(0, 10)}
-              </div>
+            <div className={classNames(styles.totalItemTrend)}>
+              {"+" +
+                String(
+                  newData.data.confirmed_diff / newData.data.confirmed
+                ).substring(0, 6) +
+                "%"}
             </div>
           </div>
-          <div className={classNames("col", styles.statusCol)}>
-            <div className={classNames(styles.totalItem)}>
-              NEW CASES
-              <div className={classNames(styles.totalItemNum)}>100</div>
+          <div className={classNames(styles.totalItem)}>
+            DEATHS
+            <div className={classNames(styles.totalItemNum)}>
+              {newData.data.deaths && newData.data.deaths.toLocaleString()}
+            </div>
+            <div className={classNames(styles.totalItemTrend)}>
+              {"+" +
+                String(
+                  newData.data.deaths_diff / newData.data.deaths
+                ).substring(0, 6) +
+                "%"}
+            </div>
+          </div>
+          <div className={classNames(styles.totalItem)}>
+            RECOVERED
+            <div className={classNames(styles.totalItemNum)}>
+              {newData.data.recovered &&
+                newData.data.recovered.toLocaleString()}
+            </div>
+            <div className={classNames(styles.totalItemTrend)}>
+              {"+" +
+                String(
+                  newData.data.recovered_diff / newData.data.recovered
+                ).substring(0, 6) +
+                "%"}
+            </div>
+          </div>
+          <div className={classNames(styles.totalItem)}>
+            LATEST UPDATE
+            <div className={classNames(styles.totalItemNum)}>
+              {newData.data.last_update}
             </div>
           </div>
         </div>
