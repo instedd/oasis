@@ -23,6 +23,7 @@ def test_create_travels_with_no_cookie(setup):
 
 
 def test_create_travels(setup):
+    print(setup["db"].execute("SELECT * FROM stories", {}).rowcount)
     db_story = models.Story()
     setup["db"].add(db_story)
     setup["db"].commit()
