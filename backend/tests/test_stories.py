@@ -23,8 +23,6 @@ def test_create_travels_with_no_cookie(setup):
 
 
 def test_create_travels(setup):
-    response = setup["db"].execute("SELECT * FROM stories", {}).rowcount
-    print(response)
     db_story = models.Story()
     setup["db"].add(db_story)
     setup["db"].commit()
@@ -158,6 +156,8 @@ def test_update_close_contacts(setup):
 
 
 def test_read_random_story(setup):
+    response = setup["db"].execute("SELECT * FROM stories", {}).rowcount
+    print(response)
     db_stories = [
         models.Story(
             id=i,
