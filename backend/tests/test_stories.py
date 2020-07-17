@@ -158,7 +158,7 @@ def test_update_close_contacts(setup):
 def test_read_random_story(setup):
     db_stories = [
         models.Story(
-            id=i,
+            age=i,
             city="city" + str(i),
             country="country" + str(i % 5),
             state="state" + str(i % 10),
@@ -170,10 +170,6 @@ def test_read_random_story(setup):
         for i in range(100)
     ]
     setup["db"].add_all(db_stories)
-    response = (
-        setup["db"].execute("SELECT * FROM stories WHERE id=7", {}).rowcount
-    )
-    print(response)
     setup["db"].commit()
 
     response = setup["app"].get("/api/stories/random/country/2")
@@ -183,7 +179,7 @@ def test_read_random_story(setup):
     assert len(parsed_response) == 10
 
     for story in parsed_response:
-        assert "country" + str(story["id"] % 5) == story["country"]
+        assert "country" + str(story["age"] % 5) == story["country"]
 
     parsed_response = setup["app"].get("/api/stories/random/city/2").json()
     assert len(parsed_response) == 100
