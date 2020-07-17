@@ -153,3 +153,36 @@ def test_update_close_contacts(setup):
     parsed_response = response.json()
     for k in parsed_response[0]:
         assert parsed_response[0][k] == data[0][k]
+
+
+def test_read_random_story(setup):
+    db_stories = [
+        models.Story(
+            id=i,
+            city="city" + str(i),
+            country="country" + str(i % 5),
+            state="state" + str(i % 10),
+            my_story=str(i),
+            _medical_conditions="[]",
+            sick="not_sick",
+            tested="not_tested",
+        )
+        for i in range(100)
+    ]
+    setup["db"].add_all(db_stories)
+    setup["db"].commit()
+
+    response = setup["app"].get("/api/stories/random/country/2")
+
+    assert response.status_code == 200
+    parsed_response = response.json()
+    assert len(parsed_response) == 10
+
+    for story in parsed_response:
+        assert "country" + str(story["id"] % 5) == story["country"]
+
+    parsed_response = setup["app"].get("/api/stories/random/city/2").json()
+    assert len(parsed_response) == 100
+
+    parsed_response = setup["app"].get("/api/stories/random/state/5").json()
+    assert len(parsed_response) == 50

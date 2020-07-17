@@ -61,8 +61,8 @@ async def create_story(
     return response
 
 
-@router.get("/nearest/{level}/{k}", response_model=List[schemas.Story])
-def read_nearest_stories(level: str, k: int, db: Session = Depends(get_db)):
+@router.get("/random/{level}/{k}", response_model=List[schemas.Story])
+def read_random_stories(level: str, k: int, db: Session = Depends(get_db)):
     db_stories = crud.get_random_stories(db, level, k)
 
     if db_stories is None:

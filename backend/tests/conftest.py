@@ -8,7 +8,7 @@ from database import Base, engine
 from app import app
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def setup():
     client = TestClient(app)
     alembic.config.main(argv=["upgrade", "head"])
