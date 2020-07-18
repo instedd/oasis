@@ -22,6 +22,7 @@ class Story(Base):
     sickness_start = Column(String(64))
     sickness_end = Column(String(64))
     my_story = Column(Text())
+    spam = Column(Integer)
 
     user = relationship("User", uselist=False, back_populates="story")
     symptoms = relationship("Symptom", secondary="story_symptoms")
