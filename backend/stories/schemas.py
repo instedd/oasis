@@ -66,6 +66,8 @@ class StoryCreate(BaseModel):
     sickness_end: str = None
     close_contacts: List[CloseContact] = []
     my_story: str = None
+    latitude: float = None
+    longitude: float = None
 
 
 class Story(StoryCreate):
