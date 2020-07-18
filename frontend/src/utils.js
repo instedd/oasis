@@ -72,19 +72,20 @@ export const snakeToCamelCase = (str) =>
 const camelToSnakeCase = (str) => str.replace(/([A-Z])/g, "_$1").toLowerCase();
 
 export const storiesToGeoJson = (stories) => {
-  let features = [];
+  stories = stories.filter(
+    (story) => story && story.latitude && story.longitude
+  );
 
-  stories.forEach((story) => {
+  let features = stories.map((story) => {
     let { latitude, longitude, ...properties } = story;
-
-    features.push({
+    return {
       type: "Feature",
       geometry: {
         type: "Point",
         coordinates: [latitude, longitude],
       },
       properties: properties,
-    });
+    };
   });
 
   return {
