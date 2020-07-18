@@ -68,6 +68,8 @@ class StoryCreate(BaseModel):
     my_story: str = None
     latitude: float = None
     longitude: float = None
+    spam: int = 0
+
 
 
 class Story(StoryCreate):

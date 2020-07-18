@@ -1,5 +1,6 @@
 import json
 
+
 from sqlalchemy import (
     JSON,
     Column,
@@ -10,6 +11,7 @@ from sqlalchemy import (
     Text,
     Numeric,
 )
+
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -33,6 +35,7 @@ class Story(Base):
     my_story = Column(Text())
     latitude = Column(Numeric(10, 7))
     longitude = Column(Numeric(10, 7))
+    spam = Column(Integer)
 
     user = relationship("User", uselist=False, back_populates="story")
     symptoms = relationship("Symptom", secondary="story_symptoms")
