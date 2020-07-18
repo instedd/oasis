@@ -69,12 +69,7 @@ def read_random_stories(level: str, k: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Invalid level")
 
     stories = list(
-        map(
-            lambda db_story: jsonable_encoder(
-                schemas.Story.from_orm(db_story)
-            ),
-            db_stories,
-        )
+        map(lambda db_story: jsonable_encoder(db_story), db_stories,)
     )
     response = JSONResponse(stories, status_code=200)
 
@@ -169,3 +164,14 @@ def update_close_contacts(
     )
 
     return updated_contacts
+
+
+@router.get("/all", response_model=List[schemas.Story])
+def read_all_stories(db: Session = Depends(get_db)):
+    db_stories = crud.get_all_stories(db)
+
+    stories = list(
+        map(lambda db_story: jsonable_encoder(db_story), db_stories)
+    )
+
+    return JSONResponse(stories, status_code=200)
