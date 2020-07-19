@@ -3,6 +3,13 @@ import mapboxgl from "mapbox-gl";
 import React, { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import api from "utils";
+import { sicknessStatus } from "../../routes/types";
+
+const statusMapping = {
+  [sicknessStatus.SICK]: { name: "Sick", color: "orange" },
+  [sicknessStatus.RECOVERED]: { name: "Recovered", color: "green" },
+  [sicknessStatus.NOT_SICK]: { name: "Not Sick", color: "gray" },
+};
 
 mapboxgl.accessToken =
   "pk.eyJ1Ijoic3RlNTE5IiwiYSI6ImNrOHc1aHlvYTB0N2ozam51MHFiazE3bmcifQ.AHtFuA-pAqau_AJIy-hzOg";
@@ -90,6 +97,7 @@ export default function Map({ draggable = true }) {
       addWorldLayer(map, worldData);
       addNonUSLayer(map, worldData);
       addUSStatesLayer(map, usStatesData);
+      addStoryLayer(map);
     });
   };
 
@@ -106,6 +114,49 @@ export default function Map({ draggable = true }) {
       method: "GET",
     });
     return body;
+  };
+
+  const fetchStoriesData = async (scope) => {
+    const body = await api(`stories/all`, {
+      method: "GET",
+    });
+    return storiesToGeoJson(body);
+  };
+
+  const getRandomFloat = () => {
+    return Math.random() * (Math.random() > 0.5 ? -2 : 2);
+  };
+
+  const storiesToGeoJson = (stories) => {
+    stories = stories.filter(
+      (story) =>
+        story &&
+        story.latitude &&
+        story.longitude &&
+        !story.spam &&
+        story.createdAt
+    );
+
+    let features = stories.map((story) => {
+      let { latitude, longitude, ...properties } = story;
+
+      return {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [
+            latitude + getRandomFloat(),
+            longitude + getRandomFloat(),
+          ],
+        },
+        properties: properties,
+      };
+    });
+
+    return {
+      type: "FeatureCollection",
+      features: features,
+    };
   };
 
   const getColor = (group) => {
@@ -267,6 +318,77 @@ export default function Map({ draggable = true }) {
     );
   };
 
+  const addStoryLayer = async (map) => {
+    var geojson = await fetchStoriesData();
+
+    // Add story
+    map.addSource("places", {
+      type: "geojson",
+      data: geojson,
+    });
+
+    // add markers to map
+    geojson.features.forEach(function (marker) {
+      // create a HTML element for each feature
+      var el = document.createElement("div");
+      el.className = "marker";
+      var myStory = marker.properties.myStory;
+
+      if (!myStory) {
+        myStory = "";
+      }
+
+      var date = marker.properties.createdAt.substring(0, 10);
+      var popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
+        "<h3>" + date + "</h3><p>" + myStory + "</p>"
+      );
+
+      map.on("mouseenter", "places", function (e) {
+        // Change the cursor style as a UI indicator.
+        map.getCanvas().style.cursor = "pointer";
+        var coordinates = e.features[0].geometry.coordinates.slice();
+        var description = e.features[0].properties.myStory;
+
+        // Ensure that if the map is zoomed out such that multiple
+        // copies of the feature are visible, the popup appears
+        // over the copy being pointed to.
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+
+        // Populate the popup and set its coordinates
+        // based on the feature found.
+        popup.setLngLat(coordinates).setHTML(description).addTo(map);
+      });
+
+      map.on("mouseleave", "places", function () {
+        map.getCanvas().style.cursor = "";
+        popup.remove();
+      });
+
+      // create the marker
+      const sickStatus = marker.properties.sick;
+      if (sickStatus === sicknessStatus.SICK) {
+        new mapboxgl.Marker({ color: statusMapping[sickStatus].color })
+          .setLngLat(marker.geometry.coordinates)
+          .setPopup(popup) // sets a popup on this marker
+          .addTo(map);
+      }
+      if (sickStatus === sicknessStatus.NOT_SICK) {
+        new mapboxgl.Marker({ color: statusMapping[sickStatus].color })
+          .setLngLat(marker.geometry.coordinates)
+          .setPopup(popup) // sets a popup on this marker
+          .addTo(map);
+      }
+      if (sickStatus === sicknessStatus.RECOVERED) {
+        new mapboxgl.Marker({ color: statusMapping[sickStatus].color })
+          .setLngLat(marker.geometry.coordinates)
+          .setPopup(popup) // sets a popup on this marker
+          .addTo(map);
+      }
+    });
+  };
+
   const legend = (
     <div className={classNames(styles.legend)} id="legend">
       <h4>Active cases</h4>
@@ -292,6 +414,7 @@ export default function Map({ draggable = true }) {
         Please refresh the page if the map is gray.
       </div>
       <div
+        style={{ color: "gray" }}
         className={classNames([
           styles.fill,
           styles.map,

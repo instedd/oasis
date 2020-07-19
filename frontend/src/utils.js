@@ -71,27 +71,4 @@ export const snakeToCamelCase = (str) =>
 
 const camelToSnakeCase = (str) => str.replace(/([A-Z])/g, "_$1").toLowerCase();
 
-export const storiesToGeoJson = (stories) => {
-  stories = stories.filter(
-    (story) => story && story.latitude && story.longitude
-  );
-
-  let features = stories.map((story) => {
-    let { latitude, longitude, ...properties } = story;
-    return {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [latitude, longitude],
-      },
-      properties: properties,
-    };
-  });
-
-  return {
-    type: "FeatureCollection",
-    features: features,
-  };
-};
-
 export default api;

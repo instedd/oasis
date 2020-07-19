@@ -117,7 +117,6 @@ function CriticalQuestions(props) {
         return jsondata.features[0].geometry.coordinates;
       });
   };
-
   const handleSubmit = (event) => {
     event.preventDefault();
     getGeocoding().then((coordinates) => {
@@ -317,7 +316,9 @@ function CriticalQuestions(props) {
             }
 
             if (address.length > 1) {
-              state = address[address.length - 2].trim().split(" ")[0];
+              var str = address[address.length - 2];
+              var lastIndex = str.lastIndexOf(" ");
+              state = str.substring(0, lastIndex).trim();
             }
             if (address.length > 2) {
               city = address[address.length - 3].trim();
