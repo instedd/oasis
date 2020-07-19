@@ -124,7 +124,7 @@ export default function Map({ draggable = true }) {
   };
 
   const getRandomFloat = () => {
-    return Math.random() * (Math.random() > 0.5 ? -2 : 2);
+    return Math.random() * (Math.random() > 0.5 ? -1 : 1);
   };
 
   const storiesToGeoJson = (stories) => {
