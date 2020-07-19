@@ -61,21 +61,6 @@ async def create_story(
     return response
 
 
-@router.get("/random/{level}/{k}", response_model=List[schemas.Story])
-def read_random_stories(level: str, k: int, db: Session = Depends(get_db)):
-    db_stories = crud.get_random_stories(db, level, k)
-
-    if db_stories is None:
-        raise HTTPException(status_code=400, detail="Invalid level")
-
-    stories = list(
-        map(lambda db_story: jsonable_encoder(db_story), db_stories,)
-    )
-    response = JSONResponse(stories, status_code=200)
-
-    return response
-
-
 @router.get("/{story_id}/symptoms", response_model=List[schemas.Symptom])
 def read_story_symptoms(
     story_id: int,

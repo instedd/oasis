@@ -1,8 +1,6 @@
 from typing import List
 
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy import distinct
-from sqlalchemy.sql.expression import func
 
 from database import Base
 from users.models import User
@@ -17,32 +15,6 @@ def update(model_id: int, dto: schemas.BaseModel, model: Base, db: Session):
     db.commit()
     db.refresh(db_item)
     return db_item
-
-
-def get_random_stories(db: Session, level: str, k: int):
-    k_stories = []
-    if level == "country":
-        _model = models.Story.country
-    elif level == "state":
-        _model = models.Story.state
-    elif level == "city":
-        _model = models.Story.city
-    else:
-        return None
-
-    db_levels = db.query(distinct(_model)).all()
-
-    for db_level in db_levels:
-        db_level = db_level[0]
-        k_stories += (
-            db.query(models.Story)
-            .filter(_model == db_level)
-            .order_by(func.rand())
-            .limit(k)
-            .all()
-        )
-
-    return k_stories
 
 
 def get_story(db: Session, story_id: int):
