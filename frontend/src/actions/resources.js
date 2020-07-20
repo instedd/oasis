@@ -3,10 +3,6 @@ import { sicknessStatus, testStatus } from "routes/types";
 export const getStoryResources = (story) => {
   const resources = [
     {
-      text: "All available resources",
-      site: "/resources",
-    },
-    {
       text: "Information for people in higher risk",
       site: peopleHigherRisk(story),
     },

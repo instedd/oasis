@@ -22,7 +22,6 @@ import history from "./history";
 import store from "store/configureStore";
 import * as serviceWorker from "./serviceWorker";
 import Wrapper from "components/Wrapper";
-import Resources from "routes/Resources";
 
 ReactDOM.render(
   <Provider store={store}>
@@ -41,7 +40,6 @@ ReactDOM.render(
               path={paths.criticalQuestions}
               component={CriticalQuestions}
             />
-            <Route path={paths.resources} component={Resources} />
             <Route path={paths.symptoms} component={Symptoms} />
             <Route path={paths.confirm} component={Confirm} />
             <Route
