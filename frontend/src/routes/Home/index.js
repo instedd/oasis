@@ -95,8 +95,19 @@ function App(props) {
             className={classes.terms}
             tooltipTitle="Terms and Conditions"
             icon={
-              <div className="row" style={{ alignItems: "center" }}>
-                <Checkbox style={{ color: "white", padding: "0 5px 0 0" }} />
+              <div style={{ alignItems: "center" }}>
+                <Checkbox 
+                  id="checkbox"
+                  style={{ color: "white", padding: "0 5px 0 0" }} 
+                  onChange={(e)=> {
+                    var warning = document.getElementById("warning");
+                    if(e.target.checked){
+                      warning.innerHTML = "";
+                    }else{
+                      warning.innerHTML = "Please read the Terms and Conditions";
+                    }
+                  }}
+                />
                 <Pop
                   label={
                     <span
@@ -114,6 +125,9 @@ function App(props) {
                   linkIndex={linkIndex}
                   listIndex={listIndex}
                 />
+                <div id="warning" style={{color:"red", fontSize: 10}}>
+                    Please read the Terms and Conditions
+                </div>
               </div>
             }
             TooltipClasses={classesTooltip}
@@ -126,7 +140,11 @@ function App(props) {
               className={action.classes}
               TooltipClasses={classesTooltip}
               onClick={() => {
-                history.push(action.href, action.state || {});
+                if(document.getElementById('checkbox').checked){                 
+                  history.push(action.href, action.state || {});
+                }else{
+                  history.push('', action.state || {});
+                }
               }}
             />
           ))}
