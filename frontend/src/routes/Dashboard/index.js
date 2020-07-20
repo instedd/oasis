@@ -11,6 +11,8 @@ import styles from "./styles.module.css";
 import { fetchStory } from "actions/story";
 import { getStoryResources } from "actions/resources";
 import { LOADING } from "actions/types";
+import { useLocation } from "react-router-dom";
+import Map from "components/Map";
 
 const statusMapping = {
   [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
@@ -31,9 +33,18 @@ const actions = [
   },
 ];
 
-function Dashboard(props) {
+function Dashboard(props, { draggableMapRoutes = [] }) {
   const [open, setOpen] = React.useState(false);
   const { story, status } = useSelector((state) => state.story);
+  let location = useLocation();
+  const [draggableMap, setDraggableMap] = useState(false);
+
+  useEffect(() => {
+    let shouldDragMap = draggableMapRoutes.includes(location.pathname);
+    if (shouldDragMap !== draggableMap)
+      setDraggableMap(draggableMapRoutes.includes(location.pathname));
+  }, [location]);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -136,6 +147,7 @@ function Dashboard(props) {
         status.detail
       ) : (
         <>
+          <Map draggable={draggableMap} userId={story.id} />
           {informationHeader()}
           <SpeedDial
             ariaLabel="Daily actions"

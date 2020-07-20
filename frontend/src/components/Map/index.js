@@ -7,11 +7,13 @@ import api from "utils";
 mapboxgl.accessToken =
   "pk.eyJ1Ijoic3RlNTE5IiwiYSI6ImNrOHc1aHlvYTB0N2ozam51MHFiazE3bmcifQ.AHtFuA-pAqau_AJIy-hzOg";
 
-export default function Map({ draggable = true }) {
+export default function Map(props, { draggable = true }) {
   const countryMinZoom = 3.5;
   const initialZoom = 5;
   const focusZoom = 6;
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
+
+  const id = props.userId;
 
   const dataScope = {
     WORLD: "world",
