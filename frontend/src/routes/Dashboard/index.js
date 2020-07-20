@@ -147,7 +147,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
         status.detail
       ) : (
         <>
-          <Map draggable={draggableMap} userId={story.id} />
+          <Map draggable={draggableMap} userStory={story} />
           {informationHeader()}
           <SpeedDial
             ariaLabel="Daily actions"

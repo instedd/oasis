@@ -100,19 +100,42 @@ function CriticalQuestions(props) {
     setContacts(newContacts);
   };
 
+  const getGeocoding = () => {
+    const city = formValues[fields.CITY.key];
+    const state = formValues[fields.STATE.key];
+    const country = formValues[fields.COUNTRY.key];
+
+    const query = city + " " + state + " " + country;
+    const url =
+      "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
+      query +
+      ".json?access_token=" +
+      MAPBOX_APIKEY;
+    return fetch(url)
+      .then((response) => response.json())
+      .then((jsondata) => {
+        return jsondata.features[0].geometry.coordinates;
+      });
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const { ...story } = formValues;
-    if (story.sick === sicknessStatus.NOT_SICK) nextPage = paths.dashboard;
-    else nextPage = paths.symptoms;
+    getGeocoding().then((coordinates) => {
+      const { ...story } = formValues;
+      if (story.sick === sicknessStatus.NOT_SICK) nextPage = paths.dashboard;
+      else nextPage = paths.symptoms;
 
-    const dto = {
-      story,
-      nextPage,
-      travels: recentTravels,
-      closeContacts: contacts,
-    };
-    dispatch(submitStory(dto));
+      story.latitude = coordinates[0];
+      story.longitude = coordinates[1];
+
+      const dto = {
+        story,
+        nextPage,
+        travels: recentTravels,
+        closeContacts: contacts,
+      };
+      dispatch(submitStory(dto));
+    });
   };
 
   const [countries, setCountries] = useState([]);
@@ -294,7 +317,9 @@ function CriticalQuestions(props) {
             }
 
             if (address.length > 1) {
-              state = address[address.length - 2].trim().split(" ")[0];
+              var str = address[address.length - 2];
+              var lastIndex = str.lastIndexOf(" ");
+              state = str.substring(0, lastIndex).trim();
             }
             if (address.length > 2) {
               city = address[address.length - 3].trim();
