@@ -463,20 +463,35 @@ function CriticalQuestions(props) {
         {travelsSection()}
         <div style={{ height: "30px" }} ref={pageBottomRef}></div>
       </div>
-      <AlertDialog
-        label={
-          <Fab
-            style={{ background: "#EA2027" }}
-            aria-label="Go to next page"
-            size="medium"
-            className="fab next-btn"
-          >
-            <ArrowRightIcon />
-          </Fab>
-        }
-        text={contactNoticeText}
-        submit={handleSubmit}
-      />
+
+      {contacts.length !== 0 && (
+        <AlertDialog
+          label={
+            <Fab
+              style={{ background: "#EA2027" }}
+              aria-label="Go to next page"
+              size="medium"
+              className="fab next-btn"
+            >
+              <ArrowRightIcon />
+            </Fab>
+          }
+          text={contactNoticeText}
+          submit={handleSubmit}
+        />
+      )}
+      {contacts.length === 0 && (
+        <Fab
+          style={{ background: "#EA2027" }}
+          aria-label="Go to next page"
+          size="medium"
+          className="fab next-btn"
+          onClick={handleSubmit}
+        >
+          <ArrowRightIcon />
+        </Fab>
+      )}
+
       <Fab
         style={{ background: "#9206FF" }}
         aria-label="Go to previous page"
