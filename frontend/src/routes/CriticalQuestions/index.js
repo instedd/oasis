@@ -142,9 +142,7 @@ function CriticalQuestions(props) {
       }
 
       // delete the contacts which have empty email and phone number
-      var valid_contacts = contacts.filter(
-        (contact) => contact.email || contact.phoneNumber
-      );
+      var valid_contacts = contacts.filter((contact) => contact.email);
 
       const dto = {
         story,
@@ -224,7 +222,7 @@ function CriticalQuestions(props) {
         <div key={i}>
           <div className={classNames("grid-3", styles["grid-3"])}>
             <TextField
-              label="Email"
+              label="Email (required)"
               value={contact.email}
               onChange={handleCloseContactChange("email", i)}
             />
@@ -506,8 +504,7 @@ function CriticalQuestions(props) {
         <div style={{ height: "30px" }} ref={pageBottomRef}></div>
       </div>
 
-      {contacts.filter((contact) => contact.email || contact.phoneNumber)
-        .length !== 0 &&
+      {contacts.filter((contact) => contact.email).length !== 0 &&
         formValues[fields.CITY.key] &&
         formValues[fields.CITY.key].length &&
         formValues[fields.STATE.key] &&
@@ -529,8 +526,13 @@ function CriticalQuestions(props) {
             submit={handleSubmit}
           />
         )}
-      {contacts.filter((contact) => contact.email || contact.phoneNumber)
-        .length === 0 && (
+      {(contacts.filter((contact) => contact.email).length === 0 ||
+        !formValues[fields.CITY.key] ||
+        !formValues[fields.CITY.key].length ||
+        !formValues[fields.STATE.key] ||
+        !formValues[fields.STATE.key].length ||
+        !formValues[fields.COUNTRY.key] ||
+        !formValues[fields.COUNTRY.key].length) && (
         <Fab
           style={{ background: "#EA2027" }}
           aria-label="Go to next page"
