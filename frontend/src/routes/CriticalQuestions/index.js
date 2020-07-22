@@ -141,12 +141,8 @@ function CriticalQuestions(props) {
         story.longitude = coordinates[1];
       }
 
-      console.log(contacts);
       // delete the contacts which have empty email and phone number
-      var valid_contacts = contacts.filter(
-        (contact) => contact.email || contact.phoneNumber
-      );
-      console.log(valid_contacts);
+      var valid_contacts = contacts.filter((contact) => contact.email);
 
       const dto = {
         story,
@@ -226,7 +222,7 @@ function CriticalQuestions(props) {
         <div key={i}>
           <div className={classNames("grid-3", styles["grid-3"])}>
             <TextField
-              label="Email"
+              label="Email (required)"
               value={contact.email}
               onChange={handleCloseContactChange("email", i)}
             />
@@ -508,23 +504,35 @@ function CriticalQuestions(props) {
         <div style={{ height: "30px" }} ref={pageBottomRef}></div>
       </div>
 
-      {contacts.length !== 0 && (
-        <AlertDialog
-          label={
-            <Fab
-              style={{ background: "#EA2027" }}
-              aria-label="Go to next page"
-              size="medium"
-              className="fab next-btn"
-            >
-              <ArrowRightIcon />
-            </Fab>
-          }
-          text={contactNoticeText}
-          submit={handleSubmit}
-        />
-      )}
-      {contacts.length === 0 && (
+      {contacts.filter((contact) => contact.email).length !== 0 &&
+        formValues[fields.CITY.key] &&
+        formValues[fields.CITY.key].length &&
+        formValues[fields.STATE.key] &&
+        formValues[fields.STATE.key].length &&
+        formValues[fields.COUNTRY.key] &&
+        formValues[fields.COUNTRY.key].length && (
+          <AlertDialog
+            label={
+              <Fab
+                style={{ background: "#EA2027" }}
+                aria-label="Go to next page"
+                size="medium"
+                className="fab next-btn"
+              >
+                <ArrowRightIcon />
+              </Fab>
+            }
+            text={contactNoticeText}
+            submit={handleSubmit}
+          />
+        )}
+      {(contacts.filter((contact) => contact.email).length === 0 ||
+        !formValues[fields.CITY.key] ||
+        !formValues[fields.CITY.key].length ||
+        !formValues[fields.STATE.key] ||
+        !formValues[fields.STATE.key].length ||
+        !formValues[fields.COUNTRY.key] ||
+        !formValues[fields.COUNTRY.key].length) && (
         <Fab
           style={{ background: "#EA2027" }}
           aria-label="Go to next page"
