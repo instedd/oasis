@@ -141,12 +141,10 @@ function CriticalQuestions(props) {
         story.longitude = coordinates[1];
       }
 
-      console.log(contacts);
       // delete the contacts which have empty email and phone number
       var valid_contacts = contacts.filter(
         (contact) => contact.email || contact.phoneNumber
       );
-      console.log(valid_contacts);
 
       const dto = {
         story,
@@ -508,23 +506,31 @@ function CriticalQuestions(props) {
         <div style={{ height: "30px" }} ref={pageBottomRef}></div>
       </div>
 
-      {contacts.length !== 0 && (
-        <AlertDialog
-          label={
-            <Fab
-              style={{ background: "#EA2027" }}
-              aria-label="Go to next page"
-              size="medium"
-              className="fab next-btn"
-            >
-              <ArrowRightIcon />
-            </Fab>
-          }
-          text={contactNoticeText}
-          submit={handleSubmit}
-        />
-      )}
-      {contacts.length === 0 && (
+      {contacts.filter((contact) => contact.email || contact.phoneNumber)
+        .length !== 0 &&
+        formValues[fields.CITY.key] &&
+        formValues[fields.CITY.key].length &&
+        formValues[fields.STATE.key] &&
+        formValues[fields.STATE.key].length &&
+        formValues[fields.COUNTRY.key] &&
+        formValues[fields.COUNTRY.key].length && (
+          <AlertDialog
+            label={
+              <Fab
+                style={{ background: "#EA2027" }}
+                aria-label="Go to next page"
+                size="medium"
+                className="fab next-btn"
+              >
+                <ArrowRightIcon />
+              </Fab>
+            }
+            text={contactNoticeText}
+            submit={handleSubmit}
+          />
+        )}
+      {contacts.filter((contact) => contact.email || contact.phoneNumber)
+        .length === 0 && (
         <Fab
           style={{ background: "#EA2027" }}
           aria-label="Go to next page"
