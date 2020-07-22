@@ -1,6 +1,6 @@
 import json
 
-from sqlalchemy import JSON, Column, ForeignKey, Integer, String, Date, Text
+from sqlalchemy import JSON, Column, ForeignKey, Integer, String, Date, Text, Numeric 
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -23,6 +23,8 @@ class Story(Base):
     sickness_end = Column(String(64))
     my_story = Column(Text())
     spam = Column(Integer)
+    latitude = Column(Numeric(10, 7))
+    longitude = Column(Numeric(10, 7))
 
     user = relationship("User", uselist=False, back_populates="story")
     symptoms = relationship("Symptom", secondary="story_symptoms")
