@@ -23,16 +23,6 @@ const statusMapping = {
   [sicknessStatus.NOT_SICK]: { name: "Not Sick", color: "gray" },
 };
 
-const actions = [
-  { name: "ADD MY STORY", href: paths.myStory, classes: "MuiFab-extended" },
-  {
-    name: "DAILY ASSESSMENT",
-    href: paths.onboard,
-    state: { onboard: true },
-    classes: classNames("MuiFab-extended assessment", styles.assessment),
-  },
-];
-
 function Dashboard(props, { draggableMapRoutes = [] }) {
   const [open, setOpen] = React.useState(false);
   const { story, status } = useSelector((state) => state.story);
@@ -70,6 +60,21 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       .then((res) => res.json())
       .then((result) => setData(result));
   }, []);
+
+  const hasMyStory = story && story.myStory;
+  const actions = [
+    {
+      name: hasMyStory ? "UPDATE MY STORY" : "ADD MY STORY",
+      href: paths.myStory,
+      classes: "MuiFab-extended",
+    },
+    {
+      name: "DAILY ASSESSMENT",
+      href: paths.onboard,
+      state: { onboard: true },
+      classes: classNames("MuiFab-extended assessment", styles.assessment),
+    },
+  ];
 
   const userStatus = () => (
     <div className={classNames(styles.statusList)}>
