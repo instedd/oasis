@@ -114,19 +114,31 @@ function CriticalQuestions(props) {
     return fetch(url)
       .then((response) => response.json())
       .then((jsondata) => {
-        return jsondata.features[0].geometry.coordinates;
+        if (
+          jsondata &&
+          jsondata.features &&
+          jsondata.features.length &&
+          jsondata.features[0].geometry &&
+          jsondata.features[0].geometry.coordinates &&
+          jsondata.features[0].geometry.coordinates.length >= 2
+        ) {
+          return jsondata.features[0].geometry.coordinates;
+        }
       });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
     getGeocoding().then((coordinates) => {
       const { ...story } = formValues;
       if (story.sick === sicknessStatus.NOT_SICK) nextPage = paths.dashboard;
       else nextPage = paths.symptoms;
 
-      story.latitude = coordinates[0];
-      story.longitude = coordinates[1];
+      if (coordinates) {
+        story.latitude = coordinates[0];
+        story.longitude = coordinates[1];
+      }
 
       const dto = {
         story,
@@ -331,8 +343,7 @@ function CriticalQuestions(props) {
         } else {
           setListItems([]);
         }
-      })
-      .then((error) => console.log(error));
+      });
   };
 
   return (
