@@ -135,16 +135,24 @@ function CriticalQuestions(props) {
       if (story.sick === sicknessStatus.NOT_SICK) nextPage = paths.dashboard;
       else nextPage = paths.symptoms;
 
+      // check if the user has filled valid city, state, and country
       if (coordinates) {
         story.latitude = coordinates[0];
         story.longitude = coordinates[1];
       }
 
+      console.log(contacts);
+      // delete the contacts which have empty email and phone number
+      var valid_contacts = contacts.filter(
+        (contact) => contact.email || contact.phoneNumber
+      );
+      console.log(valid_contacts);
+
       const dto = {
         story,
         nextPage,
         travels: recentTravels,
-        closeContacts: contacts,
+        closeContacts: valid_contacts,
       };
       dispatch(submitStory(dto));
     });
