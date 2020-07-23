@@ -3,13 +3,13 @@ EXPOSURE_NOTIFICATION_SUBJECT = "COVID-19 - Important notification"
 EXPOSURE_NOTIFICATION_TEXT_CONTENT = """
 Hello,
 
-This is a notice from Oasis, a citizen-led global community working to stop the spread of COVID-19.
+This is a notice from Oasis (http://1oasis.ucsd.edu), a citizen-led global community working to stop the spread of COVID-19 (https://www.cdc.gov/coronavirus/2019-nCoV/index.html).
 
 A user of Oasis has been reported to have COVID-19 and has indicated that they have interacted with you. You could be at risk of infection. 
 
 Oasis community volunteers document their symptoms and COVID-19 test results on the Oasis platform. In addition, they can provide contact information of people whom they have been near and who may have been exposed to the virus. 
 
-This notification is to let you know that you may have been exposed to the COVID-19 virus and we offer a few suggestions on what you can do based on current recommendations from the CDC. 
+This notification is to let you know that you may have been exposed to the COVID-19 virus and we offer a few suggestions on what you can do based on current recommendations from the CDC (https://www.cdc.gov/coronavirus/2019-ncov/if-you-are-sick/quarantine.html). 
 
 To protect everyone’s privacy, we keep all notifications confidential - that means we do not share information about who has symptoms, who has confirmed infection, or who has been in contact with people who may be infected. We only use your contact information to notify you now of possible COVID exposure and will never use personal information for anything else.
 
@@ -37,7 +37,7 @@ If you have symptoms (https://www.cdc.gov/coronavirus/2019-ncov/symptoms-testing
 
 We encourage you to access the Oasis website (http://1oasis.org/) which has COVID-19 information tailored to your situation, and, if you choose, you can report how you are feeling or anonymously alert potential contacts you have had. 
 
-You can learn more from the CDC (https://www.cdc.gov/coronavirus/2019-ncov/if-you-are-sick/quarantine.html?CDC_AA_refVal=https%3A%2F%2Fwww.cdc.gov%2Fcoronavirus%2F2019-ncov%2Fif-you-are-sick%2Fquarantine-isolation.html) about how to care for yourself if you’ve been exposed to COVID-19.
+You can learn more from the CDC (https://www.cdc.gov/coronavirus/2019-ncov/index.html) about how to care for yourself if you’ve been exposed to COVID-19.
 """
 
 EXPOSURE_NOTIFICATION_HTML_CONTENT = """
@@ -47,7 +47,7 @@ EXPOSURE_NOTIFICATION_HTML_CONTENT = """
 <p>Hello,</p>
 
 <p>This is a notice from <a href='http://1oasis.ucsd.edu'>Oasis</a>, a citizen-led global community working to stop the spread of <a href='https://www.cdc.gov/coronavirus/2019-nCoV/index.html'>COVID-19</a>.<br>
-    A user of Oasis has been reported to have COVID-19 and has indicated that they have interacted with you. <b>You could be at risk of infection.</b>
+A user of Oasis has been reported to have COVID-19 and has indicated that they have interacted with you. <b>You could be at risk of infection.</b>
 </p>
 
 <p>Oasis community volunteers document their symptoms and COVID-19 test results on the Oasis platform. In addition, they can provide contact information of people whom they have been near and who may have been exposed to the virus.</p>
