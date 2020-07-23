@@ -429,23 +429,27 @@ export default function Map(props, { draggable = true }) {
   };
 
   const legend = (
-    <div className={classNames(styles.legend)} id="legend">
-      <h4>Active cases</h4>
-      {legendRanges.map((range, i) => (
-        <div className={classNames(styles.legendItem)} key={i}>
-          <span style={{ backgroundColor: range.color }}></span>
-          {range.label}
-        </div>
-      ))}
+    <>
+      <div className={classNames(styles.legend)} id="legend">
+        <h4>Active cases</h4>
+        {legendRanges.map((range, i) => (
+          <div className={classNames(styles.legendItem)} key={i}>
+            <span style={{ backgroundColor: range.color }}></span>
+            {range.label}
+          </div>
+        ))}
+      </div>
 
-      <h4>User Stories</h4>
-      {statusColor.map((status, i) => (
-        <div className={classNames(styles.legendItem)} key={i}>
-          <span style={{ backgroundColor: status.color }}></span>
-          {status.text}
-        </div>
-      ))}
-    </div>
+      <div className={classNames(styles.storylegend)} id="legend">
+        <h4>User Stories</h4>
+        {statusColor.map((status, i) => (
+          <div className={classNames(styles.legendItem)} key={i}>
+            <span style={{ backgroundColor: status.color }}></span>
+            {status.text}
+          </div>
+        ))}
+      </div>
+    </>
   );
 
   const draggableDependantFeatures = () => {
