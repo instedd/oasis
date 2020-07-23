@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import mapboxgl from "mapbox-gl";
 import React, { useEffect, useState } from "react";
+import RoomRoundedIcon from "@material-ui/icons/RoomRounded";
 import styles from "./styles.module.css";
 import api from "utils";
 import { sicknessStatus } from "../../routes/types";
@@ -10,6 +11,13 @@ const statusMapping = {
   [sicknessStatus.RECOVERED]: { name: "Recovered", color: "green" },
   [sicknessStatus.NOT_SICK]: { name: "Not Sick", color: "gray" },
 };
+
+const statusColor = [
+  { text: "My story", color: "#3bb2d0" },
+  { text: "Sick", color: statusMapping[sicknessStatus.SICK].color },
+  { text: "Not sick", color: statusMapping[sicknessStatus.NOT_SICK].color },
+  { text: "Recovered", color: statusMapping[sicknessStatus.RECOVERED].color },
+];
 
 mapboxgl.accessToken =
   "pk.eyJ1Ijoic3RlNTE5IiwiYSI6ImNrOHc1aHlvYTB0N2ozam51MHFiazE3bmcifQ.AHtFuA-pAqau_AJIy-hzOg";
@@ -321,7 +329,6 @@ export default function Map(props, { draggable = true }) {
     );
   };
 
-
   const addStoryLayer = async (map) => {
     var geojson = await fetchStoriesData();
 
@@ -338,7 +345,7 @@ export default function Map(props, { draggable = true }) {
       el.className = "marker";
       var myStory = marker.properties.myStory;
 
-      // check if mystory is null 
+      // check if mystory is null
       if (!myStory) {
         myStory = "";
       }
@@ -383,14 +390,14 @@ export default function Map(props, { draggable = true }) {
       if (sickStatus === sicknessStatus.NOT_SICK) {
         new mapboxgl.Marker({ color: statusMapping[sickStatus].color })
           .setLngLat(marker.geometry.coordinates)
-          .setPopup(popup) 
+          .setPopup(popup)
           .addTo(map);
       }
 
       if (sickStatus === sicknessStatus.RECOVERED) {
         new mapboxgl.Marker({ color: statusMapping[sickStatus].color })
           .setLngLat(marker.geometry.coordinates)
-          .setPopup(popup) 
+          .setPopup(popup)
           .addTo(map);
       }
     });
@@ -399,24 +406,22 @@ export default function Map(props, { draggable = true }) {
     // create the popup
     const date = userStory.createdAt;
     const story = userStory.myStory;
-    
+
     var popup = null;
-    if(story){
-      if(date){
-        popup = new mapboxgl.Popup({ offset: 25 }).setHTML(   
+    if (story) {
+      if (date) {
+        popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
           "<h3> MY STORY </h3>" + date + "<p>" + story + "</p>"
         );
-      }else{
-        popup = new mapboxgl.Popup({ offset: 25 }).setHTML(   
+      } else {
+        popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
           "<h3> MY STORY </h3>" + "<p>" + story + "</p>"
         );
       }
-    }else{
-      popup = new mapboxgl.Popup({ offset: 25 }).setHTML(   
-        "<h3> MY STORY </h3>" 
-      );
+    } else {
+      popup = new mapboxgl.Popup({ offset: 25 }).setHTML("<h3> MY STORY </h3>");
     }
-       
+
     // create the marker
     new mapboxgl.Marker()
       .setLngLat([userStory.latitude, userStory.longitude])
@@ -426,11 +431,20 @@ export default function Map(props, { draggable = true }) {
 
   const legend = (
     <div className={classNames(styles.legend)} id="legend">
-      <h4>Active cases</h4>
+      <h3>Active cases</h3>
       {legendRanges.map((range, i) => (
         <div className={classNames(styles.legendItem)} key={i}>
           <span style={{ backgroundColor: range.color }}></span>
           {range.label}
+        </div>
+      ))}
+      <h3 style={{ marginTop: "8px" }}>Story markers</h3>
+      {statusColor.map((status, i) => (
+        <div className={classNames(styles.legendItem)} key={i}>
+          <RoomRoundedIcon
+            style={{ color: status.color, fontSize: "medium" }}
+          />
+          <sup style={{ fontSize: "12px" }}> {status.text} </sup>
         </div>
       ))}
     </div>
@@ -449,7 +463,7 @@ export default function Map(props, { draggable = true }) {
         Please refresh the page if the map is gray.
       </div>
       <div
-        style={{ color: 'gray' }}
+        style={{ color: "gray" }}
         className={classNames([
           styles.fill,
           styles.map,
