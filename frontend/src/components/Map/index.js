@@ -29,8 +29,6 @@ export default function Map(props, { draggable = true }) {
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
 
   const userStory = props.userStory;
-  console.log("User Story");
-  console.log(userStory);
 
   const dataScope = {
     WORLD: "world",
@@ -132,8 +130,6 @@ export default function Map(props, { draggable = true }) {
     const body = await api(`stories/all`, {
       method: "GET",
     });
-    console.log("All the stories");
-    console.log(body);
     return storiesToGeoJson(body);
   };
 
@@ -384,7 +380,6 @@ export default function Map(props, { draggable = true }) {
 
       // create the marker
       const sickStatus = marker.properties.sick;
-      console.log(sickStatus);
       new mapboxgl.Marker({ color: statusMapping[sickStatus].color })
         .setLngLat(marker.geometry.coordinates)
         .setPopup(popup) // sets a popup on this marker
