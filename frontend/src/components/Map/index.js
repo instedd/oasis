@@ -380,26 +380,10 @@ export default function Map(props, { draggable = true }) {
 
       // create the marker
       const sickStatus = marker.properties.sick;
-      if (sickStatus === sicknessStatus.SICK) {
-        new mapboxgl.Marker({ color: statusMapping[sickStatus].color })
-          .setLngLat(marker.geometry.coordinates)
-          .setPopup(popup) // sets a popup on this marker
-          .addTo(map);
-      }
-
-      if (sickStatus === sicknessStatus.NOT_SICK) {
-        new mapboxgl.Marker({ color: statusMapping[sickStatus].color })
-          .setLngLat(marker.geometry.coordinates)
-          .setPopup(popup)
-          .addTo(map);
-      }
-
-      if (sickStatus === sicknessStatus.RECOVERED) {
-        new mapboxgl.Marker({ color: statusMapping[sickStatus].color })
-          .setLngLat(marker.geometry.coordinates)
-          .setPopup(popup)
-          .addTo(map);
-      }
+      new mapboxgl.Marker({ color: statusMapping[sickStatus].color })
+        .setLngLat(marker.geometry.coordinates)
+        .setPopup(popup) // sets a popup on this marker
+        .addTo(map);
     });
 
     // Add current user's marker
