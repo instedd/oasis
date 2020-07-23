@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import mapboxgl from "mapbox-gl";
 import React, { useEffect, useState } from "react";
+import RoomRoundedIcon from "@material-ui/icons/RoomRounded";
 import styles from "./styles.module.css";
 import api from "utils";
 import { sicknessStatus } from "../../routes/types";
@@ -429,27 +430,24 @@ export default function Map(props, { draggable = true }) {
   };
 
   const legend = (
-    <>
-      <div className={classNames(styles.legend)} id="legend">
-        <h4>Active cases</h4>
-        {legendRanges.map((range, i) => (
-          <div className={classNames(styles.legendItem)} key={i}>
-            <span style={{ backgroundColor: range.color }}></span>
-            {range.label}
-          </div>
-        ))}
-      </div>
-
-      <div className={classNames(styles.storylegend)} id="legend">
-        <h4>Story markers</h4>
-        {statusColor.map((status, i) => (
-          <div className={classNames(styles.legendItem)} key={i}>
-            <span style={{ backgroundColor: status.color }}></span>
-            {status.text}
-          </div>
-        ))}
-      </div>
-    </>
+    <div className={classNames(styles.legend)} id="legend">
+      <h4>Active cases</h4>
+      {legendRanges.map((range, i) => (
+        <div className={classNames(styles.legendItem)} key={i}>
+          <span style={{ backgroundColor: range.color }}></span>
+          {range.label}
+        </div>
+      ))}
+      <h4>Story markers</h4>
+      {statusColor.map((status, i) => (
+        <div className={classNames(styles.legendItem)} key={i}>
+          <RoomRoundedIcon
+            style={{ color: status.color, fontSize: "medium" }}
+          />
+          {status.text}
+        </div>
+      ))}
+    </div>
   );
 
   const draggableDependantFeatures = () => {
