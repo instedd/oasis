@@ -1,13 +1,6 @@
-from sqlalchemy import Column, Integer, String, Date
+from sqlalchemy import Column, Integer, String, Date, DateTime
 
 from database import Base
-
-# from database import Base
-
-# class YourCoolModel(Base):
-#    __tablename__ = "super_cool_models"
-# id = Column(Integer, primary_key=True, index=True)
-# all your cool model attributes go here
 
 
 class NytLiveCounty(Base):
@@ -18,8 +11,8 @@ class NytLiveCounty(Base):
 
     __tablename__ = "nyt"
     date = Column(Date)
-    county = Column(String)
-    state = Column(String)
+    county = Column(String(128))
+    state = Column(String(128))
     fips = Column(Integer)
     cases = Column(Integer)
     deaths = Column(Integer)
@@ -35,3 +28,5 @@ class TimeToLive(Base):
     """
 
     __tablename__ = "nyt_ttl"
+    last_updated = Column(DateTime)
+    time_to_live = Column(Integer)
