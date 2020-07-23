@@ -13,10 +13,10 @@ const statusMapping = {
 };
 
 const statusColor = [
-  { text: "my story", color: "#3bb2d0" },
-  { text: "sick", color: statusMapping[sicknessStatus.SICK].color },
-  { text: "not sick", color: statusMapping[sicknessStatus.NOT_SICK].color },
-  { text: "recovered", color: statusMapping[sicknessStatus.RECOVERED].color },
+  { text: "My story", color: "#3bb2d0" },
+  { text: "Sick", color: statusMapping[sicknessStatus.SICK].color },
+  { text: "Not sick", color: statusMapping[sicknessStatus.NOT_SICK].color },
+  { text: "Recovered", color: statusMapping[sicknessStatus.RECOVERED].color },
 ];
 
 mapboxgl.accessToken =
@@ -431,20 +431,20 @@ export default function Map(props, { draggable = true }) {
 
   const legend = (
     <div className={classNames(styles.legend)} id="legend">
-      <h4>Active cases</h4>
+      <h3>Active cases</h3>
       {legendRanges.map((range, i) => (
         <div className={classNames(styles.legendItem)} key={i}>
           <span style={{ backgroundColor: range.color }}></span>
           {range.label}
         </div>
       ))}
-      <h4>Story markers</h4>
+      <h3 style={{ marginTop: "8px" }}>Story markers</h3>
       {statusColor.map((status, i) => (
         <div className={classNames(styles.legendItem)} key={i}>
           <RoomRoundedIcon
             style={{ color: status.color, fontSize: "medium" }}
           />
-          {status.text}
+          <sup style={{ fontSize: "12px" }}> {status.text} </sup>
         </div>
       ))}
     </div>
