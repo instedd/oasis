@@ -1,4 +1,5 @@
-import { Fab } from "@material-ui/core";
+import { Fab, Button } from "@material-ui/core";
+import { Alert, AlertTitle } from "@material-ui/lab";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import classNames from "classnames";
 import React from "react";
@@ -21,51 +22,71 @@ export default function Confirm({ history }) {
 
   return (
     <>
-      <h1 className={classNames("title", styles.title)}>
-        HAVE YOUR BEEN TESTED FOR COVID-19?
-      </h1>
+      {!story && (
+        <>
+          <Alert severity="info">
+            Your story is lost after refreshing, please press the button below
+            to return to homepage.
+          </Alert>
+          <br></br>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => history.push(paths.home)}
+          >
+            Home
+          </Button>
+        </>
+      )}
+      {story && (
+        <>
+          <h1 className={classNames("title", styles.title)}>
+            HAVE YOUR BEEN TESTED FOR COVID-19?
+          </h1>
 
-      <div className={classNames("btn-group", styles.buttons)}>
-        <Fab
-          style={{ background: "#EA2027" }}
-          size="large"
-          className="fab"
-          variant="extended"
-          onClick={handleClick(testStatus.POSITIVE)}
-        >
-          <span>YES, TESTED POSITIVE</span>
-        </Fab>
-        <Fab
-          style={{ background: "#9206FF" }}
-          size="large"
-          className="fab"
-          variant="extended"
-          onClick={handleClick(testStatus.NEGATIVE)}
-        >
-          <span>YES, TESTED NEGATIVE</span>
-        </Fab>
-        <Fab
-          style={{ background: "#0559FD" }}
-          size="large"
-          className="fab"
-          variant="extended"
-          onClick={handleClick(testStatus.NOT_TESTED)}
-        >
-          <span>NO, I HAVE NOT</span>
-        </Fab>
-      </div>
-      <Fab
-        style={{ background: "#9206FF" }}
-        size="medium"
-        className="fab back-btn"
-        onClick={() =>
-          history.push(
-            sick === sicknessStatus.SICK ? paths.alert : paths.onboard
-          )
-        }
-      >
-        <ArrowLeftIcon />
-      </Fab>
+          <div className={classNames("btn-group", styles.buttons)}>
+            <Fab
+              style={{ background: "#EA2027" }}
+              size="large"
+              className="fab"
+              variant="extended"
+              onClick={handleClick(testStatus.POSITIVE)}
+            >
+              <span>YES, TESTED POSITIVE</span>
+            </Fab>
+            <Fab
+              style={{ background: "#9206FF" }}
+              size="large"
+              className="fab"
+              variant="extended"
+              onClick={handleClick(testStatus.NEGATIVE)}
+            >
+              <span>YES, TESTED NEGATIVE</span>
+            </Fab>
+            <Fab
+              style={{ background: "#0559FD" }}
+              size="large"
+              className="fab"
+              variant="extended"
+              onClick={handleClick(testStatus.NOT_TESTED)}
+            >
+              <span>NO, I HAVE NOT</span>
+            </Fab>
+          </div>
+          <Fab
+            style={{ background: "#9206FF" }}
+            size="medium"
+            className="fab back-btn"
+            onClick={() =>
+              history.push(
+                sick === sicknessStatus.SICK ? paths.alert : paths.onboard
+              )
+            }
+          >
+            <ArrowLeftIcon />
+          </Fab>
+        </>
+      )}
     </>
   );
 }
