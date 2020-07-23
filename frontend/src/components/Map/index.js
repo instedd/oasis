@@ -13,9 +13,9 @@ const statusMapping = {
 
 const statusColor = [
   { text: "my story", color: "#3bb2d0" },
-  { text: "sick story", color: "orange" },
-  { text: "not Sick story", color: "gray" },
-  { text: "recovered story", color: "green" },
+  { text: "sick", color: statusMapping[sicknessStatus.SICK].color },
+  { text: "not sick", color: statusMapping[sicknessStatus.NOT_SICK].color },
+  { text: "recovered", color: statusMapping[sicknessStatus.RECOVERED].color },
 ];
 
 mapboxgl.accessToken =
@@ -441,7 +441,7 @@ export default function Map(props, { draggable = true }) {
       </div>
 
       <div className={classNames(styles.storylegend)} id="legend">
-        <h4>User Stories</h4>
+        <h4>Story markers</h4>
         {statusColor.map((status, i) => (
           <div className={classNames(styles.legendItem)} key={i}>
             <span style={{ backgroundColor: status.color }}></span>
