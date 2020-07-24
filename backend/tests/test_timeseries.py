@@ -1,0 +1,9 @@
+from time_series import crud, models
+
+
+def test_insert_current_data(setup):
+    """
+    Tests if the current NYT file can be loaded from github
+    """
+    crud.init_table(setup["db"])
+    assert len(setup["db"].query(models.TimeSeries).all()) == 14

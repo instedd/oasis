@@ -12,7 +12,7 @@ class TimeSeries(Base):
 
     __tablename__ = "time_series"
     id = Column(Integer, primary_key=True, index=True)
-    data = Column(Date)
+    date = Column(Date)
     confirmed = Column(Integer)
     recovered = Column(Integer)
     deaths = Column(Integer)
