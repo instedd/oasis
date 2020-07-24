@@ -71,19 +71,17 @@ def update(db: Session):
         db.rollback()
 
 
-def get_nyt_data(db: Session, date: datetime, counties: List[str]):
+def get_nyt_data(db: Session, counties: List[str]):
     """
     Retrieves records from a particular date for a list of counties. If
     counties is [], return all data for all counties
     """
     if len(counties) == 0:
-        recs = db.query(models.NytLiveCounty).filter(
-            models.NytLiveCounty.date == date
-        )
+        recs = db.query(models.NytLiveCounty).all()
     else:
         recs = (
             db.query(models.NytLiveCounty)
-            .filter(models.NytLiveCounty.date == date)
-            .filter(models.NytLiveCounty.counties in counties)
+            # .filter(models.NytLiveCounty.date == date)
+            .filter(models.NytLiveCounty.county.in_(counties)).all()
         )
     return recs
