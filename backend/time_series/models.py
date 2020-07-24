@@ -24,3 +24,5 @@ class TimeToLive(Base):
     """
 
     __tablename__ = "timeseries_ttl"
+    last_updated = Column(String)
+    time_to_live = Column(Integer)
