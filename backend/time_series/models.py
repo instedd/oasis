@@ -1,5 +1,5 @@
 from database import Base
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, Date, DateTime
 
 
 class TimeSeries(Base):
@@ -12,7 +12,7 @@ class TimeSeries(Base):
 
     __tablename__ = "time_series"
     id = Column(Integer, primary_key=True, index=True)
-    data = Column(String)
+    data = Column(Date)
     confirmed = Column(Integer)
     recovered = Column(Integer)
     deaths = Column(Integer)
@@ -24,5 +24,5 @@ class TimeToLive(Base):
     """
 
     __tablename__ = "timeseries_ttl"
-    last_updated = Column(String)
+    last_updated = Column(DateTime)
     time_to_live = Column(Integer)
