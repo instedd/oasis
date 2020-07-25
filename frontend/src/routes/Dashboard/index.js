@@ -11,6 +11,8 @@ import styles from "./styles.module.css";
 import { fetchStory } from "actions/story";
 import { getStoryResources } from "actions/resources";
 import { LOADING } from "actions/types";
+import { useLocation } from "react-router-dom";
+import Map from "components/Map";
 
 const statusMapping = {
   [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
@@ -21,19 +23,18 @@ const statusMapping = {
   [sicknessStatus.NOT_SICK]: { name: "Not Sick", color: "gray" },
 };
 
-const actions = [
-  { name: "ADD MY STORY", href: paths.myStory, classes: "MuiFab-extended" },
-  {
-    name: "DAILY ASSESSMENT",
-    href: paths.onboard,
-    state: { onboard: true },
-    classes: classNames("MuiFab-extended assessment", styles.assessment),
-  },
-];
-
-function Dashboard(props) {
+function Dashboard(props, { draggableMapRoutes = [] }) {
   const [open, setOpen] = React.useState(false);
   const { story, status } = useSelector((state) => state.story);
+  let location = useLocation();
+  const [draggableMap, setDraggableMap] = useState(false);
+
+  useEffect(() => {
+    let shouldDragMap = draggableMapRoutes.includes(location.pathname);
+    if (shouldDragMap !== draggableMap)
+      setDraggableMap(draggableMapRoutes.includes(location.pathname));
+  }, [location]);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -59,6 +60,21 @@ function Dashboard(props) {
       .then((res) => res.json())
       .then((result) => setData(result));
   }, []);
+
+  const hasMyStory = story && story.myStory;
+  const actions = [
+    {
+      name: hasMyStory ? "UPDATE MY STORY" : "ADD MY STORY",
+      href: paths.myStory,
+      classes: "MuiFab-extended",
+    },
+    {
+      name: "DAILY ASSESSMENT",
+      href: paths.onboard,
+      state: { onboard: true },
+      classes: classNames("MuiFab-extended assessment", styles.assessment),
+    },
+  ];
 
   const userStatus = () => (
     <div className={classNames(styles.statusList)}>
@@ -136,6 +152,7 @@ function Dashboard(props) {
         status.detail
       ) : (
         <>
+          <Map draggable={draggableMap} userStory={story} />
           {informationHeader()}
           <SpeedDial
             ariaLabel="Daily actions"

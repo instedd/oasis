@@ -88,3 +88,12 @@ def create_close_contacts(
 
 def update_close_contact(db: Session, close_contact: schemas.CloseContact):
     return update(close_contact.id, close_contact, models.CloseContact, db)
+
+
+def get_all_stories(db: Session):
+    return (
+        db.query(models.Story)
+        .options(joinedload("travels"))
+        .options(joinedload("symptoms"))
+        .all()
+    )

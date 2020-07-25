@@ -40,12 +40,12 @@
   text-align: left;
 }
 
-.legend h4 {
+.legend h3{  
   margin: 0 0 5px;
   color: whitesmoke;
 }
 
-.legend div span {
+.legend div span{
   border-radius: 50%;
   display: inline-block;
   height: 10px;

@@ -13,7 +13,6 @@ export default function Onboard({ history }) {
   const location = useLocation();
   const handleClick = (selected) => () => {
     dispatch(setSickStatus(selected));
-    console.log(location.state);
     if (selected === sicknessStatus.SICK)
       history.push(paths.alert, location.state || {});
     else history.push(paths.confirm, location.state || {});

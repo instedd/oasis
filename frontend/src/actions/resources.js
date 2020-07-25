@@ -107,7 +107,9 @@ const checkSymptoms = withStory((story) => {
 
 const peopleHigherRisk = withStory((story) => {
   const peopleAtRisk = {
-    predicate: story.age > 64 || story.medicalConditions.length,
+    predicate:
+      story.age > 64 ||
+      (story.medicalConditions && story.medicalConditions.length),
     link:
       "https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/people-at-higher-risk.html",
   };
