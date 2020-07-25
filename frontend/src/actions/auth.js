@@ -51,7 +51,14 @@ export const signIn = (loginDTO) => async (dispatch) => {
 
   if (!response.error) {
     const story = await getCurrentStory(dispatch);
-    if (story.error) history.push(paths.onboard);
-    else history.push(paths.dashboard);
+    console.log("This story is ");
+    console.log(story);
+    if (!story || Object.entries(story).length === 0 || story.error) {
+      history.push(paths.onboard);
+      console.log("Go to onboard");
+    } else {
+      history.push(paths.dashboard);
+      console.log("Go to dashboard");
+    }
   }
 };
