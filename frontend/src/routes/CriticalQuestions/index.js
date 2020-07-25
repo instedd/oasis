@@ -355,6 +355,13 @@ function CriticalQuestions(props) {
 
   return (
     <>
+      {status &&
+        status.type === ERROR &&
+        status.detail !== "Story not found" && (
+          <p className={classNames(styles.status, styles.error)}>
+            {status.detail}
+          </p>
+      )}
       <h1 className="title" style={{ margin: 0 }}>
         MY COVID STORY
       </h1>
