@@ -66,6 +66,11 @@ function CriticalQuestions(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, story]);
 
+  // for developer: the result of finding user stories
+  if (status && status.type === ERROR) {
+    console.log(status.detail);
+  }
+
   const handleFormChange = (field) => (event) => {
     const intFields = [fields.AGE];
     const nonValueFields = [fields.SICKNESS_START, fields.SICKNESS_END];
@@ -333,9 +338,7 @@ function CriticalQuestions(props) {
             }
 
             if (address.length > 1) {
-              var str = address[address.length - 2];
-              var lastIndex = str.lastIndexOf(" ");
-              state = str.substring(0, lastIndex).trim();
+              state = address[address.length - 2].trim();
             }
             if (address.length > 2) {
               city = address[address.length - 3].trim();
@@ -352,11 +355,6 @@ function CriticalQuestions(props) {
 
   return (
     <>
-      {status && status.type === ERROR && (
-        <p className={classNames(styles.status, styles.error)}>
-          {status.detail}
-        </p>
-      )}
       <h1 className="title" style={{ margin: 0 }}>
         MY COVID STORY
       </h1>

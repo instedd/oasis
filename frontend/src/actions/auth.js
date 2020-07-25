@@ -4,6 +4,7 @@ import {
   SUCCESS,
   SIGN_UP_START,
   SIGN_IN_START,
+  SIGN_IN_NEW,
 } from "./types";
 import api from "utils";
 import history from "../history";
