@@ -142,8 +142,8 @@ function CriticalQuestions(props) {
 
       // check if the user has filled valid city, state, and country
       if (coordinates) {
-        story.latitude = coordinates[0];
-        story.longitude = coordinates[1];
+        story.latitude = coordinates[1]; // coordinates = [lng, lat]
+        story.longitude = coordinates[0];
       }
 
       // delete the contacts which have empty email and phone number
@@ -361,7 +361,7 @@ function CriticalQuestions(props) {
           <p className={classNames(styles.status, styles.error)}>
             {status.detail}
           </p>
-      )}
+        )}
       <h1 className="title" style={{ margin: 0 }}>
         MY COVID STORY
       </h1>

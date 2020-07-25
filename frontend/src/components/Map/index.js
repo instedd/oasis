@@ -86,12 +86,18 @@ export default function Map(props, { draggable = true }) {
   const getUserLocation = async () => {
     const userLocation = await fetchUserLocation();
     if (userLocation) {
-      setLocation({
-        ...location,
-        lng: userLocation.lng,
-        lat: userLocation.lat,
-      });
+      if (isInRange(userLocation.latitude, userLocation.longitude)) {
+        setLocation({
+          ...location,
+          lng: userLocation.lng,
+          lat: userLocation.lat,
+        });
+      }
     }
+  };
+
+  const isInRange = (lat, lng) => {
+    return lat && lat <= 90 && lat >= -90 && lng && lng <= 180 && lng >= -180;
   };
 
   const addLayers = async (map) => {
@@ -141,11 +147,11 @@ export default function Map(props, { draggable = true }) {
     stories = stories.filter(
       (story) =>
         story &&
-        story.latitude &&
-        story.longitude &&
+        isInRange(story.latitude, story.longitude) &&
         !story.spam &&
-        story.createdAt &&
-        story.id !== userStory.id
+        story.id !== userStory.id &&
+        story.myStory &&
+        story.myStory !== ""
     );
 
     let features = stories.map((story) => {
@@ -156,8 +162,8 @@ export default function Map(props, { draggable = true }) {
         geometry: {
           type: "Point",
           coordinates: [
-            latitude + getRandomFloat(),
             longitude + getRandomFloat(),
+            latitude + getRandomFloat(),
           ],
         },
         properties: properties,
@@ -407,10 +413,12 @@ export default function Map(props, { draggable = true }) {
     }
 
     // create the marker
-    new mapboxgl.Marker()
-      .setLngLat([userStory.latitude, userStory.longitude])
-      .setPopup(popup) // sets a popup on this marker
-      .addTo(map);
+    if (isInRange(userStory.latitude, userStory.longitude)) {
+      new mapboxgl.Marker()
+        .setLngLat([userStory.longitude, userStory.latitude])
+        .setPopup(popup) // sets a popup on this marker
+        .addTo(map);
+    }
   };
 
   const legend = (
