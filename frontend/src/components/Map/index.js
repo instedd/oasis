@@ -4,12 +4,18 @@ import React, { useEffect, useState } from "react";
 import RoomRoundedIcon from "@material-ui/icons/RoomRounded";
 import styles from "./styles.module.css";
 import api from "utils";
-import { sicknessStatus } from "../../routes/types";
+import { sicknessStatus, testStatus } from "../../routes/types";
 
 const statusMapping = {
   [sicknessStatus.SICK]: { name: "Sick", color: "orange" },
   [sicknessStatus.RECOVERED]: { name: "Recovered", color: "green" },
   [sicknessStatus.NOT_SICK]: { name: "Not Sick", color: "gray" },
+};
+
+const teststatusMapping = {
+  [testStatus.NEGATIVE]: { name: "Tested Negative" },
+  [testStatus.POSITIVE]: { name: "Tested Positive" },
+  [testStatus.NOT_TESTED]: { name: "Not Tested" },
 };
 
 const statusColor = [
@@ -329,6 +335,29 @@ export default function Map(props, { draggable = true }) {
     );
   };
 
+  const createPopup = (userStory, content) => {
+    if (userStory.age) content = content + " " + userStory.age + " years old";
+    content += content.length !== 0 ? " user " : " User ";
+    if (userStory.profession !== "")
+      content =
+        content +
+        " working in " +
+        userStory.profession.toLowerCase() +
+        " industry ";
+    content = content + "living near " + userStory.state;
+    var date = userStory.createdAt.substring(0, 10);
+    if (userStory.myStory) content = content + " on " + date;
+    content += ".";
+    content =
+      content +
+      "<p><u>" +
+      statusMapping[userStory.sick].name +
+      "</u> and <u>" +
+      teststatusMapping[userStory.tested].name +
+      "<u></p>";
+    return content;
+  };
+
   const addStoryLayer = async (map) => {
     var geojson = await fetchStoriesData();
 
@@ -345,16 +374,14 @@ export default function Map(props, { draggable = true }) {
       el.className = "marker";
       var myStory = marker.properties.myStory;
 
-      // check if mystory is null
-      if (!myStory) {
-        myStory = "";
-      }
+      // var date = marker.properties.createdAt.substring(0, 10);
 
-      var date = marker.properties.createdAt.substring(0, 10);
-      var popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-        "<h3>" + date + "</h3><p>" + myStory + "</p>"
-      );
-
+      var popup = new mapboxgl.Popup({ offset: 25 });
+      content = "<p><b>" + date + "</b></p>";
+      content += "<style>h1 {color:red;}body {color:blue;}</style>";
+      //add user story if has any
+      if (myStory) content = content + '<p>"' + myStory + '"</p>-From';
+      popup.setHTML(createPopup(marker.properties, content));
       map.on("mouseenter", "places", function (e) {
         // Change the cursor style as a UI indicator.
         map.getCanvas().style.cursor = "pointer";
@@ -390,21 +417,24 @@ export default function Map(props, { draggable = true }) {
     // create the popup
     const date = userStory.createdAt;
     const story = userStory.myStory;
-
-    var popup = null;
+    console.log(userStory);
+    var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false,
+      offset: 25,
+    });
+    var content = "";
     if (story) {
       if (date) {
-        popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-          "<h3> MY STORY </h3>" + date + "<p>" + story + "</p>"
-        );
-      } else {
-        popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-          "<h3> MY STORY </h3>" + "<p>" + story + "</p>"
-        );
+        content = content + "<p><b>" + date + "</b></p>";
       }
-    } else {
-      popup = new mapboxgl.Popup({ offset: 25 }).setHTML("<h3> MY STORY </h3>");
+      content = content + '<p>"' + story + '"</p>';
     }
+    if (content === "")
+      content = "<h3> You haven't share your story yet! </h3>";
+
+    popup.setHTML(content);
+    //popup.setHTML(createPopup(userStory,content));
 
     // create the marker
     new mapboxgl.Marker()
