@@ -86,13 +86,11 @@ export default function Map(props, { draggable = true }) {
   const getUserLocation = async () => {
     const userLocation = await fetchUserLocation();
     if (userLocation) {
-      if (isInRange(userLocation.lat, userLocation.lng)) {
-        setLocation({
-          ...location,
-          lng: userLocation.lng,
-          lat: userLocation.lat,
-        });
-      }
+      setLocation({
+        ...location,
+        lng: userLocation.lng,
+        lat: userLocation.lat,
+      });
     }
   };
 
