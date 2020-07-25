@@ -149,3 +149,14 @@ def update_close_contacts(
     )
 
     return updated_contacts
+
+
+@router.get("/all", response_model=List[schemas.Story])
+def read_all_stories(db: Session = Depends(get_db)):
+    db_stories = crud.get_all_stories(db)
+
+    stories = list(
+        map(lambda db_story: jsonable_encoder(db_story), db_stories)
+    )
+
+    return JSONResponse(stories, status_code=200)

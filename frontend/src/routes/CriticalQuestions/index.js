@@ -66,6 +66,11 @@ function CriticalQuestions(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, story]);
 
+  // for developer: the result of finding user stories
+  if (status && status.type === ERROR) {
+    console.log(status.detail);
+  }
+
   const handleFormChange = (field) => (event) => {
     const intFields = [fields.AGE];
     const nonValueFields = [fields.SICKNESS_START, fields.SICKNESS_END];
@@ -100,19 +105,58 @@ function CriticalQuestions(props) {
     setContacts(newContacts);
   };
 
+  const getGeocoding = () => {
+    const city = formValues[fields.CITY.key];
+    const state = formValues[fields.STATE.key];
+    const country = formValues[fields.COUNTRY.key];
+
+    const query = city + " " + state + " " + country;
+    const url =
+      "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
+      query +
+      ".json?access_token=" +
+      MAPBOX_APIKEY;
+    return fetch(url)
+      .then((response) => response.json())
+      .then((jsondata) => {
+        if (
+          jsondata &&
+          jsondata.features &&
+          jsondata.features.length &&
+          jsondata.features[0].geometry &&
+          jsondata.features[0].geometry.coordinates &&
+          jsondata.features[0].geometry.coordinates.length >= 2
+        ) {
+          return jsondata.features[0].geometry.coordinates;
+        }
+      });
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    const { ...story } = formValues;
-    if (story.sick === sicknessStatus.NOT_SICK) nextPage = paths.dashboard;
-    else nextPage = paths.symptoms;
 
-    const dto = {
-      story,
-      nextPage,
-      travels: recentTravels,
-      closeContacts: contacts,
-    };
-    dispatch(submitStory(dto));
+    getGeocoding().then((coordinates) => {
+      const { ...story } = formValues;
+      if (story.sick === sicknessStatus.NOT_SICK) nextPage = paths.dashboard;
+      else nextPage = paths.symptoms;
+
+      // check if the user has filled valid city, state, and country
+      if (coordinates) {
+        story.latitude = coordinates[0];
+        story.longitude = coordinates[1];
+      }
+
+      // delete the contacts which have empty email and phone number
+      var valid_contacts = contacts.filter((contact) => contact.email);
+
+      const dto = {
+        story,
+        nextPage,
+        travels: recentTravels,
+        closeContacts: valid_contacts,
+      };
+      dispatch(submitStory(dto));
+    });
   };
 
   const [countries, setCountries] = useState([]);
@@ -183,7 +227,7 @@ function CriticalQuestions(props) {
         <div key={i}>
           <div className={classNames("grid-3", styles["grid-3"])}>
             <TextField
-              label="Email"
+              label="Email (required)"
               value={contact.email}
               onChange={handleCloseContactChange("email", i)}
             />
@@ -294,7 +338,7 @@ function CriticalQuestions(props) {
             }
 
             if (address.length > 1) {
-              state = address[address.length - 2].trim().split(" ")[0];
+              state = address[address.length - 2].trim();
             }
             if (address.length > 2) {
               city = address[address.length - 3].trim();
@@ -306,17 +350,11 @@ function CriticalQuestions(props) {
         } else {
           setListItems([]);
         }
-      })
-      .then((error) => console.log(error));
+      });
   };
 
   return (
     <>
-      {status && status.type === ERROR && (
-        <p className={classNames(styles.status, styles.error)}>
-          {status.detail}
-        </p>
-      )}
       <h1 className="title" style={{ margin: 0 }}>
         MY COVID STORY
       </h1>
@@ -463,20 +501,47 @@ function CriticalQuestions(props) {
         {travelsSection()}
         <div style={{ height: "30px" }} ref={pageBottomRef}></div>
       </div>
-      <AlertDialog
-        label={
-          <Fab
-            style={{ background: "#EA2027" }}
-            aria-label="Go to next page"
-            size="medium"
-            className="fab next-btn"
-          >
-            <ArrowRightIcon />
-          </Fab>
-        }
-        text={contactNoticeText}
-        submit={handleSubmit}
-      />
+
+      {contacts.filter((contact) => contact.email).length !== 0 &&
+        formValues[fields.CITY.key] &&
+        formValues[fields.CITY.key].length &&
+        formValues[fields.STATE.key] &&
+        formValues[fields.STATE.key].length &&
+        formValues[fields.COUNTRY.key] &&
+        formValues[fields.COUNTRY.key].length && (
+          <AlertDialog
+            label={
+              <Fab
+                style={{ background: "#EA2027" }}
+                aria-label="Go to next page"
+                size="medium"
+                className="fab next-btn"
+              >
+                <ArrowRightIcon />
+              </Fab>
+            }
+            text={contactNoticeText}
+            submit={handleSubmit}
+          />
+        )}
+      {(contacts.filter((contact) => contact.email).length === 0 ||
+        !formValues[fields.CITY.key] ||
+        !formValues[fields.CITY.key].length ||
+        !formValues[fields.STATE.key] ||
+        !formValues[fields.STATE.key].length ||
+        !formValues[fields.COUNTRY.key] ||
+        !formValues[fields.COUNTRY.key].length) && (
+        <Fab
+          style={{ background: "#EA2027" }}
+          aria-label="Go to next page"
+          size="medium"
+          className="fab next-btn"
+          onClick={handleSubmit}
+        >
+          <ArrowRightIcon />
+        </Fab>
+      )}
+
       <Fab
         style={{ background: "#9206FF" }}
         aria-label="Go to previous page"

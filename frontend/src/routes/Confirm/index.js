@@ -16,9 +16,7 @@ export default function Confirm({ history }) {
   const location = useLocation();
   const handleClick = (selected) => () => {
     dispatch(setTestedStatus(selected));
-    //console.log(state);
     history.push(getConfirmFlow(location.state, story.sick));
-    //history.push(paths.criticalQuestions);
   };
 
   return (
