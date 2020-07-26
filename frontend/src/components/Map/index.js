@@ -348,13 +348,15 @@ export default function Map(props, { draggable = true }) {
     var date = userStory.createdAt.substring(0, 10);
     if (userStory.myStory) content = content + " on " + date;
     content += ".";
+    const sickColor = statusMapping[userStory.sick].color;
     content =
       content +
-      "<p><u>" +
+      '<p style="color:' +
+      sickColor +
+      ';">' +
+      "<u>" +
       statusMapping[userStory.sick].name +
-      "</u> and <u>" +
-      teststatusMapping[userStory.tested].name +
-      "<u></p>";
+      "</u></p>";
     return content;
   };
 
@@ -374,11 +376,8 @@ export default function Map(props, { draggable = true }) {
       el.className = "marker";
       var myStory = marker.properties.myStory;
 
-      // var date = marker.properties.createdAt.substring(0, 10);
-
       var popup = new mapboxgl.Popup({ offset: 25 });
-      content = "<p><b>" + date + "</b></p>";
-      content += "<style>h1 {color:red;}body {color:blue;}</style>";
+      content = "";
       //add user story if has any
       if (myStory) content = content + '<p>"' + myStory + '"</p>-From';
       popup.setHTML(createPopup(marker.properties, content));
