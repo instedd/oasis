@@ -360,6 +360,18 @@ export default function Map(props, { draggable = true }) {
     return content;
   };
 
+  const setHover = (marker, popup, map) => {
+    const element = marker.getElement();
+    element.id = "marker";
+    // hover event listener
+    element.addEventListener("mouseenter", () => popup.addTo(map));
+    element.addEventListener("mouseleave", () => popup.remove());
+    // add popup to marker
+    marker.setPopup(popup);
+    // add marker to map
+    marker.addTo(map);
+  };
+
   const addStoryLayer = async (map) => {
     var geojson = await fetchStoriesData();
 
@@ -372,11 +384,16 @@ export default function Map(props, { draggable = true }) {
     // add markers to map
     geojson.features.forEach(function (marker) {
       // create a HTML element for each feature
+      console.log(marker);
       var el = document.createElement("div");
       el.className = "marker";
       var myStory = marker.properties.myStory;
 
-      var popup = new mapboxgl.Popup({ offset: 25 });
+      var popup = new mapboxgl.Popup({
+        offset: 25,
+        closeButton: false,
+        closeOnClick: false,
+      });
       content = "";
       //add user story if has any
       if (myStory) content = content + '<p>"' + myStory + '"</p>-From';
@@ -406,10 +423,10 @@ export default function Map(props, { draggable = true }) {
 
       // create the marker
       const sickStatus = marker.properties.sick;
-      new mapboxgl.Marker({ color: statusMapping[sickStatus].color })
-        .setLngLat(marker.geometry.coordinates)
-        .setPopup(popup) // sets a popup on this marker
-        .addTo(map);
+      const currmarker = new mapboxgl.Marker({
+        color: statusMapping[sickStatus].color,
+      }).setLngLat(marker.geometry.coordinates);
+      setHover(currmarker, popup, map);
     });
 
     // Add current user's marker
@@ -429,17 +446,14 @@ export default function Map(props, { draggable = true }) {
       }
       content = content + '<p>"' + story + '"</p>';
     }
-    if (content === "")
-      content = "<h3> You haven't share your story yet! </h3>";
+    if (content === "") content = "<p> You haven't share your story yet! </p>";
 
     popup.setHTML(content);
-    //popup.setHTML(createPopup(userStory,content));
-
-    // create the marker
-    new mapboxgl.Marker()
-      .setLngLat([userStory.latitude, userStory.longitude])
-      .setPopup(popup) // sets a popup on this marker
-      .addTo(map);
+    const marker = new mapboxgl.Marker().setLngLat([
+      userStory.latitude,
+      userStory.longitude,
+    ]);
+    setHover(marker, popup, map);
   };
 
   const legend = (
