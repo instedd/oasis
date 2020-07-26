@@ -335,7 +335,7 @@ export default function Map(props, { draggable = true }) {
     );
   };
 
-  const createPopup = (userStory, content) => {
+  const popUpContent = (userStory, content) => {
     if (userStory.age) content = content + " " + userStory.age + " years old";
     content += content.length !== 0 ? " user " : " User ";
     if (userStory.profession !== "")
@@ -360,7 +360,13 @@ export default function Map(props, { draggable = true }) {
     return content;
   };
 
-  const setHover = (marker, popup, map) => {
+  const setHover = (marker, content, map) => {
+    var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false,
+      offset: 25,
+    });
+    popup.setHTML(content);
     const element = marker.getElement();
     element.id = "marker";
     // hover event listener
@@ -389,44 +395,18 @@ export default function Map(props, { draggable = true }) {
       el.className = "marker";
       var myStory = marker.properties.myStory;
 
-      var popup = new mapboxgl.Popup({
-        offset: 25,
-        closeButton: false,
-        closeOnClick: false,
-      });
       content = "";
       //add user story if has any
       if (myStory) content = content + '<p>"' + myStory + '"</p>-From';
-      popup.setHTML(createPopup(marker.properties, content));
-      map.on("mouseenter", "places", function (e) {
-        // Change the cursor style as a UI indicator.
-        map.getCanvas().style.cursor = "pointer";
-        var coordinates = e.features[0].geometry.coordinates.slice();
-        var description = e.features[0].properties.myStory;
-
-        // Ensure that if the map is zoomed out such that multiple
-        // copies of the feature are visible, the popup appears
-        // over the copy being pointed to.
-        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-        }
-
-        // Populate the popup and set its coordinates
-        // based on the feature found.
-        popup.setLngLat(coordinates).setHTML(description).addTo(map);
-      });
-
-      map.on("mouseleave", "places", function () {
-        map.getCanvas().style.cursor = "";
-        popup.remove();
-      });
+      content = popUpContent(marker.properties, content);
 
       // create the marker
       const sickStatus = marker.properties.sick;
       const currmarker = new mapboxgl.Marker({
         color: statusMapping[sickStatus].color,
       }).setLngLat(marker.geometry.coordinates);
-      setHover(currmarker, popup, map);
+      //attach the popup
+      setHover(currmarker, content, map);
     });
 
     // Add current user's marker
@@ -434,26 +414,20 @@ export default function Map(props, { draggable = true }) {
     const date = userStory.createdAt;
     const story = userStory.myStory;
     console.log(userStory);
-    var popup = new mapboxgl.Popup({
-      closeButton: false,
-      closeOnClick: false,
-      offset: 25,
-    });
     var content = "";
     if (story) {
       if (date) {
         content = content + "<p><b>" + date + "</b></p>";
       }
       content = content + '<p>"' + story + '"</p>';
-    }
-    if (content === "") content = "<p> You haven't share your story yet! </p>";
+    } else content = "<p> You haven't share your story yet! </p>";
 
-    popup.setHTML(content);
     const marker = new mapboxgl.Marker().setLngLat([
       userStory.latitude,
       userStory.longitude,
     ]);
-    setHover(marker, popup, map);
+    //attach the popup
+    setHover(marker, content, map);
   };
 
   const legend = (
