@@ -106,7 +106,7 @@ export default function Map(props, { draggable = true }) {
     const worldData = data["data"]["adm0"];
     // US data for state layer
     const usStatesData = data["data"]["adm1"]["US"];
-
+    console.log(data);
     addLegend(data);
 
     map.on("load", function () {
