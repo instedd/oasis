@@ -29,6 +29,9 @@ export default function Map(props, { draggable = true }) {
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
 
   const userStory = props.userStory;
+  const actives = props.actives;
+  const death = props.death;
+  const recovered = props.recovered;
 
   const dataScope = {
     WORLD: "world",
@@ -205,10 +208,41 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
+
+    map.on("mousemove", function (e) {
+      var countries = map.queryRenderedFeatures(e.point, {
+        layers: ["world-layer"],
+      });
+
+      if (countries.length > 0) {
+        const country_name = countries[0].properties.name;
+        const country = covidData.filter(
+          (country) => country.name === country_name
+        );
+
+        if (country.length > 0 && country[0].confirmed) {
+          document.getElementById("pd").innerHTML =
+            "<h3><strong>" +
+            country_name +
+            "</strong></h3><p><strong><em>" +
+            country[0].confirmed +
+            "</strong> cases have been confirmed</em></p>";
+        } else {
+          document.getElementById("pd").innerHTML =
+            "<h3><strong>" +
+            country_name +
+            "</strong></h3><p><strong><em> NA </strong></em></p>";
+        }
+      } else {
+        document.getElementById("pd").innerHTML =
+          "<p>Hover over a state or country!</p>";
+      }
+    });
   };
 
   const addNonUSLayer = async (map, data) => {
     const covidData = await data;
+
     // Delete US from the world expression(all expression)
     const expression = covidData
       .filter((country) => country.name !== "United States of America")
@@ -237,6 +271,37 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
+
+    map.on("mousemove", function (e) {
+      var countries = map.queryRenderedFeatures(e.point, {
+        layers: ["non-us-layer"],
+      });
+
+      if (
+        countries.length > 0 &&
+        countries[0].properties.name &&
+        countries[0].properties.name !== "United States of America"
+      ) {
+        const country_name = countries[0].properties.name;
+        const country = covidData.filter(
+          (country) => country.name === country_name
+        );
+
+        if (country.length > 0 && country[0].confirmed) {
+          document.getElementById("pd").innerHTML =
+            "<h3><strong>" +
+            country_name +
+            "</strong></h3><p><strong><em>" +
+            country[0].confirmed +
+            "</strong> cases have been confirmed</em></p>";
+        } else {
+          document.getElementById("pd").innerHTML =
+            "<h3><strong>" +
+            country_name +
+            "</strong></h3><p><strong><em> NA </strong></em></p>";
+        }
+      }
+    });
   };
 
   const addUSStatesLayer = async (map, data) => {
@@ -331,6 +396,29 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
+
+    // add the information window
+    map.on("mousemove", function (e) {
+      var states = map.queryRenderedFeatures(e.point, {
+        layers: ["us-states-layer"],
+      });
+
+      if (states.length > 0) {
+        const state_name = states[0].properties.STATE_NAME;
+        const abbr_name = Object.keys(stateToFIPS).find(
+          (key) => stateToFIPS[key] === states[0].properties.STATE_ID
+        );
+        const confirmed = usData.filter((state) => state.name === abbr_name)[0]
+          .confirmed;
+
+        document.getElementById("pd").innerHTML =
+          "<h3>" +
+          state_name +
+          "</h3><strong><em>" +
+          confirmed +
+          "</strong> cases have been confirmed</em>";
+      }
+    });
   };
 
   const addStoryLayer = async (map) => {
@@ -449,6 +537,17 @@ export default function Map(props, { draggable = true }) {
 
   return (
     <div className={styles.root}>
+      <div class="map-overlay" id="features">
+        <div>
+          {" "}
+          <h3>
+            Actives: {actives} Death: {death} Recovered: {recovered}{" "}
+          </h3>{" "}
+        </div>
+        <div id="pd">
+          <p>Hover over a state or country!</p>
+        </div>
+      </div>
       <div className={styles.refresh}>
         Please refresh the page if the map is gray.
       </div>
