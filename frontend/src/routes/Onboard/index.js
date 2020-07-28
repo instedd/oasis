@@ -3,16 +3,20 @@ import classNames from "classnames";
 import React from "react";
 import { useDispatch } from "react-redux";
 import { sicknessStatus } from "routes/types";
-import { setSickStatus } from "../../actions/story";
+import { submitSick } from "../../actions/story";
 import styles from "./styles.module.css";
 import paths from "routes/paths";
+import { fields } from "./fields";
 import { useLocation } from "react-router-dom";
 
 export default function Onboard({ history }) {
   const dispatch = useDispatch();
   const location = useLocation();
+  const story = fields;
+
   const handleClick = (selected) => () => {
-    dispatch(setSickStatus(selected));
+    story.sick = selected;
+    dispatch(submitSick({ story }));
     if (selected === sicknessStatus.SICK)
       history.push(paths.alert, location.state || {});
     else history.push(paths.confirm, location.state || {});

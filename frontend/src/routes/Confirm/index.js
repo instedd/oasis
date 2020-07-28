@@ -1,21 +1,29 @@
 import { Fab } from "@material-ui/core";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import classNames from "classnames";
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import paths, { getConfirmFlow } from "routes/paths";
 import { sicknessStatus, testStatus } from "routes/types";
-import { setTestedStatus } from "../../actions/story";
+import { fetchStory, submitSick } from "../../actions/story";
 import styles from "./styles.module.css";
 import { useLocation } from "react-router-dom";
 
 export default function Confirm({ history }) {
   const sick = useSelector((state) => state.story.sick);
   const { story } = useSelector((state) => state.story);
+
+  // useEffect(() => {
+  //   if (!story) {
+  //     dispatch(fetchStory());
+  //   }
+  // })
+
   const dispatch = useDispatch();
   const location = useLocation();
   const handleClick = (selected) => () => {
-    dispatch(setTestedStatus(selected));
+    story.tested = selected;
+    dispatch(submitSick({ story }));
     history.push(getConfirmFlow(location.state, story.sick));
   };
 

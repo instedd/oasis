@@ -24,21 +24,28 @@ const isValidStory = (dto) => invalidFields(dto.story).length === 0;
 const invalidFields = (dto) =>
   mandatoryFields.filter((field) => !(field.key in dto && dto[field.key]));
 
-export const submitStory = (dto) => async (dispatch) => {
-  if (!isValidStory(dto)) {
-    return dispatch({
-      type: INVALID_STORY,
-      payload: {
-        status: {
-          type: ERROR,
-          detail: `Please complete the following fields: ${invalidFields(dto)
-            .map((field) => field.label)
-            .join(", ")}`,
-        },
-      },
-    });
-  }
+export const submitSick = (dto) => async (dispatch) => {
+  const { story, nextPage, travels, closeContacts } = dto;
+  const {
+    error,
+    travels: [],
+    closeContacts: [],
+    ...updatedStory
+  } = await api(`stories/`, {
+    method: "POST",
+    body: story,
+  });
 
+  dispatch({
+    type: SAVED_STORY,
+    payload: {
+      status: error || { type: SUCCESS },
+      story: (!error && updatedStory) || null,
+    },
+  });
+};
+
+export const submitStory = (dto, path) => async (dispatch) => {
   dispatch({ type: SAVE_STORY_START });
   const { story, nextPage, travels, closeContacts } = dto;
   const {
@@ -58,6 +65,20 @@ export const submitStory = (dto) => async (dispatch) => {
       story: (!error && updatedStory) || null,
     },
   });
+
+  if (!isValidStory(dto)) {
+    return dispatch({
+      type: INVALID_STORY,
+      payload: {
+        status: {
+          type: ERROR,
+          detail: `Please complete the following fields: ${invalidFields(dto)
+            .map((field) => field.label)
+            .join(", ")}`,
+        },
+      },
+    });
+  }
 
   const storyId = updatedStory.id;
   const sendTravels = () =>

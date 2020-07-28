@@ -16,13 +16,15 @@ class Sex(str, Enum):
 class MedicalSituation(str, Enum):
     sick = "sick"
     not_sick = "not_sick"
-    recovered = "recovered"
+    recovered = ("recovered",)
+    unknown = "unknown"
 
 
 class TestSituation(str, Enum):
     positive = "positive"
     negative = "negative"
-    not_tested = "not_tested"
+    not_tested = ("not_tested",)
+    unknown = "unknown"
 
 
 class TravelCreate(BaseModel):
