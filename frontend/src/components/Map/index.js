@@ -7,15 +7,12 @@ import api from "utils";
 import { sicknessStatus, testStatus } from "../../routes/types";
 
 const statusMapping = {
+  [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
+  [testStatus.NEGATIVE]: { name: "Tested Negative", color: "purple" },
+  [testStatus.NOT_TESTED]: { name: "Not Tested", color: "blue" },
   [sicknessStatus.SICK]: { name: "Sick", color: "orange" },
   [sicknessStatus.RECOVERED]: { name: "Recovered", color: "green" },
   [sicknessStatus.NOT_SICK]: { name: "Not Sick", color: "gray" },
-};
-
-const teststatusMapping = {
-  [testStatus.NEGATIVE]: { name: "Tested Negative" },
-  [testStatus.POSITIVE]: { name: "Tested Positive" },
-  [testStatus.NOT_TESTED]: { name: "Not Tested" },
 };
 
 const statusColor = [
@@ -335,28 +332,41 @@ export default function Map(props, { draggable = true }) {
     );
   };
 
+  const addCircle = (status, content) => {
+    const color = status.color;
+    const word = status.name;
+    content +=
+      '<div style="position:relative;width: 8px; height: 8px;line-height:8px;font-size:8px;' +
+      "margin-right: 10px;top:5px;float: left;border-radius: 50%;background:";
+    content = content + color + ';"></div>';
+    content =
+      content +
+      '<p style="position:relative;top:5px;right:5px;float:left;' +
+      "color:" +
+      color +
+      ';line-height:8px;font-size:8px;">' +
+      word.toUpperCase() +
+      "</p>";
+    return content;
+  };
   const popUpContent = (userStory, content) => {
     if (userStory.age) content = content + " " + userStory.age + " years old";
-    content += content.length !== 0 ? " user " : " User ";
+    content += userStory.myStory || userStory.age ? " user " : " User ";
     if (userStory.profession !== "")
       content =
         content +
-        " working in " +
+        " working in the " +
         userStory.profession.toLowerCase() +
         " industry ";
     content = content + "living near " + userStory.state;
     var date = userStory.createdAt.substring(0, 10);
     if (userStory.myStory) content = content + " on " + date;
-    content += ".";
-    const sickColor = statusMapping[userStory.sick].color;
-    content =
-      content +
-      '<p style="color:' +
-      sickColor +
-      ';">' +
-      "<u>" +
-      statusMapping[userStory.sick].name +
-      "</u></p>";
+    content += ".</p>";
+    content += '<div style="line-height:8px;" class="row">';
+    content = addCircle(statusMapping[userStory.sick], content);
+    content = addCircle(statusMapping[userStory.tested], content);
+    content += "</div>";
+    console.log(content);
     return content;
   };
 
@@ -397,7 +407,13 @@ export default function Map(props, { draggable = true }) {
 
       content = "";
       //add user story if has any
-      if (myStory) content = content + '<p>"' + myStory + '"</p>-From';
+      if (myStory)
+        content =
+          content +
+          '<p style="font-size:15px;line-height:15px;"><b>"' +
+          myStory +
+          '"</b></p><p style = "line-height:10px;font-size:10px;">-From';
+      else content += '<p style = "line-height:10px;font-size:10px;">';
       content = popUpContent(marker.properties, content);
 
       // create the marker
