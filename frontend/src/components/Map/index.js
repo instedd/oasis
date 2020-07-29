@@ -359,7 +359,7 @@ export default function Map(props, { draggable = true }) {
         " working in the " +
         userStory.profession.toLowerCase() +
         " industry ";
-    content = content + "living near " + userStory.state;
+    content = content + "living in " + userStory.state;
     var date = userStory.createdAt.substring(0, 10);
     if (userStory.myStory) content = content + " on " + date;
     content += ".</p>";
@@ -409,7 +409,7 @@ export default function Map(props, { draggable = true }) {
           content +
           '<p style="font-size:5vh;line-height:5vh;">"' +
           myStory +
-          '"</p><p style = "line-height:3vh;font-size:3vh;">-From';
+          '"</p><p style = "line-height:3vh;font-size:3vh;">- From';
       else content += '<p style = "line-height:3vh;font-size:3vh;">';
       content = popUpContent(marker.properties, content);
 
