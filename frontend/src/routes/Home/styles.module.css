@@ -2,7 +2,8 @@
   font-weight: normal;
   line-height: 125%;
   text-align: center;
-  width: 270px;
+  margin: 0px;
+  padding: 0px;
 }
 
 .signin {

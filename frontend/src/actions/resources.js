@@ -153,7 +153,7 @@ const testCali = withStory((story) => {
     predicate:
       (story.state === states.BAJA && story.country === countries.MEX) ||
       (story.state === states.CAL &&
-        (story.country == countries.USA || story.country === countries.US)),
+        (story.country === countries.USA || story.country === countries.US)),
     link: "https://covid19.ca.gov/testing-and-treatment/",
   };
 
