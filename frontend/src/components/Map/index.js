@@ -97,6 +97,10 @@ export default function Map(props, { draggable = true }) {
     }
   };
 
+  const isInRange = (lat, lng) => {
+    return lat && lat <= 90 && lat >= -90 && lng && lng <= 180 && lng >= -180;
+  };
+
   const addLayers = async (map) => {
     const data = await fetchCovidData(dataScope.ALL);
     //world data including US for world layer
@@ -144,11 +148,11 @@ export default function Map(props, { draggable = true }) {
     stories = stories.filter(
       (story) =>
         story &&
-        story.latitude &&
-        story.longitude &&
+        isInRange(story.latitude, story.longitude) &&
         !story.spam &&
-        story.createdAt &&
-        story.id !== userStory.id
+        story.id !== userStory.id &&
+        story.myStory &&
+        story.myStory !== ""
     );
 
     let features = stories.map((story) => {
@@ -159,8 +163,8 @@ export default function Map(props, { draggable = true }) {
         geometry: {
           type: "Point",
           coordinates: [
-            latitude + getRandomFloat(),
             longitude + getRandomFloat(),
+            latitude + getRandomFloat(),
           ],
         },
         properties: properties,
@@ -435,15 +439,17 @@ export default function Map(props, { draggable = true }) {
       if (date) {
         content = content + "<p><b>" + date + "</b></p>";
       }
-      content = content + '<p>"' + story + '"</p>';
-    } else content = "<p> You haven't share your story yet! </p>";
+    } else {
+      popup = new mapboxgl.Popup({ offset: 25 }).setHTML("<h3> MY STORY </h3>");
+    }
 
-    const marker = new mapboxgl.Marker().setLngLat([
-      userStory.latitude,
-      userStory.longitude,
-    ]);
-    //attach the popup
-    setHover(marker, content, map);
+    // create the marker
+    if (isInRange(userStory.latitude, userStory.longitude)) {
+      new mapboxgl.Marker()
+        .setLngLat([userStory.longitude, userStory.latitude])
+        .setPopup(popup) // sets a popup on this marker
+        .addTo(map);
+    }
   };
 
   const legend = (
