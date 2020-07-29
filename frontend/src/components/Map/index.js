@@ -337,7 +337,7 @@ export default function Map(props, { draggable = true }) {
     const color = status.color;
     const word = status.name;
     content +=
-      '<div style="position:relative;width: 8px; height: 8px;line-height:8px;font-size:8px;' +
+      '<div style="position:relative;width: 8px; height: 8px;line-height:2vh;font-size:2vh;' +
       "margin-right: 10px;top:5px;float: left;border-radius: 50%;background:";
     content = content + color + ';"></div>';
     content =
@@ -345,7 +345,7 @@ export default function Map(props, { draggable = true }) {
       '<p style="position:relative;top:5px;right:5px;float:left;' +
       "color:" +
       color +
-      ';line-height:8px;font-size:8px;">' +
+      ';line-height:2vh;font-size:2vh;">' +
       word.toUpperCase() +
       "</p>";
     return content;
@@ -363,7 +363,7 @@ export default function Map(props, { draggable = true }) {
     var date = userStory.createdAt.substring(0, 10);
     if (userStory.myStory) content = content + " on " + date;
     content += ".</p>";
-    content += '<div style="line-height:8px;" class="row">';
+    content += '<div style="line-height:2vh;" class="row">';
     content = addCircle(statusMapping[userStory.sick], content);
     content = addCircle(statusMapping[userStory.tested], content);
     content += "</div>";
@@ -407,10 +407,10 @@ export default function Map(props, { draggable = true }) {
       if (myStory)
         content =
           content +
-          '<p style="font-size:15px;line-height:15px;">"' +
+          '<p style="font-size:5vh;line-height:5vh;">"' +
           myStory +
-          '"</p><p style = "line-height:10px;font-size:10px;">-From';
-      else content += '<p style = "line-height:10px;font-size:10px;">';
+          '"</p><p style = "line-height:3vh;font-size:3vh;">-From';
+      else content += '<p style = "line-height:3vh;font-size:3vh;">';
       content = popUpContent(marker.properties, content);
 
       // create the marker
@@ -428,15 +428,11 @@ export default function Map(props, { draggable = true }) {
     // create the popup
     const date = userStory.createdAt;
     const story = userStory.myStory;
-    var content = "";
+    var content = '<p style="font-size:4vh;line-height:4vh;">';
     if (story) {
-      content =
-        content +
-        '<p style="font-size:15px;line-height:15px;">"' +
-        story +
-        '"</p>';
+      content = content + '"' + story + '"</p>';
       if (date) content = content + "<p> - on" + date + "</p>";
-    } else content = "<p> You haven't share your story yet! </p>";
+    } else content += "You haven't share your story yet! </p>";
 
     // create the marker
     if (isInRange(userStory.latitude, userStory.longitude)) {
