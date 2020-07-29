@@ -5,6 +5,10 @@ import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import { makeStyles } from "@material-ui/core/styles";
+import { Alert } from "@material-ui/lab";
+import Dialog from "@material-ui/core/Dialog";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
 
 import Text from "../../text.json";
 import Pop from "components/PopUp";
@@ -65,6 +69,7 @@ function App(props) {
   const classes = useStyles();
   const classesTooltip = useStylesTooltip();
   const [open, setOpen] = React.useState(false);
+  const [dialOpen, setDialOpen] = React.useState(false);
 
   const handleOpen = () => {
     setOpen(true);
@@ -74,14 +79,37 @@ function App(props) {
     setOpen(false);
   };
 
+  const handleDialOpen = () => {
+    setDialOpen(true);
+  };
+
+  const handleDialClose = () => {
+    setDialOpen(false);
+  };
+
   const texts = Text["Terms and Conditions"].texts;
   const listIndex = Text["Terms and Conditions"].listIndex;
   const linkIndex = Text["Terms and Conditions"].linkIndex;
+  //if(document.getElementById('speeddial')) console.log(document.getElementById('speeddial'));
+  console.log(open);
   return (
     <>
       <h1 className={styles.title}>FIGHT COVID-19 PUT YOUR STORY ON THE MAP</h1>
       <div>
+        <Dialog
+          open={dialOpen}
+          onClose={handleDialClose}
+          fullWidth={true}
+          maxWidth={"md"}
+        >
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Please read the Terms and Conditions.
+            </DialogContentText>
+          </DialogContent>
+        </Dialog>
         <SpeedDial
+          id="speeddial"
           ariaLabel="Take action"
           className={classes.speedDial}
           icon={<SpeedDialIcon />}
@@ -96,17 +124,9 @@ function App(props) {
             tooltipTitle="Terms and Conditions"
             icon={
               <div style={{ alignItems: "center" }}>
-                <Checkbox 
+                <Checkbox
                   id="checkbox"
-                  style={{ color: "white", padding: "0 5px 0 0" }} 
-                  onChange={(e)=> {
-                    var warning = document.getElementById("warning");
-                    if(e.target.checked){
-                      warning.innerHTML = "";
-                    }else{
-                      warning.innerHTML = "Please read the Terms and Conditions";
-                    }
-                  }}
+                  style={{ color: "white", padding: "0 5px 0 0" }}
                 />
                 <Pop
                   label={
@@ -125,9 +145,6 @@ function App(props) {
                   linkIndex={linkIndex}
                   listIndex={listIndex}
                 />
-                <div id="warning" style={{color:"red", fontSize: 10}}>
-                    Please read the Terms and Conditions
-                </div>
               </div>
             }
             TooltipClasses={classesTooltip}
@@ -140,10 +157,11 @@ function App(props) {
               className={action.classes}
               TooltipClasses={classesTooltip}
               onClick={() => {
-                if(document.getElementById('checkbox').checked){                 
+                if (document.getElementById("checkbox").checked) {
                   history.push(action.href, action.state || {});
-                }else{
-                  history.push('', action.state || {});
+                } else {
+                  handleDialOpen();
+                  history.push("", action.state || {});
                 }
               }}
             />
