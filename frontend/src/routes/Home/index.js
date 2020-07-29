@@ -163,12 +163,11 @@ function App(props) {
                 style={{ alignItems: "center", display: "none" }}
               >
                 <ErrorOutlineIcon
-                  style={{ fontSize: "medium", color: "yellow" }}
+                  style={{ fontSize: "medium", color: "red" }}
                 />
-                <span style={{ color: "yellow", fontSize: 11 }}>
+                <span style={{ color: "red", fontSize: 11 }}>
                   <strong>
-                    {" "}
-                    <em> Please read the Terms & Conditions</em>{" "}
+                    Please read the Terms & Conditions
                   </strong>
                 </span>
               </div>
