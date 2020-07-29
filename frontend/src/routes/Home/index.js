@@ -5,7 +5,6 @@ import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import { makeStyles } from "@material-ui/core/styles";
-import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 
 import Text from "../../text.json";
 import Pop from "components/PopUp";
