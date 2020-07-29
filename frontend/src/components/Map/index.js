@@ -337,7 +337,7 @@ export default function Map(props, { draggable = true }) {
     const color = status.color;
     const word = status.name;
     content +=
-      '<div style="position:relative;width: 8px; height: 8px;line-height:2vh;font-size:2vh;' +
+      '<div style="position:relative;width: 8px; height: 8px;line-height:0.8rem;font-size:0.8rem;' +
       "margin-right: 10px;top:5px;float: left;border-radius: 50%;background:";
     content = content + color + ';"></div>';
     content =
@@ -345,7 +345,7 @@ export default function Map(props, { draggable = true }) {
       '<p style="position:relative;top:5px;right:5px;float:left;' +
       "color:" +
       color +
-      ';line-height:2vh;font-size:2vh;">' +
+      ';line-height:0.8rem;font-size:0.8rem;">' +
       word.toUpperCase() +
       "</p>";
     return content;
@@ -363,7 +363,7 @@ export default function Map(props, { draggable = true }) {
     var date = userStory.createdAt.substring(0, 10);
     if (userStory.myStory) content = content + " on " + date;
     content += ".</p>";
-    content += '<div style="line-height:2vh;" class="row">';
+    content += '<div style="line-height:0.8rem;" class="row">';
     content = addCircle(statusMapping[userStory.sick], content);
     content = addCircle(statusMapping[userStory.tested], content);
     content += "</div>";
@@ -407,10 +407,10 @@ export default function Map(props, { draggable = true }) {
       if (myStory)
         content =
           content +
-          '<p style="font-size:5vh;line-height:5vh;">"' +
+          '<p style="font-size: 18px;line-height: 18px;">"' +
           myStory +
-          '"</p><p style = "line-height:3vh;font-size:3vh;">- From';
-      else content += '<p style = "line-height:3vh;font-size:3vh;">';
+          '"</p><p style = "line-height:0.9rem;font-size:0.9rem;">- From';
+      else content += '<p style = "line-height:0.8rem;font-size:0.8rem;">';
       content = popUpContent(marker.properties, content);
 
       // create the marker
@@ -428,7 +428,7 @@ export default function Map(props, { draggable = true }) {
     // create the popup
     const date = userStory.createdAt;
     const story = userStory.myStory;
-    var content = '<p style="font-size:4vh;line-height:4vh;">';
+    var content = '<p style="font-size: 18px;line-height: 18px;">';
     if (story) {
       content = content + '"' + story + '"</p>';
       if (date) content = content + "<p> - on" + date + "</p>";
