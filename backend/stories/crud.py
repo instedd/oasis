@@ -28,6 +28,11 @@ def get_story(db: Session, story_id: int):
 
 
 def update_story(db: Session, story_id: int, story: schemas.StoryCreate):
+    # Don't update my_story if given as none for now.
+    # Delete this after frontend is updated.
+    if story.my_story is None:
+        current = get_story(db, story_id)
+        story.my_story = current.my_story
     return update(story_id, story, models.Story, db)
 
 
