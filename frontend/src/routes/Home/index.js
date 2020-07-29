@@ -98,16 +98,14 @@ function App(props) {
             className={classes.terms}
             tooltipTitle="Terms and Conditions"
             icon={
-              <div style={{ alignItems: "center" }}>
+              <div style={{ alignItems: "center", padding: "0px 6px" }}>
                 <Checkbox
                   id="checkbox"
-                  style={{ color: "white", padding: "0px 10px" }}
+                  style={{ color: "white", padding: "0px 2px" }}
                   onChange={(e) => {
-                    var warning = document.getElementById("warning");
                     if (e.target.checked) {
+                      var warning = document.getElementById("warning");
                       warning.style.display = "none";
-                    } else {
-                      warning.style.display = "inline";
                     }
                   }}
                 />
@@ -148,6 +146,8 @@ function App(props) {
                   history.push(action.href, action.state || {});
                 } else {
                   history.push("", action.state || {});
+                  var warning = document.getElementById("warning");
+                  warning.style.display = "inline";
                 }
               }}
             />
@@ -158,11 +158,14 @@ function App(props) {
             tooltipTitle="Read"
             TooltipClasses={classesTooltip}
             icon={
-              <div id="warning" style={{ alignItems: "center" }}>
+              <div
+                id="warning"
+                style={{ alignItems: "center", display: "none" }}
+              >
                 <ErrorOutlineIcon
                   style={{ fontSize: "medium", color: "yellow" }}
                 />
-                <span style={{ color: "yellow", fontSize: 12 }}>
+                <span style={{ color: "yellow", fontSize: 11 }}>
                   <strong>
                     {" "}
                     <em> Please read the Terms & Conditions</em>{" "}
