@@ -4,9 +4,12 @@ import React, { useEffect, useState } from "react";
 import RoomRoundedIcon from "@material-ui/icons/RoomRounded";
 import styles from "./styles.module.css";
 import api from "utils";
-import { sicknessStatus } from "../../routes/types";
+import { sicknessStatus, testStatus } from "../../routes/types";
 
 const statusMapping = {
+  [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
+  [testStatus.NEGATIVE]: { name: "Tested Negative", color: "purple" },
+  [testStatus.NOT_TESTED]: { name: "Not Tested", color: "blue" },
   [sicknessStatus.SICK]: { name: "Sick", color: "orange" },
   [sicknessStatus.RECOVERED]: { name: "Recovered", color: "green" },
   [sicknessStatus.NOT_SICK]: { name: "Not Sick", color: "gray" },
@@ -94,13 +97,16 @@ export default function Map(props, { draggable = true }) {
     }
   };
 
+  const isInRange = (lat, lng) => {
+    return lat && lat <= 90 && lat >= -90 && lng && lng <= 180 && lng >= -180;
+  };
+
   const addLayers = async (map) => {
     const data = await fetchCovidData(dataScope.ALL);
     //world data including US for world layer
     const worldData = data["data"]["adm0"];
     // US data for state layer
     const usStatesData = data["data"]["adm1"]["US"];
-
     addLegend(data);
 
     map.on("load", function () {
@@ -141,10 +147,8 @@ export default function Map(props, { draggable = true }) {
     stories = stories.filter(
       (story) =>
         story &&
-        story.latitude &&
-        story.longitude &&
+        isInRange(story.latitude, story.longitude) &&
         !story.spam &&
-        story.createdAt &&
         story.id !== userStory.id
     );
 
@@ -156,8 +160,8 @@ export default function Map(props, { draggable = true }) {
         geometry: {
           type: "Point",
           coordinates: [
-            latitude + getRandomFloat(),
             longitude + getRandomFloat(),
+            latitude + getRandomFloat(),
           ],
         },
         properties: properties,
@@ -329,6 +333,59 @@ export default function Map(props, { draggable = true }) {
     );
   };
 
+  const addCircle = (status, content) => {
+    const color = status.color;
+    const word = status.name;
+    content +=
+      '<div style="position:relative;width: 8px; height: 8px;line-height:0.8rem;font-size:0.8rem;' +
+      "margin-right: 10px;top:5px;float: left;border-radius: 50%;background:";
+    content = content + color + ';"></div>';
+    content =
+      content +
+      '<p style="position:relative;top:5px;right:5px;float:left;' +
+      "color:" +
+      color +
+      ';line-height:0.8rem;font-size:0.8rem;">' +
+      word.toUpperCase() +
+      "</p>";
+    return content;
+  };
+  const popUpContent = (userStory, content) => {
+    if (userStory.age) content = content + " " + userStory.age + " years old";
+    content += userStory.myStory || userStory.age ? " user " : " User ";
+    if (userStory.profession !== "")
+      content =
+        content +
+        " working in the " +
+        userStory.profession.toLowerCase() +
+        " industry ";
+    content = content + "living in " + userStory.state;
+    var date = userStory.createdAt.substring(0, 10);
+    if (userStory.myStory) content = content + " on " + date;
+    content += ".</p>";
+    content += '<div style="line-height:0.8rem;" class="row">';
+    content = addCircle(statusMapping[userStory.sick], content);
+    content = addCircle(statusMapping[userStory.tested], content);
+    content += "</div>";
+    return content;
+  };
+
+  const setHover = (marker, content, map) => {
+    var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false,
+      offset: 25,
+    });
+    popup.setHTML(content);
+    const element = marker.getElement();
+    element.id = "marker";
+    // hover event listener
+    element.addEventListener("mouseenter", () => popup.addTo(map));
+    element.addEventListener("mouseleave", () => popup.remove());
+    // add popup to marker
+    marker.setPopup(popup);
+  };
+
   const addStoryLayer = async (map) => {
     var geojson = await fetchStoriesData();
 
@@ -345,72 +402,49 @@ export default function Map(props, { draggable = true }) {
       el.className = "marker";
       var myStory = marker.properties.myStory;
 
-      // check if mystory is null
-      if (!myStory) {
-        myStory = "";
-      }
-
-      var date = marker.properties.createdAt.substring(0, 10);
-      var popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-        "<h3>" + date + "</h3><p>" + myStory + "</p>"
-      );
-
-      map.on("mouseenter", "places", function (e) {
-        // Change the cursor style as a UI indicator.
-        map.getCanvas().style.cursor = "pointer";
-        var coordinates = e.features[0].geometry.coordinates.slice();
-        var description = e.features[0].properties.myStory;
-
-        // Ensure that if the map is zoomed out such that multiple
-        // copies of the feature are visible, the popup appears
-        // over the copy being pointed to.
-        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-        }
-
-        // Populate the popup and set its coordinates
-        // based on the feature found.
-        popup.setLngLat(coordinates).setHTML(description).addTo(map);
-      });
-
-      map.on("mouseleave", "places", function () {
-        map.getCanvas().style.cursor = "";
-        popup.remove();
-      });
+      content = "";
+      //add user story if has any
+      if (myStory)
+        content =
+          content +
+          '<p style="font-size: 18px;line-height: 18px;">"' +
+          myStory +
+          '"</p><p style = "line-height:0.9rem;font-size:0.9rem;">- From';
+      else content += '<p style = "line-height:0.8rem;font-size:0.8rem;">';
+      content = popUpContent(marker.properties, content);
 
       // create the marker
       const sickStatus = marker.properties.sick;
-      new mapboxgl.Marker({ color: statusMapping[sickStatus].color })
-        .setLngLat(marker.geometry.coordinates)
-        .setPopup(popup) // sets a popup on this marker
-        .addTo(map);
+      const currmarker = new mapboxgl.Marker({
+        color: statusMapping[sickStatus].color,
+      }).setLngLat(marker.geometry.coordinates);
+      //attach the popup
+      setHover(currmarker, content, map);
+      // add marker to map
+      currmarker.addTo(map);
     });
 
     // Add current user's marker
     // create the popup
     const date = userStory.createdAt;
     const story = userStory.myStory;
-
-    var popup = null;
+    var content = '<p style="font-size: 18px;line-height: 18px;">';
     if (story) {
-      if (date) {
-        popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-          "<h3> MY STORY </h3>" + date + "<p>" + story + "</p>"
-        );
-      } else {
-        popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-          "<h3> MY STORY </h3>" + "<p>" + story + "</p>"
-        );
-      }
-    } else {
-      popup = new mapboxgl.Popup({ offset: 25 }).setHTML("<h3> MY STORY </h3>");
-    }
+      content = content + '"' + story + '"</p>';
+      if (date) content = content + "<p> - on" + date + "</p>";
+    } else content += "You haven't share your story yet! </p>";
 
     // create the marker
-    new mapboxgl.Marker()
-      .setLngLat([userStory.latitude, userStory.longitude])
-      .setPopup(popup) // sets a popup on this marker
-      .addTo(map);
+    if (isInRange(userStory.latitude, userStory.longitude)) {
+      const marker = new mapboxgl.Marker().setLngLat([
+        userStory.longitude,
+        userStory.latitude,
+      ]);
+      //attach popup
+      setHover(marker, content, map);
+      // add marker to map
+      marker.addTo(map);
+    }
   };
 
   const legend = (

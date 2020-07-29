@@ -5,6 +5,7 @@ import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import { makeStyles } from "@material-ui/core/styles";
+import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 
 import Text from "../../text.json";
 import Pop from "components/PopUp";
@@ -79,7 +80,9 @@ function App(props) {
   const linkIndex = Text["Terms and Conditions"].linkIndex;
   return (
     <>
-      <h1 className={styles.title}>FIGHT COVID-19 PUT YOUR STORY ON THE MAP</h1>
+      <h1 className={styles.title}>
+        FIGHT COVID-19 <br /> PUT YOUR STORY <br /> ON THE MAP
+      </h1>
       <div>
         <SpeedDial
           ariaLabel="Take action"
@@ -95,23 +98,25 @@ function App(props) {
             className={classes.terms}
             tooltipTitle="Terms and Conditions"
             icon={
-              <div style={{ alignItems: "center" }}>
-                <Checkbox 
+              <div style={{ alignItems: "center", padding: "0px 6px" }}>
+                <Checkbox
                   id="checkbox"
-                  style={{ color: "white", padding: "0 5px 0 0" }} 
-                  onChange={(e)=> {
-                    var warning = document.getElementById("warning");
-                    if(e.target.checked){
-                      warning.innerHTML = "";
-                    }else{
-                      warning.innerHTML = "Please read the Terms and Conditions";
+                  style={{ color: "white", padding: "0px 2px" }}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      var warning = document.getElementById("warning");
+                      warning.style.display = "none";
                     }
                   }}
                 />
                 <Pop
                   label={
                     <span
-                      style={{ textDecoration: "underline", color: "white" }}
+                      style={{
+                        textDecoration: "underline",
+                        color: "white",
+                        fontSize: 16,
+                      }}
                     >
                       Terms and Conditions
                     </span>
@@ -125,9 +130,6 @@ function App(props) {
                   linkIndex={linkIndex}
                   listIndex={listIndex}
                 />
-                <div id="warning" style={{color:"red", fontSize: 10}}>
-                    Please read the Terms and Conditions
-                </div>
               </div>
             }
             TooltipClasses={classesTooltip}
@@ -140,14 +142,37 @@ function App(props) {
               className={action.classes}
               TooltipClasses={classesTooltip}
               onClick={() => {
-                if(document.getElementById('checkbox').checked){                 
+                if (document.getElementById("checkbox").checked) {
                   history.push(action.href, action.state || {});
-                }else{
-                  history.push('', action.state || {});
+                } else {
+                  history.push("", action.state || {});
+                  var warning = document.getElementById("warning");
+                  warning.style.display = "inline";
                 }
               }}
             />
           ))}
+          <SpeedDialAction
+            key="read"
+            className={classes.terms}
+            tooltipTitle="Read"
+            TooltipClasses={classesTooltip}
+            icon={
+              <div
+                id="warning"
+                style={{ alignItems: "center", display: "none" }}
+              >
+                <ErrorOutlineIcon
+                  style={{ fontSize: "medium", color: "red" }}
+                />
+                <span style={{ color: "red", fontSize: 11 }}>
+                  <strong>
+                    Please read the Terms & Conditions
+                  </strong>
+                </span>
+              </div>
+            }
+          />
         </SpeedDial>
       </div>
     </>

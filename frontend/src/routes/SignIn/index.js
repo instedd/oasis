@@ -42,7 +42,15 @@ export default function SignIn() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    dispatch(signIn(formValues));
+    if (!formValues.email || formValues.email === "") {
+      document.getElementById("incomplete_error").innerText =
+        "Please fill your email address";
+    } else if (!formValues.password || formValues.password === "") {
+      document.getElementById("incomplete_error").innerText =
+        "Please fill your password";
+    } else {
+      dispatch(signIn(formValues));
+    }
   };
 
   return (
@@ -58,6 +66,7 @@ export default function SignIn() {
           {status.detail}
         </p>
       )}
+      <p id="incomplete_error" style={{ color: "red" }}></p>
       <form className={classes.form} noValidate>
         <TextField
           variant="outlined"
