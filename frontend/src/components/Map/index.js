@@ -107,7 +107,6 @@ export default function Map(props, { draggable = true }) {
     const worldData = data["data"]["adm0"];
     // US data for state layer
     const usStatesData = data["data"]["adm1"]["US"];
-    console.log(data);
     addLegend(data);
 
     map.on("load", function () {
@@ -150,9 +149,7 @@ export default function Map(props, { draggable = true }) {
         story &&
         isInRange(story.latitude, story.longitude) &&
         !story.spam &&
-        story.id !== userStory.id &&
-        story.myStory &&
-        story.myStory !== ""
+        story.id !== userStory.id
     );
 
     let features = stories.map((story) => {
@@ -370,7 +367,6 @@ export default function Map(props, { draggable = true }) {
     content = addCircle(statusMapping[userStory.sick], content);
     content = addCircle(statusMapping[userStory.tested], content);
     content += "</div>";
-    console.log(content);
     return content;
   };
 
@@ -388,8 +384,6 @@ export default function Map(props, { draggable = true }) {
     element.addEventListener("mouseleave", () => popup.remove());
     // add popup to marker
     marker.setPopup(popup);
-    // add marker to map
-    marker.addTo(map);
   };
 
   const addStoryLayer = async (map) => {
@@ -404,7 +398,6 @@ export default function Map(props, { draggable = true }) {
     // add markers to map
     geojson.features.forEach(function (marker) {
       // create a HTML element for each feature
-      console.log(marker);
       var el = document.createElement("div");
       el.className = "marker";
       var myStory = marker.properties.myStory;
@@ -414,9 +407,9 @@ export default function Map(props, { draggable = true }) {
       if (myStory)
         content =
           content +
-          '<p style="font-size:15px;line-height:15px;"><b>"' +
+          '<p style="font-size:15px;line-height:15px;">"' +
           myStory +
-          '"</b></p><p style = "line-height:10px;font-size:10px;">-From';
+          '"</p><p style = "line-height:10px;font-size:10px;">-From';
       else content += '<p style = "line-height:10px;font-size:10px;">';
       content = popUpContent(marker.properties, content);
 
@@ -427,28 +420,34 @@ export default function Map(props, { draggable = true }) {
       }).setLngLat(marker.geometry.coordinates);
       //attach the popup
       setHover(currmarker, content, map);
+      // add marker to map
+      currmarker.addTo(map);
     });
 
     // Add current user's marker
     // create the popup
     const date = userStory.createdAt;
     const story = userStory.myStory;
-    console.log(userStory);
     var content = "";
     if (story) {
-      if (date) {
-        content = content + "<p><b>" + date + "</b></p>";
-      }
-    } else {
-      popup = new mapboxgl.Popup({ offset: 25 }).setHTML("<h3> MY STORY </h3>");
-    }
+      content =
+        content +
+        '<p style="font-size:15px;line-height:15px;">"' +
+        story +
+        '"</p>';
+      if (date) content = content + "<p> - on" + date + "</p>";
+    } else content = "<p> You haven't share your story yet! </p>";
 
     // create the marker
     if (isInRange(userStory.latitude, userStory.longitude)) {
-      new mapboxgl.Marker()
-        .setLngLat([userStory.longitude, userStory.latitude])
-        .setPopup(popup) // sets a popup on this marker
-        .addTo(map);
+      const marker = new mapboxgl.Marker().setLngLat([
+        userStory.longitude,
+        userStory.latitude,
+      ]);
+      //attach popup
+      setHover(marker, content, map);
+      // add marker to map
+      marker.addTo(map);
     }
   };
 
