@@ -149,10 +149,15 @@ function CriticalQuestions(props) {
       // delete the contacts which have empty email and phone number
       var valid_contacts = contacts.filter((contact) => contact.email);
 
+      // delete the travel which does not have date or location
+      var valid_travels = recentTravels.filter(
+        (travel) => travel.location && travel.dateOfReturn
+      );
+
       const dto = {
         story,
         nextPage,
-        travels: recentTravels,
+        travels: valid_travels,
         closeContacts: valid_contacts,
       };
       dispatch(submitStory(dto));
