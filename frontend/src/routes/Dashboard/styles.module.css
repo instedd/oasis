@@ -125,3 +125,8 @@
         left: 0rem;
     }
 }
+
+#board{
+    width: 140px;
+    height: 120px;
+}

@@ -29,7 +29,7 @@ export default function Map(props, { draggable = true }) {
 
   const userStory = props.userStory;
   const actives = props.actives;
-  const death = props.death;
+  const deaths = props.deaths;
   const recovered = props.recovered;
 
   const dataScope = {
@@ -221,20 +221,18 @@ export default function Map(props, { draggable = true }) {
 
         if (country.length > 0 && country[0].confirmed) {
           document.getElementById("pd").innerHTML =
-            "<h3><strong>" +
+            "<h2>" +
             country_name +
-            "</strong></h3><p><strong><em>" +
+            "</h2><h3>" +
             country[0].confirmed +
-            "</strong> cases have been confirmed</em></p>";
+            " cases have been confirmed</h3>";
         } else {
           document.getElementById("pd").innerHTML =
-            "<h3><strong>" +
-            country_name +
-            "</strong></h3><p><strong><em> NA </strong></em></p>";
+            "<h2>" + country_name + "</h2><h3> NA </h3>";
         }
       } else {
         document.getElementById("pd").innerHTML =
-          "<p>Hover over a state or country!</p>";
+          "<h2> Confrimed Cases </h2> <h3>Hover over a state or country!</h3>";
       }
     });
   };
@@ -288,16 +286,14 @@ export default function Map(props, { draggable = true }) {
 
         if (country.length > 0 && country[0].confirmed) {
           document.getElementById("pd").innerHTML =
-            "<h3><strong>" +
+            "<h2>" +
             country_name +
-            "</strong></h3><p><strong><em>" +
+            "</h2><h3>" +
             country[0].confirmed +
-            "</strong> cases have been confirmed</em></p>";
+            " cases have been confirmed</h3>";
         } else {
           document.getElementById("pd").innerHTML =
-            "<h3><strong>" +
-            country_name +
-            "</strong></h3><p><strong><em> NA </strong></em></p>";
+            "<h2>" + country_name + "</h2><h3> NA </h3>";
         }
       }
     });
@@ -411,11 +407,11 @@ export default function Map(props, { draggable = true }) {
           .confirmed;
 
         document.getElementById("pd").innerHTML =
-          "<h3>" +
+          "<h2>" +
           state_name +
-          "</h3><strong><em>" +
+          "</h2><h3>" +
           confirmed +
-          "</strong> cases have been confirmed</em>";
+          " cases have been confirmed</h3>";
       }
     });
   };
@@ -508,20 +504,22 @@ export default function Map(props, { draggable = true }) {
 
   const legend = (
     <div>
-      <div className={classNames(styles.statusLegend)} id="features">
+      <div className={classNames(styles.statusLegend)}>
         <div>
+          <h2> Latest Total </h2>
           <h3>
             Actives: {actives} <br />
-            Death: {death} <br />
+            Deaths: {deaths} <br />
             Recovered: {recovered}
           </h3>
         </div>
         <div id="pd">
-          <p>Hover over a state or country!</p>
+          <h2> Confrimed Cases </h2>
+          <h3> Hover over a state or country!</h3>
         </div>
       </div>
-      <h3>Active cases</h3>
       <div className={classNames(styles.legend)} id="legend">
+        <h3>Active cases</h3>
         {legendRanges.map((range, i) => (
           <div className={classNames(styles.legendItem)} key={i}>
             <span style={{ backgroundColor: range.color }}></span>
