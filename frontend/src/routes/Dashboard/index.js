@@ -77,7 +77,10 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   ];
 
   const userStatus = () => (
-    <div className={classNames(styles.statusList)}>
+    <div
+      className={classNames(styles.statusList)}
+      style={{ textAlign: "left" }}
+    >
       <div className={classNames("row", styles.statusItem)}>
         <span
           className={styles.dot}
@@ -96,36 +99,10 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     </div>
   );
 
-  const latestUpdate = () => (
-    <>
-      <h3>LATEST TOTALS</h3>
-      <div className="row">
-        <div className={classNames(styles.totalItem)}>
-          ACTIVES
-          <div className={classNames(styles.totalItemNum)}>
-            {data.confirmed && data.confirmed.toLocaleString()}
-          </div>
-        </div>
-        <div className={classNames(styles.totalItem)}>
-          DEATHS
-          <div className={classNames(styles.totalItemNum)}>
-            {data.deaths && data.deaths.toLocaleString()}
-          </div>
-        </div>
-        <div className={classNames(styles.totalItem)}>
-          RECOVERED
-          <div className={classNames(styles.totalItemNum)}>
-            {data.recovered && data.recovered.toLocaleString()}
-          </div>
-        </div>
-      </div>
-    </>
-  );
-
   const resources = () => (
     <>
       <h3>RESOURCES</h3>
-      <p>Stay at home</p>
+      <p style={{ textAlign: "left", fontSize: 18 }}>Stay at home</p>
       {getStoryResources(story).map((resource) => (
         <Link
           href={resource.site}
@@ -142,7 +119,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     <div className={classNames(styles.box, styles.top, styles.header)}>
       {resources()}
       {userStatus()}
-      {latestUpdate()}
     </div>
   );
 
@@ -152,7 +128,13 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
         status.detail
       ) : (
         <>
-          <Map draggable={draggableMap} userStory={story} />
+          <Map
+            draggable={draggableMap}
+            userStory={story}
+            actives={data.confirmed && data.confirmed.toLocaleString()}
+            deaths={data.deaths && data.deaths.toLocaleString()}
+            recovered={data.recovered && data.recovered.toLocaleString()}
+          />
           {informationHeader()}
           <SpeedDial
             ariaLabel="Daily actions"
