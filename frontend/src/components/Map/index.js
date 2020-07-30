@@ -438,7 +438,7 @@ export default function Map(props, { draggable = true }) {
         " working in the " +
         userStory.profession.toLowerCase() +
         " industry ";
-    content = content + "living in " + userStory.state;
+    content = content + "living near " + userStory.state;
     var date = userStory.createdAt.substring(0, 10);
     if (userStory.myStory) content = content + " on " + date;
     content += ".</p>";
@@ -511,7 +511,7 @@ export default function Map(props, { draggable = true }) {
     if (story) {
       content = content + '"' + story + '"</p>';
       if (date) content = content + "<p> - on" + date + "</p>";
-    } else content += "You haven't share your story yet! </p>";
+    } else content += "You haven't shared your story yet! </p>";
 
     // create the marker
     if (isInRange(userStory.latitude, userStory.longitude)) {
