@@ -232,7 +232,7 @@ export default function Map(props, { draggable = true }) {
         }
       } else {
         document.getElementById("pd").innerHTML =
-          "<h2> Confirmed Cases </h2> <h3>Hover over a state or country!</h3>";
+          "<h2> Confirmed Cases </h2> <h3>Hover over/Click a state or country!</h3>";
       }
     });
   };
@@ -515,7 +515,7 @@ export default function Map(props, { draggable = true }) {
         </div>
         <div id="pd">
           <h2> Confirmed Cases </h2>
-          <h3> Hover over a state or country!</h3>
+          <h3> Hover over/Click a state or country!</h3>
         </div>
       </div>
       <div className={classNames(styles.legend)} id="legend">
