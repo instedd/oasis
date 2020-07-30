@@ -321,7 +321,6 @@ export default function Map(props, { draggable = true }) {
     );
   };
 
-
   const addStoryLayer = async (map) => {
     var geojson = await fetchStoriesData();
 
@@ -338,7 +337,7 @@ export default function Map(props, { draggable = true }) {
       el.className = "marker";
       var myStory = marker.properties.myStory;
 
-      // check if mystory is null 
+      // check if mystory is null
       if (!myStory) {
         myStory = "";
       }
@@ -383,14 +382,14 @@ export default function Map(props, { draggable = true }) {
       if (sickStatus === sicknessStatus.NOT_SICK) {
         new mapboxgl.Marker({ color: statusMapping[sickStatus].color })
           .setLngLat(marker.geometry.coordinates)
-          .setPopup(popup) 
+          .setPopup(popup)
           .addTo(map);
       }
 
       if (sickStatus === sicknessStatus.RECOVERED) {
         new mapboxgl.Marker({ color: statusMapping[sickStatus].color })
           .setLngLat(marker.geometry.coordinates)
-          .setPopup(popup) 
+          .setPopup(popup)
           .addTo(map);
       }
     });
@@ -399,24 +398,22 @@ export default function Map(props, { draggable = true }) {
     // create the popup
     const date = userStory.createdAt;
     const story = userStory.myStory;
-    
+
     var popup = null;
-    if(story){
-      if(date){
-        popup = new mapboxgl.Popup({ offset: 25 }).setHTML(   
+    if (story) {
+      if (date) {
+        popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
           "<h3> MY STORY </h3>" + date + "<p>" + story + "</p>"
         );
-      }else{
-        popup = new mapboxgl.Popup({ offset: 25 }).setHTML(   
+      } else {
+        popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
           "<h3> MY STORY </h3>" + "<p>" + story + "</p>"
         );
       }
-    }else{
-      popup = new mapboxgl.Popup({ offset: 25 }).setHTML(   
-        "<h3> MY STORY </h3>" 
-      );
+    } else {
+      popup = new mapboxgl.Popup({ offset: 25 }).setHTML("<h3> MY STORY </h3>");
     }
-       
+
     // create the marker
     new mapboxgl.Marker()
       .setLngLat([userStory.latitude, userStory.longitude])
@@ -449,7 +446,7 @@ export default function Map(props, { draggable = true }) {
         Please refresh the page if the map is gray.
       </div>
       <div
-        style={{ color: 'gray' }}
+        style={{ color: "gray" }}
         className={classNames([
           styles.fill,
           styles.map,

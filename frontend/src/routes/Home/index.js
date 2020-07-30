@@ -96,15 +96,16 @@ function App(props) {
             tooltipTitle="Terms and Conditions"
             icon={
               <div style={{ alignItems: "center" }}>
-                <Checkbox 
+                <Checkbox
                   id="checkbox"
-                  style={{ color: "white", padding: "0 5px 0 0" }} 
-                  onChange={(e)=> {
+                  style={{ color: "white", padding: "0 5px 0 0" }}
+                  onChange={(e) => {
                     var warning = document.getElementById("warning");
-                    if(e.target.checked){
+                    if (e.target.checked) {
                       warning.innerHTML = "";
-                    }else{
-                      warning.innerHTML = "Please read the Terms and Conditions";
+                    } else {
+                      warning.innerHTML =
+                        "Please read the Terms and Conditions";
                     }
                   }}
                 />
@@ -125,8 +126,8 @@ function App(props) {
                   linkIndex={linkIndex}
                   listIndex={listIndex}
                 />
-                <div id="warning" style={{color:"red", fontSize: 10}}>
-                    Please read the Terms and Conditions
+                <div id="warning" style={{ color: "red", fontSize: 10 }}>
+                  Please read the Terms and Conditions
                 </div>
               </div>
             }
@@ -140,10 +141,10 @@ function App(props) {
               className={action.classes}
               TooltipClasses={classesTooltip}
               onClick={() => {
-                if(document.getElementById('checkbox').checked){                 
+                if (document.getElementById("checkbox").checked) {
                   history.push(action.href, action.state || {});
-                }else{
-                  history.push('', action.state || {});
+                } else {
+                  history.push("", action.state || {});
                 }
               }}
             />
