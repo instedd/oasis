@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import mapboxgl from "mapbox-gl";
 import React, { useEffect, useState } from "react";
-import RoomRoundedIcon from "@material-ui/icons/RoomRounded";
 import Collapse from "@material-ui/core/Collapse";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import IconButton from "@material-ui/core/IconButton";
@@ -17,13 +16,6 @@ const statusMapping = {
   [sicknessStatus.RECOVERED]: { name: "Recovered", color: "green" },
   [sicknessStatus.NOT_SICK]: { name: "Not Sick", color: "gray" },
 };
-
-const statusColor = [
-  { text: "My story", color: "#3bb2d0" },
-  { text: "Sick", color: statusMapping[sicknessStatus.SICK].color },
-  { text: "Not sick", color: statusMapping[sicknessStatus.NOT_SICK].color },
-  { text: "Recovered", color: statusMapping[sicknessStatus.RECOVERED].color },
-];
 
 mapboxgl.accessToken =
   "pk.eyJ1Ijoic3RlNTE5IiwiYSI6ImNrOHc1aHlvYTB0N2ozam51MHFiazE3bmcifQ.AHtFuA-pAqau_AJIy-hzOg";
