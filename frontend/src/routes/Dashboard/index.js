@@ -27,11 +27,13 @@ const statusMapping = {
 };
 
 function Dashboard(props, { draggableMapRoutes = [] }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const { story, status } = useSelector((state) => state.story);
   let location = useLocation();
   const [draggableMap, setDraggableMap] = useState(false);
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(
+    window.screen.width > 1024 ? true : false
+  );
 
   const handleExpandClick = () => {
     setExpanded(!expanded);

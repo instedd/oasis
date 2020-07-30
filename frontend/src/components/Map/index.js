@@ -534,7 +534,9 @@ export default function Map(props, { draggable = true }) {
     }
   };
 
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = React.useState(
+    window.screen.width > 1024 ? true : false
+  );
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
