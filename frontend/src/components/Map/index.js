@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import mapboxgl from "mapbox-gl";
 import React, { useEffect, useState } from "react";
-import RoomRoundedIcon from "@material-ui/icons/RoomRounded";
 import styles from "./styles.module.css";
 import api from "utils";
 import { sicknessStatus } from "../../routes/types";
@@ -508,23 +507,28 @@ export default function Map(props, { draggable = true }) {
   };
 
   const legend = (
-    <div className={classNames(styles.legend)} id="legend">
+    <div>
+      <div className={classNames(styles.legend)} id="features">
+        <div>
+          <h3>
+            Actives: {actives} <br />
+            Death: {death} <br />
+            Recovered: {recovered}
+          </h3>
+        </div>
+        <div id="pd">
+          <p>Hover over a state or country!</p>
+        </div>
+      </div>
       <h3>Active cases</h3>
-      {legendRanges.map((range, i) => (
-        <div className={classNames(styles.legendItem)} key={i}>
-          <span style={{ backgroundColor: range.color }}></span>
-          {range.label}
-        </div>
-      ))}
-      <h3 style={{ marginTop: "8px" }}>Story markers</h3>
-      {statusColor.map((status, i) => (
-        <div className={classNames(styles.legendItem)} key={i}>
-          <RoomRoundedIcon
-            style={{ color: status.color, fontSize: "medium" }}
-          />
-          <sup style={{ fontSize: "12px" }}> {status.text} </sup>
-        </div>
-      ))}
+      <div className={classNames(styles.legend)} id="legend">
+        {legendRanges.map((range, i) => (
+          <div className={classNames(styles.legendItem)} key={i}>
+            <span style={{ backgroundColor: range.color }}></span>
+            {range.label}
+          </div>
+        ))}
+      </div>
     </div>
   );
 
@@ -537,17 +541,6 @@ export default function Map(props, { draggable = true }) {
 
   return (
     <div className={styles.root}>
-      <div class="map-overlay" id="features">
-        <div>
-          {" "}
-          <h3>
-            Actives: {actives} Death: {death} Recovered: {recovered}{" "}
-          </h3>{" "}
-        </div>
-        <div id="pd">
-          <p>Hover over a state or country!</p>
-        </div>
-      </div>
       <div className={styles.refresh}>
         Please refresh the page if the map is gray.
       </div>

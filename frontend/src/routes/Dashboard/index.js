@@ -77,7 +77,10 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   ];
 
   const userStatus = () => (
-    <div className={classNames(styles.statusList)}>
+    <div
+      className={classNames(styles.statusList)}
+      style={{ textAlign: "left" }}
+    >
       <div className={classNames("row", styles.statusItem)}>
         <span
           className={styles.dot}
@@ -99,7 +102,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const resources = () => (
     <>
       <h3>RESOURCES</h3>
-      <p>Stay at home</p>
+      <p style={{ textAlign: "left", fontSize: 18 }}>Stay at home</p>
       {getStoryResources(story).map((resource) => (
         <Link
           href={resource.site}
