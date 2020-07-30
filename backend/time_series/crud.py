@@ -37,11 +37,11 @@ def fetch_latest_total(url):
 
 def init_table(db: Session):
     confirmed_sums, days = last_n_days_total(CONFIRMED_URL, PERIOD)
-    recovered_sums = last_n_days_total(RECOVERED_URL, PERIOD)
-    deaths_sums = last_n_days_total(DEATHS_URL, PERIOD)
+    recovered_sums, days = last_n_days_total(RECOVERED_URL, PERIOD)
+    deaths_sums, days = last_n_days_total(DEATHS_URL, PERIOD)
     for day in range(PERIOD):
         db_time = models.TimeSeries(
-            date=datetime.strptime(days[day], "%d/%m/%y"),
+            date=datetime.strptime(days[day], "%m/%d/%y"),
             confirmed=confirmed_sums[day],
             recovered=recovered_sums[day],
             deaths=deaths_sums[day],
