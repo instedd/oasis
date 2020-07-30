@@ -508,7 +508,7 @@ export default function Map(props, { draggable = true }) {
 
   const legend = (
     <div>
-      <div className={classNames(styles.legend)} id="features">
+      <div className={classNames(styles.statusLegend)} id="features">
         <div>
           <h3>
             Actives: {actives} <br />
