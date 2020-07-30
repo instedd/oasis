@@ -85,7 +85,10 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   ];
 
   const userStatus = () => (
-    <div className={classNames(styles.statusList)}>
+    <div
+      className={classNames(styles.statusList)}
+      style={{ textAlign: "left" }}
+    >
       <div className={classNames("row", styles.statusItem)}>
         <span
           className={styles.dot}
@@ -102,32 +105,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       </div>
       <div></div>
     </div>
-  );
-
-  const latestUpdate = () => (
-    <>
-      <h3>LATEST TOTALS</h3>
-      <div className="row">
-        <div className={classNames(styles.totalItem)}>
-          ACTIVES
-          <div className={classNames(styles.totalItemNum)}>
-            {data.confirmed && data.confirmed.toLocaleString()}
-          </div>
-        </div>
-        <div className={classNames(styles.totalItem)}>
-          DEATHS
-          <div className={classNames(styles.totalItemNum)}>
-            {data.deaths && data.deaths.toLocaleString()}
-          </div>
-        </div>
-        <div className={classNames(styles.totalItem)}>
-          RECOVERED
-          <div className={classNames(styles.totalItemNum)}>
-            {data.recovered && data.recovered.toLocaleString()}
-          </div>
-        </div>
-      </div>
-    </>
   );
 
   const resources = () => (
@@ -159,7 +136,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const informationHeader = () => (
     <div className={classNames(styles.box, styles.top, styles.header)}>
       {userStatus()}
-      {latestUpdate()}
       {resources()}
     </div>
   );
@@ -170,7 +146,13 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
         status.detail
       ) : (
         <>
-          <Map draggable={draggableMap} userStory={story} />
+          <Map
+            draggable={draggableMap}
+            userStory={story}
+            actives={data.confirmed && data.confirmed.toLocaleString()}
+            deaths={data.deaths && data.deaths.toLocaleString()}
+            recovered={data.recovered && data.recovered.toLocaleString()}
+          />
           {informationHeader()}
           <SpeedDial
             ariaLabel="Daily actions"

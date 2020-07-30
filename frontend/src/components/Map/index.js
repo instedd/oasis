@@ -35,6 +35,9 @@ export default function Map(props, { draggable = true }) {
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
 
   const userStory = props.userStory;
+  const actives = props.actives;
+  const deaths = props.deaths;
+  const recovered = props.recovered;
 
   const dataScope = {
     WORLD: "world",
@@ -208,10 +211,39 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
+
+    map.on("mousemove", function (e) {
+      var countries = map.queryRenderedFeatures(e.point, {
+        layers: ["world-layer"],
+      });
+
+      if (countries.length > 0) {
+        const country_name = countries[0].properties.name;
+        const country = covidData.filter(
+          (country) => country.name === country_name
+        );
+
+        if (country.length > 0 && country[0].confirmed) {
+          document.getElementById("pd").innerHTML =
+            "<h2>" +
+            country_name +
+            "</h2><h3>" +
+            country[0].confirmed +
+            " cases confirmed</h3>";
+        } else {
+          document.getElementById("pd").innerHTML =
+            "<h2>" + country_name + "</h2><h3> NA </h3>";
+        }
+      } else {
+        document.getElementById("pd").innerHTML =
+          "<h2> Confirmed Cases </h2> <h3>Hover over/Click a state or country!</h3>";
+      }
+    });
   };
 
   const addNonUSLayer = async (map, data) => {
     const covidData = await data;
+
     // Delete US from the world expression(all expression)
     const expression = covidData
       .filter((country) => country.name !== "United States of America")
@@ -240,6 +272,35 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
+
+    map.on("mousemove", function (e) {
+      var countries = map.queryRenderedFeatures(e.point, {
+        layers: ["non-us-layer"],
+      });
+
+      if (
+        countries.length > 0 &&
+        countries[0].properties.name &&
+        countries[0].properties.name !== "United States of America"
+      ) {
+        const country_name = countries[0].properties.name;
+        const country = covidData.filter(
+          (country) => country.name === country_name
+        );
+
+        if (country.length > 0 && country[0].confirmed) {
+          document.getElementById("pd").innerHTML =
+            "<h2>" +
+            country_name +
+            "</h2><h3>" +
+            country[0].confirmed +
+            " cases confirmed</h3>";
+        } else {
+          document.getElementById("pd").innerHTML =
+            "<h2>" + country_name + "</h2><h3> NA </h3>";
+        }
+      }
+    });
   };
 
   const addUSStatesLayer = async (map, data) => {
@@ -334,6 +395,29 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
+
+    // add the information window
+    map.on("mousemove", function (e) {
+      var states = map.queryRenderedFeatures(e.point, {
+        layers: ["us-states-layer"],
+      });
+
+      if (states.length > 0) {
+        const state_name = states[0].properties.STATE_NAME;
+        const abbr_name = Object.keys(stateToFIPS).find(
+          (key) => stateToFIPS[key] === states[0].properties.STATE_ID
+        );
+        const confirmed = usData.filter((state) => state.name === abbr_name)[0]
+          .confirmed;
+
+        document.getElementById("pd").innerHTML =
+          "<h2>" +
+          state_name +
+          "</h2><h3>" +
+          confirmed +
+          " cases confirmed</h3>";
+      }
+    });
   };
 
   const addCircle = (status, content) => {
@@ -457,34 +541,41 @@ export default function Map(props, { draggable = true }) {
   };
 
   const legend = (
-    <div className={classNames(styles.legend)} id="legend">
-      <div className={classNames(styles.legendCollapse)}>
-        <h3>Active Cases</h3>
-        <IconButton
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ExpandLessIcon />
-        </IconButton>
+    <div className={classNames(styles.legendWrapper)}>
+      <div className={classNames(styles.legend)} id="legend">
+        <div className={classNames(styles.legendCollapse)}>
+          <h3>Active Cases</h3>
+          <IconButton
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="show more"
+          >
+            <ExpandLessIcon />
+          </IconButton>
+        </div>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          {legendRanges.map((range, i) => (
+            <div className={classNames(styles.legendItem)} key={i}>
+              <span style={{ backgroundColor: range.color }}></span>
+              {range.label}
+            </div>
+          ))}
+        </Collapse>
       </div>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        {legendRanges.map((range, i) => (
-          <div className={classNames(styles.legendItem)} key={i}>
-            <span style={{ backgroundColor: range.color }}></span>
-            {range.label}
-          </div>
-        ))}
-        <h3 style={{ marginTop: "8px" }}>Story markers</h3>
-        {statusColor.map((status, i) => (
-          <div className={classNames(styles.legendItem)} key={i}>
-            <RoomRoundedIcon
-              style={{ color: status.color, fontSize: "medium" }}
-            />
-            <sup style={{ fontSize: "12px" }}> {status.text} </sup>
-          </div>
-        ))}
-      </Collapse>
+      <div className={classNames(styles.statusLegend)}>
+        <div>
+          <h2> Latest Total </h2>
+          <h3>
+            Actives: {actives} <br />
+            Deaths: {deaths} <br />
+            Recovered: {recovered}
+          </h3>
+        </div>
+        <div id="pd">
+          <h2> Confirmed Cases </h2>
+          <h3> Hover over/Click a state or country!</h3>
+        </div>
+      </div>
     </div>
   );
 
