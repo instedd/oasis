@@ -1,6 +1,9 @@
 import classNames from "classnames";
 import mapboxgl from "mapbox-gl";
 import React, { useEffect, useState } from "react";
+import Collapse from "@material-ui/core/Collapse";
+import ExpandLessIcon from "@material-ui/icons/ExpandLess";
+import IconButton from "@material-ui/core/IconButton";
 import styles from "./styles.module.css";
 import api from "utils";
 import { sicknessStatus, testStatus } from "../../routes/types";
@@ -13,13 +16,6 @@ const statusMapping = {
   [sicknessStatus.RECOVERED]: { name: "Recovered", color: "green" },
   [sicknessStatus.NOT_SICK]: { name: "Not Sick", color: "gray" },
 };
-
-const statusColor = [
-  { text: "My story", color: "#3bb2d0" },
-  { text: "Sick", color: statusMapping[sicknessStatus.SICK].color },
-  { text: "Not sick", color: statusMapping[sicknessStatus.NOT_SICK].color },
-  { text: "Recovered", color: statusMapping[sicknessStatus.RECOVERED].color },
-];
 
 mapboxgl.accessToken =
   "pk.eyJ1Ijoic3RlNTE5IiwiYSI6ImNrOHc1aHlvYTB0N2ozam51MHFiazE3bmcifQ.AHtFuA-pAqau_AJIy-hzOg";
@@ -530,8 +526,36 @@ export default function Map(props, { draggable = true }) {
     }
   };
 
+  const [expanded, setExpanded] = React.useState(
+    window.screen.width > 1024 ? true : false
+  );
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
   const legend = (
-    <div>
+    <div className={classNames(styles.legendWrapper)}>
+      <div className={classNames(styles.legend)} id="legend">
+        <div className={classNames(styles.legendCollapse)}>
+          <h3>Active Cases</h3>
+          <IconButton
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="show more"
+          >
+            <ExpandLessIcon />
+          </IconButton>
+        </div>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          {legendRanges.map((range, i) => (
+            <div className={classNames(styles.legendItem)} key={i}>
+              <span style={{ backgroundColor: range.color }}></span>
+              {range.label}
+            </div>
+          ))}
+        </Collapse>
+      </div>
       <div className={classNames(styles.statusLegend)}>
         <div>
           <h2> Latest Total </h2>
@@ -545,15 +569,6 @@ export default function Map(props, { draggable = true }) {
           <h2> Confirmed Cases </h2>
           <h3> Hover over/Click a state or country!</h3>
         </div>
-      </div>
-      <div className={classNames(styles.legend)} id="legend">
-        <h3>Active cases</h3>
-        {legendRanges.map((range, i) => (
-          <div className={classNames(styles.legendItem)} key={i}>
-            <span style={{ backgroundColor: range.color }}></span>
-            {range.label}
-          </div>
-        ))}
       </div>
     </div>
   );

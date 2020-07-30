@@ -2,6 +2,9 @@ import Link from "@material-ui/core/Link";
 import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
+import Collapse from "@material-ui/core/Collapse";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import IconButton from "@material-ui/core/IconButton";
 import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -24,10 +27,17 @@ const statusMapping = {
 };
 
 function Dashboard(props, { draggableMapRoutes = [] }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const { story, status } = useSelector((state) => state.story);
   let location = useLocation();
   const [draggableMap, setDraggableMap] = useState(false);
+  const [expanded, setExpanded] = useState(
+    window.screen.width > 1024 ? true : false
+  );
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
 
   useEffect(() => {
     let shouldDragMap = draggableMapRoutes.includes(location.pathname);
@@ -101,24 +111,34 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
 
   const resources = () => (
     <>
-      <h3>RESOURCES</h3>
-      <p style={{ textAlign: "left", fontSize: 18 }}>Stay at home</p>
-      {getStoryResources(story).map((resource) => (
-        <Link
-          href={resource.site}
-          {...(resource.color ? { style: { color: resource.color } } : {})}
-          target="_blank"
+      <div className={classNames(styles.resources)}>
+        <h3>RESOURCES</h3>
+        <IconButton
+          onClick={handleExpandClick}
+          aria-expanded={expanded}
+          aria-label="show more"
         >
-          {resource.text}
-        </Link>
-      ))}
+          <ExpandMoreIcon />
+        </IconButton>
+      </div>
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        {getStoryResources(story).map((resource) => (
+          <Link
+            href={resource.site}
+            {...(resource.color ? { style: { color: resource.color } } : {})}
+            target="_blank"
+          >
+            {resource.text}
+          </Link>
+        ))}
+      </Collapse>
     </>
   );
 
   const informationHeader = () => (
     <div className={classNames(styles.box, styles.top, styles.header)}>
-      {resources()}
       {userStatus()}
+      {resources()}
     </div>
   );
 
