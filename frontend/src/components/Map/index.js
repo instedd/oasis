@@ -232,7 +232,7 @@ export default function Map(props, { draggable = true }) {
         }
       } else {
         document.getElementById("pd").innerHTML =
-          "<h2> Confrimed Cases </h2> <h3>Hover over a state or country!</h3>";
+          "<h2> Confirmed Cases </h2> <h3>Hover over a state or country!</h3>";
       }
     });
   };
@@ -514,7 +514,7 @@ export default function Map(props, { draggable = true }) {
           </h3>
         </div>
         <div id="pd">
-          <h2> Confrimed Cases </h2>
+          <h2> Confirmed Cases </h2>
           <h3> Hover over a state or country!</h3>
         </div>
       </div>
