@@ -225,7 +225,7 @@ export default function Map(props, { draggable = true }) {
             country_name +
             "</h2><h3>" +
             country[0].confirmed +
-            " cases have been confirmed</h3>";
+            " cases confirmed</h3>";
         } else {
           document.getElementById("pd").innerHTML =
             "<h2>" + country_name + "</h2><h3> NA </h3>";
@@ -290,7 +290,7 @@ export default function Map(props, { draggable = true }) {
             country_name +
             "</h2><h3>" +
             country[0].confirmed +
-            " cases have been confirmed</h3>";
+            " cases confirmed</h3>";
         } else {
           document.getElementById("pd").innerHTML =
             "<h2>" + country_name + "</h2><h3> NA </h3>";
@@ -411,7 +411,7 @@ export default function Map(props, { draggable = true }) {
           state_name +
           "</h2><h3>" +
           confirmed +
-          " cases have been confirmed</h3>";
+          " cases confirmed</h3>";
       }
     });
   };
