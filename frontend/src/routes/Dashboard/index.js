@@ -36,6 +36,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
   useEffect(() => {
     let shouldDragMap = draggableMapRoutes.includes(location.pathname);
     if (shouldDragMap !== draggableMap)

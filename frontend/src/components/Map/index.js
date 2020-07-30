@@ -2,6 +2,9 @@ import classNames from "classnames";
 import mapboxgl from "mapbox-gl";
 import React, { useEffect, useState } from "react";
 import RoomRoundedIcon from "@material-ui/icons/RoomRounded";
+import Collapse from "@material-ui/core/Collapse";
+import ExpandLessIcon from "@material-ui/icons/ExpandLess";
+import IconButton from "@material-ui/core/IconButton";
 import styles from "./styles.module.css";
 import api from "utils";
 import { sicknessStatus, testStatus } from "../../routes/types";
@@ -447,24 +450,41 @@ export default function Map(props, { draggable = true }) {
     }
   };
 
+  const [expanded, setExpanded] = React.useState(false);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
   const legend = (
     <div className={classNames(styles.legend)} id="legend">
-      <h3>Active cases</h3>
-      {legendRanges.map((range, i) => (
-        <div className={classNames(styles.legendItem)} key={i}>
-          <span style={{ backgroundColor: range.color }}></span>
-          {range.label}
-        </div>
-      ))}
-      <h3 style={{ marginTop: "8px" }}>Story markers</h3>
-      {statusColor.map((status, i) => (
-        <div className={classNames(styles.legendItem)} key={i}>
-          <RoomRoundedIcon
-            style={{ color: status.color, fontSize: "medium" }}
-          />
-          <sup style={{ fontSize: "12px" }}> {status.text} </sup>
-        </div>
-      ))}
+      <div className={classNames(styles.legendCollapse)}>
+        <h3>Active Cases</h3>
+        <IconButton
+          onClick={handleExpandClick}
+          aria-expanded={expanded}
+          aria-label="show more"
+        >
+          <ExpandLessIcon />
+        </IconButton>
+      </div>
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        {legendRanges.map((range, i) => (
+          <div className={classNames(styles.legendItem)} key={i}>
+            <span style={{ backgroundColor: range.color }}></span>
+            {range.label}
+          </div>
+        ))}
+        <h3 style={{ marginTop: "8px" }}>Story markers</h3>
+        {statusColor.map((status, i) => (
+          <div className={classNames(styles.legendItem)} key={i}>
+            <RoomRoundedIcon
+              style={{ color: status.color, fontSize: "medium" }}
+            />
+            <sup style={{ fontSize: "12px" }}> {status.text} </sup>
+          </div>
+        ))}
+      </Collapse>
     </div>
   );
 

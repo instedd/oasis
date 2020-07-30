@@ -117,6 +117,7 @@
     .top {
         top: 0rem;
         padding-top: 5rem;
+        padding-bottom: 0.8rem;
     }
     .bottom { bottom: 0; }
     .box {
