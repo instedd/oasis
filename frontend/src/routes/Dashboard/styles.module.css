@@ -83,8 +83,12 @@
 }
 
 .statusList {
-    margin-top: 10px;
-    text-align: center;
+    position: absolute;
+    top: 32px;
+    right: 5%;
+    font-size: 12px;
+    font-weight: 900;
+    font-family: Roboto;
 }
 
 .statusItem {
@@ -112,8 +116,7 @@
     .wrapper { right: 0; }
     .top {
         top: 0rem;
-        min-height: 150px;
-        padding-top: 4rem;
+        padding-top: 5rem;
     }
     .bottom { bottom: 0; }
     .box {
@@ -124,4 +127,15 @@
         text-align: left;
         left: 0rem;
     }
+}
+
+.resources {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.resources button {
+    color: white
 }
