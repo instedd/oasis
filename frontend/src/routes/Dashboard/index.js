@@ -84,6 +84,11 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       state: { onboard: true },
       classes: classNames("MuiFab-extended assessment", styles.assessment),
     },
+    {
+      name: "EDIT MY PROFILE",
+      href: paths.criticalQuestions,
+      classes: classNames("MuiFab-extended", styles.profile),
+    },
   ];
 
   const userStatus = () => (
