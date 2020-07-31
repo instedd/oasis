@@ -49,6 +49,7 @@ function CriticalQuestions(props) {
   const [contacts, setContacts] = useState([]);
   const [recentTravels, setRecentTravels] = useState([]);
   const [locationList, setListItems] = useState([]);
+  const [moveForward, setMoveForward] = useState(false);
 
   let nextPage;
   const { story, status, travels, closeContacts } = useSelector(
@@ -106,7 +107,8 @@ function CriticalQuestions(props) {
   };
 
   const getGeocoding = () => {
-    const city = formValues[fields.CITY.key];
+    console.log(formValues);
+    const city = formValues[fields.CITY.key] ? formValues[fields.CITY.key] : "";
     const state = formValues[fields.STATE.key];
     const country = formValues[fields.COUNTRY.key];
 
@@ -209,16 +211,32 @@ function CriticalQuestions(props) {
 
   const closeContactsSection = () => (
     <>
+      <p>Enter close contact information below if you are sick.</p>
       <div className={styles.formrow}>
-        <Fab
-          style={{ background: "#EA2027" }}
-          aria-label="add"
-          size="medium"
-          className={styles.fab}
-          onClick={() => setContacts([...contacts, {}])}
-        >
-          <AddIcon />
-        </Fab>
+        {story && story.sick === sicknessStatus.SICK && (
+          <Fab
+            style={{ background: "#EA2027" }}
+            aria-label="add"
+            size="medium"
+            className={styles.fab}
+            onClick={() => setContacts([...contacts, {}])}
+          >
+            <AddIcon />
+          </Fab>
+        )}
+        {story &&
+          (story.sick === sicknessStatus.RECOVERED ||
+            story.sick === sicknessStatus.NOT_SICK) && (
+            <Fab
+              style={{ background: "#D3D3D3" }}
+              aria-label="add"
+              size="medium"
+              className={styles.fab}
+              onClick={() => {}}
+            >
+              <AddIcon />
+            </Fab>
+          )}
         <p>Close Contacts</p>
         <Pop
           label={<ErrorOutlineIcon />}
@@ -510,13 +528,11 @@ function CriticalQuestions(props) {
           </FormControl>
         </div>
         {closeContactsSection()}
-        {travelsSection()}
+        {/*travelsSection()*/}
         <div style={{ height: "30px" }} ref={pageBottomRef}></div>
       </div>
 
       {contacts.filter((contact) => contact.email).length !== 0 &&
-        formValues[fields.CITY.key] &&
-        formValues[fields.CITY.key].length &&
         formValues[fields.STATE.key] &&
         formValues[fields.STATE.key].length &&
         formValues[fields.COUNTRY.key] &&
@@ -537,8 +553,6 @@ function CriticalQuestions(props) {
           />
         )}
       {(contacts.filter((contact) => contact.email).length === 0 ||
-        !formValues[fields.CITY.key] ||
-        !formValues[fields.CITY.key].length ||
         !formValues[fields.STATE.key] ||
         !formValues[fields.STATE.key].length ||
         !formValues[fields.COUNTRY.key] ||
