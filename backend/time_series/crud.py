@@ -52,22 +52,20 @@ def init_table(db: Session):
     return db
 
 
-def add_new_day(db: Session):
-
+def update(db: Session):
     confirmed_today, today = fetch_latest_total(CONFIRMED_URL)
-    recovered_today = fetch_latest_total(RECOVERED_URL)
-    deaths_today = fetch_latest_total(DEATHS_URL)
-
-    db_time = models.TimeSeries(
-        data=today,
-        confirmed=confirmed_today,
-        recovered=recovered_today,
-        deaths=deaths_today,
-    )
-    db.add(db_time)
-    db.commit()
-    db.refresh(db_time)
-    return db_time
+    recovered_today, today = fetch_latest_total(RECOVERED_URL)
+    deaths_today, today = fetch_latest_total(DEATHS_URL)
+    result = db.query(models.TimeSeries.date).filter_by(date=today).scalar()
+    if result is None:
+        db_time = models.TimeSeries(
+            date=today,
+            confirmed=confirmed_today,
+            recovered=recovered_today,
+            deaths=deaths_today,
+        )
+        db.add(db_time)
+        db.commit()
 
 
 def remove_oldest_day(db: Session):
