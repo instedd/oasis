@@ -49,7 +49,6 @@ function CriticalQuestions(props) {
   const [contacts, setContacts] = useState([]);
   const [recentTravels, setRecentTravels] = useState([]);
   const [locationList, setListItems] = useState([]);
-  const [moveForward, setMoveForward] = useState(false);
 
   let nextPage;
   const { story, status, travels, closeContacts } = useSelector(
@@ -107,7 +106,6 @@ function CriticalQuestions(props) {
   };
 
   const getGeocoding = () => {
-    console.log(formValues);
     const city = formValues[fields.CITY.key] ? formValues[fields.CITY.key] : "";
     const state = formValues[fields.STATE.key];
     const country = formValues[fields.COUNTRY.key];
