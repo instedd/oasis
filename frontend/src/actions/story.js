@@ -17,7 +17,7 @@ import {
 } from "./types";
 import { fields } from "../routes/CriticalQuestions/fields";
 
-const mandatoryFields = [fields.CITY, fields.STATE, fields.COUNTRY];
+const mandatoryFields = [fields.STATE, fields.COUNTRY];
 
 const isValidStory = (dto) => invalidFields(dto.story).length === 0;
 
