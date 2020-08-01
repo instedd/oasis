@@ -22,7 +22,7 @@ mapboxgl.accessToken =
 
 export default function Map(props, { draggable = true }) {
   const countryMinZoom = 3.5;
-  const initialZoom = 5;
+  const initialZoom = 1;
   const focusZoom = 6;
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
 
@@ -39,8 +39,8 @@ export default function Map(props, { draggable = true }) {
 
   const [map, setMap] = useState(null);
   const [location, setLocation] = useState({
-    lng: -119.6,
-    lat: 36.7,
+    lng: 0,
+    lat: 0,
   });
   const [legendRanges, setLegendRanges] = useState([]);
 
@@ -116,6 +116,10 @@ export default function Map(props, { draggable = true }) {
   };
 
   const fetchUserLocation = async () => {
+    if (isInRange(userStory.latitude, userStory.longitude)) {
+      return { lat: userStory.latitude, lng: userStory.longitude };
+    }
+
     const response = await fetch(`https://freegeoip.app/json/`);
     if (response.status >= 200 && response.status < 300) {
       const jsonResponse = await response.json();
