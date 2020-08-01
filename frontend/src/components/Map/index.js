@@ -582,6 +582,9 @@ export default function Map(props, { draggable = true }) {
 
   return (
     <div className={styles.root}>
+      <div className={styles.random}>
+        The locations of markers are randomized.
+      </div>
       <div className={styles.refresh}>
         Please refresh the page if the map is gray.
       </div>

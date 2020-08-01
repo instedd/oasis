@@ -110,7 +110,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
         />
         {statusMapping[story.tested].name.toUpperCase()}
       </div>
-      <div></div>
     </div>
   );
 
