@@ -3,6 +3,7 @@ import io
 import pandas as pd
 from datetime import datetime
 from sqlalchemy.orm import Session
+import traceback
 
 from . import models
 
@@ -21,56 +22,61 @@ def fetch_url(url):
     return pd.read_csv(io.StringIO(s.decode("utf-8")))
 
 
-def last_n_days_total(url, n):
+def fetch_total(url):
     df = fetch_url(url)
-    day = -1 * n
-    lastndays = df[df.columns[day:]]
-    sums = lastndays.sum().tolist()
-    days = lastndays.columns.tolist()
-    return sums, days
+    return pd.DataFrame(
+        df.drop(
+            ["Province/State", "Country/Region", "Lat", "Long"], axis=1
+        ).sum()
+    )
 
 
 def fetch_latest_total(url):
-    sums, days = last_n_days_total(url, 1)
-    return sums[0], days[0]
-
-
-def init_table(db: Session):
-    confirmed_sums, days = last_n_days_total(CONFIRMED_URL, PERIOD)
-    recovered_sums, days = last_n_days_total(RECOVERED_URL, PERIOD)
-    deaths_sums, days = last_n_days_total(DEATHS_URL, PERIOD)
-    for day in range(PERIOD):
-        db_time = models.TimeSeries(
-            date=datetime.strptime(days[day], "%m/%d/%y"),
-            confirmed=confirmed_sums[day],
-            recovered=recovered_sums[day],
-            deaths=deaths_sums[day],
-        )
-        db.add(db_time)
-        db.commit()
-        db.refresh(db_time)
-    return db
+    date = fetch_total(CONFIRMED_URL).iloc[[-1]].index[0]
+    total = fetch_total(CONFIRMED_URL).iloc[[-1]][0][0]
+    return total, date
 
 
 def update(db: Session):
-    confirmed_today, today = fetch_latest_total(CONFIRMED_URL)
-    recovered_today, today = fetch_latest_total(RECOVERED_URL)
-    deaths_today, today = fetch_latest_total(DEATHS_URL)
-    result = db.query(models.TimeSeries.date).filter_by(date=today).scalar()
-    if result is None:
-        db_time = models.TimeSeries(
-            date=today,
-            confirmed=confirmed_today,
-            recovered=recovered_today,
-            deaths=deaths_today,
-        )
-        db.add(db_time)
-        db.commit()
-
-
-def remove_oldest_day(db: Session):
-    oldest = (
-        db.query(models.TimeSeries).order_by(models.TimeSeries.data).first()
+    confirmed_sums = fetch_total(CONFIRMED_URL).rename(
+        columns={0: "confirmed"}
     )
-    db.delete(oldest)
-    db.commit()
+    recovered_sums = fetch_total(RECOVERED_URL).rename(
+        columns={0: "recovered"}
+    )
+    deaths_sums = fetch_total(DEATHS_URL).rename(columns={0: "deaths"})
+    totals = confirmed_sums.merge(
+        recovered_sums, left_index=True, right_index=True
+    ).merge(deaths_sums, left_index=True, right_index=True)
+    try:
+        for day in totals.index:
+            this_date = datetime.strptime(day, "%m/%d/%y")
+            result = (
+                db.query(models.TimeSeries.date)
+                .filter_by(date=this_date)
+                .scalar()
+            )
+            if result is not None:
+                continue
+            db_time = models.TimeSeries(
+                date=datetime.strptime(day, "%m/%d/%y"),
+                confirmed=int(totals.loc[day][0]),
+                recovered=int(totals.loc[day][1]),
+                deaths=int(totals.loc[day][2]),
+            )
+            db.add(db_time)
+            db.commit()
+            db.refresh(db_time)
+        return db
+    except Exception:
+        traceback.print_exc()
+        db.rollback()
+
+
+def get_n_days_data(db: Session, n: int):
+    return (
+        db.query(models.TimeSeries)
+        .order_by(models.TimeSeries.date.desc())
+        .limit(n)
+        .all()
+    )

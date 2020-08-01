@@ -13,6 +13,7 @@ import { getStoryResources } from "actions/resources";
 import { LOADING } from "actions/types";
 import { useLocation } from "react-router-dom";
 import Map from "components/Map";
+import api from "utils";
 
 const statusMapping = {
   [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
@@ -61,6 +62,14 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       .then((result) => setData(result));
   }, []);
 
+  const fetchTimeSeries = async (n) => {
+    const body = await api(`time_series/${n}`, {
+      method: "GET",
+    });
+    return body;
+  };
+
+  console.log(fetchTimeSeries(5));
   const hasMyStory = story && story.myStory;
   const actions = [
     {
