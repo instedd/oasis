@@ -106,7 +106,7 @@ function CriticalQuestions(props) {
   };
 
   const getGeocoding = () => {
-    const city = formValues[fields.CITY.key] ? formValues[fields.CITY.key] : "";
+    const city = formValues[fields.CITY.key];
     const state = formValues[fields.STATE.key];
     const country = formValues[fields.COUNTRY.key];
 
@@ -230,7 +230,6 @@ function CriticalQuestions(props) {
               aria-label="add"
               size="medium"
               className={styles.fab}
-              onClick={() => {}}
             >
               <AddIcon />
             </Fab>
@@ -530,23 +529,35 @@ function CriticalQuestions(props) {
         <div style={{ height: "30px" }} ref={pageBottomRef}></div>
       </div>
 
-      {contacts.filter((contact) => contact.email).length !== 0 && (
-        <AlertDialog
-          label={
-            <Fab
-              style={{ background: "#EA2027" }}
-              aria-label="Go to next page"
-              size="medium"
-              className="fab next-btn"
-            >
-              <ArrowRightIcon />
-            </Fab>
-          }
-          text={contactNoticeText}
-          submit={handleSubmit}
-        />
-      )}
-      {contacts.filter((contact) => contact.email).length === 0 && (
+      {contacts.filter((contact) => contact.email).length !== 0 &&
+        formValues[fields.CITY.key] &&
+        formValues[fields.CITY.key].length &&
+        formValues[fields.STATE.key] &&
+        formValues[fields.STATE.key].length &&
+        formValues[fields.COUNTRY.key] &&
+        formValues[fields.COUNTRY.key].length && (
+          <AlertDialog
+            label={
+              <Fab
+                style={{ background: "#EA2027" }}
+                aria-label="Go to next page"
+                size="medium"
+                className="fab next-btn"
+              >
+                <ArrowRightIcon />
+              </Fab>
+            }
+            text={contactNoticeText}
+            submit={handleSubmit}
+          />
+        )}
+      {(contacts.filter((contact) => contact.email).length === 0 ||
+        !formValues[fields.CITY.key] ||
+        !formValues[fields.CITY.key].length ||
+        !formValues[fields.STATE.key] ||
+        !formValues[fields.STATE.key].length ||
+        !formValues[fields.COUNTRY.key] ||
+        !formValues[fields.COUNTRY.key].length) && (
         <Fab
           style={{ background: "#EA2027" }}
           aria-label="Go to next page"

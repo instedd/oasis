@@ -99,12 +99,10 @@
     top: 32px;
     right: 30px;
     font-weight: 900;
-    /* font-family: Roboto; */
 }
 
 .statusItem {
     align-items: center;
-    /* margin-bottom: 10px; */
     display: inline-flex;
     margin-right: 20px;
 }
@@ -157,7 +155,6 @@
 }
 
 .resources {
-    /* margin-top: 10px; */
     display: flex;
     flex-direction: row;
     align-items: center;
