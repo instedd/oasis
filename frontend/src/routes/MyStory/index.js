@@ -41,26 +41,49 @@ export default function MyStory(props) {
     <>
       <h1 className="title">MY COVID-19 STORY</h1>
       <p className="subtitle">Your COVID-19 story in your own words</p>
+      <div className="wordcount">
+        <p>{myStory.length}/200</p>
+      </div>
       <TextField
+        inputProps={{
+          maxLength: 200,
+        }}
         id="outlined-multiline-static"
-        placeholder="Tell a little about yourself, how you think you got sick and what the experience has been like"
+        placeholder="Everyone has a Covid-19 story. What's yours?"
         multiline
-        rowsMax={10}
         value={myStory}
         onChange={handleChange}
         className={classNames("textarea", styles.textarea)}
         variant="outlined"
       />
+      <br></br>
       <Fab
-        style={{ background: "#EA2027", marginTop: "1.5rem" }}
+        style={{ background: "#9206FF", marginTop: "1.5rem" }}
         aria-label="add"
         size="medium"
         className="fab"
         variant="extended"
         onClick={handleSubmit}
       >
+        SKIP FOR NOW
+      </Fab>
+
+      <Fab
+        style={{
+          background: "#EA2027",
+          marginTop: "1.5rem",
+          marginLeft: "1rem",
+        }}
+        aria-label="add"
+        size="medium"
+        className="fab"
+        variant="extended"
+        width="100"
+        onClick={handleSubmit}
+      >
         SHARE MY STORY
       </Fab>
+
       <Fab
         style={{ background: "#9206FF" }}
         aria-label="add"

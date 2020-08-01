@@ -8,7 +8,7 @@
 }
 
 .textarea .Mui-focused label{
-    width: 400px
+    width: 300px
 }
 .textarea label {
     color: grey;
@@ -18,7 +18,7 @@
 }
 
 .textarea {
-    width: 90vw;
+    width: 50vw;
     height: 40vh;
     display: flex;
 }
@@ -29,3 +29,4 @@
     align-items: flex-start;
     background-color: rgba(0,0,0,0.5);
 }
+
