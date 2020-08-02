@@ -140,8 +140,9 @@ function CriticalQuestions(props) {
       formValues[fields.STATE.key].length &&
       formValues[fields.COUNTRY.key] &&
       formValues[fields.COUNTRY.key].length &&
-      (!formValues[fields.CITY.key] || formValues[fields.CITY.key].length)
+      (!formValues[fields.CITY.key] || formValues[fields.CITY.key] === "")
     ) {
+      console.log("111");
       document.getElementById("reminder").innerHTML =
         "It seems that you did not fill your city. You can type it out manually and then click next. ";
       if (document.getElementById("error")) {
@@ -149,6 +150,7 @@ function CriticalQuestions(props) {
       }
       next_count++;
     } else {
+      console.log("222");
       if (document.getElementById("error")) {
         document.getElementById("error").style.display = "inline";
       }
