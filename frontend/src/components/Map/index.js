@@ -1,7 +1,9 @@
 import classNames from "classnames";
 import mapboxgl from "mapbox-gl";
 import React, { useEffect, useState } from "react";
-import RoomRoundedIcon from "@material-ui/icons/RoomRounded";
+import Collapse from "@material-ui/core/Collapse";
+import ExpandLessIcon from "@material-ui/icons/ExpandLess";
+import IconButton from "@material-ui/core/IconButton";
 import styles from "./styles.module.css";
 import api from "utils";
 import { sicknessStatus, testStatus } from "../../routes/types";
@@ -15,23 +17,19 @@ const statusMapping = {
   [sicknessStatus.NOT_SICK]: { name: "Not Sick", color: "gray" },
 };
 
-const statusColor = [
-  { text: "My story", color: "#3bb2d0" },
-  { text: "Sick", color: statusMapping[sicknessStatus.SICK].color },
-  { text: "Not sick", color: statusMapping[sicknessStatus.NOT_SICK].color },
-  { text: "Recovered", color: statusMapping[sicknessStatus.RECOVERED].color },
-];
-
 mapboxgl.accessToken =
   "pk.eyJ1Ijoic3RlNTE5IiwiYSI6ImNrOHc1aHlvYTB0N2ozam51MHFiazE3bmcifQ.AHtFuA-pAqau_AJIy-hzOg";
 
 export default function Map(props, { draggable = true }) {
   const countryMinZoom = 3.5;
-  const initialZoom = 5;
+  const initialZoom = 1;
   const focusZoom = 6;
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
 
   const userStory = props.userStory;
+  const actives = props.actives;
+  const deaths = props.deaths;
+  const recovered = props.recovered;
 
   const dataScope = {
     WORLD: "world",
@@ -41,8 +39,8 @@ export default function Map(props, { draggable = true }) {
 
   const [map, setMap] = useState(null);
   const [location, setLocation] = useState({
-    lng: -119.6,
-    lat: 36.7,
+    lng: 0,
+    lat: 0,
   });
   const [legendRanges, setLegendRanges] = useState([]);
 
@@ -118,6 +116,10 @@ export default function Map(props, { draggable = true }) {
   };
 
   const fetchUserLocation = async () => {
+    if (isInRange(userStory.latitude, userStory.longitude)) {
+      return { lat: userStory.latitude, lng: userStory.longitude };
+    }
+
     const response = await fetch(`https://freegeoip.app/json/`);
     if (response.status >= 200 && response.status < 300) {
       const jsonResponse = await response.json();
@@ -205,10 +207,39 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
+
+    map.on("mousemove", function (e) {
+      var countries = map.queryRenderedFeatures(e.point, {
+        layers: ["world-layer"],
+      });
+
+      if (countries.length > 0) {
+        const country_name = countries[0].properties.name;
+        const country = covidData.filter(
+          (country) => country.name === country_name
+        );
+
+        if (country.length > 0 && country[0].confirmed) {
+          document.getElementById("pd").innerHTML =
+            "<h2>" +
+            country_name +
+            "</h2><h3>" +
+            country[0].confirmed +
+            " cases confirmed</h3>";
+        } else {
+          document.getElementById("pd").innerHTML =
+            "<h2>" + country_name + "</h2><h3> NA </h3>";
+        }
+      } else {
+        document.getElementById("pd").innerHTML =
+          "<h2> Confirmed Cases </h2> <h3>Hover over/Click a state or country!</h3>";
+      }
+    });
   };
 
   const addNonUSLayer = async (map, data) => {
     const covidData = await data;
+
     // Delete US from the world expression(all expression)
     const expression = covidData
       .filter((country) => country.name !== "United States of America")
@@ -237,6 +268,35 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
+
+    map.on("mousemove", function (e) {
+      var countries = map.queryRenderedFeatures(e.point, {
+        layers: ["non-us-layer"],
+      });
+
+      if (
+        countries.length > 0 &&
+        countries[0].properties.name &&
+        countries[0].properties.name !== "United States of America"
+      ) {
+        const country_name = countries[0].properties.name;
+        const country = covidData.filter(
+          (country) => country.name === country_name
+        );
+
+        if (country.length > 0 && country[0].confirmed) {
+          document.getElementById("pd").innerHTML =
+            "<h2>" +
+            country_name +
+            "</h2><h3>" +
+            country[0].confirmed +
+            " cases confirmed</h3>";
+        } else {
+          document.getElementById("pd").innerHTML =
+            "<h2>" + country_name + "</h2><h3> NA </h3>";
+        }
+      }
+    });
   };
 
   const addUSStatesLayer = async (map, data) => {
@@ -331,6 +391,29 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
+
+    // add the information window
+    map.on("mousemove", function (e) {
+      var states = map.queryRenderedFeatures(e.point, {
+        layers: ["us-states-layer"],
+      });
+
+      if (states.length > 0) {
+        const state_name = states[0].properties.STATE_NAME;
+        const abbr_name = Object.keys(stateToFIPS).find(
+          (key) => stateToFIPS[key] === states[0].properties.STATE_ID
+        );
+        const confirmed = usData.filter((state) => state.name === abbr_name)[0]
+          .confirmed;
+
+        document.getElementById("pd").innerHTML =
+          "<h2>" +
+          state_name +
+          "</h2><h3>" +
+          confirmed +
+          " cases confirmed</h3>";
+      }
+    });
   };
 
   const addCircle = (status, content) => {
@@ -359,7 +442,7 @@ export default function Map(props, { draggable = true }) {
         " working in the " +
         userStory.profession.toLowerCase() +
         " industry ";
-    content = content + "living in " + userStory.state;
+    content = content + "living near " + userStory.state;
     var date = userStory.createdAt.substring(0, 10);
     if (userStory.myStory) content = content + " on " + date;
     content += ".</p>";
@@ -432,7 +515,7 @@ export default function Map(props, { draggable = true }) {
     if (story) {
       content = content + '"' + story + '"</p>';
       if (date) content = content + "<p> - on" + date + "</p>";
-    } else content += "You haven't share your story yet! </p>";
+    } else content += "You haven't shared your story yet! </p>";
 
     // create the marker
     if (isInRange(userStory.latitude, userStory.longitude)) {
@@ -447,24 +530,50 @@ export default function Map(props, { draggable = true }) {
     }
   };
 
+  const [expanded, setExpanded] = React.useState(
+    window.screen.width > 1024 ? true : false
+  );
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
   const legend = (
-    <div className={classNames(styles.legend)} id="legend">
-      <h3>Active cases</h3>
-      {legendRanges.map((range, i) => (
-        <div className={classNames(styles.legendItem)} key={i}>
-          <span style={{ backgroundColor: range.color }}></span>
-          {range.label}
+    <div className={classNames(styles.legendWrapper)}>
+      <div className={classNames(styles.legend)} id="legend">
+        <div className={classNames(styles.legendCollapse)}>
+          <h3>Active Cases</h3>
+          <IconButton
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="show more"
+          >
+            <ExpandLessIcon />
+          </IconButton>
         </div>
-      ))}
-      <h3 style={{ marginTop: "8px" }}>Story markers</h3>
-      {statusColor.map((status, i) => (
-        <div className={classNames(styles.legendItem)} key={i}>
-          <RoomRoundedIcon
-            style={{ color: status.color, fontSize: "medium" }}
-          />
-          <sup style={{ fontSize: "12px" }}> {status.text} </sup>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          {legendRanges.map((range, i) => (
+            <div className={classNames(styles.legendItem)} key={i}>
+              <span style={{ backgroundColor: range.color }}></span>
+              {range.label}
+            </div>
+          ))}
+        </Collapse>
+      </div>
+      <div className={classNames(styles.statusLegend)}>
+        <div>
+          <h2> Latest Total </h2>
+          <h3>
+            Actives: {actives} <br />
+            Deaths: {deaths} <br />
+            Recovered: {recovered}
+          </h3>
         </div>
-      ))}
+        <div id="pd">
+          <h2> Confirmed Cases </h2>
+          <h3> Hover over/Click a state or country!</h3>
+        </div>
+      </div>
     </div>
   );
 
@@ -477,6 +586,9 @@ export default function Map(props, { draggable = true }) {
 
   return (
     <div className={styles.root}>
+      <div className={styles.random}>
+        The locations of markers are randomized.
+      </div>
       <div className={styles.refresh}>
         Please refresh the page if the map is gray.
       </div>

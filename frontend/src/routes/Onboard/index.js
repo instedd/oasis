@@ -44,7 +44,7 @@ export default function Onboard({ history }) {
           className="fab not-sick-btn"
           onClick={handleClick(sicknessStatus.RECOVERED)}
         >
-          <span>I AM RECOVERED</span>
+          <span>I HAVE RECOVERED</span>
         </Fab>
       </div>
     </>

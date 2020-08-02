@@ -149,10 +149,15 @@ function CriticalQuestions(props) {
       // delete the contacts which have empty email and phone number
       var valid_contacts = contacts.filter((contact) => contact.email);
 
+      // delete the travel which does not have date or location
+      var valid_travels = recentTravels.filter(
+        (travel) => travel.location && travel.dateOfReturn
+      );
+
       const dto = {
         story,
         nextPage,
-        travels: recentTravels,
+        travels: valid_travels,
         closeContacts: valid_contacts,
       };
       dispatch(submitStory(dto));
@@ -204,16 +209,31 @@ function CriticalQuestions(props) {
 
   const closeContactsSection = () => (
     <>
+      <p>Enter close contact information below if you are sick.</p>
       <div className={styles.formrow}>
-        <Fab
-          style={{ background: "#EA2027" }}
-          aria-label="add"
-          size="medium"
-          className={styles.fab}
-          onClick={() => setContacts([...contacts, {}])}
-        >
-          <AddIcon />
-        </Fab>
+        {story && story.sick === sicknessStatus.SICK && (
+          <Fab
+            style={{ background: "#EA2027" }}
+            aria-label="add"
+            size="medium"
+            className={styles.fab}
+            onClick={() => setContacts([...contacts, {}])}
+          >
+            <AddIcon />
+          </Fab>
+        )}
+        {story &&
+          (story.sick === sicknessStatus.RECOVERED ||
+            story.sick === sicknessStatus.NOT_SICK) && (
+            <Fab
+              style={{ background: "#D3D3D3" }}
+              aria-label="add"
+              size="medium"
+              className={styles.fab}
+            >
+              <AddIcon />
+            </Fab>
+          )}
         <p>Close Contacts</p>
         <Pop
           label={<ErrorOutlineIcon />}
@@ -505,7 +525,7 @@ function CriticalQuestions(props) {
           </FormControl>
         </div>
         {closeContactsSection()}
-        {travelsSection()}
+        {/*travelsSection()*/}
         <div style={{ height: "30px" }} ref={pageBottomRef}></div>
       </div>
 
