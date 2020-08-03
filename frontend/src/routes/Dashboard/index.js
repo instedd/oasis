@@ -2,6 +2,9 @@ import Link from "@material-ui/core/Link";
 import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
+import Collapse from "@material-ui/core/Collapse";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import IconButton from "@material-ui/core/IconButton";
 import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -24,10 +27,17 @@ const statusMapping = {
 };
 
 function Dashboard(props, { draggableMapRoutes = [] }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const { story, status } = useSelector((state) => state.story);
   let location = useLocation();
   const [draggableMap, setDraggableMap] = useState(false);
+  const [expanded, setExpanded] = useState(
+    window.screen.width > 1024 ? true : false
+  );
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
 
   useEffect(() => {
     let shouldDragMap = draggableMapRoutes.includes(location.pathname);
@@ -74,10 +84,18 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       state: { onboard: true },
       classes: classNames("MuiFab-extended assessment", styles.assessment),
     },
+    {
+      name: "EDIT MY PROFILE",
+      href: paths.criticalQuestions,
+      classes: classNames("MuiFab-extended", styles.profile),
+    },
   ];
 
   const userStatus = () => (
-    <div className={classNames(styles.statusList)}>
+    <div
+      className={classNames(styles.statusList)}
+      style={{ textAlign: "left" }}
+    >
       <div className={classNames("row", styles.statusItem)}>
         <span
           className={styles.dot}
@@ -92,57 +110,39 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
         />
         {statusMapping[story.tested].name.toUpperCase()}
       </div>
-      <div></div>
     </div>
-  );
-
-  const latestUpdate = () => (
-    <>
-      <h3>LATEST TOTALS</h3>
-      <div className="row">
-        <div className={classNames(styles.totalItem)}>
-          ACTIVES
-          <div className={classNames(styles.totalItemNum)}>
-            {data.confirmed && data.confirmed.toLocaleString()}
-          </div>
-        </div>
-        <div className={classNames(styles.totalItem)}>
-          DEATHS
-          <div className={classNames(styles.totalItemNum)}>
-            {data.deaths && data.deaths.toLocaleString()}
-          </div>
-        </div>
-        <div className={classNames(styles.totalItem)}>
-          RECOVERED
-          <div className={classNames(styles.totalItemNum)}>
-            {data.recovered && data.recovered.toLocaleString()}
-          </div>
-        </div>
-      </div>
-    </>
   );
 
   const resources = () => (
     <>
-      <h3>RESOURCES</h3>
-      <p>Stay at home</p>
-      {getStoryResources(story).map((resource) => (
-        <Link
-          href={resource.site}
-          {...(resource.color ? { style: { color: resource.color } } : {})}
-          target="_blank"
+      <div className={classNames(styles.resources)}>
+        <h3>RESOURCES</h3>
+        <IconButton
+          onClick={handleExpandClick}
+          aria-expanded={expanded}
+          aria-label="show more"
         >
-          {resource.text}
-        </Link>
-      ))}
+          <ExpandMoreIcon />
+        </IconButton>
+      </div>
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        {getStoryResources(story).map((resource) => (
+          <Link
+            href={resource.site}
+            {...(resource.color ? { style: { color: resource.color } } : {})}
+            target="_blank"
+          >
+            {resource.text}
+          </Link>
+        ))}
+      </Collapse>
     </>
   );
 
   const informationHeader = () => (
     <div className={classNames(styles.box, styles.top, styles.header)}>
-      {resources()}
       {userStatus()}
-      {latestUpdate()}
+      {resources()}
     </div>
   );
 
@@ -152,7 +152,13 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
         status.detail
       ) : (
         <>
-          <Map draggable={draggableMap} userStory={story} />
+          <Map
+            draggable={draggableMap}
+            userStory={story}
+            actives={data.confirmed && data.confirmed.toLocaleString()}
+            deaths={data.deaths && data.deaths.toLocaleString()}
+            recovered={data.recovered && data.recovered.toLocaleString()}
+          />
           {informationHeader()}
           <SpeedDial
             ariaLabel="Daily actions"

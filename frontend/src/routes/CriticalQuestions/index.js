@@ -8,6 +8,7 @@ import {
   TextField,
   List,
   ListItem,
+  Button,
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
@@ -54,6 +55,9 @@ function CriticalQuestions(props) {
   const { story, status, travels, closeContacts } = useSelector(
     (state) => state.story
   );
+
+  // the number of times that the user clicks next
+  var next_count = 0;
 
   useEffect(() => {
     if (!story) {
@@ -130,28 +134,56 @@ function CriticalQuestions(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    getGeocoding().then((coordinates) => {
-      const { ...story } = formValues;
-      if (story.sick === sicknessStatus.NOT_SICK) nextPage = paths.dashboard;
-      else nextPage = paths.symptoms;
-
-      // check if the user has filled valid city, state, and country
-      if (coordinates) {
-        story.latitude = coordinates[0];
-        story.longitude = coordinates[1];
+    if (
+      next_count === 0 &&
+      formValues[fields.STATE.key] &&
+      formValues[fields.STATE.key].length &&
+      formValues[fields.COUNTRY.key] &&
+      formValues[fields.COUNTRY.key].length &&
+      (!formValues[fields.CITY.key] || formValues[fields.CITY.key] === "")
+    ) {
+      console.log("111");
+      document.getElementById("reminder").innerHTML =
+        "It seems that you did not fill your city. You can type it out manually and then click next. ";
+      if (document.getElementById("error")) {
+        document.getElementById("error").style.display = "none";
       }
+      next_count++;
+    } else {
+      console.log("222");
+      if (document.getElementById("error")) {
+        document.getElementById("error").style.display = "inline";
+      }
+      document.getElementById("reminder").innerHTML = "";
+      getGeocoding().then((coordinates) => {
+        const { ...story } = formValues;
+        if (story.sick === sicknessStatus.NOT_SICK) nextPage = paths.dashboard;
+        else nextPage = paths.symptoms;
 
-      // delete the contacts which have empty email and phone number
-      var valid_contacts = contacts.filter((contact) => contact.email);
+        // check if the user has filled valid city, state, and country
+        if (coordinates) {
+          story.latitude = coordinates[1]; // coordinates = [lng, lat]
+          story.longitude = coordinates[0];
+        }
 
-      const dto = {
-        story,
-        nextPage,
-        travels: recentTravels,
-        closeContacts: valid_contacts,
-      };
-      dispatch(submitStory(dto));
-    });
+        // delete the contacts which have empty email and phone number
+        var valid_contacts = contacts.filter((contact) => contact.email);
+
+        // delete the travel which does not have date or location
+        var valid_travels = recentTravels.filter(
+          (travel) => travel.location && travel.dateOfReturn
+        );
+
+        const dto = {
+          story,
+          nextPage,
+          travels: valid_travels,
+          closeContacts: valid_contacts,
+        };
+
+        dispatch(submitStory(dto));
+      });
+    }
   };
 
   const [countries, setCountries] = useState([]);
@@ -199,16 +231,31 @@ function CriticalQuestions(props) {
 
   const closeContactsSection = () => (
     <>
+      <p>Enter close contact information below if you are sick.</p>
       <div className={styles.formrow}>
-        <Fab
-          style={{ background: "#EA2027" }}
-          aria-label="add"
-          size="medium"
-          className={styles.fab}
-          onClick={() => setContacts([...contacts, {}])}
-        >
-          <AddIcon />
-        </Fab>
+        {story && story.sick === sicknessStatus.SICK && (
+          <Fab
+            style={{ background: "#EA2027" }}
+            aria-label="add"
+            size="medium"
+            className={styles.fab}
+            onClick={() => setContacts([...contacts, {}])}
+          >
+            <AddIcon />
+          </Fab>
+        )}
+        {story &&
+          (story.sick === sicknessStatus.RECOVERED ||
+            story.sick === sicknessStatus.NOT_SICK) && (
+            <Fab
+              style={{ background: "#D3D3D3" }}
+              aria-label="add"
+              size="medium"
+              className={styles.fab}
+            >
+              <AddIcon />
+            </Fab>
+          )}
         <p>Close Contacts</p>
         <Pop
           label={<ErrorOutlineIcon />}
@@ -222,7 +269,7 @@ function CriticalQuestions(props) {
         <div key={i}>
           <div className={classNames("grid-3", styles["grid-3"])}>
             <TextField
-              label="Email (required)"
+              label="Email*"
               value={contact.email}
               onChange={handleCloseContactChange("email", i)}
             />
@@ -333,9 +380,7 @@ function CriticalQuestions(props) {
             }
 
             if (address.length > 1) {
-              var str = address[address.length - 2];
-              var lastIndex = str.lastIndexOf(" ");
-              state = str.substring(0, lastIndex).trim();
+              state = address[address.length - 2].trim();
             }
             if (address.length > 2) {
               city = address[address.length - 3].trim();
@@ -352,8 +397,11 @@ function CriticalQuestions(props) {
 
   return (
     <>
-      {status && status.type === ERROR && (
-        <p className={classNames(styles.status, styles.error)}>
+      <p id="reminder" className={classNames(styles.status, styles.error)}>
+        {" "}
+      </p>
+      {status && status.type === ERROR && status.detail !== "Story not found" && (
+        <p className={classNames(styles.status, styles.error)} id="error">
           {status.detail}
         </p>
       )}
@@ -416,7 +464,7 @@ function CriticalQuestions(props) {
               <FormHelperText style={{ fontSize: 12 }}>
                 Current Location
               </FormHelperText>
-              <List dense>
+              <List dense id="on_list">
                 {locationList.map((item, index) => (
                   <ListItem
                     key={index}
@@ -436,18 +484,54 @@ function CriticalQuestions(props) {
                     </ListItemText>
                   </ListItem>
                 ))}
+                {formValues[fields.CITY.key] &&
+                  formValues[fields.CITY.key].length && (
+                    <ListItem
+                      key="off"
+                      button
+                      onClick={() => {
+                        document.getElementById("on_list").style.display =
+                          "none";
+                      }}
+                    >
+                      <ListItemText style={{ color: "red" }}>
+                        Turn Off Adrress Autocompletion
+                      </ListItemText>
+                    </ListItem>
+                  )}
+              </List>
+              <List dense id="off_list">
+                {formValues[fields.CITY.key] &&
+                  formValues[fields.CITY.key].length &&
+                  document.getElementById("on_list").style.display ===
+                    "none" && (
+                    <ListItem
+                      key="on"
+                      button
+                      onClick={(e) => {
+                        document.getElementById("on_list").style.display =
+                          "inline";
+                        document.getElementById("off_list").style.display =
+                          "none";
+                      }}
+                    >
+                      <ListItemText style={{ color: "green" }}>
+                        Turn On Adrress Autocompletion
+                      </ListItemText>
+                    </ListItem>
+                  )}
               </List>
             </FormControl>
 
             <TextField
-              label={fields.STATE.label}
+              label={fields.STATE.label + "*"}
               value={formValues[fields.STATE.key]}
               onChange={handleFormChange(fields.STATE)}
               InputProps={{ inputProps: { min: 0 } }}
             />
 
             <TextField
-              label={fields.COUNTRY.label}
+              label={fields.COUNTRY.label + "*"}
               value={formValues[fields.COUNTRY.key]}
               onChange={handleFormChange(fields.COUNTRY)}
               InputProps={{ inputProps: { min: 0 } }}
@@ -500,7 +584,7 @@ function CriticalQuestions(props) {
           </FormControl>
         </div>
         {closeContactsSection()}
-        {travelsSection()}
+        {/*travelsSection()*/}
         <div style={{ height: "30px" }} ref={pageBottomRef}></div>
       </div>
 

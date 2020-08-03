@@ -1,34 +1,36 @@
 import classNames from "classnames";
 import mapboxgl from "mapbox-gl";
 import React, { useEffect, useState } from "react";
-import RoomRoundedIcon from "@material-ui/icons/RoomRounded";
+import Collapse from "@material-ui/core/Collapse";
+import ExpandLessIcon from "@material-ui/icons/ExpandLess";
+import IconButton from "@material-ui/core/IconButton";
+import Divider from "@material-ui/core/Divider";
 import styles from "./styles.module.css";
 import api from "utils";
-import { sicknessStatus } from "../../routes/types";
+import { sicknessStatus, testStatus } from "../../routes/types";
 
 const statusMapping = {
+  [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
+  [testStatus.NEGATIVE]: { name: "Tested Negative", color: "purple" },
+  [testStatus.NOT_TESTED]: { name: "Not Tested", color: "blue" },
   [sicknessStatus.SICK]: { name: "Sick", color: "orange" },
   [sicknessStatus.RECOVERED]: { name: "Recovered", color: "green" },
   [sicknessStatus.NOT_SICK]: { name: "Not Sick", color: "gray" },
 };
-
-const statusColor = [
-  { text: "My story", color: "#3bb2d0" },
-  { text: "Sick", color: statusMapping[sicknessStatus.SICK].color },
-  { text: "Not sick", color: statusMapping[sicknessStatus.NOT_SICK].color },
-  { text: "Recovered", color: statusMapping[sicknessStatus.RECOVERED].color },
-];
 
 mapboxgl.accessToken =
   "pk.eyJ1Ijoic3RlNTE5IiwiYSI6ImNrOHc1aHlvYTB0N2ozam51MHFiazE3bmcifQ.AHtFuA-pAqau_AJIy-hzOg";
 
 export default function Map(props, { draggable = true }) {
   const countryMinZoom = 3.5;
-  const initialZoom = 5;
+  const initialZoom = 1;
   const focusZoom = 6;
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
 
   const userStory = props.userStory;
+  const actives = props.actives;
+  const deaths = props.deaths;
+  const recovered = props.recovered;
 
   const dataScope = {
     WORLD: "world",
@@ -38,8 +40,8 @@ export default function Map(props, { draggable = true }) {
 
   const [map, setMap] = useState(null);
   const [location, setLocation] = useState({
-    lng: -119.6,
-    lat: 36.7,
+    lng: 0,
+    lat: 0,
   });
   const [legendRanges, setLegendRanges] = useState([]);
 
@@ -94,24 +96,31 @@ export default function Map(props, { draggable = true }) {
     }
   };
 
+  const isInRange = (lat, lng) => {
+    return lat && lat <= 90 && lat >= -90 && lng && lng <= 180 && lng >= -180;
+  };
+
   const addLayers = async (map) => {
     const data = await fetchCovidData(dataScope.ALL);
     //world data including US for world layer
     const worldData = data["data"]["adm0"];
     // US data for state layer
     const usStatesData = data["data"]["adm1"]["US"];
-
     addLegend(data);
 
     map.on("load", function () {
+      addStoryLayer(map);
       addWorldLayer(map, worldData);
       addNonUSLayer(map, worldData);
       addUSStatesLayer(map, usStatesData);
-      addStoryLayer(map);
     });
   };
 
   const fetchUserLocation = async () => {
+    if (isInRange(userStory.latitude, userStory.longitude)) {
+      return { lat: userStory.latitude, lng: userStory.longitude };
+    }
+
     const response = await fetch(`https://freegeoip.app/json/`);
     if (response.status >= 200 && response.status < 300) {
       const jsonResponse = await response.json();
@@ -130,6 +139,11 @@ export default function Map(props, { draggable = true }) {
     const body = await api(`stories/all`, {
       method: "GET",
     });
+
+    //add the numer of the users
+    document.getElementById("users_num").innerHTML =
+      "There are " + body.length + " users on OASIS";
+
     return storiesToGeoJson(body);
   };
 
@@ -141,12 +155,14 @@ export default function Map(props, { draggable = true }) {
     stories = stories.filter(
       (story) =>
         story &&
-        story.latitude &&
-        story.longitude &&
+        isInRange(story.latitude, story.longitude) &&
         !story.spam &&
-        story.createdAt &&
         story.id !== userStory.id
     );
+
+    //add the number of the stories
+    document.getElementById("stories_num").innerHTML =
+      stories.length + " of them shared their stories";
 
     let features = stories.map((story) => {
       let { latitude, longitude, ...properties } = story;
@@ -156,8 +172,8 @@ export default function Map(props, { draggable = true }) {
         geometry: {
           type: "Point",
           coordinates: [
-            latitude + getRandomFloat(),
             longitude + getRandomFloat(),
+            latitude + getRandomFloat(),
           ],
         },
         properties: properties,
@@ -201,10 +217,39 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
+
+    map.on("mousemove", function (e) {
+      var countries = map.queryRenderedFeatures(e.point, {
+        layers: ["world-layer"],
+      });
+
+      if (countries.length > 0) {
+        const country_name = countries[0].properties.name;
+        const country = covidData.filter(
+          (country) => country.name === country_name
+        );
+
+        if (country.length > 0 && country[0].confirmed) {
+          document.getElementById("pd").innerHTML =
+            "<h2>" +
+            country_name +
+            "</h2><h3>" +
+            country[0].confirmed +
+            " cases confirmed</h3>";
+        } else {
+          document.getElementById("pd").innerHTML =
+            "<h2>" + country_name + "</h2><h3> NA </h3>";
+        }
+      } else {
+        document.getElementById("pd").innerHTML =
+          "<h2> Confirmed Cases </h2> <h3>Hover over/Click a state or country!</h3>";
+      }
+    });
   };
 
   const addNonUSLayer = async (map, data) => {
     const covidData = await data;
+
     // Delete US from the world expression(all expression)
     const expression = covidData
       .filter((country) => country.name !== "United States of America")
@@ -233,6 +278,35 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
+
+    map.on("mousemove", function (e) {
+      var countries = map.queryRenderedFeatures(e.point, {
+        layers: ["non-us-layer"],
+      });
+
+      if (
+        countries.length > 0 &&
+        countries[0].properties.name &&
+        countries[0].properties.name !== "United States of America"
+      ) {
+        const country_name = countries[0].properties.name;
+        const country = covidData.filter(
+          (country) => country.name === country_name
+        );
+
+        if (country.length > 0 && country[0].confirmed) {
+          document.getElementById("pd").innerHTML =
+            "<h2>" +
+            country_name +
+            "</h2><h3>" +
+            country[0].confirmed +
+            " cases confirmed</h3>";
+        } else {
+          document.getElementById("pd").innerHTML =
+            "<h2>" + country_name + "</h2><h3> NA </h3>";
+        }
+      }
+    });
   };
 
   const addUSStatesLayer = async (map, data) => {
@@ -327,6 +401,82 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
+
+    // add the information window
+    map.on("mousemove", function (e) {
+      var states = map.queryRenderedFeatures(e.point, {
+        layers: ["us-states-layer"],
+      });
+
+      if (states.length > 0) {
+        const state_name = states[0].properties.STATE_NAME;
+        const abbr_name = Object.keys(stateToFIPS).find(
+          (key) => stateToFIPS[key] === states[0].properties.STATE_ID
+        );
+        const confirmed = usData.filter((state) => state.name === abbr_name)[0]
+          .confirmed;
+
+        document.getElementById("pd").innerHTML =
+          "<h2>" +
+          state_name +
+          "</h2><h3>" +
+          confirmed +
+          " cases confirmed</h3>";
+      }
+    });
+  };
+
+  const addCircle = (status, content) => {
+    const color = status.color;
+    const word = status.name;
+    content +=
+      '<div style="position:relative;width: 8px; height: 8px;line-height:0.8rem;font-size:0.8rem;' +
+      "margin-right: 10px;top:5px;float: left;border-radius: 50%;background:";
+    content = content + color + ';"></div>';
+    content =
+      content +
+      '<p style="position:relative;top:5px;right:5px;float:left;' +
+      "color:" +
+      color +
+      ';line-height:0.8rem;font-size:0.8rem;">' +
+      word.toUpperCase() +
+      "</p>";
+    return content;
+  };
+  const popUpContent = (userStory, content) => {
+    if (userStory.age) content = content + " " + userStory.age + " years old";
+    content += userStory.myStory || userStory.age ? " user " : " User ";
+    if (userStory.profession !== "")
+      content =
+        content +
+        " working in the " +
+        userStory.profession.toLowerCase() +
+        " industry ";
+    content = content + "living near " + userStory.state;
+    var date = userStory.createdAt.substring(0, 10);
+    if (userStory.myStory) content = content + " on " + date;
+    content += ".</p>";
+    content += '<div style="line-height:0.8rem;" class="row">';
+    content = addCircle(statusMapping[userStory.sick], content);
+    content = addCircle(statusMapping[userStory.tested], content);
+    content += "</div>";
+    return content;
+  };
+
+  const setHover = (marker, content, map) => {
+    var popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false,
+      offset: 25,
+    });
+    popup.setHTML(content);
+    const element = marker.getElement();
+    element.id = "marker";
+    // hover event listener
+    element.addEventListener("mouseenter", () => popup.addTo(map));
+    element.addEventListener("mouseleave", () => popup.remove());
+    // add popup to marker
+    marker.setPopup(popup);
   };
 
   const addStoryLayer = async (map) => {
@@ -345,92 +495,102 @@ export default function Map(props, { draggable = true }) {
       el.className = "marker";
       var myStory = marker.properties.myStory;
 
-      // check if mystory is null
-      if (!myStory) {
-        myStory = "";
-      }
-
-      var date = marker.properties.createdAt.substring(0, 10);
-      var popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-        "<h3>" + date + "</h3><p>" + myStory + "</p>"
-      );
-
-      map.on("mouseenter", "places", function (e) {
-        // Change the cursor style as a UI indicator.
-        map.getCanvas().style.cursor = "pointer";
-        var coordinates = e.features[0].geometry.coordinates.slice();
-        var description = e.features[0].properties.myStory;
-
-        // Ensure that if the map is zoomed out such that multiple
-        // copies of the feature are visible, the popup appears
-        // over the copy being pointed to.
-        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-        }
-
-        // Populate the popup and set its coordinates
-        // based on the feature found.
-        popup.setLngLat(coordinates).setHTML(description).addTo(map);
-      });
-
-      map.on("mouseleave", "places", function () {
-        map.getCanvas().style.cursor = "";
-        popup.remove();
-      });
+      content = "";
+      //add user story if has any
+      if (myStory)
+        content =
+          content +
+          '<p style="font-size: 18px;line-height: 18px;">"' +
+          myStory +
+          '"</p><p style = "line-height:0.9rem;font-size:0.9rem;">- From';
+      else content += '<p style = "line-height:0.8rem;font-size:0.8rem;">';
+      content = popUpContent(marker.properties, content);
 
       // create the marker
       const sickStatus = marker.properties.sick;
-      new mapboxgl.Marker({ color: statusMapping[sickStatus].color })
-        .setLngLat(marker.geometry.coordinates)
-        .setPopup(popup) // sets a popup on this marker
-        .addTo(map);
+      const currmarker = new mapboxgl.Marker({
+        color: statusMapping[sickStatus].color,
+      }).setLngLat(marker.geometry.coordinates);
+      //attach the popup
+      setHover(currmarker, content, map);
+      // add marker to map
+      currmarker.addTo(map);
     });
 
     // Add current user's marker
     // create the popup
     const date = userStory.createdAt;
     const story = userStory.myStory;
-
-    var popup = null;
+    var content = '<p style="font-size: 18px;line-height: 18px;">';
     if (story) {
-      if (date) {
-        popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-          "<h3> MY STORY </h3>" + date + "<p>" + story + "</p>"
-        );
-      } else {
-        popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-          "<h3> MY STORY </h3>" + "<p>" + story + "</p>"
-        );
-      }
-    } else {
-      popup = new mapboxgl.Popup({ offset: 25 }).setHTML("<h3> MY STORY </h3>");
-    }
+      content = content + '"' + story + '"</p>';
+      if (date) content = content + "<p> - on" + date + "</p>";
+    } else content += "You haven't shared your story yet! </p>";
 
     // create the marker
-    new mapboxgl.Marker()
-      .setLngLat([userStory.latitude, userStory.longitude])
-      .setPopup(popup) // sets a popup on this marker
-      .addTo(map);
+    if (isInRange(userStory.latitude, userStory.longitude)) {
+      const marker = new mapboxgl.Marker().setLngLat([
+        userStory.longitude,
+        userStory.latitude,
+      ]);
+      //attach popup
+      setHover(marker, content, map);
+      // add marker to map
+      marker.addTo(map);
+    }
+  };
+
+  const [expanded, setExpanded] = React.useState(
+    window.screen.width > 1024 ? true : false
+  );
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
   };
 
   const legend = (
-    <div className={classNames(styles.legend)} id="legend">
-      <h3>Active cases</h3>
-      {legendRanges.map((range, i) => (
-        <div className={classNames(styles.legendItem)} key={i}>
-          <span style={{ backgroundColor: range.color }}></span>
-          {range.label}
+    <div className={classNames(styles.legendWrapper)}>
+      <div className={classNames(styles.legend)} id="legend">
+        <div className={classNames(styles.legendCollapse)}>
+          <h3>Active Cases</h3>
+          <IconButton
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="show more"
+          >
+            <ExpandLessIcon />
+          </IconButton>
         </div>
-      ))}
-      <h3 style={{ marginTop: "8px" }}>Story markers</h3>
-      {statusColor.map((status, i) => (
-        <div className={classNames(styles.legendItem)} key={i}>
-          <RoomRoundedIcon
-            style={{ color: status.color, fontSize: "medium" }}
-          />
-          <sup style={{ fontSize: "12px" }}> {status.text} </sup>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          {legendRanges.map((range, i) => (
+            <div className={classNames(styles.legendItem)} key={i}>
+              <span style={{ backgroundColor: range.color }}></span>
+              {range.label}
+            </div>
+          ))}
+        </Collapse>
+      </div>
+      <div className={classNames(styles.statusLegend)}>
+        <div>
+          <h2> Latest Total </h2>
+          <h3>
+            Actives: {actives} <br />
+            Deaths: {deaths} <br />
+            Recovered: {recovered}
+          </h3>
         </div>
-      ))}
+        <div id="pd">
+          <h2> Confirmed Cases </h2>
+          <h3> Hover over/Click a state or country!</h3>
+        </div>
+        <Divider style={{ color: "black" }} />
+        <div style={{ paddingTop: 5, color: "#dcd6d3" }}>
+          <em>
+            <p id="users_num"></p>
+            <p id="stories_num"></p>
+          </em>
+        </div>
+      </div>
     </div>
   );
 
@@ -443,6 +603,9 @@ export default function Map(props, { draggable = true }) {
 
   return (
     <div className={styles.root}>
+      <div className={styles.random}>
+        The locations of markers are randomized.
+      </div>
       <div className={styles.refresh}>
         Please refresh the page if the map is gray.
       </div>
