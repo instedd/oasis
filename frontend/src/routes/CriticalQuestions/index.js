@@ -13,7 +13,7 @@ import {
 import AddIcon from "@material-ui/icons/Add";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import ArrowRightIcon from "@material-ui/icons/ArrowRight";
-import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
+import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import { DatePicker } from "@material-ui/pickers";
 import { submitStory, fetchStory } from "actions/story";
 import classNames from "classnames";
@@ -28,6 +28,7 @@ import { ERROR } from "actions/types";
 import { fields, initialFieldsState } from "./fields";
 import Select from "../../components/Select";
 import AlertDialog from "components/Dialog";
+import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 
 const contactText = Text["Close Contacts"].texts;
 const contactNoticeText = Text["Close Contacts Notice"].texts;
@@ -231,7 +232,6 @@ function CriticalQuestions(props) {
 
   const closeContactsSection = () => (
     <>
-      <p>Enter close contact information below if you are sick.</p>
       <div className={styles.formrow}>
         {story && story.sick === sicknessStatus.SICK && (
           <Fab
@@ -256,20 +256,26 @@ function CriticalQuestions(props) {
               <AddIcon />
             </Fab>
           )}
-        <p>Close Contacts</p>
-        <Pop
-          label={<ErrorOutlineIcon />}
-          title={<span></span>}
-          texts={contactText}
-          linkIndex={contactLinkIndex}
-          listIndex={contactListIndex}
-        />
+        <span>Close Contacts</span>
+        <span className={styles.pop}>
+          <Pop
+            label={<HelpOutlineIcon />}
+            title={
+              <span className={styles.sickAlert}>
+                Enter close contacts when you are sick
+              </span>
+            }
+            texts={contactText}
+            linkIndex={contactLinkIndex}
+            listIndex={contactListIndex}
+          />
+        </span>
       </div>
       {contacts.map((contact, i) => (
-        <div key={i}>
+        <div key={i} className={styles.contact}>
           <div className={classNames("grid-3", styles["grid-3"])}>
             <TextField
-              label="Email*"
+              label="Email *"
               value={contact.email}
               onChange={handleCloseContactChange("email", i)}
             />
@@ -281,6 +287,14 @@ function CriticalQuestions(props) {
               onChange={handleCloseContactChange("phoneNumber", i)}
             />
           </div>
+          <Button
+            onClick={() =>
+              setContacts(contacts.filter((el, i) => i != contacts.length - 1))
+            }
+          >
+            <DeleteForeverIcon />
+            Delete this contact
+          </Button>
         </div>
       ))}
     </>
@@ -300,7 +314,7 @@ function CriticalQuestions(props) {
         </Fab>
         <p>Recent Travels</p>
         <Pop
-          label={<ErrorOutlineIcon />}
+          label={<HelpOutlineIcon />}
           title={<span></span>}
           texts={travelText}
           linkIndex={travelLinkIndex}
@@ -524,14 +538,14 @@ function CriticalQuestions(props) {
             </FormControl>
 
             <TextField
-              label={fields.STATE.label + "*"}
+              label={fields.STATE.label + " *"}
               value={formValues[fields.STATE.key]}
               onChange={handleFormChange(fields.STATE)}
               InputProps={{ inputProps: { min: 0 } }}
             />
 
             <TextField
-              label={fields.COUNTRY.label + "*"}
+              label={fields.COUNTRY.label + " *"}
               value={formValues[fields.COUNTRY.key]}
               onChange={handleFormChange(fields.COUNTRY)}
               InputProps={{ inputProps: { min: 0 } }}
