@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Collapse from "@material-ui/core/Collapse";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import IconButton from "@material-ui/core/IconButton";
+import Divider from "@material-ui/core/Divider";
 import styles from "./styles.module.css";
 import api from "utils";
 import { sicknessStatus, testStatus, posToLatLng } from "../../routes/types";
@@ -112,11 +113,11 @@ export default function Map(props, { draggable = true }) {
     addLegend(data);
 
     map.on("load", function () {
+      addStoryLayer(map);
       addWorldLayer(map, worldData);
       addNonUSLayer(map, worldData);
       addUSStatesLayer(map, usStatesData);
       addSDPostLayer(map, sdPosData);
-      addStoryLayer(map);
     });
   };
 
@@ -143,6 +144,11 @@ export default function Map(props, { draggable = true }) {
     const body = await api(`stories/all`, {
       method: "GET",
     });
+
+    //add the numer of the users
+    document.getElementById("users_num").innerHTML =
+      "There are " + body.length + " users on OASIS";
+
     return storiesToGeoJson(body);
   };
 
@@ -158,6 +164,10 @@ export default function Map(props, { draggable = true }) {
         !story.spam &&
         story.id !== userStory.id
     );
+
+    //add the number of the stories
+    document.getElementById("stories_num").innerHTML =
+      stories.length + " of them shared their stories";
 
     let features = stories.map((story) => {
       let { latitude, longitude, ...properties } = story;
@@ -668,6 +678,13 @@ export default function Map(props, { draggable = true }) {
         <div id="pd">
           <h2> Confirmed Cases </h2>
           <h3> Hover over/Click a state or country!</h3>
+        </div>
+        <Divider style={{ color: "black" }} />
+        <div style={{ paddingTop: 5, color: "#dcd6d3" }}>
+          <em>
+            <p id="users_num"></p>
+            <p id="stories_num"></p>
+          </em>
         </div>
       </div>
     </div>
