@@ -6,7 +6,7 @@ import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import IconButton from "@material-ui/core/IconButton";
 import styles from "./styles.module.css";
 import api from "utils";
-import { sicknessStatus, testStatus } from "../../routes/types";
+import { sicknessStatus, testStatus, posToLatLng } from "../../routes/types";
 
 const statusMapping = {
   [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
@@ -22,8 +22,9 @@ mapboxgl.accessToken =
 
 export default function Map(props, { draggable = true }) {
   const countryMinZoom = 3.5;
+  const stateMaxZoom = 9;
   const initialZoom = 1;
-  const focusZoom = 6;
+  const focusZoom = 8;
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
 
   const userStory = props.userStory;
@@ -105,12 +106,16 @@ export default function Map(props, { draggable = true }) {
     const worldData = data["data"]["adm0"];
     // US data for state layer
     const usStatesData = data["data"]["adm1"]["US"];
+    // SD postal code data
+    const sdPosData = data["data"]["adm2"];
+
     addLegend(data);
 
     map.on("load", function () {
       addWorldLayer(map, worldData);
       addNonUSLayer(map, worldData);
       addUSStatesLayer(map, usStatesData);
+      addSDPostLayer(map, sdPosData);
       addStoryLayer(map);
     });
   };
@@ -167,6 +172,26 @@ export default function Map(props, { draggable = true }) {
           ],
         },
         properties: properties,
+      };
+    });
+
+    return {
+      type: "FeatureCollection",
+      features: features,
+    };
+  };
+
+  const postDataToGeojson = (data) => {
+    let features = data.map((zipcode) => {
+      let { name, ...properties } = zipcode;
+
+      return {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [posToLatLng[name][1], posToLatLng[name][0]],
+        },
+        properties: zipcode,
       };
     });
 
@@ -382,6 +407,7 @@ export default function Map(props, { draggable = true }) {
         type: "fill",
         source: "states",
         minzoom: countryMinZoom,
+        maxzoom: stateMaxZoom,
         "source-layer": "states",
         paint: {
           "fill-color": expression,
@@ -416,6 +442,75 @@ export default function Map(props, { draggable = true }) {
     });
   };
 
+  const addSDPostLayer = async (map, data) => {
+    const sdPosData = await data;
+    const geojson = postDataToGeojson(sdPosData);
+
+    map.addSource("sd-pos", {
+      type: "geojson",
+      data: geojson,
+    });
+
+    map.addLayer(
+      {
+        id: "sd-pos-layer",
+        type: "circle",
+        source: "sd-pos",
+        minzoom: focusZoom,
+        paint: {
+          // Size circle radius by earthquake magnitude and zoom level
+          "circle-radius": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            7,
+            ["interpolate", ["linear"], ["get", "confirmed"], 1, 1, 1000, 8],
+            16,
+            ["interpolate", ["linear"], ["get", "confirmed"], 1, 5, 1000, 60],
+          ],
+          // Color circle by earthquake magnitude
+          "circle-color": [
+            "interpolate",
+            ["linear"],
+            ["get", "confirmed"],
+            1,
+            "rgba(33,102,172,0)",
+            300,
+            "rgb(103,169,207)",
+            600,
+            "rgb(209,229,240)",
+            900,
+            "rgb(253,219,199)",
+            1200,
+            "rgb(239,138,98)",
+            1500,
+            "rgb(178,24,43)",
+          ],
+          "circle-stroke-color": "white",
+          "circle-stroke-width": 1,
+          // Transition from heatmap to circle layer by zoom level
+          "circle-opacity": ["interpolate", ["linear"], ["zoom"], 8, 0, 11, 1],
+        },
+      },
+      "waterway-label"
+    );
+
+    // add the information window
+    map.on("mousemove", function (e) {
+      var zipcodes = map.queryRenderedFeatures(e.point, {
+        layers: ["sd-pos-layer"],
+      });
+
+      if (zipcodes.length > 0) {
+        const name = zipcodes[0].properties.name;
+        const confirmed = zipcodes[0].properties.confirmed;
+
+        document.getElementById("pd").innerHTML =
+          "<h2>" + name + "</h2><h3>" + confirmed + " cases confirmed</h3>";
+      }
+    });
+  };
+
   const addCircle = (status, content) => {
     const color = status.color;
     const word = status.name;
@@ -433,6 +528,7 @@ export default function Map(props, { draggable = true }) {
       "</p>";
     return content;
   };
+
   const popUpContent = (userStory, content) => {
     if (userStory.age) content = content + " " + userStory.age + " years old";
     content += userStory.myStory || userStory.age ? " user " : " User ";
