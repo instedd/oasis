@@ -13,7 +13,7 @@ class NytLiveCounty(Base):
     date = Column(Date)
     county = Column(String(128))
     state = Column(String(128))
-    fips = Column(Integer)
+    fips = Column(String(128))
     cases = Column(Integer)
     deaths = Column(Integer)
     confirmed_cases = Column(Integer)

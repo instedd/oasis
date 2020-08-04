@@ -18,11 +18,13 @@ NYT_CURR_URL = (
 )
 
 
-def get_int_or_null(element):
+def get_type_or_null(element, to_type):
     """
-    Handles missing count data from NYT county spreadsheet
+    Takes an object and returns the desired casting, otherwise returns
+    None if element is a pandas null. Used to do both type conversion and
+    missing data handling for sanitizing the NYT dataset
     """
-    return int(element) if not pd.isnull(element) else None
+    return to_type(element) if not pd.isnull(element) else None
 
 
 def update(db: Session):
@@ -33,12 +35,14 @@ def update(db: Session):
     # Helpful SO: https://stackoverflow.com/questions/32400867
     # /pandas-read-csv-from-url
     raw_data = requests.get(NYT_CURR_URL).content
-    df = pd.read_csv(io.StringIO(raw_data.decode("utf-8")))
+    df = pd.read_csv(io.StringIO(raw_data.decode("utf-8")), dtype=str)
+    df = df[df["fips"].notna()]
 
     # Parse into database
     # Helpful structure for this here: https://stackoverflow.com/questions
     # /31394998/using-sqlalchemy-to-load-csv-file-into-a-database
     try:
+        db.query(models.NytLiveCounty).delete()
         for indx, row in df.iterrows():
             db.add(
                 models.NytLiveCounty(
@@ -47,20 +51,20 @@ def update(db: Session):
                         "date": datetime.strptime(row["date"], "%Y-%m-%d"),
                         "county": row["county"],
                         "state": row["state"],
-                        "fips": get_int_or_null(row["fips"]),
-                        "cases": get_int_or_null(row["cases"]),
-                        "deaths": get_int_or_null(row["deaths"]),
-                        "confirmed_cases": get_int_or_null(
-                            row["confirmed_cases"]
+                        "fips": get_type_or_null(row["fips"], str),
+                        "cases": get_type_or_null(row["cases"], int),
+                        "deaths": get_type_or_null(row["deaths"], int),
+                        "confirmed_cases": get_type_or_null(
+                            row["confirmed_cases"], int
                         ),
-                        "confirmed_deaths": get_int_or_null(
-                            row["confirmed_deaths"]
+                        "confirmed_deaths": get_type_or_null(
+                            row["confirmed_deaths"], int
                         ),
-                        "probable_cases": get_int_or_null(
-                            row["probable_cases"]
+                        "probable_cases": get_type_or_null(
+                            row["probable_cases"], int
                         ),
-                        "probable_deaths": get_int_or_null(
-                            row["probable_deaths"]
+                        "probable_deaths": get_type_or_null(
+                            row["probable_deaths"], int
                         ),
                     }
                 )
@@ -71,17 +75,14 @@ def update(db: Session):
         db.rollback()
 
 
-def get_nyt_data(db: Session, counties: List[str]):
+def get_nyt_data(db: Session, county_ids: List[str]):
     """
-    Retrieves records from a particular date for a list of counties. If
-    counties is [], return all data for all counties
+    Retrieves records for a list of FIPS codes
     """
-    if len(counties) == 0:
-        recs = db.query(models.NytLiveCounty).all()
-    else:
-        recs = (
-            db.query(models.NytLiveCounty)
-            # .filter(models.NytLiveCounty.date == date)
-            .filter(models.NytLiveCounty.county.in_(counties)).all()
-        )
+    update(db)  # TODO - REMOVE ME ONCE INTELLIGENT UPDATING IMPLEMENTED
+    recs = (
+        db.query(models.NytLiveCounty)
+        .filter(models.NytLiveCounty.fips.in_(county_ids))
+        .all()
+    )
     return recs

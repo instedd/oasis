@@ -6,7 +6,7 @@ class CountyData(BaseModel):
     date: date
     county: str
     state: str
-    fips: int
+    fips: str
     cases: int
     deaths: int
     confirmed_cases: int
