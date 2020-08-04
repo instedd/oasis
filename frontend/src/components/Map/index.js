@@ -9,6 +9,38 @@ import styles from "./styles.module.css";
 import api from "utils";
 import { sicknessStatus, testStatus } from "../../routes/types";
 
+const getRandomFloat = () => {
+  return Math.random() * (Math.random() > 0.5 ? -1 : 1);
+};
+const amIDrowning = (lat, lng, map) => {
+  let point = { lat: lat, lng: lng };
+  point = map.project(point);
+  let features = map.queryRenderedFeatures(point, {
+    layers: ["water"],
+  });
+  if (!features.length) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+class MapUtil {
+  constructor(map) {
+    this.map = map;
+  }
+  getSafeCoordinate(latitude, longitude) {
+    var rLat = latitude + getRandomFloat();
+    var rLng = longitude + getRandomFloat();
+    while (amIDrowning(rLat, rLng, this.map)) {
+      rLat = latitude + getRandomFloat();
+      rLng = longitude + getRandomFloat();
+    }
+    console.log([rLng, rLat]);
+    return [rLng, rLat];
+  }
+}
+var mapUtil;
 const statusMapping = {
   [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
   [testStatus.NEGATIVE]: { name: "Tested Negative", color: "purple" },
@@ -46,8 +78,6 @@ export default function Map(props, { draggable = true }) {
   const [legendRanges, setLegendRanges] = useState([]);
 
   useEffect(() => {
-    getUserLocation();
-
     const map = new mapboxgl.Map({
       container: "map",
       style: "mapbox://styles/mapbox/dark-v10",
@@ -65,7 +95,7 @@ export default function Map(props, { draggable = true }) {
     map &&
       map.flyTo({
         center: [location.lng, location.lat],
-        zoom: focusZoom,
+        zoom: initialZoom,
         speed: 0.6,
         curve: 1,
       });
@@ -109,6 +139,7 @@ export default function Map(props, { draggable = true }) {
     addLegend(data);
 
     map.on("load", function () {
+      mapUtil = new MapUtil(map);
       addStoryLayer(map);
       addWorldLayer(map, worldData);
       addNonUSLayer(map, worldData);
@@ -171,10 +202,7 @@ export default function Map(props, { draggable = true }) {
         type: "Feature",
         geometry: {
           type: "Point",
-          coordinates: [
-            longitude + getRandomFloat(),
-            latitude + getRandomFloat(),
-          ],
+          coordinates: mapUtil.getSafeCoordinate(latitude, longitude),
         },
         properties: properties,
       };
@@ -538,6 +566,13 @@ export default function Map(props, { draggable = true }) {
       // add marker to map
       marker.addTo(map);
     }
+    getUserLocation();
+    map.flyTo({
+      center: [location.lng, location.lat],
+      zoom: 8,
+      speed: 0.6,
+      curve: 1,
+    });
   };
 
   const [expanded, setExpanded] = React.useState(
