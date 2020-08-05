@@ -42,11 +42,14 @@ export default function MyStory(props) {
       <h1 className="title">MY COVID-19 STORY</h1>
       <p className="subtitle">Your COVID-19 story in your own words</p>
       <div className="wordcount">
-        <p>{myStory.length}/200</p>
+        {myStory.length < 280 && <p>{myStory.length}/280</p>}
+        {myStory.length === 280 && (
+          <p style={{ color: "red" }}>You have reached 280 characters limit</p>
+        )}
       </div>
       <TextField
         inputProps={{
-          maxLength: 200,
+          maxLength: 280,
         }}
         id="outlined-multiline-static"
         placeholder="Everyone has a Covid-19 story. What's yours?"
@@ -58,7 +61,12 @@ export default function MyStory(props) {
       />
       <br></br>
       <Fab
-        style={{ background: "#9206FF", marginTop: "1.5rem" }}
+        style={{
+          background: "#9206FF",
+          marginTop: "1.5rem",
+          width: "165px",
+          verticalAlign: "left",
+        }}
         aria-label="add"
         size="medium"
         className="fab"
@@ -67,12 +75,13 @@ export default function MyStory(props) {
       >
         SKIP FOR NOW
       </Fab>
-
+      <br></br>
       <Fab
         style={{
           background: "#EA2027",
           marginTop: "1.5rem",
           marginLeft: "1rem",
+          right: "5px",
         }}
         aria-label="add"
         size="medium"

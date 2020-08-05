@@ -18,9 +18,13 @@
 }
 
 .textarea {
-    width: 50vw;
-    height: 40vh;
+    width:30vw;
+    height:30vw;
+    max-width: 30vw;
+    max-height: 30vh;
     display: flex;
+    resize: vertical;
+    overflow-y:scroll;
 }
 
 .textarea > div {
