@@ -41,10 +41,9 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
 
   useEffect(() => {
     let shouldDragMap = draggableMapRoutes.includes(location.pathname);
-    if (shouldDragMap !== draggableMap) {
+    if (shouldDragMap !== draggableMap)
       setDraggableMap(draggableMapRoutes.includes(location.pathname));
-    }
-  }, [location, draggableMap, setDraggableMap, draggableMapRoutes]);
+  }, [location]);
 
   const dispatch = useDispatch();
 

@@ -96,23 +96,3 @@ div::before {
 .status.error {
   color: red;
 }
-
-.contact button {
-  color: #ffffff7a;
-  margin: 1.2rem 0.5rem 0 0;
-}
-
-.contact button svg {
-  margin-right: 4px;
-}
-
-.sickAlert {
-  text-align: center;
-  font-size: 18px;
-  font-weight: 900;
-  display: block;
-}
-
-.pop button {
-  color: rgb(255 255 255 / 61%);
-}
