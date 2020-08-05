@@ -34,9 +34,6 @@ const contactText = Text["Close Contacts"].texts;
 const contactNoticeText = Text["Close Contacts Notice"].texts;
 const contactListIndex = Text["Close Contacts"].listIndex;
 const contactLinkIndex = Text["Close Contacts"].linkIndex;
-const travelText = Text["Recent Travel"].texts;
-const travelListIndex = Text["Recent Travel"].listIndex;
-const travelLinkIndex = Text["Recent Travel"].linkIndex;
 const professions = Text["Profession"];
 const medicalConditions = Text["Medical Conditions"];
 
@@ -83,18 +80,6 @@ function CriticalQuestions(props) {
     } else {
       setFormValues({ ...formValues, [key]: event.target.value });
     }
-  };
-
-  const handleRecentTravelChange = (key, index) => (event) => {
-    const newTravel = recentTravels[index];
-    if (key === "dateOfReturn")
-      newTravel[key] = new Date(event)
-        .toISOString()
-        .substring(0, 10);
-    else newTravel[key] = event.target.value;
-    const newTravels = [...recentTravels];
-    newTravels[index] = newTravel;
-    setRecentTravels(newTravels);
   };
 
   const handleCloseContactChange = (key, index) => (event) => {
@@ -262,7 +247,8 @@ function CriticalQuestions(props) {
             label={<HelpOutlineIcon />}
             title={
               <span className={styles.sickAlert}>
-                Enter close contacts when you are sick
+                You can send annoymous emails to inform your close contacts if
+                you are sick
               </span>
             }
             texts={contactText}
@@ -289,58 +275,12 @@ function CriticalQuestions(props) {
           </div>
           <Button
             onClick={() =>
-              setContacts(contacts.filter((el, i) => i != contacts.length - 1))
+              setContacts(contacts.filter((el, i) => i !== contacts.length - 1))
             }
           >
             <DeleteForeverIcon />
             Delete this contact
           </Button>
-        </div>
-      ))}
-    </>
-  );
-
-  const travelsSection = () => (
-    <>
-      <div className={styles.formrow}>
-        <Fab
-          style={{ background: "#EA2027" }}
-          aria-label="add"
-          size="medium"
-          className={styles.fab}
-          onClick={() => setRecentTravels([...recentTravels, {}])}
-        >
-          <AddIcon />
-        </Fab>
-        <p>Recent Travels</p>
-        <Pop
-          label={<HelpOutlineIcon />}
-          title={<span></span>}
-          texts={travelText}
-          linkIndex={travelLinkIndex}
-          listIndex={travelListIndex}
-        />
-      </div>
-      {recentTravels.map((travel, i) => (
-        <div key={i}>
-          <div className={classNames("grid-3", styles["grid-3"])}>
-            <TextField
-              label="Where did you travel to?"
-              value={travel.location || ""}
-              onChange={handleRecentTravelChange("location", i)}
-            />
-          </div>
-          <div className={classNames("grid-3", styles["grid-3"])}>
-            <DatePicker
-              label="When did you return?"
-              key={i}
-              id={`travel-date-${i}`}
-              clearable
-              disableFuture
-              value={travel.dateOfReturn || null}
-              onChange={handleRecentTravelChange("dateOfReturn", i)}
-            />
-          </div>
         </div>
       ))}
     </>
@@ -383,7 +323,7 @@ function CriticalQuestions(props) {
       .then((jsondata) => {
         if ("features" in jsondata && jsondata.features.length > 0) {
           const places = jsondata.features;
-          places.map((place) => {
+          places.forEach((place) => {
             const place_name = place.place_name;
             const address = place_name.split(",");
             let city = "";
@@ -432,7 +372,6 @@ function CriticalQuestions(props) {
             id={fields.AGE.key}
             label={fields.AGE.label}
             type="number"
-            value={formValues[fields.AGE.key]}
             onChange={handleFormChange(fields.AGE)}
             InputProps={{ inputProps: { min: 0 } }}
           />
@@ -598,7 +537,6 @@ function CriticalQuestions(props) {
           </FormControl>
         </div>
         {closeContactsSection()}
-        {/*travelsSection()*/}
         <div style={{ height: "30px" }} ref={pageBottomRef}></div>
       </div>
 
