@@ -113,11 +113,11 @@ export default function Map(props, { draggable = true }) {
     addLegend(data);
 
     map.on("load", function () {
-      addStoryLayer(map);
       addWorldLayer(map, worldData);
       addNonUSLayer(map, worldData);
       addUSStatesLayer(map, usStatesData);
       addSDPostLayer(map, sdPosData);
+      addStoryLayer(map);
     });
   };
 
@@ -145,11 +145,7 @@ export default function Map(props, { draggable = true }) {
       method: "GET",
     });
 
-    //add the numer of the users
-    document.getElementById("users_num").innerHTML =
-      "There are " + body.length + " users on OASIS";
-
-    return storiesToGeoJson(body);
+    return body;
   };
 
   const getRandomFloat = () => {
@@ -164,10 +160,6 @@ export default function Map(props, { draggable = true }) {
         !story.spam &&
         story.id !== userStory.id
     );
-
-    //add the number of the stories
-    document.getElementById("stories_num").innerHTML =
-      stories.length + " of them shared their stories";
 
     let features = stories.map((story) => {
       let { latitude, longitude, ...properties } = story;
@@ -469,37 +461,21 @@ export default function Map(props, { draggable = true }) {
         minzoom: focusZoom,
         paint: {
           // Size circle radius by earthquake magnitude and zoom level
-          "circle-radius": [
-            "interpolate",
-            ["linear"],
-            ["zoom"],
-            7,
-            ["interpolate", ["linear"], ["get", "confirmed"], 1, 1, 1000, 8],
-            16,
-            ["interpolate", ["linear"], ["get", "confirmed"], 1, 5, 1000, 60],
-          ],
+          "circle-radius": ["+", ["/", ["get", "confirmed"], 80], 3],
           // Color circle by earthquake magnitude
-          "circle-color": [
-            "interpolate",
-            ["linear"],
-            ["get", "confirmed"],
-            1,
-            "rgba(33,102,172,0)",
-            300,
-            "rgb(103,169,207)",
-            600,
-            "rgb(209,229,240)",
-            900,
-            "rgb(253,219,199)",
-            1200,
-            "rgb(239,138,98)",
-            1500,
-            "rgb(178,24,43)",
-          ],
+          "circle-color": "rgb(239,138,98)",
           "circle-stroke-color": "white",
           "circle-stroke-width": 1,
           // Transition from heatmap to circle layer by zoom level
-          "circle-opacity": ["interpolate", ["linear"], ["zoom"], 8, 0, 11, 1],
+          "circle-opacity": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            8,
+            0.9,
+            11,
+            0.5,
+          ],
         },
       },
       "waterway-label"
@@ -576,7 +552,15 @@ export default function Map(props, { draggable = true }) {
   };
 
   const addStoryLayer = async (map) => {
-    var geojson = await fetchStoriesData();
+    const storiesData = await fetchStoriesData();
+    const geojson = storiesToGeoJson(storiesData);
+
+    //add the number of the stories
+    document.getElementById("users_num").innerHTML =
+      storiesData.length + " of them shared their stories";
+    //add the number of the stories
+    document.getElementById("stories_num").innerHTML =
+      geojson.features.length + " of them shared their stories";
 
     // Add other users' story
     map.addSource("places", {
