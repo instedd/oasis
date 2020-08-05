@@ -4,9 +4,10 @@ import React, { useEffect, useState } from "react";
 import Collapse from "@material-ui/core/Collapse";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import IconButton from "@material-ui/core/IconButton";
+import Divider from "@material-ui/core/Divider";
 import styles from "./styles.module.css";
 import api from "utils";
-import { sicknessStatus, testStatus } from "../../routes/types";
+import { sicknessStatus, testStatus, posToLatLng } from "../../routes/types";
 
 const statusMapping = {
   [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
@@ -22,8 +23,9 @@ mapboxgl.accessToken =
 
 export default function Map(props, { draggable = true }) {
   const countryMinZoom = 3.5;
+  const stateMaxZoom = 9;
   const initialZoom = 1;
-  const focusZoom = 6;
+  const focusZoom = 8;
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
 
   const userStory = props.userStory;
@@ -105,12 +107,16 @@ export default function Map(props, { draggable = true }) {
     const worldData = data["data"]["adm0"];
     // US data for state layer
     const usStatesData = data["data"]["adm1"]["US"];
+    // SD postal code data
+    const sdPosData = data["data"]["adm2"];
+
     addLegend(data);
 
     map.on("load", function () {
       addWorldLayer(map, worldData);
       addNonUSLayer(map, worldData);
       addUSStatesLayer(map, usStatesData);
+      addSDPostLayer(map, sdPosData);
       addStoryLayer(map);
     });
   };
@@ -138,7 +144,8 @@ export default function Map(props, { draggable = true }) {
     const body = await api(`stories/all`, {
       method: "GET",
     });
-    return storiesToGeoJson(body);
+
+    return body;
   };
 
   const getRandomFloat = () => {
@@ -167,6 +174,26 @@ export default function Map(props, { draggable = true }) {
           ],
         },
         properties: properties,
+      };
+    });
+
+    return {
+      type: "FeatureCollection",
+      features: features,
+    };
+  };
+
+  const postDataToGeojson = (data) => {
+    let features = data.map((zipcode) => {
+      let { name, ...properties } = zipcode;
+
+      return {
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [posToLatLng[name][1], posToLatLng[name][0]],
+        },
+        properties: zipcode,
       };
     });
 
@@ -382,6 +409,7 @@ export default function Map(props, { draggable = true }) {
         type: "fill",
         source: "states",
         minzoom: countryMinZoom,
+        maxzoom: stateMaxZoom,
         "source-layer": "states",
         paint: {
           "fill-color": expression,
@@ -416,6 +444,59 @@ export default function Map(props, { draggable = true }) {
     });
   };
 
+  const addSDPostLayer = async (map, data) => {
+    const sdPosData = await data;
+    const geojson = postDataToGeojson(sdPosData);
+
+    map.addSource("sd-pos", {
+      type: "geojson",
+      data: geojson,
+    });
+
+    map.addLayer(
+      {
+        id: "sd-pos-layer",
+        type: "circle",
+        source: "sd-pos",
+        minzoom: focusZoom,
+        paint: {
+          // Size circle radius by earthquake magnitude and zoom level
+          "circle-radius": ["+", ["/", ["get", "confirmed"], 80], 3],
+          // Color circle by earthquake magnitude
+          "circle-color": "rgb(239,138,98)",
+          "circle-stroke-color": "white",
+          "circle-stroke-width": 1,
+          // Transition from heatmap to circle layer by zoom level
+          "circle-opacity": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
+            8,
+            0.9,
+            11,
+            0.5,
+          ],
+        },
+      },
+      "waterway-label"
+    );
+
+    // add the information window
+    map.on("mousemove", function (e) {
+      var zipcodes = map.queryRenderedFeatures(e.point, {
+        layers: ["sd-pos-layer"],
+      });
+
+      if (zipcodes.length > 0) {
+        const name = zipcodes[0].properties.name;
+        const confirmed = zipcodes[0].properties.confirmed;
+
+        document.getElementById("pd").innerHTML =
+          "<h2>" + name + "</h2><h3>" + confirmed + " cases confirmed</h3>";
+      }
+    });
+  };
+
   const addCircle = (status, content) => {
     const color = status.color;
     const word = status.name;
@@ -433,6 +514,7 @@ export default function Map(props, { draggable = true }) {
       "</p>";
     return content;
   };
+
   const popUpContent = (userStory, content) => {
     if (userStory.age) content = content + " " + userStory.age + " years old";
     content += userStory.myStory || userStory.age ? " user " : " User ";
@@ -470,7 +552,15 @@ export default function Map(props, { draggable = true }) {
   };
 
   const addStoryLayer = async (map) => {
-    var geojson = await fetchStoriesData();
+    const storiesData = await fetchStoriesData();
+    const geojson = storiesToGeoJson(storiesData);
+
+    //add the number of the stories
+    document.getElementById("users_num").innerHTML =
+      storiesData.length + " of them shared their stories";
+    //add the number of the stories
+    document.getElementById("stories_num").innerHTML =
+      geojson.features.length + " of them shared their stories";
 
     // Add other users' story
     map.addSource("places", {
@@ -572,6 +662,13 @@ export default function Map(props, { draggable = true }) {
         <div id="pd">
           <h2> Confirmed Cases </h2>
           <h3> Hover over/Click a state or country!</h3>
+        </div>
+        <Divider style={{ color: "black" }} />
+        <div style={{ paddingTop: 5, color: "#dcd6d3" }}>
+          <em>
+            <p id="users_num"></p>
+            <p id="stories_num"></p>
+          </em>
         </div>
       </div>
     </div>
