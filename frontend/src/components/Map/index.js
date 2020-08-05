@@ -12,6 +12,7 @@ import { sicknessStatus, testStatus, posToLatLng } from "../../routes/types";
 const getRandomFloat = () => {
   return Math.random() * (Math.random() > 0.5 ? -1 : 1);
 };
+
 const amIDrowning = (lat, lng, map) => {
   let point = { lat: lat, lng: lng };
   point = map.project(point);
@@ -29,6 +30,7 @@ class MapUtil {
   constructor(map) {
     this.map = map;
   }
+
   getSafeCoordinate(latitude, longitude) {
     var rLat = latitude + getRandomFloat();
     var rLng = longitude + getRandomFloat();
@@ -39,7 +41,9 @@ class MapUtil {
     return [rLng, rLat];
   }
 }
+
 var mapUtil;
+
 const statusMapping = {
   [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
   [testStatus.NEGATIVE]: { name: "Tested Negative", color: "purple" },
@@ -71,23 +75,24 @@ export default function Map(props, { draggable = true }) {
   };
 
   const [map, setMap] = useState(null);
-  const [location, setLocation] = useState({
-    lng: 0,
-    lat: 0,
-  });
   const [legendRanges, setLegendRanges] = useState([]);
 
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: "map",
       style: "mapbox://styles/mapbox/dark-v10",
-      center: [location.lng, location.lat],
+      center: [0, 0],
       zoom: initialZoom,
     });
 
     addLayers(map);
 
     const flyTo = () => {
+      if (!isInRange(userStory.latitude, userStory.longitude)) {
+        userStory.latitude = 32.7157;
+        userStory.longitude = -117.1611;
+      }
+
       setTimeout(function () {
         map.flyTo({
           center: [userStory.longitude, userStory.latitude],
@@ -118,17 +123,6 @@ export default function Map(props, { draggable = true }) {
     newRanges && setLegendRanges(newRanges);
   };
 
-  const getUserLocation = async () => {
-    const userLocation = await fetchUserLocation();
-    if (userLocation) {
-      setLocation({
-        ...location,
-        lng: userLocation.lng,
-        lat: userLocation.lat,
-      });
-    }
-  };
-
   const isInRange = (lat, lng) => {
     return lat && lat <= 90 && lat >= -90 && lng && lng <= 180 && lng >= -180;
   };
@@ -146,24 +140,12 @@ export default function Map(props, { draggable = true }) {
 
     map.on("load", function () {
       mapUtil = new MapUtil(map);
-      addStoryLayer(map);
       addWorldLayer(map, worldData);
       addNonUSLayer(map, worldData);
       addUSStatesLayer(map, usStatesData);
       addSDPostLayer(map, sdPosData);
+      addStoryLayer(map);
     });
-  };
-
-  const fetchUserLocation = async () => {
-    if (isInRange(userStory.latitude, userStory.longitude)) {
-      return { lat: userStory.latitude, lng: userStory.longitude };
-    }
-
-    const response = await fetch(`https://freegeoip.app/json/`);
-    if (response.status >= 200 && response.status < 300) {
-      const jsonResponse = await response.json();
-      return { lat: jsonResponse.latitude, lng: jsonResponse.longitude };
-    }
   };
 
   const fetchCovidData = async (scope) => {
@@ -179,10 +161,6 @@ export default function Map(props, { draggable = true }) {
     });
 
     return body;
-  };
-
-  const getRandomFloat = () => {
-    return Math.random() * (Math.random() > 0.5 ? -1 : 1);
   };
 
   const storiesToGeoJson = (stories) => {
