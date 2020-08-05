@@ -372,6 +372,7 @@ function CriticalQuestions(props) {
             id={fields.AGE.key}
             label={fields.AGE.label}
             type="number"
+            value={formValues[fields.AGE.key]}
             onChange={handleFormChange(fields.AGE)}
             InputProps={{ inputProps: { min: 0 } }}
           />
