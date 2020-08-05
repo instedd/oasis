@@ -36,7 +36,6 @@ class MapUtil {
       rLat = latitude + getRandomFloat();
       rLng = longitude + getRandomFloat();
     }
-    console.log([rLng, rLat]);
     return [rLng, rLat];
   }
 }
@@ -86,20 +85,23 @@ export default function Map(props, { draggable = true }) {
     });
 
     addLayers(map);
+
+    const flyTo = () => {
+      setTimeout(function () {
+        map.flyTo({
+          center: [userStory.longitude, userStory.latitude],
+          zoom: focusZoom,
+          speed: 0.6,
+          curve: 1,
+        });
+      }, 3000);
+    };
+
+    flyTo();
     setMap(map);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    map &&
-      map.flyTo({
-        center: [location.lng, location.lat],
-        zoom: initialZoom,
-        speed: 0.6,
-        curve: 1,
-      });
-  }, [location, map]);
 
   const addLegend = (data) => {
     const clusters = data.clusters;
@@ -566,13 +568,6 @@ export default function Map(props, { draggable = true }) {
       // add marker to map
       marker.addTo(map);
     }
-    getUserLocation();
-    map.flyTo({
-      center: [location.lng, location.lat],
-      zoom: 8,
-      speed: 0.6,
-      curve: 1,
-    });
   };
 
   const [expanded, setExpanded] = React.useState(
