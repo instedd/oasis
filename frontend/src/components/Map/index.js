@@ -9,6 +9,41 @@ import styles from "./styles.module.css";
 import api from "utils";
 import { sicknessStatus, testStatus, posToLatLng } from "../../routes/types";
 
+const getRandomFloat = () => {
+  return Math.random() * (Math.random() > 0.5 ? -1 : 1);
+};
+
+const amIDrowning = (lat, lng, map) => {
+  let point = { lat: lat, lng: lng };
+  point = map.project(point);
+  let features = map.queryRenderedFeatures(point, {
+    layers: ["water"],
+  });
+  if (!features.length) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+class MapUtil {
+  constructor(map) {
+    this.map = map;
+  }
+
+  getSafeCoordinate(latitude, longitude) {
+    var rLat = latitude + getRandomFloat();
+    var rLng = longitude + getRandomFloat();
+    while (amIDrowning(rLat, rLng, this.map)) {
+      rLat = latitude + getRandomFloat();
+      rLng = longitude + getRandomFloat();
+    }
+    return [rLng, rLat];
+  }
+}
+
+var mapUtil;
+
 const statusMapping = {
   [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
   [testStatus.NEGATIVE]: { name: "Tested Negative", color: "purple" },
@@ -40,37 +75,39 @@ export default function Map(props, { draggable = true }) {
   };
 
   const [map, setMap] = useState(null);
-  const [location, setLocation] = useState({
-    lng: 0,
-    lat: 0,
-  });
   const [legendRanges, setLegendRanges] = useState([]);
 
   useEffect(() => {
-    getUserLocation();
-
     const map = new mapboxgl.Map({
       container: "map",
       style: "mapbox://styles/mapbox/dark-v10",
-      center: [location.lng, location.lat],
+      center: [0, 0],
       zoom: initialZoom,
     });
 
     addLayers(map);
+
+    const flyTo = () => {
+      if (!isInRange(userStory.latitude, userStory.longitude)) {
+        userStory.latitude = 32.7157;
+        userStory.longitude = -117.1611;
+      }
+
+      setTimeout(function () {
+        map.flyTo({
+          center: [userStory.longitude, userStory.latitude],
+          zoom: focusZoom,
+          speed: 0.6,
+          curve: 1,
+        });
+      }, 3000);
+    };
+
+    flyTo();
     setMap(map);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    map &&
-      map.flyTo({
-        center: [location.lng, location.lat],
-        zoom: focusZoom,
-        speed: 0.6,
-        curve: 1,
-      });
-  }, [location, map]);
 
   const addLegend = (data) => {
     const clusters = data.clusters;
@@ -84,17 +121,6 @@ export default function Map(props, { draggable = true }) {
         };
       });
     newRanges && setLegendRanges(newRanges);
-  };
-
-  const getUserLocation = async () => {
-    const userLocation = await fetchUserLocation();
-    if (userLocation) {
-      setLocation({
-        ...location,
-        lng: userLocation.lng,
-        lat: userLocation.lat,
-      });
-    }
   };
 
   const isInRange = (lat, lng) => {
@@ -113,24 +139,13 @@ export default function Map(props, { draggable = true }) {
     addLegend(data);
 
     map.on("load", function () {
+      mapUtil = new MapUtil(map);
       addWorldLayer(map, worldData);
       addNonUSLayer(map, worldData);
       addUSStatesLayer(map, usStatesData);
       addSDPostLayer(map, sdPosData);
       addStoryLayer(map);
     });
-  };
-
-  const fetchUserLocation = async () => {
-    if (isInRange(userStory.latitude, userStory.longitude)) {
-      return { lat: userStory.latitude, lng: userStory.longitude };
-    }
-
-    const response = await fetch(`https://freegeoip.app/json/`);
-    if (response.status >= 200 && response.status < 300) {
-      const jsonResponse = await response.json();
-      return { lat: jsonResponse.latitude, lng: jsonResponse.longitude };
-    }
   };
 
   const fetchCovidData = async (scope) => {
@@ -146,10 +161,6 @@ export default function Map(props, { draggable = true }) {
     });
 
     return body;
-  };
-
-  const getRandomFloat = () => {
-    return Math.random() * (Math.random() > 0.5 ? -1 : 1);
   };
 
   const storiesToGeoJson = (stories) => {
@@ -168,10 +179,7 @@ export default function Map(props, { draggable = true }) {
         type: "Feature",
         geometry: {
           type: "Point",
-          coordinates: [
-            longitude + getRandomFloat(),
-            latitude + getRandomFloat(),
-          ],
+          coordinates: mapUtil.getSafeCoordinate(latitude, longitude),
         },
         properties: properties,
       };
@@ -557,7 +565,7 @@ export default function Map(props, { draggable = true }) {
 
     //add the number of the stories
     document.getElementById("users_num").innerHTML =
-      storiesData.length + " of them shared their stories";
+      "there are " + storiesData.length + " users on OASIS";
     //add the number of the stories
     document.getElementById("stories_num").innerHTML =
       geojson.features.length + " of them shared their stories";
