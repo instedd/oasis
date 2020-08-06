@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 import { Checkbox } from "@material-ui/core";
 import SpeedDial from "@material-ui/lab/SpeedDial";
 import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
 import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
 import { makeStyles } from "@material-ui/core/styles";
+import { useLocation } from "react-router-dom";
+import SimpleMap from "components/SimpleMap";
 
 import Text from "../../text.json";
 import Pop from "components/PopUp";
@@ -61,10 +63,19 @@ const actions = [
   },
 ];
 
-function App(props) {
+function App(props, { draggableMapRoutes = [] }) {
   const classes = useStyles();
   const classesTooltip = useStylesTooltip();
   const [open, setOpen] = React.useState(false);
+  const [draggableMap, setDraggableMap] = useState(false);
+  let location = useLocation();
+
+  useEffect(() => {
+    let shouldDragMap = draggableMapRoutes.includes(location.pathname);
+    if (shouldDragMap !== draggableMap) {
+      setDraggableMap(draggableMapRoutes.includes(location.pathname));
+    }
+  }, [location, draggableMap, setDraggableMap, draggableMapRoutes]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -79,6 +90,7 @@ function App(props) {
   const linkIndex = Text["Terms and Conditions"].linkIndex;
   return (
     <>
+      <SimpleMap draggable={draggableMap} />
       <h1 className={styles.title}>
         FIGHT COVID-19 <br /> PUT YOUR STORY <br /> ON THE MAP
       </h1>
@@ -162,9 +174,7 @@ function App(props) {
                 style={{ alignItems: "center", display: "none" }}
               >
                 <span style={{ color: "red", fontSize: 12 }}>
-                  <strong>
-                    Please read the Terms & Conditions
-                  </strong>
+                  <strong>Please read the Terms & Conditions</strong>
                 </span>
               </div>
             }
