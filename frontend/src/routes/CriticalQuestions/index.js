@@ -38,6 +38,7 @@ const travelListIndex = Text["Recent Travel"].listIndex;
 const travelLinkIndex = Text["Recent Travel"].linkIndex;
 const professions = Text["Profession"];
 const medicalConditions = Text["Medical Conditions"];
+const mailformat = "/^w+([.-]?w+)*@w+([.-]?w+)*(.w{2,3})+$/";
 
 const MAPBOX_APIKEY =
   "pk.eyJ1IjoieXVzMjUyIiwiYSI6ImNrYTZhM2VlcjA2M2UzMm1uOWh5YXhvdGoifQ.ZIzOiYbBfwJsV168m42iFg";
@@ -101,6 +102,7 @@ function CriticalQuestions(props) {
     contactToUpdate[key] = event.target.value;
     const newContacts = [...contacts];
     newContacts[index] = contactToUpdate;
+    console.log(newContacts);
     setContacts(newContacts);
   };
 
