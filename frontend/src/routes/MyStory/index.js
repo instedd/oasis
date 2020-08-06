@@ -43,7 +43,7 @@ export default function MyStory(props) {
       <p className="subtitle">Your COVID-19 story in your own words</p>
       <TextField
         id="outlined-multiline-static"
-        placeholder="Tell a little about yourself, how you think you got sick and what the experience has been like"
+        placeholder="Everyone has a COVID-19 story, tell us yours!"
         multiline
         rowsMax={10}
         value={myStory}
