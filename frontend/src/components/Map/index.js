@@ -557,7 +557,7 @@ export default function Map(props, { draggable = true }) {
 
     //add the number of the stories
     document.getElementById("users_num").innerHTML =
-      storiesData.length + " of them shared their stories";
+      "There are " + storiesData.length + " users on OASIS";
     //add the number of the stories
     document.getElementById("stories_num").innerHTML =
       geojson.features.filter((story) => story.properties.myStory).length +
