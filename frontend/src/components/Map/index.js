@@ -458,7 +458,7 @@ export default function Map(props, { draggable = true }) {
         id: "sd-pos-layer",
         type: "circle",
         source: "sd-pos",
-        minzoom: focusZoom,
+        minzoom: 6,
         paint: {
           // Size circle radius by earthquake magnitude and zoom level
           "circle-radius": ["+", ["/", ["get", "confirmed"], 80], 3],
@@ -560,7 +560,8 @@ export default function Map(props, { draggable = true }) {
       storiesData.length + " of them shared their stories";
     //add the number of the stories
     document.getElementById("stories_num").innerHTML =
-      geojson.features.length + " of them shared their stories";
+      geojson.features.filter((story) => story.properties.myStory).length +
+      " of them shared their stories";
 
     // Add other users' story
     map.addSource("places", {
