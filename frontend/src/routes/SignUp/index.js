@@ -30,8 +30,6 @@ export default function SignUp(props) {
   const [formValues, setFormValues] = useState({
     password: "",
     email: "",
-    firstName: "",
-    username: "",
   });
 
   const handleFormChange = (key) => (event) => {
@@ -60,31 +58,6 @@ export default function SignUp(props) {
       )}
       <form className={classes.form} noValidate>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TextField
-              autoComplete="fname"
-              name="firstName"
-              variant="outlined"
-              required
-              fullWidth
-              id="firstName"
-              label="First Name"
-              autoFocus
-              onChange={handleFormChange("firstName")}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              required
-              fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="username"
-              onChange={handleFormChange("username")}
-            />
-          </Grid>
           <Grid item xs={12}>
             <TextField
               variant="outlined"
