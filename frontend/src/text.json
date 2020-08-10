@@ -45,15 +45,16 @@
     ],
     "Close Contacts": {
         "texts": [
+            "Anonymous emails will be sent to the list of close contacts you provided. They will be told they may have been exposed to COVID-19 and given resources on what to do. We will never share your identity or the email of the person you have listed.",
             "Based on our current knowledge, a close contact is someone who was within 6 feet of an infected person for at least 30 minutes starting from 48 hours before illness onset until the time the patient is isolated.",
             "They should stay home, maintain social distancing, and self-monitor until 14 days from the last date of exposure.",
             "https://www.cdc.gov/coronavirus/2019-ncov/php/principles-contact-tracing.html"
         ],
         "listIndex": [
-            1
+            1,2
         ],
         "linkIndex": [
-            2
+            3
         ]
     },
 

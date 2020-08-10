@@ -1,4 +1,4 @@
-import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
 import Popover from "@material-ui/core/Popover";
 import React from "react";
 
@@ -18,15 +18,14 @@ export default function Pop({ label, title, texts, listIndex, linkIndex }) {
 
   return (
     <>
-      <Button
+      <IconButton
         aria-describedby={id}
-        color="primary"
         aria-owns="simple-popover"
         aria-haspopup="true"
         onClick={handleClick}
       >
         {label}
-      </Button>
+      </IconButton>
       <Popover
         id={id}
         open={open}
