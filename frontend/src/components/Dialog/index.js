@@ -5,11 +5,15 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 
-export default function AlertDialog({ label, text, submit }) {
+export default function AlertDialog({ label, text, submit, valid }) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
-    setOpen(true);
+    document.getElementById("reminder").innerHTML = "";
+    valid
+      ? setOpen(true)
+      : (document.getElementById("reminder").innerHTML =
+          "Make sure to enter valid email address(es)");
   };
 
   const handleClose = () => {
