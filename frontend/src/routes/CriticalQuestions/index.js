@@ -281,7 +281,7 @@ function CriticalQuestions(props) {
               value={contact.email}
               onChange={handleCloseContactChange("email", i)}
               helperText={
-                contact.email.length > 0 && !!validateEmail(contact.email)
+                contact.email && !validateEmail(contact.email)
                   ? "Please enter a valid email."
                   : null
               }
