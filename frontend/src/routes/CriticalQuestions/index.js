@@ -104,7 +104,6 @@ function CriticalQuestions(props) {
     }
     const newContacts = [...contacts];
     newContacts[index] = contactToUpdate;
-    console.log(newContacts);
     setContacts(newContacts);
   };
 
@@ -281,7 +280,11 @@ function CriticalQuestions(props) {
               label="Email *"
               value={contact.email}
               onChange={handleCloseContactChange("email", i)}
-              helperText="Please enter a valid email."
+              helperText={
+                contact.email.length > 0 && !!validateEmail(contact.email)
+                  ? "Please enter a valid email."
+                  : null
+              }
             />
           </div>
 

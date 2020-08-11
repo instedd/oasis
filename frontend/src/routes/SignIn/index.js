@@ -54,8 +54,7 @@ export default function SignIn() {
       document.getElementById("incomplete_error").innerText =
         "Please enter your password";
     } else if (!validateEmail(formValues.email)) {
-      document.getElementById("incomplete_error").innerText =
-        "Please enter a valid email address";
+      document.getElementById("incomplete_error").innerText = "";
     } else {
       dispatch(signIn(formValues));
     }
