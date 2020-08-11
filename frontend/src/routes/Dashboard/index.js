@@ -62,6 +62,13 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       .then((result) => setData(result));
   }, []);
 
+  const update = async () => {
+    const body = await api(`time_series/update`, {
+      method: "GET",
+    });
+    return body;
+  };
+
   const fetchTimeSeries = async (n) => {
     const body = await api(`time_series/${n}`, {
       method: "GET",
@@ -69,7 +76,11 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     return body;
   };
 
-  console.log(fetchTimeSeries(5));
+  // db = update();
+  var five_days = fetchTimeSeries(14);
+  five_days.then(function (result) {
+    console.log(result); // "Some User token"
+  });
   const hasMyStory = story && story.myStory;
   const actions = [
     {

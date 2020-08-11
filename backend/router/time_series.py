@@ -10,12 +10,19 @@ from time_series import crud, schemas
 router = APIRouter()
 
 
+# A fuction to update db
+@router.get("/update", response_model=schemas.TimeSeriesData)
+def update(db: Session = Depends(get_db)):
+    crud.update(db)
+
+
 # A function to get n lastest today
 @router.get("/{n}", response_model=schemas.TimeSeriesData)
-def get_county_data(n: int, db: Session = Depends(get_db)):
+def get_timeseries_data(n: int, db: Session = Depends(get_db)):
     """
-    Returns a list of county data records based on county names queried
+    Returns a list of time series data based on the number of days
     """
+
     res = crud.get_n_days_data(db, n)
-    res = jsonable_encoder(res)
-    return JSONResponse(res, status_code=200)
+    n_days = list(map(lambda day: jsonable_encoder(day), res))
+    return JSONResponse(n_days, status_code=200)
