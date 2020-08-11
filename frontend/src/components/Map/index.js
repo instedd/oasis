@@ -502,7 +502,7 @@ export default function Map(props, { draggable = true }) {
     const word = status.name;
     content +=
       '<div style="position:relative;width: 8px; height: 8px;line-height:0.8rem;font-size:0.8rem;' +
-      "margin-right: 10px;top:5px;float: left;border-radius: 50%;background:";
+      "margin-right: 10px;top:7px;float: left;border-radius: 50%;background:";
     content = content + color + ';"></div>';
     content =
       content +
