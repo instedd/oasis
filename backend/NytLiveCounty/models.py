@@ -20,6 +20,8 @@ class NytLiveCounty(Base):
     confirmed_deaths = Column(Integer)
     probable_cases = Column(Integer)
     probable_deaths = Column(Integer)
+    timestamp = Column(Integer)  # unix time - integer for simplicity
+    commit = Column(String(128))  # Commit on NYT github this entry came from
 
 
 class TimeToLive(Base):
