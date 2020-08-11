@@ -34,13 +34,35 @@ export default function SignUp(props) {
     username: "",
   });
 
+  const validateEmail = (email) => {
+    const validEmailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    return validEmailFormat.test(email);
+  };
+
   const handleFormChange = (key) => (event) => {
     setFormValues({ ...formValues, [key]: event.target.value });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    dispatch(signUp(formValues));
+    if (formValues.firstName === "") {
+      document.getElementById("incomplete_error").innerText =
+        "Please enter your first name";
+    } else if (formValues.username === "") {
+      document.getElementById("incomplete_error").innerText =
+        "Please enter your username";
+    } else if (formValues.email === "") {
+      document.getElementById("incomplete_error").innerText =
+        "Please enter your email";
+    } else if (formValues.password === "") {
+      document.getElementById("incomplete_error").innerText =
+        "Please enter your password";
+    } else if (!validateEmail(formValues.email)) {
+      document.getElementById("incomplete_error").innerText =
+        "Please enter a valid email address";
+    } else {
+      dispatch(signUp(formValues));
+    }
   };
 
   const status = useSelector((state) => state.auth.status);
@@ -58,6 +80,7 @@ export default function SignUp(props) {
           {status.detail}
         </p>
       )}
+      <p id="incomplete_error" style={{ color: "red" }}></p>
       <form className={classes.form} noValidate>
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -87,6 +110,9 @@ export default function SignUp(props) {
           </Grid>
           <Grid item xs={12}>
             <TextField
+              error={
+                formValues.email.length > 0 && !validateEmail(formValues.email)
+              }
               variant="outlined"
               required
               fullWidth
@@ -95,6 +121,11 @@ export default function SignUp(props) {
               name="email"
               autoComplete="email"
               onChange={handleFormChange("email")}
+              helperText={
+                formValues.email.length > 0 && !validateEmail(formValues.email)
+                  ? "Please enter a valid email."
+                  : null
+              }
             />
           </Grid>
           <Grid item xs={12}>
