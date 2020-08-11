@@ -586,10 +586,7 @@ function CriticalQuestions(props) {
           !!(
             formValues[fields.CITY.key] && formValues[fields.CITY.key].length
           )) ||
-          (next_count > 0 &&
-            !(
-              formValues[fields.CITY.key] && formValues[fields.CITY.key].length
-            ))) &&
+          next_count > 0) &&
         formValues[fields.STATE.key] &&
         formValues[fields.STATE.key].length &&
         formValues[fields.COUNTRY.key] &&
