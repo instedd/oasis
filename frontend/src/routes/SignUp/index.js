@@ -76,31 +76,6 @@ export default function SignUp(props) {
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <TextField
-              autoComplete="fname"
-              name="firstName"
-              variant="outlined"
-              required
-              fullWidth
-              id="firstName"
-              label="First Name"
-              autoFocus
-              onChange={handleFormChange("firstName")}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              variant="outlined"
-              required
-              fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="username"
-              onChange={handleFormChange("username")}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
               error={
                 formValues.email.length > 0 && !validateEmail(formValues.email)
               }
