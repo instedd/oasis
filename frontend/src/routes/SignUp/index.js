@@ -30,8 +30,6 @@ export default function SignUp(props) {
   const [formValues, setFormValues] = useState({
     password: "",
     email: "",
-    firstName: "",
-    username: "",
   });
 
   const validateEmail = (email) => {
@@ -112,6 +110,7 @@ export default function SignUp(props) {
               error={
                 formValues.email.length > 0 && !validateEmail(formValues.email)
               }
+
               variant="outlined"
               required
               fullWidth

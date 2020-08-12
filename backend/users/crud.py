@@ -15,23 +15,12 @@ def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
 
-def get_user_by_username(db: Session, username: str):
-    return (
-        db.query(models.User).filter(models.User.username == username).first()
-    )
-
-
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = bcrypt.hashpw(
         f"{user.password}{os.environ['PEPPER']}".encode("utf8"),
         bcrypt.gensalt(rounds=16),
     )
-    db_user = models.User(
-        email=user.email,
-        first_name=user.first_name,
-        username=user.username,
-        password=hashed_password,
-    )
+    db_user = models.User(email=user.email, password=hashed_password,)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
