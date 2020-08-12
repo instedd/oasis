@@ -185,7 +185,7 @@ export default function Map(props, { draggable = true }) {
 
   const postDataToGeojson = (data) => {
     let features = data.map((zipcode) => {
-      let { name, ...properties } = zipcode;
+      let { name } = zipcode;
 
       return {
         type: "Feature",

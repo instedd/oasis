@@ -29,7 +29,6 @@ import { fields, initialFieldsState } from "./fields";
 import Select from "../../components/Select";
 import AlertDialog from "components/Dialog";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
-import { valid } from "chroma-js";
 
 const contactText = Text["Close Contacts"].texts;
 const contactNoticeText = Text["Close Contacts Notice"].texts;
@@ -86,6 +85,7 @@ function CriticalQuestions(props) {
   };
 
   const validateEmail = (email) => {
+    // eslint-disable-next-line
     const validEmailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     return validEmailFormat.test(email);
   };
@@ -136,6 +136,9 @@ function CriticalQuestions(props) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    console.log(
+      formValues[fields.CITY.key] && formValues[fields.CITY.key].length
+    );
 
     if (
       next_count === 0 &&

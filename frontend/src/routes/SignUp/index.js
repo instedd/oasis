@@ -33,6 +33,7 @@ export default function SignUp(props) {
   });
 
   const validateEmail = (email) => {
+    // eslint-disable-next-line
     const validEmailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     return validEmailFormat.test(email);
   };
