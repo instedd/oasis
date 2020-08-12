@@ -43,13 +43,7 @@ export default function SignUp(props) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (formValues.firstName === "") {
-      document.getElementById("incomplete_error").innerText =
-        "Please enter your first name";
-    } else if (formValues.username === "") {
-      document.getElementById("incomplete_error").innerText =
-        "Please enter your username";
-    } else if (formValues.email === "") {
+    if (formValues.email === "") {
       document.getElementById("incomplete_error").innerText =
         "Please enter your email";
     } else if (formValues.password === "") {
@@ -110,7 +104,6 @@ export default function SignUp(props) {
               error={
                 formValues.email.length > 0 && !validateEmail(formValues.email)
               }
-
               variant="outlined"
               required
               fullWidth
