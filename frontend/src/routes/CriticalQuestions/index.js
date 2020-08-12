@@ -136,9 +136,6 @@ function CriticalQuestions(props) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(
-      formValues[fields.CITY.key] && formValues[fields.CITY.key].length
-    );
 
     if (
       next_count === 0 &&
