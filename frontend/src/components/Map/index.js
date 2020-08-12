@@ -149,7 +149,7 @@ export default function Map(props, { draggable = true }) {
   };
 
   const getRandomFloat = () => {
-    return Math.random() * (Math.random() > 0.5 ? -1 : 1);
+    return Math.random() * (Math.random() > 0.5 ? -0.1 : 0.1);
   };
 
   const storiesToGeoJson = (stories) => {
