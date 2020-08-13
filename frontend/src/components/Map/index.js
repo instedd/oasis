@@ -492,7 +492,11 @@ export default function Map(props, { draggable = true }) {
         const confirmed = zipcodes[0].properties.confirmed;
 
         document.getElementById("pd").innerHTML =
-          "<h2>" + name + "</h2><h3>" + confirmed + " cases confirmed</h3>";
+          "<h2>" +
+          name +
+          ", San Diego</h2><h3>" +
+          confirmed +
+          " cases confirmed</h3>";
       }
     });
   };
