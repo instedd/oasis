@@ -149,7 +149,7 @@ export default function Map(props, { draggable = true }) {
   };
 
   const getRandomFloat = () => {
-    return Math.random() * (Math.random() > 0.5 ? -1 : 1);
+    return Math.random() * (Math.random() > 0.5 ? -0.1 : 0.1);
   };
 
   const storiesToGeoJson = (stories) => {
@@ -185,7 +185,7 @@ export default function Map(props, { draggable = true }) {
 
   const postDataToGeojson = (data) => {
     let features = data.map((zipcode) => {
-      let { name, ...properties } = zipcode;
+      let { name } = zipcode;
 
       return {
         type: "Feature",
@@ -492,7 +492,11 @@ export default function Map(props, { draggable = true }) {
         const confirmed = zipcodes[0].properties.confirmed;
 
         document.getElementById("pd").innerHTML =
-          "<h2>" + name + "</h2><h3>" + confirmed + " cases confirmed</h3>";
+          "<h2>" +
+          name +
+          ", San Diego</h2><h3>" +
+          confirmed +
+          " cases confirmed</h3>";
       }
     });
   };
@@ -502,7 +506,7 @@ export default function Map(props, { draggable = true }) {
     const word = status.name;
     content +=
       '<div style="position:relative;width: 8px; height: 8px;line-height:0.8rem;font-size:0.8rem;' +
-      "margin-right: 10px;top:5px;float: left;border-radius: 50%;background:";
+      "margin-right: 10px;top:7px;float: left;border-radius: 50%;background:";
     content = content + color + ';"></div>';
     content =
       content +
