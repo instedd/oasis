@@ -13,6 +13,7 @@ body {
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: cover;
+  background-image: url(../background.png);
   height: 100%;
   font-family: 'Rubik', 'Abel', sans-serif !important;
   color: white !important;

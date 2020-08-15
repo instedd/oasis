@@ -1,31 +1,12 @@
-.textarea fieldset {
-    border-color: white;
-    height: 100%;
+.title {
+  font-weight: normal;
+  line-height: 125%;
+  text-align: center;
+  margin: 0px;
+  padding: 0px;
 }
 
-.textarea > div:hover fieldset{
-    border-color:white !important;
-}
-
-.textarea .Mui-focused label{
-    width: 400px
-}
-.textarea label {
-    color: grey;
-    font-size: 15px;
-    line-height: 1.5rem;
-    width: 320px;
-}
-
-.textarea {
-    width: 90vw;
-    height: 40vh;
-    display: flex;
-}
-
-.textarea > div {
-    height: 100%;
-    color: white;
-    align-items: flex-start;
-    background-color: rgba(0,0,0,0.5);
+.signin {
+  background-color: var(--primary) !important;
+  color: white !important;
 }
