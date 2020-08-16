@@ -501,7 +501,8 @@ export default function Map(props, { draggable = true }) {
     });
   };
 
-  const storyStyle = '<p style="font-size: 18px;line-height: 18px;">';
+  const storyStyle =
+    '<p style="font-size: 18px;line-height: 18px; color:black">';
   const demographicStyle =
     '<p style = "line-height:0.9rem;font-size:0.9rem;"><i>';
 
