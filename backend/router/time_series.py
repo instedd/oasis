@@ -16,13 +16,19 @@ def update(db: Session = Depends(get_db)):
     crud.update(db)
 
 
+@router.get("/init", response_model=schemas.TimeSeriesData)
+def init(db: Session = Depends(get_db)):
+    crud.init_table(db)
+    return get_timeseries_data(20, db)
+
+
 # A function to get n lastest today
 @router.get("/{n}", response_model=schemas.TimeSeriesData)
 def get_timeseries_data(n: int, db: Session = Depends(get_db)):
     """
     Returns a list of time series data based on the number of days
     """
-
+    # crud.update(db)
     res = crud.get_n_days_data(db, n)
     n_days = list(map(lambda day: jsonable_encoder(day), res))
     return JSONResponse(n_days, status_code=200)

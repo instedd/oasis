@@ -32,9 +32,9 @@ def fetch_total(url):
 
 
 def fetch_latest_total(url):
-    date = fetch_total(CONFIRMED_URL).iloc[[-1]].index[0]
+    latest_date = fetch_total(CONFIRMED_URL).iloc[[-1]].index[0]
     total = fetch_total(CONFIRMED_URL).iloc[[-1]][0][0]
-    return total, date
+    return total, latest_date
 
 
 def update(db: Session):
@@ -74,9 +74,25 @@ def update(db: Session):
 
 
 def get_n_days_data(db: Session, n: int):
+    update_date = (
+        db.query(models.TimeSeries)
+        .order_by(models.TimeSeries.date.desc())
+        .first()
+    )
+    if (update_date is None) or (
+        datetime.now().date() - update_date.date
+    ).days > 1:
+        update(db)
+
     return (
         db.query(models.TimeSeries)
         .order_by(models.TimeSeries.date.desc())
         .limit(n)
         .all()
     )
+
+
+def init_table(db: Session):
+    db.query(models.TimeSeries).delete()
+    updated = update(db)
+    return updated

@@ -69,6 +69,13 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     return body;
   };
 
+  const init = async () => {
+    const body = await api(`time_series/init`, {
+      method: "GET",
+    });
+    return body;
+  };
+
   const fetchTimeSeries = async (n) => {
     const body = await api(`time_series/${n}`, {
       method: "GET",
@@ -76,11 +83,14 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     return body;
   };
 
-  // db = update();
-  var five_days = fetchTimeSeries(14);
-  five_days.then(function (result) {
-    console.log(result); // "Some User token"
+  var t0 = performance.now();
+  var days = fetchTimeSeries(14);
+  days.then(function (result) {
+    console.log(result);
   });
+  var t1 = performance.now();
+  console.log("get data took " + (t1 - t0) + " milliseconds.");
+
   const hasMyStory = story && story.myStory;
   const actions = [
     {
