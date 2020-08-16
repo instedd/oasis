@@ -539,8 +539,9 @@ export default function Map(props, { draggable = true }) {
         userStory.profession.toLowerCase() +
         " industry ";
     content = content + "living near " + userStory.state;
+    console.log(userStory);
     var date = userStory.createdAt ? userStory.createdAt.substring(0, 10) : "";
-    if (userStory.myStory) content = content + " on " + date;
+    if (date !== "") content = content + " on " + date;
     content += ".</i></p>";
     content += '<div style="line-height:0.8rem;" class="row">';
     content = addCircle(statusMapping[userStory.sick], content);
