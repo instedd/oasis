@@ -122,3 +122,8 @@
   position: absolute;
   bottom: 20px;
 }
+
+.popups {
+  overflow-y: scroll;
+  max-height: 250px;
+}

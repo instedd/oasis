@@ -539,7 +539,6 @@ export default function Map(props, { draggable = true }) {
         userStory.profession.toLowerCase() +
         " industry ";
     content = content + "living near " + userStory.state;
-    console.log(userStory);
     var date = userStory.createdAt ? userStory.createdAt.substring(0, 10) : "";
     if (date !== "") content = content + " on " + date;
     content += ".</i></p>";
@@ -552,8 +551,9 @@ export default function Map(props, { draggable = true }) {
 
   const setHover = (marker, content, map) => {
     var popup = new mapboxgl.Popup({
-      closeButton: false,
-      closeOnClick: false,
+      //className: classNames(styles.popups),
+      closeButton: true,
+      closeOnClick: true,
       offset: 25,
     });
     popup.setHTML(content);
