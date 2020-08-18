@@ -60,7 +60,6 @@ def fetch_world_data():
 def fetch_us_states_data():
     r = requests.get(url=COVID_US_STATES_API_URL)
     data = r.json()
-    print(data)
     confirmed = list(
         map(
             lambda entry: {

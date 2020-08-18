@@ -104,19 +104,33 @@ export default function Map(props, { draggable = true }) {
   const addLayers = async (map) => {
     const data = await fetchCovidData(dataScope.ALL);
     //world data including US for world layer
-    const worldData = data["data"]["adm0"];
+    const worldData = data["data"]["adm0"] ? data["data"]["adm0"] : [];
     // US data for state layer
-    const usStatesData = data["data"]["adm1"]["US"];
+    const usStatesData = data["data"]["adm1"]["US"]
+      ? data["data"]["adm1"]["US"]
+      : [];
     // SD postal code data
-    const sdPosData = data["data"]["adm2"];
+    const sdPosData = data["data"]["adm2"] ? data["data"]["adm2"] : [];
 
     addLegend(data);
 
     map.on("load", function () {
-      addWorldLayer(map, worldData);
-      addNonUSLayer(map, worldData);
-      addUSStatesLayer(map, usStatesData);
-      addSDPostLayer(map, sdPosData);
+      if (worldData && worldData.length > 0) {
+        addWorldLayer(map, worldData);
+        addNonUSLayer(map, worldData);
+      }
+    });
+
+    map.on("load", function () {
+      if (usStatesData && usStatesData.length > 0)
+        addUSStatesLayer(map, usStatesData);
+    });
+
+    map.on("load", function () {
+      if (sdPosData && sdPosData.length > 0) addSDPostLayer(map, sdPosData);
+    });
+
+    map.on("load", function () {
       addStoryLayer(map);
     });
   };
@@ -186,6 +200,10 @@ export default function Map(props, { draggable = true }) {
   const postDataToGeojson = (data) => {
     let features = data.map((zipcode) => {
       let { name } = zipcode;
+
+      if (!posToLatLng[name]) {
+        console.log(name);
+      }
 
       return {
         type: "Feature",
