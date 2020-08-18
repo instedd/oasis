@@ -82,7 +82,7 @@ def get_n_days_data(db: Session, n: int):
     if (update_date is None) or (
         datetime.now().date() - update_date.date
     ).days > 1:
-        update(db)
+        init_table(db)
 
     return (
         db.query(models.TimeSeries)
