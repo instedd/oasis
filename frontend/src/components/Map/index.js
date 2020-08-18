@@ -104,19 +104,36 @@ export default function Map(props, { draggable = true }) {
   const addLayers = async (map) => {
     const data = await fetchCovidData(dataScope.ALL);
     //world data including US for world layer
-    const worldData = data["data"]["adm0"];
+    const worldData = data["data"]["adm0"] ? data["data"]["adm0"] : [];
     // US data for state layer
-    const usStatesData = data["data"]["adm1"]["US"];
+    const usStatesData = data["data"]["adm1"]["US"]
+      ? data["data"]["adm1"]["US"]
+      : [];
     // SD postal code data
-    const sdPosData = data["data"]["adm2"];
+    const sdPosData = data["data"]["adm2"] ? data["data"]["adm2"] : [];
 
     addLegend(data);
 
+    if (worldData && worldData.length > 0) {
+      map.on("load", function () {
+        addWorldLayer(map, worldData);
+        addNonUSLayer(map, worldData);
+      });
+    }
+
+    if (usStatesData && usStatesData.length > 0) {
+      map.on("load", function () {
+        addUSStatesLayer(map, usStatesData);
+      });
+    }
+
+    if (sdPosData && sdPosData.length > 0) {
+      map.on("load", function () {
+        addSDPostLayer(map, sdPosData);
+      });
+    }
+
     map.on("load", function () {
-      addWorldLayer(map, worldData);
-      addNonUSLayer(map, worldData);
-      addUSStatesLayer(map, usStatesData);
-      addSDPostLayer(map, sdPosData);
       addStoryLayer(map);
     });
   };
@@ -149,7 +166,7 @@ export default function Map(props, { draggable = true }) {
   };
 
   const getRandomFloat = () => {
-    return Math.random() * (Math.random() > 0.5 ? -1 : 1);
+    return Math.random() * (Math.random() > 0.5 ? -0.1 : 0.1);
   };
 
   const storiesToGeoJson = (stories) => {
@@ -185,7 +202,7 @@ export default function Map(props, { draggable = true }) {
 
   const postDataToGeojson = (data) => {
     let features = data.map((zipcode) => {
-      let { name, ...properties } = zipcode;
+      let { name } = zipcode;
 
       return {
         type: "Feature",
@@ -458,7 +475,7 @@ export default function Map(props, { draggable = true }) {
         id: "sd-pos-layer",
         type: "circle",
         source: "sd-pos",
-        minzoom: focusZoom,
+        minzoom: 6,
         paint: {
           // Size circle radius by earthquake magnitude and zoom level
           "circle-radius": ["+", ["/", ["get", "confirmed"], 80], 3],
@@ -492,7 +509,11 @@ export default function Map(props, { draggable = true }) {
         const confirmed = zipcodes[0].properties.confirmed;
 
         document.getElementById("pd").innerHTML =
-          "<h2>" + name + "</h2><h3>" + confirmed + " cases confirmed</h3>";
+          "<h2>" +
+          name +
+          ", San Diego</h2><h3>" +
+          confirmed +
+          " cases confirmed</h3>";
       }
     });
   };
@@ -502,7 +523,7 @@ export default function Map(props, { draggable = true }) {
     const word = status.name;
     content +=
       '<div style="position:relative;width: 8px; height: 8px;line-height:0.8rem;font-size:0.8rem;' +
-      "margin-right: 10px;top:5px;float: left;border-radius: 50%;background:";
+      "margin-right: 10px;top:7px;float: left;border-radius: 50%;background:";
     content = content + color + ';"></div>';
     content =
       content +
@@ -557,10 +578,11 @@ export default function Map(props, { draggable = true }) {
 
     //add the number of the stories
     document.getElementById("users_num").innerHTML =
-      storiesData.length + " of them shared their stories";
+      "There are " + storiesData.length + " users on OASIS";
     //add the number of the stories
     document.getElementById("stories_num").innerHTML =
-      geojson.features.length + " of them shared their stories";
+      geojson.features.filter((story) => story.properties.myStory).length +
+      " of them shared their stories";
 
     // Add other users' story
     map.addSource("places", {

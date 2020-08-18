@@ -52,12 +52,8 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     if (!story) dispatch(fetchStory());
   }, [dispatch, story]);
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
+  const handleClick = () => {
+    setOpen(!open);
   };
 
   const [data, setData] = useState({
@@ -165,8 +161,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
             ariaLabel="Daily actions"
             className={classNames("speeddial", styles.speeddial)}
             icon={<SpeedDialIcon />}
-            onClose={handleClose}
-            onOpen={handleOpen}
+            onClick={handleClick}
             open={open}
           >
             {actions.map((action) => (
