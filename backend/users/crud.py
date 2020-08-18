@@ -3,7 +3,6 @@ import bcrypt
 
 from sqlalchemy.orm import Session
 
-from auth import schemas as auth_schemas
 from . import models, schemas
 
 
@@ -41,9 +40,4 @@ def authenticate_user(email: str, password: str, token_data, db: Session):
     if not verify_password(password, user.password):
         return False
 
-    if token_data and isinstance(token_data, auth_schemas.StoryToken):
-        db.query(models.User).filter(models.User.id == user.id).update(
-            {"story_id": token_data.story_id}
-        )
-        db.commit()
     return user
