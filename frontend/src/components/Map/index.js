@@ -114,21 +114,24 @@ export default function Map(props, { draggable = true }) {
 
     addLegend(data);
 
-    map.on("load", function () {
-      if (worldData && worldData.length > 0) {
+    if (worldData && worldData.length > 0) {
+      map.on("load", function () {
         addWorldLayer(map, worldData);
         addNonUSLayer(map, worldData);
-      }
-    });
+      });
+    }
 
-    map.on("load", function () {
-      if (usStatesData && usStatesData.length > 0)
+    if (usStatesData && usStatesData.length > 0) {
+      map.on("load", function () {
         addUSStatesLayer(map, usStatesData);
-    });
+      });
+    }
 
-    map.on("load", function () {
-      if (sdPosData && sdPosData.length > 0) addSDPostLayer(map, sdPosData);
-    });
+    if (sdPosData && sdPosData.length > 0) {
+      map.on("load", function () {
+        addSDPostLayer(map, sdPosData);
+      });
+    }
 
     map.on("load", function () {
       addStoryLayer(map);
@@ -200,10 +203,6 @@ export default function Map(props, { draggable = true }) {
   const postDataToGeojson = (data) => {
     let features = data.map((zipcode) => {
       let { name } = zipcode;
-
-      if (!posToLatLng[name]) {
-        console.log(name);
-      }
 
       return {
         type: "Feature",
