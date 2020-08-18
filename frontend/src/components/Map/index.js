@@ -104,19 +104,36 @@ export default function Map(props, { draggable = true }) {
   const addLayers = async (map) => {
     const data = await fetchCovidData(dataScope.ALL);
     //world data including US for world layer
-    const worldData = data["data"]["adm0"];
+    const worldData = data["data"]["adm0"] ? data["data"]["adm0"] : [];
     // US data for state layer
-    const usStatesData = data["data"]["adm1"]["US"];
+    const usStatesData = data["data"]["adm1"]["US"]
+      ? data["data"]["adm1"]["US"]
+      : [];
     // SD postal code data
-    const sdPosData = data["data"]["adm2"];
+    const sdPosData = data["data"]["adm2"] ? data["data"]["adm2"] : [];
 
     addLegend(data);
 
+    if (worldData && worldData.length > 0) {
+      map.on("load", function () {
+        addWorldLayer(map, worldData);
+        addNonUSLayer(map, worldData);
+      });
+    }
+
+    if (usStatesData && usStatesData.length > 0) {
+      map.on("load", function () {
+        addUSStatesLayer(map, usStatesData);
+      });
+    }
+
+    if (sdPosData && sdPosData.length > 0) {
+      map.on("load", function () {
+        addSDPostLayer(map, sdPosData);
+      });
+    }
+
     map.on("load", function () {
-      addWorldLayer(map, worldData);
-      addNonUSLayer(map, worldData);
-      addUSStatesLayer(map, usStatesData);
-      addSDPostLayer(map, sdPosData);
       addStoryLayer(map);
     });
   };
