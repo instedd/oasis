@@ -9,7 +9,9 @@ from sigfig import round
 import jenkspy
 
 COVID_WORLD_API_URL = "https://api.covid19api.com/summary"
-COVID_US_STATES_API_URL = "https://covidtracking.com/api/states"
+COVID_US_STATES_API_URL = (
+    "https://api.covidtracking.com/v1/states/current.json"
+)
 COVID_SD_ZIP_CODE_API_URL = (
     "https://gis-public.sandiegocounty.gov/arcgis/rest/services/Hosted"
     "/COVID_19_Statistics__by_ZIP_Code/FeatureServer/0/query?f=json"
@@ -32,7 +34,14 @@ class DataScope:
 
 
 def fetch_world_data():
-    r = requests.get(url=COVID_WORLD_API_URL)
+    try:
+        r = requests.get(url=COVID_WORLD_API_URL)
+    except requests.exceptions.RequestException as e:
+        print("WARNING: Unable to receive data from api.covid19api.com")
+        print(e)
+        print("Continuing without it...")
+        return []
+
     data = r.json()
     countries_data = data["Countries"]
     confirmed = list(
@@ -51,6 +60,7 @@ def fetch_world_data():
 def fetch_us_states_data():
     r = requests.get(url=COVID_US_STATES_API_URL)
     data = r.json()
+    print(data)
     confirmed = list(
         map(
             lambda entry: {
@@ -86,6 +96,9 @@ def fetch_sd_zip_code_data():
 
 
 def cluster_data(confirmed, clusters_config=None):
+    if len(confirmed) == 0:
+        return {"data": [], "clusters": []}
+
     if clusters_config is None:
         clusters_config = {"clusters": CLUSTERS, "labels": CLUSTERS_LABELS}
 
