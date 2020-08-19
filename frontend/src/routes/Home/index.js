@@ -70,6 +70,7 @@ function App(props) {
     setOpen(!open);
   };
 
+  console.log(open);
   const texts = Text["Terms and Conditions"].texts;
   const listIndex = Text["Terms and Conditions"].listIndex;
   const linkIndex = Text["Terms and Conditions"].linkIndex;
@@ -97,6 +98,10 @@ function App(props) {
                   id="checkbox"
                   style={{ color: "white", padding: "0px 2px" }}
                   onChange={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.nativeEvent.stopImmediatePropagation();
+                    setOpen(true);
                     if (e.target.checked) {
                       var warning = document.getElementById("warning");
                       warning.style.display = "none";
@@ -135,7 +140,11 @@ function App(props) {
               tooltipTitle={action.name}
               className={action.classes}
               TooltipClasses={classesTooltip}
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                e.nativeEvent.stopImmediatePropagation();
+                setOpen(true);
                 if (document.getElementById("checkbox").checked) {
                   history.push(action.href, action.state || {});
                 } else {
