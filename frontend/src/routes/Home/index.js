@@ -69,8 +69,6 @@ function App(props) {
   const handleClick = () => {
     setOpen(!open);
   };
-
-  console.log(open);
   const texts = Text["Terms and Conditions"].texts;
   const listIndex = Text["Terms and Conditions"].listIndex;
   const linkIndex = Text["Terms and Conditions"].linkIndex;
