@@ -98,9 +98,6 @@ function App(props) {
                   id="checkbox"
                   style={{ color: "white", padding: "0px 2px" }}
                   onChange={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    e.nativeEvent.stopImmediatePropagation();
                     setOpen(true);
                     if (e.target.checked) {
                       var warning = document.getElementById("warning");
