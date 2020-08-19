@@ -637,7 +637,7 @@ export default function Map(props, { draggable = true }) {
     <div className={classNames(styles.legendWrapper)}>
       <div className={classNames(styles.legend)} id="legend">
         <div className={classNames(styles.legendCollapse)}>
-          <h3>Active Cases</h3>
+          <h3>Confirmed Cases</h3>
           <IconButton
             onClick={handleExpandClick}
             aria-expanded={expanded}
@@ -657,9 +657,9 @@ export default function Map(props, { draggable = true }) {
       </div>
       <div className={classNames(styles.statusLegend)}>
         <div>
-          <h2> Latest Total </h2>
+          <h2> Global Total </h2>
           <h3>
-            Actives: {actives} <br />
+            Confirmed: {actives} <br />
             Deaths: {deaths} <br />
             Recovered: {recovered}
           </h3>
