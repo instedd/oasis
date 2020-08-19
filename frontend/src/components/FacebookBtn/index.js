@@ -38,7 +38,7 @@ export default function FacebookBtn() {
               alt="f"
               src="https://img.icons8.com/fluent/22/000000/facebook-new.png"
               style={{ paddingRight: "5px" }}
-            />{" "}
+            />
             SIGN IN WITH FACEBOOK
           </Button>
         }

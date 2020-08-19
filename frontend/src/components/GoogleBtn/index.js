@@ -31,16 +31,15 @@ export default function GoogleBtn() {
   };
 
   const onLoginFailure = (response) => {
-    alert("Failed to log in");
+    console.log("Failed to log in");
   };
 
   const onLogoutFailure = (response) => {
-    alert("Failed to log out");
+    console.log("Failed to log out");
   };
 
   return (
     <div>
-      {" "}
       {loggedIn ? (
         <GoogleLogout
           style={{ width: 140 }}
@@ -56,7 +55,10 @@ export default function GoogleBtn() {
               onClick={renderPropos.onClick}
               disbale={renderPropos.disabled}
             >
-              <img src="https://img.icons8.com/color/24/000000/google-logo.png" />{" "}
+              <img
+                alt="g"
+                src="https://img.icons8.com/color/24/000000/google-logo.png"
+              />
               Logout
             </Button>
           )}
@@ -81,7 +83,7 @@ export default function GoogleBtn() {
                 alt="g"
                 src="https://img.icons8.com/color/20/000000/google-logo.png"
                 style={{ paddingRight: "5px" }}
-              />{" "}
+              />
               SIGN IN WITH GOOGLE
             </Button>
           )}
