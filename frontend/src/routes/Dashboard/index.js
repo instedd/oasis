@@ -15,6 +15,7 @@ import { fetchStory } from "actions/story";
 import { getStoryResources } from "actions/resources";
 import { LOADING } from "actions/types";
 import { useLocation } from "react-router-dom";
+import api from "utils";
 import Map from "components/Map";
 
 const statusMapping = {
@@ -62,10 +63,26 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     recovered: null,
   });
 
+  const [stats, setStats] = useState({
+    userNum: null,
+    storyNum: null,
+  });
+
   useEffect(() => {
     fetch("https://covid19api.herokuapp.com/latest")
       .then((res) => res.json())
       .then((result) => setData(result));
+  }, []);
+
+  useEffect(() => {
+    api(`stories/all`, {
+      method: "GET",
+    }).then((storiesData) => {
+      setStats({
+        userNum: storiesData.length,
+        storyNum: storiesData.filter((story) => story.myStory).length,
+      });
+    });
   }, []);
 
   const hasMyStory = story && story.myStory;
@@ -155,6 +172,8 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
             actives={data.confirmed && data.confirmed.toLocaleString()}
             deaths={data.deaths && data.deaths.toLocaleString()}
             recovered={data.recovered && data.recovered.toLocaleString()}
+            userNum={stats.userNum && stats.userNum.toLocaleString()}
+            storyNum={stats.storyNum && stats.storyNum.toLocaleString()}
           />
           {informationHeader()}
           <SpeedDial
