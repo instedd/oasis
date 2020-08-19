@@ -12,6 +12,8 @@ import { signIn } from "actions/auth";
 import { ERROR } from "actions/types";
 import paths from "routes/paths";
 import AuthPaper from "components/AuthPaper";
+import FacebookBtn from "components/FacebookBtn";
+import GoogleBtn from "components/GoogleBtn";
 
 import styles from "./styles.module.css";
 
@@ -118,8 +120,10 @@ export default function SignIn() {
           className={classes.submit}
           onClick={handleSubmit}
         >
-          Sign In
+          Sign In With Email
         </Button>
+        <GoogleBtn />
+        <FacebookBtn />
         <Grid container justify="flex-end">
           <Grid item>
             <Link onClick={() => history.push(paths.signUp)} variant="body2">
