@@ -1,5 +1,6 @@
 import sqlalchemy
 import os
+from NytLiveCounty import crud
 
 databases_to_create = ["dbtest", os.environ["DATABASE_NAME"]]
 
@@ -19,3 +20,9 @@ for database in databases_to_create:
         print(f"Created database {database} 😎")
     else:
         print(f"Database {database} already exists 🥳")
+
+# Populate NYT database
+db = sqlalchemy.orm.sessionmaker(
+    autocommit=False, autoflush=False, bind=engine
+)
+crud.seed()
