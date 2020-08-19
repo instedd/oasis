@@ -156,10 +156,13 @@ def update(db: Session):
         # Make sure repo is up to date and on master
         check_and_reset_repo()
 
-        # Check for old data and delete
-        models.NytLiveCounty.delete().where(
-            models.NytLiveCounty.timestamp < FIFTEEN_DAYS_AGO
-        ).execute()
+        old_recs = (
+            db.query(models.NytLiveCounty)
+            .filter(models.NytLiveCounty.timestamp < FIFTEEN_DAYS_AGO)
+            .all()
+        )
+        for rec in old_recs:
+            db.delete(rec)
 
         # Identify master commit hash
         repo = Repo("covid-19-data")
@@ -192,9 +195,9 @@ def get_nyt_data(db: Session, county_ids: List[str]):
     Retrieves records for a list of FIPS codes
     """
     # Check if need to call seed
-    print(db.query(models.NytLiveCounty).one_or_none())
-    if db.query(models.NytLiveCounty).one_or_none() is None:
-        seed(db)
+    # print(db.query(models.NytLiveCounty).one_or_none())
+    # if db.query(models.NytLiveCounty).one_or_none() is None:
+    #    seed(db)
 
     # Execute query
     recs = (
