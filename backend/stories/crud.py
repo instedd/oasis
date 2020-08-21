@@ -28,11 +28,6 @@ def get_story(db: Session, story_id: int):
 
 
 def update_story(db: Session, story_id: int, story: schemas.StoryCreate):
-    # Don't update my_story if given as none for now.
-    # Delete this after frontend is updated.
-    if story.my_story is None:
-        current = get_story(db, story_id)
-        story.my_story = current.my_story
     return update(story_id, story, models.Story, db)
 
 
@@ -102,3 +97,29 @@ def get_all_stories(db: Session):
         .options(joinedload("symptoms"))
         .all()
     )
+
+
+def create_my_story(db: Session, my_story: schemas.MyStoryCreate):
+    db_my_story = models.MyStory(**my_story.dict())
+    db.add(db_my_story)
+    db.commit()
+
+    return db_my_story
+
+
+def update_my_story(db: Session, my_story: schemas.MyStory):
+    return update(my_story.id, my_story, models.MyStory, db)
+
+
+def delete_my_story(db: Session, my_story_id: int):
+    db_my_story = (
+        db.query(models.MyStory)
+        .filter(models.MyStory.id == my_story_id)
+        .first()
+    )
+
+    if db_my_story:
+        db.delete(db_my_story)
+        db.commit()
+
+    return db_my_story

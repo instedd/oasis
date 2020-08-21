@@ -160,3 +160,52 @@ def read_all_stories(db: Session = Depends(get_db)):
     )
 
     return JSONResponse(stories, status_code=200)
+
+
+@router.get("/{story_id}/my_stories", response_model=List[schemas.MyStory])
+def read_my_stories(
+    story_id: int,
+    current_story: schemas.Story = Depends(main.get_current_story),
+):
+    check_permissions(current_story, story_id)
+    return current_story.my_stories
+
+
+@router.post("/{story_id}/my_stories", response_model=schemas.MyStory)
+def create_my_story(
+    story_id: int,
+    my_story: schemas.MyStoryCreate,
+    current_story: schemas.Story = Depends(main.get_current_story),
+    db: Session = Depends(get_db),
+):
+    check_permissions(current_story, story_id)
+    return crud.create_my_story(db, my_story=my_story)
+
+
+@router.put("/{story_id}/my_stories", response_model=schemas.MyStory)
+def update_my_story(
+    story_id: int,
+    my_story: schemas.MyStory,
+    current_story: schemas.Story = Depends(main.get_current_story),
+    db: Session = Depends(get_db),
+):
+    check_permissions(current_story, story_id)
+    return crud.update_my_story(db, my_story=my_story)
+
+
+@router.delete(
+    "/{story_id}/my_stories/{my_story_id}", response_model=schemas.MyStory
+)
+def delete_my_story(
+    story_id: int,
+    my_story_id: int,
+    current_story: schemas.Story = Depends(main.get_current_story),
+    db: Session = Depends(get_db),
+):
+    check_permissions(current_story, story_id)
+    db_my_story = crud.delete_my_story(db, my_story_id=my_story_id)
+
+    if not db_my_story:
+        return JSONResponse(None, status_code=404)
+
+    return db_my_story

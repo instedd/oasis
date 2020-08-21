@@ -106,3 +106,15 @@ class StorySymptom(StorySymptomCreate):
 
     class Config:
         orm_mode = True
+
+
+class MyStoryCreate(BaseModel):
+    text: str
+    story_id: int
+
+
+class MyStory(MyStoryCreate):
+    id: int
+
+    class Config:
+        orm_mode = True
