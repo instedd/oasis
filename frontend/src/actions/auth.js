@@ -58,3 +58,35 @@ export const signIn = (loginDTO) => async (dispatch) => {
     }
   }
 };
+
+export const externalSignIn = (dto) => async (dispatch) => {
+  dispatch({ type: SIGN_IN_START });
+  const response = await api(
+    `auth/external`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `username=${encodeURIComponent(dto.email)}&password=${
+        dto.accessToken
+      }`,
+    },
+    true
+  );
+  dispatch({
+    type: SIGN_IN,
+    payload: {
+      status: response.error || { type: SUCCESS },
+    },
+  });
+
+  if (!response.error) {
+    const story = await getCurrentStory(dispatch);
+    if (!story || Object.entries(story).length === 0 || story.error) {
+      history.push(paths.onboard, { onboard: false });
+    } else {
+      history.push(paths.dashboard);
+    }
+  }
+};

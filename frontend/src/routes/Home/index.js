@@ -66,12 +66,8 @@ function App(props) {
   const classesTooltip = useStylesTooltip();
   const [open, setOpen] = React.useState(false);
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
+  const handleClick = () => {
+    setOpen(!open);
   };
 
   const texts = Text["Terms and Conditions"].texts;
@@ -87,8 +83,7 @@ function App(props) {
           ariaLabel="Take action"
           className={classes.speedDial}
           icon={<SpeedDialIcon />}
-          onClose={handleClose}
-          onOpen={handleOpen}
+          onClick={handleClick}
           open={open}
           FabProps={{ className: classes.button }}
         >
@@ -162,9 +157,7 @@ function App(props) {
                 style={{ alignItems: "center", display: "none" }}
               >
                 <span style={{ color: "red", fontSize: 12 }}>
-                  <strong>
-                    Please read the Terms & Conditions
-                  </strong>
+                  <strong>Please read the Terms & Conditions</strong>
                 </span>
               </div>
             }

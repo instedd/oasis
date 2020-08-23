@@ -32,6 +32,8 @@ export default function Map(props, { draggable = true }) {
   const actives = props.actives;
   const deaths = props.deaths;
   const recovered = props.recovered;
+  const userNum = props.userNum;
+  const storyNum = props.storyNum;
 
   const dataScope = {
     WORLD: "world",
@@ -104,19 +106,36 @@ export default function Map(props, { draggable = true }) {
   const addLayers = async (map) => {
     const data = await fetchCovidData(dataScope.ALL);
     //world data including US for world layer
-    const worldData = data["data"]["adm0"];
+    const worldData = data["data"]["adm0"] ? data["data"]["adm0"] : [];
     // US data for state layer
-    const usStatesData = data["data"]["adm1"]["US"];
+    const usStatesData = data["data"]["adm1"]["US"]
+      ? data["data"]["adm1"]["US"]
+      : [];
     // SD postal code data
-    const sdPosData = data["data"]["adm2"];
+    const sdPosData = data["data"]["adm2"] ? data["data"]["adm2"] : [];
 
     addLegend(data);
 
+    if (worldData && worldData.length > 0) {
+      map.on("load", function () {
+        addWorldLayer(map, worldData);
+        addNonUSLayer(map, worldData);
+      });
+    }
+
+    if (usStatesData && usStatesData.length > 0) {
+      map.on("load", function () {
+        addUSStatesLayer(map, usStatesData);
+      });
+    }
+
+    if (sdPosData && sdPosData.length > 0) {
+      map.on("load", function () {
+        addSDPostLayer(map, sdPosData);
+      });
+    }
+
     map.on("load", function () {
-      addWorldLayer(map, worldData);
-      addNonUSLayer(map, worldData);
-      addUSStatesLayer(map, usStatesData);
-      addSDPostLayer(map, sdPosData);
       addStoryLayer(map);
     });
   };
@@ -205,6 +224,10 @@ export default function Map(props, { draggable = true }) {
 
   const getColor = (group) => {
     return `rgba(${group * 255}, 0, 0, 1)`;
+  };
+
+  const getStateColor = (group) => {
+    return `rgba(${(group - 0.1) * 255}, 10, 12, 1)`;
   };
 
   const addWorldLayer = async (map, data) => {
@@ -398,7 +421,7 @@ export default function Map(props, { draggable = true }) {
     usData.forEach(function (row) {
       var stateID = row.name;
       if (stateID in stateToFIPS) {
-        expression.push(stateToFIPS[stateID], getColor(row.group));
+        expression.push(stateToFIPS[stateID], getStateColor(row.group));
       }
     });
     expression.push("rgba(0,0,0,0)"); // Last value is the default, used where there is no data
@@ -569,14 +592,6 @@ export default function Map(props, { draggable = true }) {
     const storiesData = await fetchStoriesData();
     const geojson = storiesToGeoJson(storiesData);
 
-    //add the number of the stories
-    document.getElementById("users_num").innerHTML =
-      "There are " + storiesData.length + " users on OASIS";
-    //add the number of the stories
-    document.getElementById("stories_num").innerHTML =
-      geojson.features.filter((story) => story.properties.myStory).length +
-      " of them shared their stories";
-
     // Add other users' story
     map.addSource("places", {
       type: "geojson",
@@ -627,7 +642,7 @@ export default function Map(props, { draggable = true }) {
     <div className={classNames(styles.legendWrapper)}>
       <div className={classNames(styles.legend)} id="legend">
         <div className={classNames(styles.legendCollapse)}>
-          <h3>Active Cases</h3>
+          <h3>Confirmed Cases</h3>
           <IconButton
             onClick={handleExpandClick}
             aria-expanded={expanded}
@@ -647,9 +662,9 @@ export default function Map(props, { draggable = true }) {
       </div>
       <div className={classNames(styles.statusLegend)}>
         <div>
-          <h2> Latest Total </h2>
+          <h2> Global Total </h2>
           <h3>
-            Actives: {actives} <br />
+            Confirmed: {actives} <br />
             Deaths: {deaths} <br />
             Recovered: {recovered}
           </h3>
@@ -661,8 +676,8 @@ export default function Map(props, { draggable = true }) {
         <Divider style={{ color: "black" }} />
         <div style={{ paddingTop: 5, color: "#dcd6d3" }}>
           <em>
-            <p id="users_num"></p>
-            <p id="stories_num"></p>
+            <p id="users_num">There are {userNum} users on OASIS</p>
+            <p id="stories_num">{storyNum} of them shared their stories</p>
           </em>
         </div>
       </div>
