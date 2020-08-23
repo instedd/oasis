@@ -8,6 +8,7 @@ import Divider from "@material-ui/core/Divider";
 import styles from "./styles.module.css";
 import api from "utils";
 import { sicknessStatus, testStatus, posToLatLng } from "../../routes/types";
+import { connect } from "react-redux";
 
 const statusMapping = {
   [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
@@ -526,8 +527,7 @@ export default function Map(props, { draggable = true }) {
 
   const storyStyle =
     '<p style="font-size: 18px;line-height: 18px; color:black">';
-  const demographicStyle =
-    '<p style = "line-height:0.9rem;font-size:0.9rem;"><i>';
+  const demographicStyle = '<p style = "line-height:0.9rem;font-size:0.9rem;">';
 
   const addCircle = (status, content) => {
     const color = status.color;
@@ -557,8 +557,11 @@ export default function Map(props, { draggable = true }) {
       } else {
         content += userStory.myStory;
       }
-    } //content += userStory.myStory;
+    }
     content += "</p>";
+    if (userStory.myStory)
+      content +=
+        '<hr style="height:1px;border-width:0;color:gray;background-color:gray" </hr>';
     content += demographicStyle;
     if (userStory.age) content = content + " " + userStory.age + " years old";
     content += userStory.myStory || userStory.age ? " user " : " User ";
@@ -571,7 +574,7 @@ export default function Map(props, { draggable = true }) {
     content = content + "living near " + userStory.state;
     var date = userStory.createdAt ? userStory.createdAt.substring(0, 10) : "";
     if (date !== "") content = content + " on " + date;
-    content += ".</i></p>";
+    content += ".</p>";
     content += '<div style="line-height:0.8rem;" class="row">';
     content = addCircle(statusMapping[userStory.sick], content);
     content = addCircle(statusMapping[userStory.tested], content);
