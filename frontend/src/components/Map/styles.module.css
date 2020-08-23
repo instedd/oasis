@@ -124,6 +124,5 @@
 }
 
 .popups {
-  overflow-y: scroll;
-  max-height: 250px;
+  offset: 25;
 }

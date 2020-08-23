@@ -551,10 +551,9 @@ export default function Map(props, { draggable = true }) {
 
   const setHover = (marker, content, map) => {
     var popup = new mapboxgl.Popup({
-      //className: classNames(styles.popups),
+      className: classNames(styles.popups),
       closeButton: true,
       closeOnClick: true,
-      offset: 25,
     });
     popup.setHTML(content);
     const element = marker.getElement();
