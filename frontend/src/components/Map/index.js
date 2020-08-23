@@ -550,7 +550,14 @@ export default function Map(props, { draggable = true }) {
   const popUpContent = (userStory) => {
     var content = "";
     content += storyStyle;
-    if (userStory.myStory) content += userStory.myStory;
+    if (userStory.myStory) {
+      if (userStory.myStory.length > 280) {
+        content += userStory.myStory.substring(0, 280);
+        content += "...";
+      } else {
+        content += userStory.myStory;
+      }
+    } //content += userStory.myStory;
     content += "</p>";
     content += demographicStyle;
     if (userStory.age) content = content + " " + userStory.age + " years old";
