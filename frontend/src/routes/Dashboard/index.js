@@ -93,7 +93,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       classes: "MuiFab-extended",
     },
     {
-      name: "DAILY ASSESSMENT",
+      name: "UPDATE MY STATUS",
       href: paths.onboard,
       state: { onboard: true },
       classes: classNames("MuiFab-extended assessment", styles.assessment),
