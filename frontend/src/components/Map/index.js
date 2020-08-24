@@ -8,7 +8,6 @@ import Divider from "@material-ui/core/Divider";
 import styles from "./styles.module.css";
 import api from "utils";
 import { sicknessStatus, testStatus, posToLatLng } from "../../routes/types";
-import { connect } from "react-redux";
 
 const statusMapping = {
   [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
@@ -563,15 +562,14 @@ export default function Map(props, { draggable = true }) {
       content +=
         '<hr style="height:1px;border-width:0;color:gray;background-color:gray" </hr>';
     content += demographicStyle;
-    if (userStory.age) content = content + " " + userStory.age + " years old";
-    content += userStory.myStory || userStory.age ? " user " : " User ";
+    if (userStory.age) content = content + "A " + userStory.age + " years old user";
+    else content += "A user";
     if (userStory.profession !== "")
-      content =
-        content +
+      content +=
         " working in the " +
         userStory.profession.toLowerCase() +
         " industry ";
-    content = content + "living near " + userStory.state;
+    content = content + " near " + userStory.state;
     var date = userStory.createdAt ? userStory.createdAt.substring(0, 10) : "";
     if (date !== "") content = content + " on " + date;
     content += ".</p>";
