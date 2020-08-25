@@ -18,8 +18,8 @@
 }
 
 .textarea {
-    width: 90vw;
-    height: 40vh;
+    width: 100%;
+    height: 200px;
     display: flex;
 }
 
@@ -28,4 +28,63 @@
     color: white;
     align-items: flex-start;
     background-color: rgba(0,0,0,0.5);
+}
+
+.home h1{
+    font-family: Roboto;
+    font-weight: 900;
+    text-transform: capitalize;
+    text-align: left;
+    font-size: 42px;
+}
+
+.home {
+    width: 40%;
+    padding-left: 4rem;
+    text-align: left;
+    margin: auto 0;
+    height: 45%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.background {
+    position: absolute;
+    background: #00000082;
+    height: 100vh;
+    width: calc( 40% + 8rem);
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+.btnGroup {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 14px;
+}
+
+.btnGroup button {
+    width: 218px !important;
+    height: 64px !important;
+    border-radius: 50px !important;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: Roboto;
+}
+
+.skipBtn{
+    color: #ffffff80 !important;
+    float: right;
+}
+
+.userNum{
+    position: absolute;
+    bottom: 20px;
+    left: calc(40% + 8rem - 330px);
+    width: 300px;
+    text-align: right;
+    font-size: 18px;
 }
