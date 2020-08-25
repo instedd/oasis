@@ -4,10 +4,6 @@ import Wrapper from "components/Wrapper";
 import paths from "routes/paths";
 
 export default function MyStory(props) {
-  function handleSubmit() {
-    // TODO
-  }
-
   return (
     <Wrapper>
       <h1 className="title">
@@ -18,7 +14,7 @@ export default function MyStory(props) {
         style={{ background: "#0559FD", color: "white" }}
         aria-label="add"
         size="medium"
-        onClick={handleSubmit}
+        onClick={() => props.history.push(paths.signIn)}
         variant="extended"
       >
         LOGIN AND UPDATE MYSTORY
