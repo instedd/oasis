@@ -15,7 +15,7 @@ export default function MyStory(props) {
         information about yourself?
       </h1>
       <Fab
-        style={{ background: "#EA2027" }}
+        style={{ background: "#0559FD", color: "white" }}
         aria-label="add"
         size="medium"
         onClick={handleSubmit}
@@ -24,7 +24,7 @@ export default function MyStory(props) {
         LOGIN AND UPDATE MYSTORY
       </Fab>
       <Fab
-        style={{ background: "#EA2027" }}
+        style={{ background: "#9206FF", color: "white" }}
         aria-label="add"
         size="medium"
         onClick={() => props.history.push(paths.signUp)}

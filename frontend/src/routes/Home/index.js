@@ -57,7 +57,7 @@ export default function Home(props) {
         variant="filled"
       />
       <Fab
-        style={{ background: "#EA2027" }}
+        style={{ background: "#0559FD", color: "white" }}
         aria-label="add"
         size="medium"
         onClick={handleSubmit}
@@ -66,7 +66,7 @@ export default function Home(props) {
         SHARE MY STORY
       </Fab>
       <Fab
-        style={{ background: "#EA2027" }}
+        style={{ background: "#9206FF", color: "white" }}
         aria-label="add"
         size="medium"
         onClick={() => props.history.push(paths.signUp)}
@@ -74,7 +74,10 @@ export default function Home(props) {
       >
         LEARN MORE
       </Fab>
-      <Button onClick={() => props.history.push(paths.onboard)}>
+      <Button
+        style={{ color: "white" }}
+        onClick={() => props.history.push(paths.onboard)}
+      >
         skip and continue as guest
       </Button>
       {/* <Map></Map */}
