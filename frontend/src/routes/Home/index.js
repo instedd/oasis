@@ -2,13 +2,18 @@ import { TextField, Fab, Button } from "@material-ui/core";
 import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import SimpleMap from "components/SimpleMap";
 import paths from "routes/paths";
 import styles from "./styles.module.css";
 import api from "utils";
+import { SET_MY_STORY } from "actions/types";
+import { setMyStory } from "../../actions/story";
 
 export default function Home(props, { draggableMapRoutes = [] }) {
-  const [myStory, setMyStory] = useState("");
+  const dispatch = useDispatch();
+
+  const [myStory, updateMyStory] = useState("");
   const [draggableMap, setDraggableMap] = useState(false);
   const [userNum, setUserNum] = useState(0);
   const [storyNum, setStoryNum] = useState(0);
@@ -68,21 +73,13 @@ export default function Home(props, { draggableMapRoutes = [] }) {
   }, [location, draggableMap, setDraggableMap, draggableMapRoutes]);
 
   const handleChange = (event) => {
-    setMyStory(event.target.value);
+    updateMyStory(event.target.value);
   };
 
-  const handleSubmit = () => {
-    // if (story["myStory"] !== myStory) {
-    //   story["myStory"] = myStory;
-    // const dto = {
-    //   story,
-    //   travels: [],
-    //   closeContacts: [],
-    // };
-    // dispatch(submitStory(dto));
-    // }
+  const handleSubmit = (event, route) => {
+    dispatch(setMyStory(myStory));
 
-    props.history.push(paths.myStory);
+    props.history.push(route);
   };
 
   return (
@@ -102,10 +99,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
             className={classNames("textarea", styles.textarea)}
             variant="filled"
           />
-          <Button
-            className={classNames("skipBtn", styles.skipBtn)}
-            onClick={() => props.history.push(paths.onboard)}
-          >
+          <Button className={classNames("skipBtn", styles.skipBtn)}>
             skip and continue as guest
           </Button>
         </div>
@@ -114,7 +108,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
             style={{ background: "#0559FD", color: "white" }}
             aria-label="add"
             size="medium"
-            onClick={handleSubmit}
+            onClick={(e) => handleSubmit(e, paths.myStory)}
             variant="extended"
           >
             SHARE MY STORY
@@ -123,7 +117,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
             style={{ background: "#9206FF", color: "white" }}
             aria-label="add"
             size="medium"
-            onClick={() => props.history.push(paths.signUp)}
+            onClick={(e) => handleSubmit(e, paths.signUp)}
             variant="extended"
           >
             LEARN MORE

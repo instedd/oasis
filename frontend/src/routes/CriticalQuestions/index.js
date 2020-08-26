@@ -50,9 +50,11 @@ function CriticalQuestions(props) {
   const [locationList, setListItems] = useState([]);
 
   let nextPage;
-  const { story, status, travels, closeContacts } = useSelector(
-    (state) => state.story
-  );
+  let myStory;
+  const { story, status, travels, closeContacts } = useSelector((state) => {
+    myStory = state.story.myStory;
+    return state.story;
+  });
 
   // the number of times that the user clicks next
   var next_count = 0;
@@ -157,6 +159,8 @@ function CriticalQuestions(props) {
         var valid_travels = recentTravels.filter(
           (travel) => travel.location && travel.dateOfReturn
         );
+
+        story.myStory = myStory;
 
         const dto = {
           story,
