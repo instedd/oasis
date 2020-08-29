@@ -130,7 +130,7 @@ def cluster_data(confirmed, clusters_config=None):
         clusters_config = {"clusters": CLUSTERS, "labels": CLUSTERS_LABELS}
 
     df = pd.DataFrame(confirmed)
-    df = df.dropna(how="any", axis=0)
+    df = df.dropna(how="any", axis=0, subset=["confirmed"])
 
     breaks = jenkspy.jenks_breaks(
         df["confirmed"], nb_class=clusters_config["clusters"]
@@ -182,18 +182,20 @@ def get_covid_sd_zip_code_data():
 def get_all_data(db: Session = Depends(get_db)):
     countries = fetch_world_data()
     us_states = fetch_us_states_data()
-    county_data = fetch_county_data(db)
+    us_counties = fetch_county_data(db)
     sd_zip = fetch_sd_zip_code_data()
     cluster_labels = [0.2, 0.4, 0.6, 0.8, 1]
 
     clustered_data = cluster_data(
-        countries + us_states + county_data + sd_zip,
+        countries + us_states + us_counties + sd_zip,
         clusters_config={"clusters": 5, "labels": cluster_labels},
     )
 
     grouped_data = functools.reduce(group_by_scope, clustered_data["data"], {})
 
-    print(grouped_data.keys())
+    grouped_data[DataScope.ADM1] = group_by_parent(
+        grouped_data[DataScope.ADM1]
+    )
 
     grouped_data[DataScope.ADM2] = group_by_parent(
         grouped_data[DataScope.ADM2]
