@@ -195,7 +195,7 @@ def get_all_data(db: Session = Depends(get_db)):
 
     print(grouped_data.keys())
 
-    grouped_data[DataScope.ADM1] = group_by_parent(
+    grouped_data[DataScope.ADM2] = group_by_parent(
         grouped_data[DataScope.ADM2]
     )
 
