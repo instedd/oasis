@@ -11,6 +11,8 @@ from os import path
 import subprocess
 from git import Repo
 import time
+from fastapi import Depends
+from database import get_db
 
 from . import models
 
@@ -59,7 +61,7 @@ def check_and_reset_repo():
         )
     else:
         subprocess.call(
-            "cd covid-19-data && git checkout master && cd ../", shell=True
+            "cd covid-19-data && git checkout -f master && cd ../", shell=True
         )
         subprocess.call("cd covid-19-data && git pull && cd ../", shell=True)
 
@@ -104,7 +106,7 @@ def add_data(db: Session, path: str, commit_hex: str):
         db.add(build_new_db_row(row, commit_hex))
 
 
-def seed(db: Session):
+def seed(db: Session = Depends(get_db)):
     """
     Replaces the contents of the existing NytLiveCounty database with the
     last 14 days of data from the NYT github repo
@@ -129,7 +131,7 @@ def seed(db: Session):
         while get_day_from_ts(get_ts(cmt)) > STALE_DATE:
             # Checkout data
             subprocess.call(
-                f"cd covid-19-data && git checkout {cmt.hexsha} && cd ../",
+                f"cd covid-19-data && git checkout -f {cmt.hexsha} && cd ../",
                 shell=True,
             )
 
