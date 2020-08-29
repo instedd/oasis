@@ -1,18 +1,27 @@
 import json
-from NytLiveCounty import models
-import time
-from sqlalchemy import func
+
+# from NytLiveCounty import models
+# import time
+# from sqlalchemy import func
 
 
 def test_query_counties(setup):
     """
     Tests if the two counties Cook and San Diego can be queried correctly
     """
-    # crud.update(setup["db"])
-    response = setup["app"].get("/api/nyt_live_county/17031,06073")
-    assert len(json.loads(response.content)) == 28
+    response = setup["app"].get("/api/data/county")
+    assert len(json.loads(response.content)["clusters"]) == 5
 
 
+def test_query_all_data(setup):
+    """
+    Test intergration of NYT data with data/all
+    """
+    response = setup["app"].get("/api/data/all")
+    assert len(json.loads(response.content)["clusters"]) == 5
+
+
+'''
 def test_empty_query(setup):
     """
     Tests that the result for an empty query is empty
@@ -33,3 +42,4 @@ def test_data_window(setup):
 
     assert min_ts[0] < THIRTEEN_DAYS_AGO
     assert min_ts[0] > FIFTEEN_DAYS_AGO
+'''
