@@ -3,10 +3,15 @@ from collections import defaultdict
 
 import pandas as pd
 import requests
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from sigfig import round
 
 import jenkspy
+
+from NytLiveCounty import models
+from database import get_db
+from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 COVID_WORLD_API_URL = "https://api.covid19api.com/summary"
 COVID_US_STATES_API_URL = (
@@ -30,7 +35,8 @@ router = APIRouter()
 class DataScope:
     ADM0 = "adm0"  # Base administrative area (countries)
     ADM1 = "adm1"  # First level administrative area (states/provinces)
-    ADM2 = "adm2"  # Zip code level
+    ADM2 = "adm2"  # Counties (not zip codes anymore)
+    ADM3 = "adm3"  # Zip codes
 
 
 def fetch_world_data():
@@ -85,11 +91,33 @@ def fetch_sd_zip_code_data():
                 "confirmed": entry["attributes"]["case_count"]
                 if entry["attributes"]["case_count"]
                 else 0,
-                "scope": DataScope.ADM2,
+                "scope": DataScope.ADM3,
             },
             features,
         )
     )
+
+    return confirmed
+
+
+def fetch_county_data(db: Session = Depends(get_db)):
+    most_recent_date = db.query(func.max(models.NytLiveCounty.date)).first()[0]
+    result = (
+        db.query(models.NytLiveCounty)
+        .filter(models.NytLiveCounty.date == most_recent_date)
+        .all()
+    )
+    confirmed = [
+        {
+            "name": record.county,
+            "confirmed": record.confirmed_cases,
+            "case_count": record.cases,
+            "fips": record.fips,
+            "parent": record.state,
+            "scope": DataScope.ADM2,
+        }
+        for record in result
+    ]
 
     return confirmed
 
@@ -102,6 +130,7 @@ def cluster_data(confirmed, clusters_config=None):
         clusters_config = {"clusters": CLUSTERS, "labels": CLUSTERS_LABELS}
 
     df = pd.DataFrame(confirmed)
+    df = df.dropna(how="any", axis=0)
 
     breaks = jenkspy.jenks_breaks(
         df["confirmed"], nb_class=clusters_config["clusters"]
@@ -125,6 +154,12 @@ def cluster_data(confirmed, clusters_config=None):
     }
 
 
+@router.get("/county")
+def get_covid_county_data(db: Session = Depends(get_db)):
+    confirmed = fetch_county_data(db)
+    return cluster_data(confirmed)
+
+
 @router.get("/world")
 def get_covid_world_data():
     confirmed = fetch_world_data()
@@ -144,21 +179,24 @@ def get_covid_sd_zip_code_data():
 
 
 @router.get("/all")
-def get_all_data():
+def get_all_data(db: Session = Depends(get_db)):
     countries = fetch_world_data()
     us_states = fetch_us_states_data()
+    county_data = fetch_county_data(db)
     sd_zip = fetch_sd_zip_code_data()
     cluster_labels = [0.2, 0.4, 0.6, 0.8, 1]
 
     clustered_data = cluster_data(
-        countries + us_states + sd_zip,
+        countries + us_states + county_data + sd_zip,
         clusters_config={"clusters": 5, "labels": cluster_labels},
     )
 
     grouped_data = functools.reduce(group_by_scope, clustered_data["data"], {})
 
+    print(grouped_data.keys())
+
     grouped_data[DataScope.ADM1] = group_by_parent(
-        grouped_data[DataScope.ADM1]
+        grouped_data[DataScope.ADM2]
     )
 
     return {
