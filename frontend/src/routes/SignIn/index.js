@@ -12,6 +12,8 @@ import { signIn } from "actions/auth";
 import { ERROR } from "actions/types";
 import paths from "routes/paths";
 import AuthPaper from "components/AuthPaper";
+import FacebookBtn from "components/FacebookBtn";
+import GoogleBtn from "components/GoogleBtn";
 
 import styles from "./styles.module.css";
 
@@ -36,6 +38,12 @@ export default function SignIn() {
     email: (user && user.email) || "",
   });
 
+  const validateEmail = (email) => {
+    // eslint-disable-next-line
+    const validEmailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    return validEmailFormat.test(email);
+  };
+
   const handleFormChange = (key) => (event) => {
     setFormValues({ ...formValues, [key]: event.target.value });
   };
@@ -44,10 +52,12 @@ export default function SignIn() {
     event.preventDefault();
     if (!formValues.email || formValues.email === "") {
       document.getElementById("incomplete_error").innerText =
-        "Please fill your email address";
+        "Please enter your email address";
     } else if (!formValues.password || formValues.password === "") {
       document.getElementById("incomplete_error").innerText =
-        "Please fill your password";
+        "Please enter your password";
+    } else if (!validateEmail(formValues.email)) {
+      document.getElementById("incomplete_error").innerText = "";
     } else {
       dispatch(signIn(formValues));
     }
@@ -69,6 +79,9 @@ export default function SignIn() {
       <p id="incomplete_error" style={{ color: "red" }}></p>
       <form className={classes.form} noValidate>
         <TextField
+          error={
+            formValues.email.length > 0 && !validateEmail(formValues.email)
+          }
           variant="outlined"
           margin="normal"
           required
@@ -80,6 +93,11 @@ export default function SignIn() {
           autoFocus
           value={formValues.email}
           onChange={handleFormChange("email")}
+          helperText={
+            formValues.email.length > 0 && !validateEmail(formValues.email)
+              ? "Please enter a valid email."
+              : null
+          }
         />
         <TextField
           variant="outlined"
@@ -102,8 +120,10 @@ export default function SignIn() {
           className={classes.submit}
           onClick={handleSubmit}
         >
-          Sign In
+          Sign In With Email
         </Button>
+        <GoogleBtn />
+        <FacebookBtn />
         <Grid container justify="flex-end">
           <Grid item>
             <Link onClick={() => history.push(paths.signUp)} variant="body2">

@@ -32,6 +32,8 @@ export default function Map(props, { draggable = true }) {
   const actives = props.actives;
   const deaths = props.deaths;
   const recovered = props.recovered;
+  const userNum = props.userNum;
+  const storyNum = props.storyNum;
 
   const dataScope = {
     WORLD: "world",
@@ -104,19 +106,36 @@ export default function Map(props, { draggable = true }) {
   const addLayers = async (map) => {
     const data = await fetchCovidData(dataScope.ALL);
     //world data including US for world layer
-    const worldData = data["data"]["adm0"];
+    const worldData = data["data"]["adm0"] ? data["data"]["adm0"] : [];
     // US data for state layer
-    const usStatesData = data["data"]["adm1"]["US"];
+    const usStatesData = data["data"]["adm1"]["US"]
+      ? data["data"]["adm1"]["US"]
+      : [];
     // SD postal code data
-    const sdPosData = data["data"]["adm2"];
+    const sdPosData = data["data"]["adm2"] ? data["data"]["adm2"] : [];
 
     addLegend(data);
 
+    if (worldData && worldData.length > 0) {
+      map.on("load", function () {
+        addWorldLayer(map, worldData);
+        addNonUSLayer(map, worldData);
+      });
+    }
+
+    if (usStatesData && usStatesData.length > 0) {
+      map.on("load", function () {
+        addUSStatesLayer(map, usStatesData);
+      });
+    }
+
+    if (sdPosData && sdPosData.length > 0) {
+      map.on("load", function () {
+        addSDPostLayer(map, sdPosData);
+      });
+    }
+
     map.on("load", function () {
-      addWorldLayer(map, worldData);
-      addNonUSLayer(map, worldData);
-      addUSStatesLayer(map, usStatesData);
-      addSDPostLayer(map, sdPosData);
       addStoryLayer(map);
     });
   };
@@ -149,7 +168,7 @@ export default function Map(props, { draggable = true }) {
   };
 
   const getRandomFloat = () => {
-    return Math.random() * (Math.random() > 0.5 ? -1 : 1);
+    return Math.random() * (Math.random() > 0.5 ? -0.1 : 0.1);
   };
 
   const storiesToGeoJson = (stories) => {
@@ -185,7 +204,7 @@ export default function Map(props, { draggable = true }) {
 
   const postDataToGeojson = (data) => {
     let features = data.map((zipcode) => {
-      let { name, ...properties } = zipcode;
+      let { name } = zipcode;
 
       return {
         type: "Feature",
@@ -205,6 +224,10 @@ export default function Map(props, { draggable = true }) {
 
   const getColor = (group) => {
     return `rgba(${group * 255}, 0, 0, 1)`;
+  };
+
+  const getStateColor = (group) => {
+    return `rgba(${(group - 0.1) * 255}, 10, 12, 1)`;
   };
 
   const addWorldLayer = async (map, data) => {
@@ -398,7 +421,7 @@ export default function Map(props, { draggable = true }) {
     usData.forEach(function (row) {
       var stateID = row.name;
       if (stateID in stateToFIPS) {
-        expression.push(stateToFIPS[stateID], getColor(row.group));
+        expression.push(stateToFIPS[stateID], getStateColor(row.group));
       }
     });
     expression.push("rgba(0,0,0,0)"); // Last value is the default, used where there is no data
@@ -458,7 +481,7 @@ export default function Map(props, { draggable = true }) {
         id: "sd-pos-layer",
         type: "circle",
         source: "sd-pos",
-        minzoom: focusZoom,
+        minzoom: 6,
         paint: {
           // Size circle radius by earthquake magnitude and zoom level
           "circle-radius": ["+", ["/", ["get", "confirmed"], 80], 3],
@@ -492,17 +515,25 @@ export default function Map(props, { draggable = true }) {
         const confirmed = zipcodes[0].properties.confirmed;
 
         document.getElementById("pd").innerHTML =
-          "<h2>" + name + "</h2><h3>" + confirmed + " cases confirmed</h3>";
+          "<h2>" +
+          name +
+          ", San Diego</h2><h3>" +
+          confirmed +
+          " cases confirmed</h3>";
       }
     });
   };
+
+  const storyStyle =
+    '<p style="font-size: 18px;line-height: 18px; color:black">';
+  const demographicStyle = '<p style = "line-height:0.9rem;font-size:0.9rem;">';
 
   const addCircle = (status, content) => {
     const color = status.color;
     const word = status.name;
     content +=
       '<div style="position:relative;width: 8px; height: 8px;line-height:0.8rem;font-size:0.8rem;' +
-      "margin-right: 10px;top:5px;float: left;border-radius: 50%;background:";
+      "margin-right: 10px;top:7px;float: left;border-radius: 50%;background:";
     content = content + color + ';"></div>';
     content =
       content +
@@ -515,18 +546,32 @@ export default function Map(props, { draggable = true }) {
     return content;
   };
 
-  const popUpContent = (userStory, content) => {
-    if (userStory.age) content = content + " " + userStory.age + " years old";
-    content += userStory.myStory || userStory.age ? " user " : " User ";
+  const popUpContent = (userStory) => {
+    var content = "";
+    content += storyStyle;
+    if (userStory.myStory) {
+      if (userStory.myStory.length > 280) {
+        content += userStory.myStory.substring(0, 280);
+        content += "...";
+      } else {
+        content += userStory.myStory;
+      }
+    }
+    content += "</p>";
+    if (userStory.myStory)
+      content +=
+        '<hr style="height:1px;border-width:0;color:gray;background-color:gray" </hr>';
+    content += demographicStyle;
+    if (userStory.age) content = content + "A " + userStory.age + " years old user";
+    else content += "A user";
     if (userStory.profession !== "")
-      content =
-        content +
+      content +=
         " working in the " +
         userStory.profession.toLowerCase() +
         " industry ";
-    content = content + "living near " + userStory.state;
-    var date = userStory.createdAt.substring(0, 10);
-    if (userStory.myStory) content = content + " on " + date;
+    content = content + " near " + userStory.state;
+    var date = userStory.createdAt ? userStory.createdAt.substring(0, 10) : "";
+    if (date !== "") content = content + " on " + date;
     content += ".</p>";
     content += '<div style="line-height:0.8rem;" class="row">';
     content = addCircle(statusMapping[userStory.sick], content);
@@ -537,9 +582,9 @@ export default function Map(props, { draggable = true }) {
 
   const setHover = (marker, content, map) => {
     var popup = new mapboxgl.Popup({
-      closeButton: false,
-      closeOnClick: false,
-      offset: 25,
+      className: classNames(styles.popups),
+      closeButton: true,
+      closeOnClick: true,
     });
     popup.setHTML(content);
     const element = marker.getElement();
@@ -555,13 +600,6 @@ export default function Map(props, { draggable = true }) {
     const storiesData = await fetchStoriesData();
     const geojson = storiesToGeoJson(storiesData);
 
-    //add the number of the stories
-    document.getElementById("users_num").innerHTML =
-      storiesData.length + " of them shared their stories";
-    //add the number of the stories
-    document.getElementById("stories_num").innerHTML =
-      geojson.features.length + " of them shared their stories";
-
     // Add other users' story
     map.addSource("places", {
       type: "geojson",
@@ -573,19 +611,8 @@ export default function Map(props, { draggable = true }) {
       // create a HTML element for each feature
       var el = document.createElement("div");
       el.className = "marker";
-      var myStory = marker.properties.myStory;
 
-      content = "";
-      //add user story if has any
-      if (myStory)
-        content =
-          content +
-          '<p style="font-size: 18px;line-height: 18px;">"' +
-          myStory +
-          '"</p><p style = "line-height:0.9rem;font-size:0.9rem;">- From';
-      else content += '<p style = "line-height:0.8rem;font-size:0.8rem;">';
-      content = popUpContent(marker.properties, content);
-
+      var content = popUpContent(marker.properties);
       // create the marker
       const sickStatus = marker.properties.sick;
       const currmarker = new mapboxgl.Marker({
@@ -597,16 +624,7 @@ export default function Map(props, { draggable = true }) {
       currmarker.addTo(map);
     });
 
-    // Add current user's marker
-    // create the popup
-    const date = userStory.createdAt;
-    const story = userStory.myStory;
-    var content = '<p style="font-size: 18px;line-height: 18px;">';
-    if (story) {
-      content = content + '"' + story + '"</p>';
-      if (date) content = content + "<p> - on" + date + "</p>";
-    } else content += "You haven't shared your story yet! </p>";
-
+    const content = popUpContent(userStory);
     // create the marker
     if (isInRange(userStory.latitude, userStory.longitude)) {
       const marker = new mapboxgl.Marker().setLngLat([
@@ -632,7 +650,7 @@ export default function Map(props, { draggable = true }) {
     <div className={classNames(styles.legendWrapper)}>
       <div className={classNames(styles.legend)} id="legend">
         <div className={classNames(styles.legendCollapse)}>
-          <h3>Active Cases</h3>
+          <h3>Confirmed Cases</h3>
           <IconButton
             onClick={handleExpandClick}
             aria-expanded={expanded}
@@ -652,9 +670,9 @@ export default function Map(props, { draggable = true }) {
       </div>
       <div className={classNames(styles.statusLegend)}>
         <div>
-          <h2> Latest Total </h2>
+          <h2> Global Total </h2>
           <h3>
-            Actives: {actives} <br />
+            Confirmed: {actives} <br />
             Deaths: {deaths} <br />
             Recovered: {recovered}
           </h3>
@@ -666,8 +684,8 @@ export default function Map(props, { draggable = true }) {
         <Divider style={{ color: "black" }} />
         <div style={{ paddingTop: 5, color: "#dcd6d3" }}>
           <em>
-            <p id="users_num"></p>
-            <p id="stories_num"></p>
+            <p id="users_num">There are {userNum} users on OASIS</p>
+            <p id="stories_num">{storyNum} of them shared their stories</p>
           </em>
         </div>
       </div>

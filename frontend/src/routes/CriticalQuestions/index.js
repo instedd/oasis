@@ -49,6 +49,8 @@ function CriticalQuestions(props) {
   const [recentTravels, setRecentTravels] = useState([]);
   const [locationList, setListItems] = useState([]);
 
+  const [validEmails, setValidEmails] = useState([]);
+
   let nextPage;
   let myStory;
   const { story, status, travels, closeContacts } = useSelector((state) => {
@@ -57,7 +59,7 @@ function CriticalQuestions(props) {
   });
 
   // the number of times that the user clicks next
-  var next_count = 0;
+  const [next_count, setNextCount] = useState(0);
 
   useEffect(() => {
     if (!story) {
@@ -84,9 +86,24 @@ function CriticalQuestions(props) {
     }
   };
 
+  const validateEmail = (email) => {
+    // eslint-disable-next-line
+    const validEmailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    return validEmailFormat.test(email);
+  };
+
+  const validateEmailEntry = (entry) => {
+    return validateEmail(entry.email);
+  };
+
   const handleCloseContactChange = (key, index) => (event) => {
     const contactToUpdate = contacts[index];
     contactToUpdate[key] = event.target.value;
+    if (key === "email") {
+      const newValidEmails = validEmails;
+      newValidEmails[index] = true;
+      setValidEmails(newValidEmails);
+    }
     const newContacts = [...contacts];
     newContacts[index] = contactToUpdate;
     setContacts(newContacts);
@@ -135,7 +152,7 @@ function CriticalQuestions(props) {
       if (document.getElementById("error")) {
         document.getElementById("error").style.display = "none";
       }
-      next_count++;
+      setNextCount(next_count + 1);
     } else {
       if (document.getElementById("error")) {
         document.getElementById("error").style.display = "inline";
@@ -263,11 +280,18 @@ function CriticalQuestions(props) {
         <div key={i} className={styles.contact}>
           <div className={classNames("grid-3", styles["grid-3"])}>
             <TextField
+              error={contact.email && !validateEmail(contact.email)}
               label="Email *"
               value={contact.email}
               onChange={handleCloseContactChange("email", i)}
+              helperText={
+                contact.email && !validateEmail(contact.email)
+                  ? "Please enter a valid email."
+                  : null
+              }
             />
           </div>
+
           <div className={classNames("grid-3", styles["grid-3"])}>
             <TextField
               label="Phone Number"
@@ -543,28 +567,6 @@ function CriticalQuestions(props) {
         <div style={{ height: "30px" }} ref={pageBottomRef}></div>
       </div>
 
-      {contacts.filter((contact) => contact.email).length !== 0 &&
-        formValues[fields.CITY.key] &&
-        formValues[fields.CITY.key].length &&
-        formValues[fields.STATE.key] &&
-        formValues[fields.STATE.key].length &&
-        formValues[fields.COUNTRY.key] &&
-        formValues[fields.COUNTRY.key].length && (
-          <AlertDialog
-            label={
-              <Fab
-                style={{ background: "#EA2027" }}
-                aria-label="Go to next page"
-                size="medium"
-                className="fab next-btn"
-              >
-                <ArrowRightIcon />
-              </Fab>
-            }
-            text={contactNoticeText}
-            submit={handleSubmit}
-          />
-        )}
       {(contacts.filter((contact) => contact.email).length === 0 ||
         !formValues[fields.CITY.key] ||
         !formValues[fields.CITY.key].length ||
@@ -582,6 +584,35 @@ function CriticalQuestions(props) {
           <ArrowRightIcon />
         </Fab>
       )}
+
+      {contacts.filter((contact) => contact.email).length !== 0 &&
+        ((next_count === 0 &&
+          !!(
+            formValues[fields.CITY.key] && formValues[fields.CITY.key].length
+          )) ||
+          next_count > 0) &&
+        formValues[fields.STATE.key] &&
+        formValues[fields.STATE.key].length &&
+        formValues[fields.COUNTRY.key] &&
+        formValues[fields.COUNTRY.key].length && (
+          <AlertDialog
+            label={
+              <Fab
+                style={{ background: "#EA2027" }}
+                aria-label="Go to next page"
+                size="medium"
+                className="fab next-btn"
+              >
+                <ArrowRightIcon />
+              </Fab>
+            }
+            valid={contacts
+              .filter((contact) => contact.email)
+              .every(validateEmailEntry)}
+            text={contactNoticeText}
+            submit={handleSubmit}
+          />
+        )}
 
       <Fab
         style={{ background: "#9206FF" }}
