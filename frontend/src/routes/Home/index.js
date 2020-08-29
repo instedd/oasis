@@ -99,7 +99,10 @@ export default function Home(props, { draggableMapRoutes = [] }) {
             className={classNames("textarea", styles.textarea)}
             variant="filled"
           />
-          <Button className={classNames("skipBtn", styles.skipBtn)}>
+          <Button
+            onClick={() => props.history.push(paths.onboard)}
+            className={classNames("skipBtn", styles.skipBtn)}
+          >
             skip and continue as guest
           </Button>
         </div>
@@ -123,9 +126,9 @@ export default function Home(props, { draggableMapRoutes = [] }) {
             LEARN MORE
           </Fab>
         </div>
-        <div className={classNames("userNum", styles.userNum)}>
+        {/* <div className={classNames("userNum", styles.userNum)}>
           {userNum} of users shared their stories
-        </div>
+        </div> */}
         <div className={classNames("background", styles.background)} />
       </div>
 
