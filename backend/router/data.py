@@ -110,7 +110,7 @@ def fetch_county_data(db: Session = Depends(get_db)):
     confirmed = [
         {
             "name": record.county,
-            "confirmed": record.confirmed_cases,
+            "confirmed": record.cases,
             "case_count": record.cases,
             "fips": record.fips,
             "parent": record.state,
