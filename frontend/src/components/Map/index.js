@@ -22,8 +22,8 @@ mapboxgl.accessToken =
   "pk.eyJ1Ijoic3RlNTE5IiwiYSI6ImNrOHc1aHlvYTB0N2ozam51MHFiazE3bmcifQ.AHtFuA-pAqau_AJIy-hzOg";
 
 export default function Map(props, { draggable = true }) {
-  const countryMinZoom = 3.5;
-  const stateMaxZoom = 9;
+  const countryMinZoom = 3;
+  const stateMaxZoom = 4;
   const initialZoom = 1;
   const focusZoom = 8;
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
@@ -111,31 +111,24 @@ export default function Map(props, { draggable = true }) {
     const usStatesData = data["data"]["adm1"]["US"]
       ? data["data"]["adm1"]["US"]
       : [];
+    // US data for county layer
+    const usCountyData = data["data"]["adm2"] ? data["data"]["adm2"] : [];
     // SD postal code data
-    const sdPosData = data["data"]["adm2"] ? data["data"]["adm2"] : [];
+    const sdPosData = data["data"]["adm3"] ? data["data"]["adm3"] : [];
 
     addLegend(data);
 
-    if (worldData && worldData.length > 0) {
-      map.on("load", function () {
+    map.on("load", function () {
+      if (worldData && worldData.length > 0) {
         addWorldLayer(map, worldData);
         addNonUSLayer(map, worldData);
-      });
-    }
-
-    if (usStatesData && usStatesData.length > 0) {
-      map.on("load", function () {
+      }
+      if (usStatesData && usStatesData.length > 0)
         addUSStatesLayer(map, usStatesData);
-      });
-    }
+      if (usCountyData && usCountyData.length > 0)
+        addUSCountyLayer(map, usCountyData);
+      if (sdPosData && sdPosData.length > 0) addSDPostLayer(map, sdPosData);
 
-    if (sdPosData && sdPosData.length > 0) {
-      map.on("load", function () {
-        addSDPostLayer(map, sdPosData);
-      });
-    }
-
-    map.on("load", function () {
       addStoryLayer(map);
     });
   };
@@ -259,7 +252,7 @@ export default function Map(props, { draggable = true }) {
     );
 
     map.on("mousemove", function (e) {
-      var countries = map.queryRenderedFeatures(e.point, {
+      let countries = map.queryRenderedFeatures(e.point, {
         layers: ["world-layer"],
       });
 
@@ -320,7 +313,7 @@ export default function Map(props, { draggable = true }) {
     );
 
     map.on("mousemove", function (e) {
-      var countries = map.queryRenderedFeatures(e.point, {
+      let countries = map.queryRenderedFeatures(e.point, {
         layers: ["non-us-layer"],
       });
 
@@ -419,7 +412,7 @@ export default function Map(props, { draggable = true }) {
     // exclude states outside the 50 states
     const expression = ["match", ["get", "STATE_ID"]];
     usData.forEach(function (row) {
-      var stateID = row.name;
+      let stateID = row.name;
       if (stateID in stateToFIPS) {
         expression.push(stateToFIPS[stateID], getStateColor(row.group));
       }
@@ -445,7 +438,7 @@ export default function Map(props, { draggable = true }) {
 
     // add the information window
     map.on("mousemove", function (e) {
-      var states = map.queryRenderedFeatures(e.point, {
+      let states = map.queryRenderedFeatures(e.point, {
         layers: ["us-states-layer"],
       });
 
@@ -467,6 +460,60 @@ export default function Map(props, { draggable = true }) {
     });
   };
 
+  const addUSCountyLayer = async (map, data) => {
+    const countyData = await data;
+    // Add the source to query.
+    // https://docs.mapbox.com/mapbox-gl-js/example/queryrenderedfeatures-around-point
+    map.addSource("counties", {
+      type: "vector",
+      url: "mapbox://mapbox.82pkq93d",
+    });
+
+    const expression = ["match", ["get", "FIPS"]];
+    countyData.forEach(function (row) {
+      expression.push(row.fips, getStateColor(row.group));
+    });
+    expression.push("rgba(0,0,0,0)"); // Last value is the default, used where there is no data
+
+    map.addLayer(
+      {
+        id: "us-counties-layer",
+        type: "fill",
+        source: "counties",
+        minzoom: stateMaxZoom,
+        maxzoom: focusZoom,
+        "source-layer": "original",
+        paint: {
+          "fill-color": expression,
+          "fill-outline-color": fillOutlineColor,
+          "fill-opacity": 1,
+        },
+      },
+      "settlement-label"
+    ); // Place polygon under these labels.
+
+    // add the information window
+    map.on("mousemove", function (e) {
+      let counties = map.queryRenderedFeatures(e.point, {
+        layers: ["us-counties-layer"],
+      });
+
+      if (counties.length > 0) {
+        const name = counties[0].properties.COUNTY;
+        const target_counties = countyData.filter((county) => {
+          if (counties[0].properties.FIPS == county.fips) {
+            return county;
+          }
+        });
+        const confirmed =
+          target_counties.length > 0 ? target_counties[0].confirmed : "NA";
+
+        document.getElementById("pd").innerHTML =
+          "<h2>" + name + "</h2><h3>" + confirmed + " cases confirmed</h3>";
+      }
+    });
+  };
+
   const addSDPostLayer = async (map, data) => {
     const sdPosData = await data;
     const geojson = postDataToGeojson(sdPosData);
@@ -481,7 +528,7 @@ export default function Map(props, { draggable = true }) {
         id: "sd-pos-layer",
         type: "circle",
         source: "sd-pos",
-        minzoom: 6,
+        minzoom: focusZoom,
         paint: {
           // Size circle radius by earthquake magnitude and zoom level
           "circle-radius": ["+", ["/", ["get", "confirmed"], 80], 3],
@@ -506,7 +553,7 @@ export default function Map(props, { draggable = true }) {
 
     // add the information window
     map.on("mousemove", function (e) {
-      var zipcodes = map.queryRenderedFeatures(e.point, {
+      let zipcodes = map.queryRenderedFeatures(e.point, {
         layers: ["sd-pos-layer"],
       });
 
@@ -552,7 +599,7 @@ export default function Map(props, { draggable = true }) {
         userStory.profession.toLowerCase() +
         " industry ";
     content = content + "living near " + userStory.state;
-    var date = userStory.createdAt.substring(0, 10);
+    let date = userStory.createdAt.substring(0, 10);
     if (userStory.myStory) content = content + " on " + date;
     content += ".</p>";
     content += '<div style="line-height:0.8rem;" class="row">';
@@ -563,7 +610,7 @@ export default function Map(props, { draggable = true }) {
   };
 
   const setHover = (marker, content, map) => {
-    var popup = new mapboxgl.Popup({
+    let popup = new mapboxgl.Popup({
       closeButton: false,
       closeOnClick: false,
       offset: 25,
@@ -591,9 +638,9 @@ export default function Map(props, { draggable = true }) {
     // add markers to map
     geojson.features.forEach(function (marker) {
       // create a HTML element for each feature
-      var el = document.createElement("div");
+      let el = document.createElement("div");
       el.className = "marker";
-      var myStory = marker.properties.myStory;
+      let myStory = marker.properties.myStory;
 
       content = "";
       //add user story if has any
@@ -621,7 +668,7 @@ export default function Map(props, { draggable = true }) {
     // create the popup
     const date = userStory.createdAt;
     const story = userStory.myStory;
-    var content = '<p style="font-size: 18px;line-height: 18px;">';
+    let content = '<p style="font-size: 18px;line-height: 18px;">';
     if (story) {
       content = content + '"' + story + '"</p>';
       if (date) content = content + "<p> - on" + date + "</p>";

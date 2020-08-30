@@ -197,9 +197,9 @@ def get_all_data(db: Session = Depends(get_db)):
         grouped_data[DataScope.ADM1]
     )
 
-    grouped_data[DataScope.ADM2] = group_by_parent(
-        grouped_data[DataScope.ADM2]
-    )
+    # grouped_data[DataScope.ADM2] = group_by_parent(
+    #     grouped_data[DataScope.ADM2]
+    # )
 
     return {
         "data": grouped_data,
