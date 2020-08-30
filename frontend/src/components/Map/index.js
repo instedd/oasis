@@ -571,6 +571,10 @@ export default function Map(props, { draggable = true }) {
     });
   };
 
+  const storyStyle =
+    '<p style="font-size: 18px;line-height: 18px; color:black">';
+  const demographicStyle = '<p style = "line-height:0.9rem;font-size:0.9rem;">';
+
   const addCircle = (status, content) => {
     const color = status.color;
     const word = status.name;
@@ -589,18 +593,34 @@ export default function Map(props, { draggable = true }) {
     return content;
   };
 
-  const popUpContent = (userStory, content) => {
-    if (userStory.age) content = content + " " + userStory.age + " years old";
-    content += userStory.myStory || userStory.age ? " user " : " User ";
+  const popUpContent = (userStory) => {
+    var content = "";
+    content += storyStyle;
+    if (userStory.myStory) {
+      if (userStory.myStory.length > 280) {
+        content += userStory.myStory.substring(0, 280);
+        content += "...";
+      } else {
+        content += userStory.myStory;
+      }
+    }
+    content += "</p>";
+    if (userStory.myStory)
+      content +=
+        '<hr style="height:1px;border-width:0;color:gray;background-color:gray" </hr>';
+    content += demographicStyle;
+    if (userStory.age) content = content + "A " + userStory.age + " years old user";
+    else content += "A user";
     if (userStory.profession !== "")
-      content =
-        content +
+      content +=
         " working in the " +
         userStory.profession.toLowerCase() +
         " industry ";
-    content = content + "living near " + userStory.state;
-    let date = userStory.createdAt.substring(0, 10);
-    if (userStory.myStory) content = content + " on " + date;
+
+    content = content + " near " + userStory.state;
+    var date = userStory.createdAt ? userStory.createdAt.substring(0, 10) : "";
+    if (date !== "") content = content + " on " + date;
+
     content += ".</p>";
     content += '<div style="line-height:0.8rem;" class="row">';
     content = addCircle(statusMapping[userStory.sick], content);
@@ -610,10 +630,10 @@ export default function Map(props, { draggable = true }) {
   };
 
   const setHover = (marker, content, map) => {
-    let popup = new mapboxgl.Popup({
-      closeButton: false,
-      closeOnClick: false,
-      offset: 25,
+    var popup = new mapboxgl.Popup({
+      className: classNames(styles.popups),
+      closeButton: true,
+      closeOnClick: true,
     });
     popup.setHTML(content);
     const element = marker.getElement();
@@ -640,19 +660,8 @@ export default function Map(props, { draggable = true }) {
       // create a HTML element for each feature
       let el = document.createElement("div");
       el.className = "marker";
-      let myStory = marker.properties.myStory;
 
-      content = "";
-      //add user story if has any
-      if (myStory)
-        content =
-          content +
-          '<p style="font-size: 18px;line-height: 18px;">"' +
-          myStory +
-          '"</p><p style = "line-height:0.9rem;font-size:0.9rem;">- From';
-      else content += '<p style = "line-height:0.8rem;font-size:0.8rem;">';
-      content = popUpContent(marker.properties, content);
-
+      var content = popUpContent(marker.properties);
       // create the marker
       const sickStatus = marker.properties.sick;
       const currmarker = new mapboxgl.Marker({
@@ -664,15 +673,7 @@ export default function Map(props, { draggable = true }) {
       currmarker.addTo(map);
     });
 
-    // Add current user's marker
-    // create the popup
-    const date = userStory.createdAt;
-    const story = userStory.myStory;
-    let content = '<p style="font-size: 18px;line-height: 18px;">';
-    if (story) {
-      content = content + '"' + story + '"</p>';
-      if (date) content = content + "<p> - on" + date + "</p>";
-    } else content += "You haven't shared your story yet! </p>";
+    const content = popUpContent(userStory);
 
     // create the marker
     if (isInRange(userStory.latitude, userStory.longitude)) {

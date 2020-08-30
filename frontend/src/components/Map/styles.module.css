@@ -122,3 +122,7 @@
   position: absolute;
   bottom: 20px;
 }
+
+.popups {
+  offset: 25;
+}
