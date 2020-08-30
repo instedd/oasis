@@ -21,7 +21,7 @@
 }
 
 .myStory h1 {
-  font-family: Roboto;
+  font-family: 'Roboto', sans-serif;
   font-weight: 500;
   text-align: left;
   font-size: 28px;
@@ -40,7 +40,7 @@
   border-radius: 50px !important;
   font-size: 14px;
   font-weight: 700;
-  font-family: Roboto;
+  font-family: 'Roboto', sans-serif;
 }
 
 .skipBtn {

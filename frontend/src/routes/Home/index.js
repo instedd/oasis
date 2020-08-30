@@ -129,9 +129,8 @@ export default function Home(props, { draggableMapRoutes = [] }) {
         {/* <div className={classNames("userNum", styles.userNum)}>
           {userNum} of users shared their stories
         </div> */}
-        <div className={classNames("background", styles.background)} />
       </div>
-
+      <div className={classNames("background", styles.background)} />
       <SimpleMap draggable={draggableMap} />
     </>
   );

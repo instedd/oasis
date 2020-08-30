@@ -31,7 +31,7 @@
 }
 
 .home h1{
-    font-family: Roboto;
+    font-family: 'Roboto', sans-serif;
     font-weight: 900;
     text-transform: capitalize;
     text-align: left;
@@ -43,7 +43,6 @@
     padding-left: 4rem;
     text-align: left;
     margin: auto 0;
-    height: 45%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -62,17 +61,17 @@
 .btnGroup {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     margin-top: 14px;
 }
 
 .btnGroup button {
-    width: 218px !important;
-    height: 60px !important;
+    width: 200px !important;
+    height: 50px !important;
     border-radius: 50px !important;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
-    font-family: Roboto;
+    font-family: 'Roboto', sans-serif;
 }
 
 .skipBtn{
