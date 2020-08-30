@@ -111,7 +111,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
             style={{ background: "#0559FD", color: "white" }}
             aria-label="add"
             size="medium"
-            onClick={(e) => handleSubmit(e, paths.myStory)}
+            onClick={(e) => handleSubmit(e, paths.consent)}
             variant="extended"
           >
             SHARE MY STORY

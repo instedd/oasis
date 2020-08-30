@@ -1,49 +1,31 @@
-.title {
-  font-weight: normal;
-  line-height: 125%;
-  text-align: center;
-  margin: 0px;
-  padding: 0px;
-}
-
-.signin {
-  background-color: var(--primary) !important;
-  color: white !important;
-}
-
-.myStory {
-  width: 280px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 400px;
-  margin: auto
-}
-
-.myStory h1 {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 500;
-  text-align: left;
-  font-size: 28px;
-}
-
-.btnGroup {
-  display: flex;
-  flex-direction: column;
+.textarea fieldset {
+  border-color: white;
   height: 100%;
-  width: 100%;
-  justify-content: space-evenly;
 }
 
-.btnGroup button {
-  height: 50px !important;
-  border-radius: 50px !important;
-  font-size: 14px;
-  font-weight: 700;
-  font-family: 'Roboto', sans-serif;
+.textarea > div:hover fieldset{
+  border-color:white !important;
 }
 
-.skipBtn {
-  color: #ffffff80 !important;
-  float: right;
+.textarea .Mui-focused label{
+  width: 400px
+}
+.textarea label {
+  color: grey;
+  font-size: 15px;
+  line-height: 1.5rem;
+  width: 320px;
+}
+
+.textarea {
+  width: 90vw;
+  height: 40vh;
+  display: flex;
+}
+
+.textarea > div {
+  height: 100%;
+  color: white;
+  align-items: flex-start;
+  background-color: rgba(0,0,0,0.5);
 }
