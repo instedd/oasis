@@ -116,6 +116,7 @@ def seed(db: Session = Depends(get_db), fake_date=None):
     fake_date is for testing purposes - it forces the function to populate the
     database assuming that today is fake_date - type is datetime
     """
+    global STALE_DATE
     try:
         # Clear existing database
         db.query(models.NytLiveCounty).delete()
