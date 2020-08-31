@@ -4,7 +4,7 @@ import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import classNames from "classnames";
 import styles from "./styles.module.css";
 import { useSelector, useDispatch } from "react-redux";
-import { submitStory } from "actions/story";
+import api from "utils";
 
 export default function MyStory(props) {
   const [myStory, setMyStory] = React.useState("");
@@ -24,17 +24,14 @@ export default function MyStory(props) {
   };
 
   const handleSubmit = () => {
-    if (story["myStory"] !== myStory) {
-      story["myStory"] = myStory;
-      const dto = {
-        story,
-        travels: [],
-        closeContacts: [],
-      };
-      dispatch(submitStory(dto));
-    }
-
-    props.history.push("/dashboard");
+    // TODO: change this function
+    api(`stories/${story.id}/my_stories`, {
+      method: "POST",
+      body: {
+        story_id: story.id,
+        text: myStory,
+      },
+    });
   };
 
   return (
