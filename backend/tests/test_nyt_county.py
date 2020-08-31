@@ -1,12 +1,13 @@
 import json
 
-# from NytLiveCounty import models
-# import time
-# from sqlalchemy import func
+from NytLiveCounty import crud, models
+from datetime import datetime
+import time
+from sqlalchemy import func
 
 
 '''
-TODO - FIX THIS ENDPOING
+TODO - FIX THIS ENDPOINT
 def test_query_counties(setup):
     """
     Tests if the two counties Cook and San Diego can be queried correctly
@@ -24,6 +25,38 @@ def test_query_all_data(setup):
     assert len(json.loads(response.content)["clusters"]) == 5
 
 
+def test_seed_fake_date(setup):
+    """
+    This test case tests that the "fake_date" parameter to seed works
+    """
+    crud.seed(setup["db"], fake_date=datetime(month=8, day=15, year=2020))
+    max_date = setup["db"].query(func.max(models.NytLiveCounty.date)).first()
+    assert max_date[0].day == 14  # 14 because newest data before 8/15 at 12am
+
+
+def test_async_update(setup):
+    """
+    Tests that the asynchronous update function correctly updates the data
+    """
+    # Seed old data
+    crud.seed(setup["db"], fake_date=datetime(month=8, day=15, year=2020))
+
+    # Execute a query that causes an async update
+    setup["app"].get("/api/data/all")
+
+    # Sleep some time to give update time to work
+    time.sleep(120)
+
+    # Check that new max date is today
+    today = datetime.now().day
+    max_date = (
+        setup["db"].query(func.max(models.NytLiveCounty.date)).first()[0].day
+    )
+
+    assert max_date == today
+
+
+# For the old NYT API - probably don't want to use
 '''
 def test_empty_query(setup):
     """
