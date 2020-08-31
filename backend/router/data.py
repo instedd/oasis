@@ -8,10 +8,12 @@ from sigfig import round
 
 import jenkspy
 
-from NytLiveCounty import models
+from NytLiveCounty import crud, models
 from database import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy import func
+
+import asyncio
 
 COVID_WORLD_API_URL = "https://api.covid19api.com/summary"
 COVID_US_STATES_API_URL = (
@@ -179,7 +181,7 @@ def get_covid_sd_zip_code_data():
 
 
 @router.get("/all")
-def get_all_data(db: Session = Depends(get_db)):
+async def get_all_data(db: Session = Depends(get_db)):
     countries = fetch_world_data()
     us_states = fetch_us_states_data()
     us_counties = fetch_county_data(db)
@@ -200,6 +202,9 @@ def get_all_data(db: Session = Depends(get_db)):
     # grouped_data[DataScope.ADM2] = group_by_parent(
     #     grouped_data[DataScope.ADM2]
     # )
+
+    # Run update for NYT data
+    asyncio.ensure_future(crud.update(db))
 
     return {
         "data": grouped_data,
