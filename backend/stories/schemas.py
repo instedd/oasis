@@ -65,7 +65,6 @@ class StoryCreate(BaseModel):
     sickness_start: str = None
     sickness_end: str = None
     close_contacts: List[CloseContact] = []
-    my_story: str = None
     spam: int = 0
     latitude: float = None
     longitude: float = None

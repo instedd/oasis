@@ -14,6 +14,7 @@ import {
   SUBMIT_TRAVELS,
   SUBMIT_CLOSE_CONTACTS_START,
   SUBMIT_CLOSE_CONTACTS,
+  SUBMIT_MY_STORY,
 } from "./types";
 import { fields } from "../routes/CriticalQuestions/fields";
 
@@ -41,6 +42,7 @@ export const submitStory = (dto) => async (dispatch) => {
 
   dispatch({ type: SAVE_STORY_START });
   const { story, nextPage, travels, closeContacts } = dto;
+  console.log(story);
   const {
     error,
     travels: _travels,
@@ -73,6 +75,18 @@ export const submitStory = (dto) => async (dispatch) => {
   if (!anyError) {
     history.push(nextPage);
   }
+};
+
+export const submitMyStory = (id, mystory) => async (dispatch) => {
+  const newMyStory = { text: mystory, story_id: id };
+  const submitResponse = await api(`stories/${id}/my_stories`, {
+    method: "POST",
+    body: newMyStory,
+  });
+  dispatch({
+    type: SUBMIT_MY_STORY,
+    payload: mystory,
+  });
 };
 
 export const setSickStatus = (option) => (dispatch) => {

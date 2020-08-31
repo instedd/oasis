@@ -88,8 +88,9 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const hasMyStory = story && story.myStory;
   const actions = [
     {
-      name: hasMyStory ? "UPDATE MY STORY" : "ADD MY STORY",
-      href: paths.myStory,
+      name: "MY STORIES", //hasMyStory ? "UPDATE MY STORY" : "ADD MY STORY",
+      href: paths.storyHistory,
+      //paths.myStory,
       classes: "MuiFab-extended",
     },
     {

@@ -16,6 +16,7 @@ import Onboard from "routes/Onboard";
 import paths from "routes/paths";
 import SignIn from "routes/SignIn";
 import SignUp from "routes/SignUp";
+import StoryHistory from "routes/StoryHistory";
 import Symptoms from "routes/Symptoms";
 import styles from "styles.module.css";
 import history from "./history";
@@ -48,6 +49,7 @@ ReactDOM.render(
             />
             <Route path={paths.signUp} component={SignUp} />
             <Route path={paths.myStory} component={MyStory} />
+            <Route path={paths.storyHistory} component={StoryHistory} />
             <Route path={paths.dashboard} component={Dashboard} />
           </Switch>
         </Wrapper>

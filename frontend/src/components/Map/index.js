@@ -621,6 +621,8 @@ export default function Map(props, { draggable = true }) {
     // create the popup
     const date = userStory.createdAt;
     const story = userStory.myStory;
+    console.log(story);
+    console.log(userStory);
     var content = '<p style="font-size: 18px;line-height: 18px;">';
     if (story) {
       content = content + '"' + story + '"</p>';

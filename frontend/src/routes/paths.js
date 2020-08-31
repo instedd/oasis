@@ -12,6 +12,7 @@ const paths = {
   confirm: "/confirm",
   healthMeasurements: "/measurements",
   myStory: "/mystory",
+  storyHistory: "/storyhistory",
 };
 
 export const getConfirmFlow = (state, sickness) => {
