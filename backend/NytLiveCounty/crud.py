@@ -16,6 +16,9 @@ from database import get_db
 
 from . import models
 
+# import asyncio
+import pytz
+
 NYT_CURR_URL = (
     "https://raw.githubusercontent.com/nytimes/covid-19-data"
     "/master/live/us-counties.csv"
@@ -30,7 +33,6 @@ def get_day_from_ts(ts):
         https://www.w3resource.com/python-exercises/date-time-exercise/
         python-date-time-exercise-11.php
     """
-    # return datetime.fromtimestamp(ts).day
     day = datetime.fromtimestamp(ts)
     return (day - datetime(day.year, 1, 1)).days + 1
 
@@ -106,10 +108,13 @@ def add_data(db: Session, path: str, commit_hex: str):
         db.add(build_new_db_row(row, commit_hex))
 
 
-def seed(db: Session = Depends(get_db)):
+def seed(db: Session = Depends(get_db), fake_date=None):
     """
     Replaces the contents of the existing NytLiveCounty database with the
     last 14 days of data from the NYT github repo
+
+    fake_date is for testing purposes - it forces the function to populate the
+    database assuming that today is fake_date - type is datetime
     """
     try:
         # Clear existing database
@@ -123,7 +128,14 @@ def seed(db: Session = Depends(get_db)):
 
         # Set current commit
         cmt = repo.heads.master.commit
-        # get_ts = lambda x: x.authored_datetime.timestamp()
+
+        # If testing, crawl back in time to fake date
+        if fake_date is not None:
+            # cmt_date = pytz.UTC.localize(cmt.authored_datetime)
+            while cmt.authored_datetime > pytz.UTC.localize(fake_date):
+                cmt = cmt.parents[0]  # Assumes no branchpoints :/
+            stale_date = datetime.timestamp(fake_date) - DB_AGE_LIMIT
+            STALE_DATE = get_day_from_ts(stale_date)
 
         def get_ts(commit):
             return commit.authored_datetime.timestamp()
@@ -150,7 +162,7 @@ def seed(db: Session = Depends(get_db)):
         db.rollback()
 
 
-def update(db: Session):
+async def update(db: Session):
     """
     Updates the NYT county database with newest data from NYT github
     """
@@ -177,6 +189,7 @@ def update(db: Session):
         )
 
         if len(recs_with_hex) > 0:  # we already have this data
+            db.commit()
             return
 
         # Load data
