@@ -35,7 +35,7 @@ export default function MyStory(props) {
         </div>
         <Button
           className={styles.skipBtn}
-          onClick={() => props.history.push(paths.onboard)}
+          onClick={() => props.history.push(paths.onboard, { onboard: false })}
         >
           continue as guest
         </Button>
