@@ -5,7 +5,7 @@ databases_to_create = ["dbtest", os.environ["DATABASE_NAME"]]
 SQLALCHEMY_DATABASE_URL = (
     f"mysql+pymysql://{os.environ['DATABASE_USER']}"
     f":{os.environ['DATABASE_PASSWORD']}"
-    f"@{os.environ['DATABASE_HOST']}/{os.environ['DATABASE_NAME']}"
+    f"@{os.environ['DATABASE_HOST']}"  # /{os.environ['DATABASE_NAME']}"
 )
 
 engine = sqlalchemy.create_engine(SQLALCHEMY_DATABASE_URL)
