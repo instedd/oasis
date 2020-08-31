@@ -12,7 +12,8 @@
 }
 
 .myStory {
-  max-width: 80%;
+  max-width: 500px;
+  padding: 0 2rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
