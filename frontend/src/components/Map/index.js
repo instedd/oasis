@@ -118,19 +118,33 @@ export default function Map(props, { draggable = true }) {
 
     addLegend(data);
 
-    map.on("load", function () {
-      if (worldData && worldData.length > 0) {
-        addWorldLayer(map, worldData);
-        addNonUSLayer(map, worldData);
-      }
-      if (usStatesData && usStatesData.length > 0)
-        addUSStatesLayer(map, usStatesData);
-      if (usCountyData && usCountyData.length > 0)
-        addUSCountyLayer(map, usCountyData);
-      if (sdPosData && sdPosData.length > 0) addSDPostLayer(map, sdPosData);
+    if (map.loaded()) {
+      load(map, worldData, usStatesData, usCountyData, sdPosData);
+    } else {
+      map.on("load", function () {
+        load(map, worldData, usStatesData, usCountyData, sdPosData);
+      });
+    }
+  };
 
-      addStoryLayer(map);
-    });
+  const load = async (
+    map,
+    worldData,
+    usStatesData,
+    usCountyData,
+    sdPosData
+  ) => {
+    if (worldData && worldData.length > 0) {
+      addWorldLayer(map, worldData);
+      addNonUSLayer(map, worldData);
+    }
+    if (usStatesData && usStatesData.length > 0)
+      addUSStatesLayer(map, usStatesData);
+    if (usCountyData && usCountyData.length > 0)
+      addUSCountyLayer(map, usCountyData);
+    if (sdPosData && sdPosData.length > 0) addSDPostLayer(map, sdPosData);
+
+    addStoryLayer(map);
   };
 
   const fetchUserLocation = async () => {
@@ -469,7 +483,7 @@ export default function Map(props, { draggable = true }) {
       url: "mapbox://mapbox.82pkq93d",
     });
 
-    const expression = ["match", ["get", "FIPS"]];
+    const expression = ["match", ["to-string", ["get", "FIPS"]]];
     countyData.forEach(function (row) {
       expression.push(row.fips, getStateColor(row.group));
     });
@@ -500,16 +514,14 @@ export default function Map(props, { draggable = true }) {
 
       if (counties.length > 0) {
         const name = counties[0].properties.COUNTY;
-        const target_counties = countyData.filter((county) => {
-          if (counties[0].properties.FIPS == county.fips) {
-            return county;
-          }
-        });
+        const target_counties = countyData.filter(
+          (county) => counties[0].properties.FIPS.toString() === county.fips
+        );
         const confirmed =
           target_counties.length > 0 ? target_counties[0].confirmed : "NA";
 
         document.getElementById("pd").innerHTML =
-          "<h2>" + name + "</h2><h3>" + confirmed + " cases confirmed</h3>";
+          "<h2>" + name + "</h2><h3>" + confirmed + " probable cases</h3>";
       }
     });
   };
@@ -609,13 +621,12 @@ export default function Map(props, { draggable = true }) {
       content +=
         '<hr style="height:1px;border-width:0;color:gray;background-color:gray" </hr>';
     content += demographicStyle;
-    if (userStory.age) content = content + "A " + userStory.age + " years old user";
+    if (userStory.age)
+      content = content + "A " + userStory.age + " years old user";
     else content += "A user";
     if (userStory.profession !== "")
       content +=
-        " working in the " +
-        userStory.profession.toLowerCase() +
-        " industry ";
+        " working in the " + userStory.profession.toLowerCase() + " industry ";
 
     content = content + " near " + userStory.state;
     var date = userStory.createdAt ? userStory.createdAt.substring(0, 10) : "";
