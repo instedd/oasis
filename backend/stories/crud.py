@@ -108,7 +108,7 @@ def create_my_story(db: Session, my_story: schemas.MyStoryCreate):
     return db_my_story
 
 
-def update_my_story(db: Session, my_story: schemas.MyStory):
+def update_my_story(db: Session, my_story: schemas.MyStoryUpdate):
     return update(my_story.id, my_story, models.MyStory, db)
 
 

@@ -185,7 +185,7 @@ def create_my_story(
 @router.put("/{story_id}/my_stories", response_model=schemas.MyStory)
 def update_my_story(
     story_id: int,
-    my_story: schemas.MyStory,
+    my_story: schemas.MyStoryUpdate,
     current_story: schemas.Story = Depends(main.get_current_story),
     db: Session = Depends(get_db),
 ):

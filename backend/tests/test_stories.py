@@ -191,7 +191,7 @@ def test_create_my_story(setup):
     assert response.status_code == 200
     parsed_response = response.json()
     for k in parsed_response:
-        if k != "id":
+        if k != "id" and k != "updated_at" and k != "created_at":
             assert parsed_response[k] == data[k]
 
 
@@ -211,14 +211,16 @@ def test_update_my_story(setup):
     cookie = {"Authorization": f"Bearer {access_token}"}
     response = setup["app"].put(
         f"/api/stories/{db_story.id}/my_stories",
-        data=json.dumps(data),
+        data=json.dumps(data, indent=4, sort_keys=True, default=str),
         cookies=cookie,
         headers=cookie,
     )
+
     assert response.status_code == 200
     parsed_response = response.json()
     for k in parsed_response:
-        assert parsed_response[k] == data[k]
+        if k != "updated_at" and k != "created_at":
+            assert parsed_response[k] == data[k]
 
 
 def test_delete_my_story(setup):
