@@ -100,7 +100,9 @@ export default function Home(props, { draggableMapRoutes = [] }) {
             variant="filled"
           />
           <Button
-            onClick={() => props.history.push(paths.onboard)}
+            onClick={() =>
+              props.history.push(paths.onboard, { onboard: false })
+            }
             className={classNames("skipBtn", styles.skipBtn)}
           >
             skip and continue as guest
