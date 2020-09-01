@@ -5,7 +5,6 @@ import classNames from "classnames";
 import styles from "./styles.module.css";
 import { useSelector, useDispatch } from "react-redux";
 import { submitStory, submitMyStory } from "actions/story";
-import api from "utils";
 
 export default function MyStory(props) {
   const [myStory, setMyStory] = React.useState("");
@@ -22,19 +21,6 @@ export default function MyStory(props) {
 
   const handleChange = (event) => {
     setMyStory(event.target.value);
-  };
-
-  const handleSubmit = () => {
-    if (story["myStory"] !== myStory) {
-      story["myStory"] = myStory;
-      const dto = {
-        story,
-        travels: [],
-        closeContacts: [],
-      };
-      dispatch(submitStory(dto));
-    }
-    props.history.push("/dashboard");
   };
 
   const handleSubmitStory = () => {

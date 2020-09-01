@@ -112,8 +112,13 @@ class MyStoryCreate(BaseModel):
     story_id: int
 
 
-class MyStory(MyStoryCreate):
+class MyStoryUpdate(MyStoryCreate):
     id: int
+
+
+class MyStory(MyStoryUpdate):
+    updated_at: date
+    created_at: date
 
     class Config:
         orm_mode = True

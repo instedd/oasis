@@ -1,6 +1,7 @@
 from typing import List
 
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.sql.expression import func, and_
 
 from database import Base
 from users.models import User
@@ -107,7 +108,7 @@ def create_my_story(db: Session, my_story: schemas.MyStoryCreate):
     return db_my_story
 
 
-def update_my_story(db: Session, my_story: schemas.MyStory):
+def update_my_story(db: Session, my_story: schemas.MyStoryUpdate):
     return update(my_story.id, my_story, models.MyStory, db)
 
 
@@ -123,3 +124,28 @@ def delete_my_story(db: Session, my_story_id: int):
         db.commit()
 
     return db_my_story
+
+
+def get_all_my_stories(db: Session):
+    subquery = (
+        db.query(
+            models.MyStory.story_id,
+            func.max(models.MyStory.updated_at).label("updated_at"),
+        )
+        .group_by(models.MyStory.story_id)
+        .subquery()
+    )
+    db_my_stories = (
+        db.query(models.MyStory)
+        .join(
+            subquery,
+            and_(
+                models.MyStory.story_id == subquery.c.story_id,
+                models.MyStory.updated_at == subquery.c.updated_at,
+            ),
+        )
+        .order_by(models.MyStory.id.asc())
+        .all()
+    )
+
+    return db_my_stories
