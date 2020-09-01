@@ -14,7 +14,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Button from "@material-ui/core/Button";
 import styles from "./styles.module.css";
 import classNames from "classnames";
-import { fetchMyStory } from "actions/story";
+import { fetchMyStory, fetchStory } from "actions/story";
 import paths from "routes/paths";
 
 const useStyles = makeStyles((theme) => ({
@@ -37,13 +37,18 @@ export default function StoryHistory(props) {
   const [stories, setStories] = useState([]);
   const classes = useStyles();
   const dispatch = useDispatch();
-  // useEffect(() => {
-  //     api(`stories/${story.id}/my_stories`, {
-  //       method: "GET",
-  //     }).then((data) => {
-  //       setStories(data)
-  //     });
-  //   }, []);
+
+  useEffect(() => {
+    if (!story) {
+      dispatch(fetchStory());
+    } else {
+      api(`stories/${story.id}/my_stories`, {
+        method: "GET",
+      }).then((data) => {
+        setStories(data);
+      });
+    }
+  }, [dispatch, story]);
   //console.log(story);
   console.log(stories);
   const handleClick = () => {
@@ -54,12 +59,15 @@ export default function StoryHistory(props) {
     <>
       <div className={classNames("root", styles.root)}>
         <h1 className="title">MY COVID-19 STORY</h1>
-        <Timeline align="alternate">
-          {stories.map((my_story, i) => (
+        <Button variant="contained" color="secondary" onClick={handleClick}>
+          Add New Story
+        </Button>
+        <Timeline>
+          {stories.reverse().map((my_story, i) => (
             <TimelineItem>
               <TimelineOppositeContent>
-                <Typography variant="body2" color="textSecondary">
-                  {my_story.id}
+                <Typography variant="h6" component="h1">
+                  {my_story.createdAt}
                 </Typography>
               </TimelineOppositeContent>
               <TimelineSeparator>
@@ -68,17 +76,12 @@ export default function StoryHistory(props) {
               </TimelineSeparator>
               <TimelineContent>
                 <Paper elevation={3} className={classes.paper}>
-                  <Typography variant="h6" component="h1">
-                    {my_story.text}
-                  </Typography>
+                  <Typography>{my_story.text}</Typography>
                 </Paper>
               </TimelineContent>
             </TimelineItem>
           ))}
         </Timeline>
-        <Button variant="contained" color="secondary" onClick={handleClick}>
-          Add New Story
-        </Button>
       </div>
     </>
   );

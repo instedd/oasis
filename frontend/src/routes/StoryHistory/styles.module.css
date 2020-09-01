@@ -4,6 +4,8 @@
     overflow:auto;
     -ms-overflow-style: none; 
     scrollbar-width: none;  
+    min-width: 100%;
+    min-height: 100%;
   }
   .root::-webkit-scrollbar {
     display: none;
