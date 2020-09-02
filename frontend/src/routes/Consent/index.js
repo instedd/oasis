@@ -1,9 +1,7 @@
 import React from "react";
 import { Fab, Button } from "@material-ui/core";
-import Wrapper from "components/Wrapper";
 import paths from "routes/paths";
 import styles from "./styles.module.css";
-import classNames from "classnames";
 
 export default function MyStory(props) {
   return (

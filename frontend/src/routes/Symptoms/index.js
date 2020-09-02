@@ -13,7 +13,6 @@ import CheckCircle from "@material-ui/icons/CheckCircle";
 import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
 import { fetchSymptoms, submitSymptoms } from "actions/symptoms";
 import { SUCCESS } from "actions/types";
-import Wrapper from "components/Wrapper";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import paths from "routes/paths";
