@@ -186,11 +186,12 @@ async def get_all_data(db: Session = Depends(get_db)):
     us_states = fetch_us_states_data()
     us_counties = fetch_county_data(db)
     sd_zip = fetch_sd_zip_code_data()
-    cluster_labels = [0.2, 0.4, 0.6, 0.8, 1]
+    # cluster_labels = [0.2, 0.4, 0.6, 0.8, 1]
+    cluster_labels = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
     clustered_data = cluster_data(
         countries + us_states + us_counties + sd_zip,
-        clusters_config={"clusters": 5, "labels": cluster_labels},
+        clusters_config={"clusters": 10, "labels": cluster_labels},
     )
 
     grouped_data = functools.reduce(group_by_scope, clustered_data["data"], {})
