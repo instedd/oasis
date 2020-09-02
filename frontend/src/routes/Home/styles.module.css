@@ -1,12 +1,116 @@
-.title {
-  font-weight: normal;
-  line-height: 125%;
-  text-align: center;
-  margin: 0px;
-  padding: 0px;
+.textarea fieldset {
+    border-color: white;
+    height: 100%;
 }
 
-.signin {
-  background-color: var(--primary) !important;
-  color: white !important;
+.textarea>div:hover fieldset {
+    border-color: white !important;
+}
+
+.textarea .Mui-focused label {
+    width: 400px
+}
+
+.textarea {
+    width: 100%;
+    height: 200px;
+    display: flex;
+}
+
+.textarea>div {
+    height: 100%;
+    color: white;
+    align-items: flex-start;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.home h1 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 900;
+    text-transform: capitalize;
+    text-align: left;
+    font-size: 42px;
+}
+
+.home {
+    width: 35%;
+    padding-left: 4rem;
+    text-align: left;
+    margin: auto 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-self: self-start;
+}
+
+.background {
+    position: absolute;
+    background: #00000082;
+    height: 100vh;
+    width: calc( 35% + 8rem);
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+.btnGroup {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 14px;
+}
+
+.btnGroup button {
+    width: 200px !important;
+    height: 50px !important;
+    border-radius: 50px !important;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Roboto', sans-serif;
+}
+
+.skipBtn {
+    color: #ffffff80 !important;
+    float: right;
+}
+
+.userNum {
+    position: absolute;
+    bottom: 20px;
+    left: calc(40% + 8rem - 330px);
+    width: 300px;
+    text-align: right;
+    font-size: 18px;
+}
+
+@media (max-width: 1024px) {
+    .background {
+        width: 100%;
+    }
+    .home {
+        width: 80%;
+        align-self: center;
+        padding: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .home {
+        width: 100%;
+        transform: scale(0.75);
+    }
+    .btnGroup {
+        justify-content: space-between;
+    }
+    .btnGroup button {
+        width: 180px !important
+    }
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.visible {
+    visibility: visible;
 }

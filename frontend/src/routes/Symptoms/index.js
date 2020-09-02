@@ -13,7 +13,6 @@ import CheckCircle from "@material-ui/icons/CheckCircle";
 import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
 import { fetchSymptoms, submitSymptoms } from "actions/symptoms";
 import { SUCCESS } from "actions/types";
-import Wrapper from "components/Wrapper";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import paths from "routes/paths";
@@ -84,7 +83,7 @@ export default function Symptoms(props) {
       ? "When you were sick, which of the following symptoms did you have?"
       : "Are you having now, or did you recently have:";
   return (
-    <Wrapper>
+    <div className={styles.symptoms}>
       <h1 className="title"> MY COVID STORY</h1>
       {symptoms.status.type !== SUCCESS && symptoms.status.detail}
       <p className={styles.subtitle}>{subtitle}</p>
@@ -137,6 +136,6 @@ export default function Symptoms(props) {
       >
         <ArrowLeftIcon />
       </Fab>
-    </Wrapper>
+    </div>
   );
 }

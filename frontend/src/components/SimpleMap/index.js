@@ -28,12 +28,9 @@ export default function Map(props, { draggable = true }) {
   const focusZoom = 8;
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
 
-  const userStory = props.userStory;
   const actives = props.actives;
   const deaths = props.deaths;
   const recovered = props.recovered;
-  const userNum = props.userNum;
-  const storyNum = props.storyNum;
 
   const dataScope = {
     WORLD: "world",
@@ -139,10 +136,6 @@ export default function Map(props, { draggable = true }) {
   };
 
   const fetchUserLocation = async () => {
-    if (isInRange(userStory.latitude, userStory.longitude)) {
-      return { lat: userStory.latitude, lng: userStory.longitude };
-    }
-
     const response = await fetch(`https://freegeoip.app/json/`);
     if (response.status >= 200 && response.status < 300) {
       const jsonResponse = await response.json();
@@ -172,10 +165,7 @@ export default function Map(props, { draggable = true }) {
   const storiesToGeoJson = (stories) => {
     stories = stories.filter(
       (story) =>
-        story &&
-        isInRange(story.latitude, story.longitude) &&
-        !story.spam &&
-        story.id !== userStory.id
+        story && isInRange(story.latitude, story.longitude) && !story.spam
     );
 
     let features = stories.map((story) => {
@@ -255,34 +245,6 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
-
-    map.on("mousemove", function (e) {
-      let countries = map.queryRenderedFeatures(e.point, {
-        layers: ["world-layer"],
-      });
-
-      if (countries.length > 0) {
-        const country_name = countries[0].properties.name;
-        const country = covidData.filter(
-          (country) => country.name === country_name
-        );
-
-        if (country.length > 0 && country[0].confirmed) {
-          document.getElementById("pd").innerHTML =
-            "<h2>" +
-            country_name +
-            "</h2><h3>" +
-            country[0].confirmed +
-            " cases confirmed</h3>";
-        } else {
-          document.getElementById("pd").innerHTML =
-            "<h2>" + country_name + "</h2><h3> NA </h3>";
-        }
-      } else {
-        document.getElementById("pd").innerHTML =
-          "<h2> Confirmed Cases </h2> <h3>Hover over/Click a state or country!</h3>";
-      }
-    });
   };
 
   const addNonUSLayer = async (map, data) => {
@@ -316,35 +278,6 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
-
-    map.on("mousemove", function (e) {
-      let countries = map.queryRenderedFeatures(e.point, {
-        layers: ["non-us-layer"],
-      });
-
-      if (
-        countries.length > 0 &&
-        countries[0].properties.name &&
-        countries[0].properties.name !== "United States of America"
-      ) {
-        const country_name = countries[0].properties.name;
-        const country = covidData.filter(
-          (country) => country.name === country_name
-        );
-
-        if (country.length > 0 && country[0].confirmed) {
-          document.getElementById("pd").innerHTML =
-            "<h2>" +
-            country_name +
-            "</h2><h3>" +
-            country[0].confirmed +
-            " cases confirmed</h3>";
-        } else {
-          document.getElementById("pd").innerHTML =
-            "<h2>" + country_name + "</h2><h3> NA </h3>";
-        }
-      }
-    });
   };
 
   const addUSStatesLayer = async (map, data) => {
@@ -417,7 +350,7 @@ export default function Map(props, { draggable = true }) {
     // exclude states outside the 50 states
     const expression = ["match", ["get", "STATE_ID"]];
     usData.forEach(function (row) {
-      let stateID = row.name;
+      var stateID = row.name;
       if (stateID in stateToFIPS) {
         expression.push(stateToFIPS[stateID], getStateColor(row.group));
       }
@@ -440,29 +373,6 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
-
-    // add the information window
-    map.on("mousemove", function (e) {
-      let states = map.queryRenderedFeatures(e.point, {
-        layers: ["us-states-layer"],
-      });
-
-      if (states.length > 0) {
-        const state_name = states[0].properties.STATE_NAME;
-        const abbr_name = Object.keys(stateToFIPS).find(
-          (key) => stateToFIPS[key] === states[0].properties.STATE_ID
-        );
-        const confirmed = usData.filter((state) => state.name === abbr_name)[0]
-          .confirmed;
-
-        document.getElementById("pd").innerHTML =
-          "<h2>" +
-          state_name +
-          "</h2><h3>" +
-          confirmed +
-          " cases confirmed</h3>";
-      }
-    });
   };
 
   const addSDPostLayer = async (map, data) => {
@@ -501,25 +411,6 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
-
-    // add the information window
-    map.on("mousemove", function (e) {
-      let zipcodes = map.queryRenderedFeatures(e.point, {
-        layers: ["sd-pos-layer"],
-      });
-
-      if (zipcodes.length > 0) {
-        const name = zipcodes[0].properties.name;
-        const confirmed = zipcodes[0].properties.confirmed;
-
-        document.getElementById("pd").innerHTML =
-          "<h2>" +
-          name +
-          ", San Diego</h2><h3>" +
-          confirmed +
-          " cases confirmed</h3>";
-      }
-    });
   };
 
   const storyStyle =
@@ -531,21 +422,21 @@ export default function Map(props, { draggable = true }) {
     const word = status.name;
     content +=
       '<div style="position:relative;width: 8px; height: 8px;line-height:0.8rem;font-size:0.8rem;' +
-      "margin-right: 10px;top:7px;float: left;border-radius: 50%;background:";
+      "margin-right: 10px;top:3px;float: left;border-radius: 50%;background:";
     content = content + color + ';"></div>';
     content =
       content +
-      '<p style="position:relative;top:5px;right:5px;float:left;' +
+      '<span style="position:relative;top:0px;right:5px;float:left;' +
       "color:" +
       color +
       ';line-height:0.8rem;font-size:0.8rem;">' +
       word.toUpperCase() +
-      "</p>";
+      "</span>";
     return content;
   };
 
   const popUpContent = (userStory) => {
-    let content = "<p>";
+    var content = "<span>";
     content += storyStyle;
     if (userStory.myStory) {
       if (userStory.myStory.length > 280) {
@@ -555,7 +446,7 @@ export default function Map(props, { draggable = true }) {
         content += userStory.myStory;
       }
     }
-    content += "</p>";
+    content += "</span>";
     if (userStory.myStory)
       content +=
         '<hr style="height:1px;border-width:0;color:gray;background-color:gray" </hr>';
@@ -567,7 +458,7 @@ export default function Map(props, { draggable = true }) {
       content +=
         " working in the " + userStory.profession.toLowerCase() + " industry ";
     content = content + " near " + userStory.state;
-    let date = userStory.createdAt ? userStory.createdAt.substring(0, 10) : "";
+    var date = userStory.createdAt ? userStory.createdAt.substring(0, 10) : "";
     if (date !== "") content = content + " on " + date;
     content += ".</p>";
     content += '<div style="line-height:0.8rem;" class="row">';
@@ -578,7 +469,7 @@ export default function Map(props, { draggable = true }) {
   };
 
   const setHover = (marker, content, map) => {
-    let popup = new mapboxgl.Popup({
+    var popup = new mapboxgl.Popup({
       className: classNames(styles.popups),
       closeButton: true,
       closeOnClick: true,
@@ -606,10 +497,10 @@ export default function Map(props, { draggable = true }) {
     // add markers to map
     geojson.features.forEach(function (marker) {
       // create a HTML element for each feature
-      let el = document.createElement("div");
+      var el = document.createElement("div");
       el.className = "marker";
 
-      let content = popUpContent(marker.properties);
+      var content = popUpContent(marker.properties);
       // create the marker
       const sickStatus = marker.properties.sick;
       const currmarker = new mapboxgl.Marker({
@@ -620,19 +511,6 @@ export default function Map(props, { draggable = true }) {
       // add marker to map
       currmarker.addTo(map);
     });
-
-    const content = popUpContent(userStory);
-    // create the marker
-    if (isInRange(userStory.latitude, userStory.longitude)) {
-      const marker = new mapboxgl.Marker().setLngLat([
-        userStory.longitude,
-        userStory.latitude,
-      ]);
-      //attach popup
-      setHover(marker, content, map);
-      // add marker to map
-      marker.addTo(map);
-    }
   };
 
   const [expanded, setExpanded] = React.useState(
@@ -643,51 +521,7 @@ export default function Map(props, { draggable = true }) {
     setExpanded(!expanded);
   };
 
-  const legend = (
-    <div className={classNames(styles.legendWrapper)}>
-      <div className={classNames(styles.legend)} id="legend">
-        <div className={classNames(styles.legendCollapse)}>
-          <h3>Confirmed Cases</h3>
-          <IconButton
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="show more"
-          >
-            <ExpandLessIcon />
-          </IconButton>
-        </div>
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          {legendRanges.map((range, i) => (
-            <div className={classNames(styles.legendItem)} key={i}>
-              <span style={{ backgroundColor: range.color }}></span>
-              {range.label}
-            </div>
-          ))}
-        </Collapse>
-      </div>
-      <div className={classNames(styles.statusLegend)}>
-        <div>
-          <h2> Global Total </h2>
-          <h3>
-            Confirmed: {actives} <br />
-            Deaths: {deaths} <br />
-            Recovered: {recovered}
-          </h3>
-        </div>
-        <div id="pd">
-          <h2> Confirmed Cases </h2>
-          <h3> Hover over/Click a state or country!</h3>
-        </div>
-        <Divider style={{ color: "black" }} />
-        <div style={{ paddingTop: 5, color: "#dcd6d3" }}>
-          <em>
-            <p id="users_num">There are {userNum} users on OASIS</p>
-            <p id="stories_num">{storyNum} of them shared their stories</p>
-          </em>
-        </div>
-      </div>
-    </div>
-  );
+  const legend = <div></div>;
 
   const draggableDependantFeatures = () => {
     if (draggable) {
@@ -698,12 +532,6 @@ export default function Map(props, { draggable = true }) {
 
   return (
     <div className={styles.root}>
-      <div className={styles.random}>
-        The locations of markers are randomized.
-      </div>
-      <div className={styles.refresh}>
-        Please refresh the page if the map is gray.
-      </div>
       <div
         style={{ color: "gray" }}
         className={classNames([

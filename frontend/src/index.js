@@ -22,6 +22,7 @@ import history from "./history";
 import store from "store/configureStore";
 import * as serviceWorker from "./serviceWorker";
 import Wrapper from "components/Wrapper";
+import Consent from "routes/Consent";
 
 ReactDOM.render(
   <Provider store={store}>
@@ -49,6 +50,7 @@ ReactDOM.render(
             <Route path={paths.signUp} component={SignUp} />
             <Route path={paths.myStory} component={MyStory} />
             <Route path={paths.dashboard} component={Dashboard} />
+            <Route path={paths.consent} component={Consent} />
           </Switch>
         </Wrapper>
       </Router>
