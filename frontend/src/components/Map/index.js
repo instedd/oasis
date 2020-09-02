@@ -77,14 +77,36 @@ export default function Map(props, { draggable = true }) {
   const addLegend = (data) => {
     const clusters = data.clusters;
     const colorGroups = data.groups;
-    const newRanges =
-      clusters &&
-      clusters.map((range, i) => {
-        return {
-          label: `${range[0].toLocaleString()} - ${range[1].toLocaleString()}`,
-          color: getColor(colorGroups[i]),
-        };
-      });
+    const newRanges = clusters && [
+      {
+        label: `${clusters[0][0].toLocaleString()} - ${clusters[0][1].toLocaleString()}`,
+        color: getLegendColor(colorGroups[3]),
+      },
+      {
+        label: `${clusters[1][0].toLocaleString()} - ${clusters[3][1].toLocaleString()}`,
+        color: getLegendColor(colorGroups[4]),
+      },
+      {
+        label: `${clusters[4][0].toLocaleString()} - ${clusters[5][1].toLocaleString()}`,
+        color: getLegendColor(colorGroups[5]),
+      },
+      {
+        label: `${clusters[6][0].toLocaleString()} - ${clusters[6][1].toLocaleString()}`,
+        color: getLegendColor(colorGroups[6]),
+      },
+      {
+        label: `${clusters[7][0].toLocaleString()} - ${clusters[7][1].toLocaleString()}`,
+        color: getLegendColor(colorGroups[7]),
+      },
+      {
+        label: `${clusters[8][0].toLocaleString()} - ${clusters[8][1].toLocaleString()}`,
+        color: getLegendColor(colorGroups[8]),
+      },
+      {
+        label: `${clusters[9][0].toLocaleString()} - ${clusters[9][1].toLocaleString()}`,
+        color: getLegendColor(colorGroups[9]),
+      },
+    ];
     newRanges && setLegendRanges(newRanges);
   };
 
@@ -118,12 +140,19 @@ export default function Map(props, { draggable = true }) {
 
     addLegend(data);
 
+    let loaded = false;
     if (map.loaded()) {
       load(map, worldData, usStatesData, usCountyData, sdPosData);
+      loaded = true;
     } else {
-      map.on("load", function () {
+      map.once("load", function () {
+        loaded = true;
         load(map, worldData, usStatesData, usCountyData, sdPosData);
       });
+    }
+
+    if (!loaded) {
+      load(map, worldData, usStatesData, usCountyData, sdPosData);
     }
   };
 
@@ -138,10 +167,10 @@ export default function Map(props, { draggable = true }) {
       addWorldLayer(map, worldData);
       addNonUSLayer(map, worldData);
     }
-    
+
     if (usStatesData && usStatesData.length > 0)
       addUSStatesLayer(map, usStatesData);
-    
+
     if (usCountyData && usCountyData.length > 0)
       addUSCountyLayer(map, usCountyData);
 
@@ -232,12 +261,28 @@ export default function Map(props, { draggable = true }) {
     };
   };
 
+  const getLegendColor = (group) => {
+    return `rgba(${group * 255}, 0, 0, 1)`;
+  };
+
   const getColor = (group) => {
+    if (group === 0.1) {
+      return `rgba(${0.4 * 255}, 0, 0, 1)`;
+    }
+
+    if (group === 0.2 || group === 0.3) {
+      return `rgba(${0.5 * 255}, 0, 0, 1)`;
+    }
+
+    if (group === 0.4 || group === 0.5) {
+      return `rgba(${0.6 * 255}, 0, 0, 1)`;
+    }
+
     return `rgba(${group * 255}, 0, 0, 1)`;
   };
 
   const getStateColor = (group) => {
-    return `rgba(${(group - 0.1) * 255}, 10, 12, 1)`;
+    return `rgba(${(group - 0.15) * 255}, 10, 12, 1)`;
   };
 
   const addWorldLayer = async (map, data) => {
@@ -487,6 +532,7 @@ export default function Map(props, { draggable = true }) {
     });
 
     const expression = ["match", ["to-string", ["get", "FIPS"]]];
+
     countyData.forEach(function (row) {
       expression.push(row.fips, getStateColor(row.group));
     });
