@@ -125,6 +125,10 @@ def fetch_county_data(db: Session = Depends(get_db)):
         for record in result
     ]
 
+    confirmed_df = pd.DataFrame(confirmed)
+    confirmed_df = confirmed_df.drop_duplicates(subset=["fips"], keep="first")
+    confirmed = confirmed_df.to_dict("records")
+
     return confirmed
 
 
