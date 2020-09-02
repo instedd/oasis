@@ -3,3 +3,4 @@
 __pycache__/
 *.py[cod]
 */build
+backend/covid-19-data/

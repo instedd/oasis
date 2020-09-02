@@ -3,10 +3,17 @@ from collections import defaultdict
 
 import pandas as pd
 import requests
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from sigfig import round
 
 import jenkspy
+
+from NytLiveCounty import crud, models
+from database import get_db
+from sqlalchemy.orm import Session
+from sqlalchemy import func
+
+import asyncio
 
 COVID_WORLD_API_URL = "https://api.covid19api.com/summary"
 COVID_US_STATES_API_URL = (
@@ -21,8 +28,10 @@ COVID_SD_ZIP_CODE_API_URL = (
     "=*&orderByFields=updatedate%20DESC"
     "&outSR=102100&resultOffset=0&resultRecordCount=113"
 )
-CLUSTERS = 5
-CLUSTERS_LABELS = [0.2, 0.4, 0.6, 0.8, 1]
+# CLUSTERS = 5
+# CLUSTERS_LABELS = [0.2, 0.4, 0.6, 0.8, 1]
+CLUSTERS = 10
+CLUSTERS_LABELS = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
 router = APIRouter()
 
@@ -30,7 +39,8 @@ router = APIRouter()
 class DataScope:
     ADM0 = "adm0"  # Base administrative area (countries)
     ADM1 = "adm1"  # First level administrative area (states/provinces)
-    ADM2 = "adm2"  # Zip code level
+    ADM2 = "adm2"  # Counties (not zip codes anymore)
+    ADM3 = "adm3"  # Zip codes
 
 
 def fetch_world_data():
@@ -85,11 +95,41 @@ def fetch_sd_zip_code_data():
                 "confirmed": entry["attributes"]["case_count"]
                 if entry["attributes"]["case_count"]
                 else 0,
-                "scope": DataScope.ADM2,
+                "scope": DataScope.ADM3,
             },
             features,
         )
     )
+
+    return confirmed
+
+
+def fetch_county_data(db: Session = Depends(get_db)):
+    most_recent_timestamp = db.query(
+        func.max(models.NytLiveCounty.timestamp)
+    ).first()[0]
+
+    result = (
+        db.query(models.NytLiveCounty)
+        .filter(models.NytLiveCounty.timestamp == most_recent_timestamp)
+        .all()
+    )
+
+    confirmed = [
+        {
+            "name": record.county,
+            "confirmed": record.cases,
+            "case_count": record.cases,
+            "fips": record.fips,
+            "parent": record.state,
+            "scope": DataScope.ADM2,
+        }
+        for record in result
+    ]
+
+    confirmed_df = pd.DataFrame(confirmed)
+    confirmed_df = confirmed_df.drop_duplicates(subset=["fips"], keep="first")
+    confirmed = confirmed_df.to_dict("records")
 
     return confirmed
 
@@ -102,6 +142,7 @@ def cluster_data(confirmed, clusters_config=None):
         clusters_config = {"clusters": CLUSTERS, "labels": CLUSTERS_LABELS}
 
     df = pd.DataFrame(confirmed)
+    df = df.dropna(how="any", axis=0, subset=["confirmed"])
 
     breaks = jenkspy.jenks_breaks(
         df["confirmed"], nb_class=clusters_config["clusters"]
@@ -125,6 +166,12 @@ def cluster_data(confirmed, clusters_config=None):
     }
 
 
+@router.get("/county")
+def get_covid_county_data(db: Session = Depends(get_db)):
+    confirmed = fetch_county_data(db)
+    return cluster_data(confirmed)
+
+
 @router.get("/world")
 def get_covid_world_data():
     confirmed = fetch_world_data()
@@ -144,15 +191,17 @@ def get_covid_sd_zip_code_data():
 
 
 @router.get("/all")
-def get_all_data():
+async def get_all_data(db: Session = Depends(get_db)):
     countries = fetch_world_data()
     us_states = fetch_us_states_data()
+    us_counties = fetch_county_data(db)
     sd_zip = fetch_sd_zip_code_data()
-    cluster_labels = [0.2, 0.4, 0.6, 0.8, 1]
+    # cluster_labels = [0.2, 0.4, 0.6, 0.8, 1]
+    cluster_labels = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
     clustered_data = cluster_data(
-        countries + us_states + sd_zip,
-        clusters_config={"clusters": 5, "labels": cluster_labels},
+        countries + us_states + us_counties + sd_zip,
+        clusters_config={"clusters": 10, "labels": cluster_labels},
     )
 
     grouped_data = functools.reduce(group_by_scope, clustered_data["data"], {})
@@ -160,6 +209,13 @@ def get_all_data():
     grouped_data[DataScope.ADM1] = group_by_parent(
         grouped_data[DataScope.ADM1]
     )
+
+    # grouped_data[DataScope.ADM2] = group_by_parent(
+    #     grouped_data[DataScope.ADM2]
+    # )
+
+    # Run update for NYT data
+    asyncio.ensure_future(crud.update(db))
 
     return {
         "data": grouped_data,
