@@ -1,5 +1,3 @@
-import os
-
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import Depends, APIRouter, HTTPException, status
 from starlette.responses import JSONResponse
@@ -36,8 +34,8 @@ async def login_for_access_token(
         "Authorization",
         value=f"Bearer {access_token}",
         httponly=True,
-        max_age=os.environ["COOKIE_EXPIRATION_SECONDS"],
-        expires=os.environ["COOKIE_EXPIRATION_SECONDS"],
+        # max_age=os.environ["COOKIE_EXPIRATION_SECONDS"],
+        # expires=os.environ["COOKIE_EXPIRATION_SECONDS"],
     )
     return response
 
@@ -60,7 +58,7 @@ async def external_login(
         "Authorization",
         value=f"Bearer {access_token}",
         httponly=True,
-        max_age=os.environ["COOKIE_EXPIRATION_SECONDS"],
-        expires=os.environ["COOKIE_EXPIRATION_SECONDS"],
+        # max_age=os.environ["COOKIE_EXPIRATION_SECONDS"],
+        # expires=os.environ["COOKIE_EXPIRATION_SECONDS"],
     )
     return response

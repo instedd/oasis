@@ -16,7 +16,7 @@ const linkIndex = Text["Warning Signs"].linkIndex;
 export default function Alert(props) {
   const location = useLocation();
   return (
-    <>
+    <div>
       <h1 className={styles.title}>WARNING</h1>
       <div className={styles.warnings}>
         <ul>
@@ -54,6 +54,6 @@ export default function Alert(props) {
           <ArrowRightIcon />
         </Fab>
       </div>
-    </>
+    </div>
   );
 }

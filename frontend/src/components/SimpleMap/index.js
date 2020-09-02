@@ -22,18 +22,15 @@ mapboxgl.accessToken =
   "pk.eyJ1Ijoic3RlNTE5IiwiYSI6ImNrOHc1aHlvYTB0N2ozam51MHFiazE3bmcifQ.AHtFuA-pAqau_AJIy-hzOg";
 
 export default function Map(props, { draggable = true }) {
-  const countryMinZoom = 3;
-  const stateMaxZoom = 4;
+  const countryMinZoom = 3.5;
+  const stateMaxZoom = 9;
   const initialZoom = 1;
   const focusZoom = 8;
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
 
-  const userStory = props.userStory;
   const actives = props.actives;
   const deaths = props.deaths;
   const recovered = props.recovered;
-  const userNum = props.userNum;
-  const storyNum = props.storyNum;
 
   const dataScope = {
     WORLD: "world",
@@ -111,50 +108,34 @@ export default function Map(props, { draggable = true }) {
     const usStatesData = data["data"]["adm1"]["US"]
       ? data["data"]["adm1"]["US"]
       : [];
-    // US data for county layer
-    const usCountyData = data["data"]["adm2"] ? data["data"]["adm2"] : [];
     // SD postal code data
-    const sdPosData = data["data"]["adm3"] ? data["data"]["adm3"] : [];
+    const sdPosData = data["data"]["adm2"] ? data["data"]["adm2"] : [];
 
     addLegend(data);
 
     if (map.loaded()) {
-      load(map, worldData, usStatesData, usCountyData, sdPosData);
+      load(map, worldData, usStatesData, sdPosData);
     } else {
       map.on("load", function () {
-        load(map, worldData, usStatesData, usCountyData, sdPosData);
+        load(map, worldData, usStatesData, sdPosData);
       });
     }
   };
 
-  const load = async (
-    map,
-    worldData,
-    usStatesData,
-    usCountyData,
-    sdPosData
-  ) => {
+  const load = async (map, worldData, usStatesData, sdPosData) => {
     if (worldData && worldData.length > 0) {
       addWorldLayer(map, worldData);
       addNonUSLayer(map, worldData);
     }
-    
+
     if (usStatesData && usStatesData.length > 0)
       addUSStatesLayer(map, usStatesData);
-    
-    if (usCountyData && usCountyData.length > 0)
-      addUSCountyLayer(map, usCountyData);
-
     if (sdPosData && sdPosData.length > 0) addSDPostLayer(map, sdPosData);
 
     addStoryLayer(map);
   };
 
   const fetchUserLocation = async () => {
-    if (isInRange(userStory.latitude, userStory.longitude)) {
-      return { lat: userStory.latitude, lng: userStory.longitude };
-    }
-
     const response = await fetch(`https://freegeoip.app/json/`);
     if (response.status >= 200 && response.status < 300) {
       const jsonResponse = await response.json();
@@ -184,10 +165,7 @@ export default function Map(props, { draggable = true }) {
   const storiesToGeoJson = (stories) => {
     stories = stories.filter(
       (story) =>
-        story &&
-        isInRange(story.latitude, story.longitude) &&
-        !story.spam &&
-        story.id !== userStory.id
+        story && isInRange(story.latitude, story.longitude) && !story.spam
     );
 
     let features = stories.map((story) => {
@@ -267,34 +245,6 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
-
-    map.on("mousemove", function (e) {
-      let countries = map.queryRenderedFeatures(e.point, {
-        layers: ["world-layer"],
-      });
-
-      if (countries.length > 0) {
-        const country_name = countries[0].properties.name;
-        const country = covidData.filter(
-          (country) => country.name === country_name
-        );
-
-        if (country.length > 0 && country[0].confirmed) {
-          document.getElementById("pd").innerHTML =
-            "<h2>" +
-            country_name +
-            "</h2><h3>" +
-            country[0].confirmed +
-            " cases confirmed</h3>";
-        } else {
-          document.getElementById("pd").innerHTML =
-            "<h2>" + country_name + "</h2><h3> NA </h3>";
-        }
-      } else {
-        document.getElementById("pd").innerHTML =
-          "<h2> Confirmed Cases </h2> <h3>Hover over/Click a state or country!</h3>";
-      }
-    });
   };
 
   const addNonUSLayer = async (map, data) => {
@@ -328,35 +278,6 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
-
-    map.on("mousemove", function (e) {
-      let countries = map.queryRenderedFeatures(e.point, {
-        layers: ["non-us-layer"],
-      });
-
-      if (
-        countries.length > 0 &&
-        countries[0].properties.name &&
-        countries[0].properties.name !== "United States of America"
-      ) {
-        const country_name = countries[0].properties.name;
-        const country = covidData.filter(
-          (country) => country.name === country_name
-        );
-
-        if (country.length > 0 && country[0].confirmed) {
-          document.getElementById("pd").innerHTML =
-            "<h2>" +
-            country_name +
-            "</h2><h3>" +
-            country[0].confirmed +
-            " cases confirmed</h3>";
-        } else {
-          document.getElementById("pd").innerHTML =
-            "<h2>" + country_name + "</h2><h3> NA </h3>";
-        }
-      }
-    });
   };
 
   const addUSStatesLayer = async (map, data) => {
@@ -429,7 +350,7 @@ export default function Map(props, { draggable = true }) {
     // exclude states outside the 50 states
     const expression = ["match", ["get", "STATE_ID"]];
     usData.forEach(function (row) {
-      let stateID = row.name;
+      var stateID = row.name;
       if (stateID in stateToFIPS) {
         expression.push(stateToFIPS[stateID], getStateColor(row.group));
       }
@@ -452,81 +373,6 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
-
-    // add the information window
-    map.on("mousemove", function (e) {
-      let states = map.queryRenderedFeatures(e.point, {
-        layers: ["us-states-layer"],
-      });
-
-      if (states.length > 0) {
-        const state_name = states[0].properties.STATE_NAME;
-        const abbr_name = Object.keys(stateToFIPS).find(
-          (key) => stateToFIPS[key] === states[0].properties.STATE_ID
-        );
-        const confirmed = usData.filter((state) => state.name === abbr_name)[0]
-          .confirmed;
-
-        document.getElementById("pd").innerHTML =
-          "<h2>" +
-          state_name +
-          "</h2><h3>" +
-          confirmed +
-          " cases confirmed</h3>";
-      }
-    });
-  };
-
-  const addUSCountyLayer = async (map, data) => {
-    const countyData = await data;
-    // Add the source to query.
-    // https://docs.mapbox.com/mapbox-gl-js/example/queryrenderedfeatures-around-point
-    map.addSource("counties", {
-      type: "vector",
-      url: "mapbox://mapbox.82pkq93d",
-    });
-
-    const expression = ["match", ["to-string", ["get", "FIPS"]]];
-    countyData.forEach(function (row) {
-      expression.push(row.fips, getStateColor(row.group));
-    });
-    expression.push("rgba(0,0,0,0)"); // Last value is the default, used where there is no data
-
-    map.addLayer(
-      {
-        id: "us-counties-layer",
-        type: "fill",
-        source: "counties",
-        minzoom: stateMaxZoom,
-        maxzoom: focusZoom,
-        "source-layer": "original",
-        paint: {
-          "fill-color": expression,
-          "fill-outline-color": fillOutlineColor,
-          "fill-opacity": 1,
-        },
-      },
-      "settlement-label"
-    ); // Place polygon under these labels.
-
-    // add the information window
-    map.on("mousemove", function (e) {
-      let counties = map.queryRenderedFeatures(e.point, {
-        layers: ["us-counties-layer"],
-      });
-
-      if (counties.length > 0) {
-        const name = counties[0].properties.COUNTY;
-        const target_counties = countyData.filter(
-          (county) => counties[0].properties.FIPS.toString() === county.fips
-        );
-        const confirmed =
-          target_counties.length > 0 ? target_counties[0].confirmed : "NA";
-
-        document.getElementById("pd").innerHTML =
-          "<h2>" + name + "</h2><h3>" + confirmed + " probable cases</h3>";
-      }
-    });
   };
 
   const addSDPostLayer = async (map, data) => {
@@ -543,7 +389,7 @@ export default function Map(props, { draggable = true }) {
         id: "sd-pos-layer",
         type: "circle",
         source: "sd-pos",
-        minzoom: focusZoom,
+        minzoom: 6,
         paint: {
           // Size circle radius by earthquake magnitude and zoom level
           "circle-radius": ["+", ["/", ["get", "confirmed"], 80], 3],
@@ -565,25 +411,6 @@ export default function Map(props, { draggable = true }) {
       },
       "waterway-label"
     );
-
-    // add the information window
-    map.on("mousemove", function (e) {
-      let zipcodes = map.queryRenderedFeatures(e.point, {
-        layers: ["sd-pos-layer"],
-      });
-
-      if (zipcodes.length > 0) {
-        const name = zipcodes[0].properties.name;
-        const confirmed = zipcodes[0].properties.confirmed;
-
-        document.getElementById("pd").innerHTML =
-          "<h2>" +
-          name +
-          ", San Diego</h2><h3>" +
-          confirmed +
-          " cases confirmed</h3>";
-      }
-    });
   };
 
   const storyStyle =
@@ -595,21 +422,21 @@ export default function Map(props, { draggable = true }) {
     const word = status.name;
     content +=
       '<div style="position:relative;width: 8px; height: 8px;line-height:0.8rem;font-size:0.8rem;' +
-      "margin-right: 10px;top:7px;float: left;border-radius: 50%;background:";
+      "margin-right: 10px;top:3px;float: left;border-radius: 50%;background:";
     content = content + color + ';"></div>';
     content =
       content +
-      '<p style="position:relative;top:5px;right:5px;float:left;' +
+      '<span style="position:relative;top:0px;right:5px;float:left;' +
       "color:" +
       color +
       ';line-height:0.8rem;font-size:0.8rem;">' +
       word.toUpperCase() +
-      "</p>";
+      "</span>";
     return content;
   };
 
   const popUpContent = (userStory) => {
-    let content = "<p>";
+    var content = "<span>";
     content += storyStyle;
     if (userStory.myStory) {
       if (userStory.myStory.length > 280) {
@@ -619,7 +446,7 @@ export default function Map(props, { draggable = true }) {
         content += userStory.myStory;
       }
     }
-    content += "</p>";
+    content += "</span>";
     if (userStory.myStory)
       content +=
         '<hr style="height:1px;border-width:0;color:gray;background-color:gray" </hr>';
@@ -630,11 +457,9 @@ export default function Map(props, { draggable = true }) {
     if (userStory.profession !== "")
       content +=
         " working in the " + userStory.profession.toLowerCase() + " industry ";
-
     content = content + " near " + userStory.state;
-    let date = userStory.createdAt ? userStory.createdAt.substring(0, 10) : "";
+    var date = userStory.createdAt ? userStory.createdAt.substring(0, 10) : "";
     if (date !== "") content = content + " on " + date;
-
     content += ".</p>";
     content += '<div style="line-height:0.8rem;" class="row">';
     content = addCircle(statusMapping[userStory.sick], content);
@@ -644,7 +469,7 @@ export default function Map(props, { draggable = true }) {
   };
 
   const setHover = (marker, content, map) => {
-    let popup = new mapboxgl.Popup({
+    var popup = new mapboxgl.Popup({
       className: classNames(styles.popups),
       closeButton: true,
       closeOnClick: true,
@@ -672,10 +497,10 @@ export default function Map(props, { draggable = true }) {
     // add markers to map
     geojson.features.forEach(function (marker) {
       // create a HTML element for each feature
-      let el = document.createElement("div");
+      var el = document.createElement("div");
       el.className = "marker";
 
-      let content = popUpContent(marker.properties);
+      var content = popUpContent(marker.properties);
       // create the marker
       const sickStatus = marker.properties.sick;
       const currmarker = new mapboxgl.Marker({
@@ -686,20 +511,6 @@ export default function Map(props, { draggable = true }) {
       // add marker to map
       currmarker.addTo(map);
     });
-
-    const content = popUpContent(userStory);
-
-    // create the marker
-    if (isInRange(userStory.latitude, userStory.longitude)) {
-      const marker = new mapboxgl.Marker().setLngLat([
-        userStory.longitude,
-        userStory.latitude,
-      ]);
-      //attach popup
-      setHover(marker, content, map);
-      // add marker to map
-      marker.addTo(map);
-    }
   };
 
   const [expanded, setExpanded] = React.useState(
@@ -710,51 +521,7 @@ export default function Map(props, { draggable = true }) {
     setExpanded(!expanded);
   };
 
-  const legend = (
-    <div className={classNames(styles.legendWrapper)}>
-      <div className={classNames(styles.legend)} id="legend">
-        <div className={classNames(styles.legendCollapse)}>
-          <h3>Confirmed Cases</h3>
-          <IconButton
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="show more"
-          >
-            <ExpandLessIcon />
-          </IconButton>
-        </div>
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          {legendRanges.map((range, i) => (
-            <div className={classNames(styles.legendItem)} key={i}>
-              <span style={{ backgroundColor: range.color }}></span>
-              {range.label}
-            </div>
-          ))}
-        </Collapse>
-      </div>
-      <div className={classNames(styles.statusLegend)}>
-        <div>
-          <h2> Global Total </h2>
-          <h3>
-            Confirmed: {actives} <br />
-            Deaths: {deaths} <br />
-            Recovered: {recovered}
-          </h3>
-        </div>
-        <div id="pd">
-          <h2> Confirmed Cases </h2>
-          <h3> Hover over/Click a state or country!</h3>
-        </div>
-        <Divider style={{ color: "black" }} />
-        <div style={{ paddingTop: 5, color: "#dcd6d3" }}>
-          <em>
-            <p id="users_num">There are {userNum} users on OASIS</p>
-            <p id="stories_num">{storyNum} of them shared their stories</p>
-          </em>
-        </div>
-      </div>
-    </div>
-  );
+  const legend = <div></div>;
 
   const draggableDependantFeatures = () => {
     if (draggable) {
@@ -765,12 +532,6 @@ export default function Map(props, { draggable = true }) {
 
   return (
     <div className={styles.root}>
-      <div className={styles.random}>
-        The locations of markers are randomized.
-      </div>
-      <div className={styles.refresh}>
-        Please refresh the page if the map is gray.
-      </div>
       <div
         style={{ color: "gray" }}
         className={classNames([

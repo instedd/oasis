@@ -14,6 +14,7 @@ import {
   SUBMIT_TRAVELS,
   SUBMIT_CLOSE_CONTACTS_START,
   SUBMIT_CLOSE_CONTACTS,
+  SET_MY_STORY,
 } from "./types";
 import { fields } from "../routes/CriticalQuestions/fields";
 
@@ -73,6 +74,13 @@ export const submitStory = (dto) => async (dispatch) => {
   if (!anyError) {
     history.push(nextPage);
   }
+};
+
+export const setMyStory = (myStory) => (dispatch) => {
+  dispatch({
+    type: SET_MY_STORY,
+    payload: myStory,
+  });
 };
 
 export const setSickStatus = (option) => (dispatch) => {
