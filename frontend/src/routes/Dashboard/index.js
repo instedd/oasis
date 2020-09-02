@@ -11,7 +11,7 @@ import { useSelector, useDispatch } from "react-redux";
 import paths from "routes/paths";
 import { sicknessStatus, testStatus } from "routes/types";
 import styles from "./styles.module.css";
-import { fetchStory } from "actions/story";
+import { submitStory, fetchStory } from "actions/story";
 import { getStoryResources } from "actions/resources";
 import { LOADING } from "actions/types";
 import { useLocation } from "react-router-dom";
@@ -28,8 +28,11 @@ const statusMapping = {
 };
 
 function Dashboard(props, { draggableMapRoutes = [] }) {
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
-  const { story, status } = useSelector((state) => state.story);
+  const { myStory, story, status } = useSelector((state) => {
+    return state.story;
+  });
   let location = useLocation();
   const [draggableMap, setDraggableMap] = useState(false);
   const [expanded, setExpanded] = useState(
@@ -46,8 +49,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       setDraggableMap(draggableMapRoutes.includes(location.pathname));
     }
   }, [location, draggableMap, setDraggableMap, draggableMapRoutes]);
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!story) dispatch(fetchStory());
@@ -83,6 +84,18 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
         storyNum: storiesData.filter((story) => story.myStory).length,
       });
     });
+  }, []);
+
+  useEffect(() => {
+    if (story && myStory && myStory.length > 0) {
+      story.myStory = myStory;
+      const dto = {
+        story,
+        travels: [],
+        closeContacts: [],
+      };
+      dispatch(submitStory(dto));
+    }
   }, []);
 
   const hasMyStory = story && story.myStory;
