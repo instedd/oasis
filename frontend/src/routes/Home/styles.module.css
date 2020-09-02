@@ -11,13 +11,6 @@
     width: 400px
 }
 
-.textarea label {
-    color: grey;
-    font-size: 15px;
-    line-height: 1.5rem;
-    width: 320px;
-}
-
 .textarea {
     width: 100%;
     height: 200px;
@@ -112,4 +105,12 @@
     .btnGroup button {
         width: 180px !important
     }
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.visible {
+    visibility: visible;
 }

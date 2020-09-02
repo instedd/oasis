@@ -13,6 +13,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
 
   const [myStory, updateMyStory] = useState("");
   const [draggableMap, setDraggableMap] = useState(false);
+  const [visibility, setVisibility] = useState("visible");
 
   let location = useLocation();
 
@@ -24,6 +25,13 @@ export default function Home(props, { draggableMapRoutes = [] }) {
   }, [location, draggableMap, setDraggableMap, draggableMapRoutes]);
 
   const handleChange = (event) => {
+    if (event.target.value) {
+      console.log(true);
+      setVisibility("hidden");
+    } else {
+      console.log(false);
+      setVisibility("visible");
+    }
     updateMyStory(event.target.value);
   };
 
@@ -42,7 +50,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
         <div>
           <TextField
             id="outlined-multiline-static"
-            placeholder="We all have a COVID-19 story. Share your COVID-19 story now…"
+            placeholder="Everyone have been affected by covid in some way. We all have a covid story, share yours!"
             multiline
             rowsMax={10}
             value={myStory}
@@ -55,6 +63,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
               props.history.push(paths.onboard, { onboard: false })
             }
             className={classNames("skipBtn", styles.skipBtn)}
+            style={{ visibility: visibility }}
           >
             skip and continue as guest
           </Button>
