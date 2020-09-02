@@ -28,8 +28,10 @@ COVID_SD_ZIP_CODE_API_URL = (
     "=*&orderByFields=updatedate%20DESC"
     "&outSR=102100&resultOffset=0&resultRecordCount=113"
 )
-CLUSTERS = 5
-CLUSTERS_LABELS = [0.2, 0.4, 0.6, 0.8, 1]
+# CLUSTERS = 5
+# CLUSTERS_LABELS = [0.2, 0.4, 0.6, 0.8, 1]
+CLUSTERS = 10
+CLUSTERS_LABELS = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 
 router = APIRouter()
 
