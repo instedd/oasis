@@ -3,13 +3,14 @@
     height: 100%;
 }
 
-.textarea > div:hover fieldset{
-    border-color:white !important;
+.textarea>div:hover fieldset {
+    border-color: white !important;
 }
 
-.textarea .Mui-focused label{
+.textarea .Mui-focused label {
     width: 400px
 }
+
 .textarea label {
     color: grey;
     font-size: 15px;
@@ -23,14 +24,14 @@
     display: flex;
 }
 
-.textarea > div {
+.textarea>div {
     height: 100%;
     color: white;
     align-items: flex-start;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
-.home h1{
+.home h1 {
     font-family: 'Roboto', sans-serif;
     font-weight: 900;
     text-transform: capitalize;
@@ -39,20 +40,21 @@
 }
 
 .home {
-    width: 40%;
+    width: 35%;
     padding-left: 4rem;
     text-align: left;
     margin: auto 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    align-self: self-start;
 }
 
 .background {
     position: absolute;
     background: #00000082;
     height: 100vh;
-    width: calc( 40% + 8rem);
+    width: calc( 35% + 8rem);
     top: 0;
     left: 0;
     z-index: -1;
@@ -74,16 +76,40 @@
     font-family: 'Roboto', sans-serif;
 }
 
-.skipBtn{
+.skipBtn {
     color: #ffffff80 !important;
     float: right;
 }
 
-.userNum{
+.userNum {
     position: absolute;
     bottom: 20px;
     left: calc(40% + 8rem - 330px);
     width: 300px;
     text-align: right;
     font-size: 18px;
+}
+
+@media (max-width: 1024px) {
+    .background {
+        width: 100%;
+    }
+    .home {
+        width: 80%;
+        align-self: center;
+        padding: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .home {
+        width: 100%;
+        transform: scale(0.75);
+    }
+    .btnGroup {
+        justify-content: space-between;
+    }
+    .btnGroup button {
+        width: 180px !important
+    }
 }
