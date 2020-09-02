@@ -1,11 +1,9 @@
 .root {
-    max-height: 80vh;
+    max-height: 100vh;
     width: 100vh;
     overflow:auto;
     -ms-overflow-style: none; 
     scrollbar-width: none;  
-    min-width: 100%;
-    min-height: 100%;
   }
   .root::-webkit-scrollbar {
     display: none;

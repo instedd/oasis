@@ -1,13 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { TextField, Fab } from "@material-ui/core";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import classNames from "classnames";
 import styles from "./styles.module.css";
 import { useSelector, useDispatch } from "react-redux";
-import { submitStory, submitMyStory } from "actions/story";
+import { submitMyStory } from "actions/story";
+import paths from "routes/paths";
 
 export default function MyStory(props) {
-  const [myStory, setMyStory] = React.useState("");
+  const [myStory, setMyStory] = useState("");
   const { story } = useSelector((state) => state.story);
   const dispatch = useDispatch();
 
@@ -26,7 +27,7 @@ export default function MyStory(props) {
   const handleSubmitStory = () => {
     var storyId = story.id;
     dispatch(submitMyStory(storyId, myStory));
-    props.history.push("/dashboard");
+    props.history.push(paths.storyHistory);
   };
 
   return (
@@ -55,7 +56,7 @@ export default function MyStory(props) {
       <Fab
         style={{ background: "#9206FF" }}
         aria-label="add"
-        onClick={() => props.history.push("/dashboard")}
+        onClick={() => props.history.push(paths.storyHistory)}
         size="medium"
         className="fab back-btn"
       >

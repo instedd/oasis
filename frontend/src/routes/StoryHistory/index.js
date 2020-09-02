@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import { Fab } from "@material-ui/core";
+import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
 import Timeline from "@material-ui/lab/Timeline";
 import TimelineItem from "@material-ui/lab/TimelineItem";
 import TimelineSeparator from "@material-ui/lab/TimelineSeparator";
@@ -14,12 +16,13 @@ import { useSelector, useDispatch } from "react-redux";
 import Button from "@material-ui/core/Button";
 import styles from "./styles.module.css";
 import classNames from "classnames";
-import { fetchMyStory, fetchStory } from "actions/story";
+import { fetchStory } from "actions/story";
 import paths from "routes/paths";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: "6px 16px",
+    width: "60vh",
   },
   secondaryTail: {
     backgroundColor: theme.palette.secondary.main,
@@ -32,7 +35,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function StoryHistory(props) {
-  const [myStory, setMyStory] = React.useState("");
   const { story } = useSelector((state) => state.story);
   const [stories, setStories] = useState([]);
   const classes = useStyles();
@@ -76,12 +78,21 @@ export default function StoryHistory(props) {
               </TimelineSeparator>
               <TimelineContent>
                 <Paper elevation={3} className={classes.paper}>
-                  <Typography>{my_story.text}</Typography>
+                  <Typography color="white">{my_story.text}</Typography>
                 </Paper>
               </TimelineContent>
             </TimelineItem>
           ))}
         </Timeline>
+        <Fab
+          style={{ background: "#9206FF" }}
+          aria-label="add"
+          onClick={() => props.history.push(paths.dashboard)}
+          size="medium"
+          className="fab back-btn"
+        >
+          <ArrowLeftIcon />
+        </Fab>
       </div>
     </>
   );
