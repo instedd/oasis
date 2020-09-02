@@ -68,10 +68,11 @@ def check_and_reset_repo():
         subprocess.call("cd covid-19-data && git pull && cd ../", shell=True)
 
 
-def build_new_db_row(row, commit: str):
+def build_new_db_row(row, now, commit: str):
     """
     Takes a row from the pandas representation of an NYT
     """
+
     new_row = models.NytLiveCounty(
         **{
             # populate fields here
@@ -87,7 +88,9 @@ def build_new_db_row(row, commit: str):
             "probable_deaths": get_type_or_null(row["probable_deaths"], int),
             # "timestamp": int(time.time()),
             "timestamp": int(
-                datetime.strptime(row["date"], "%Y-%m-%d").timestamp()
+                # datetime.strptime(row["date"], "%Y-%m-%d").timestamp()
+                # datetime.now().timestamp()
+                now
             ),
             "commit": commit,
         }
@@ -101,11 +104,12 @@ def add_data(db: Session, path: str, commit_hex: str):
     duplicate data, time limit, etc. DOES NOT COMMIT OR ROLLBACK. DOES NOT
     HANDLE EXCEPTIONS - ALL OF THIS MUST BE DONE BY CALLER
     """
+    now = datetime.now().timestamp()
     df = pd.read_csv(path, dtype=str)
     df = df[df["fips"].notna()]
 
     for indx, row in df.iterrows():
-        db.add(build_new_db_row(row, commit_hex))
+        db.add(build_new_db_row(row, now, commit_hex))
 
 
 def seed(db: Session = Depends(get_db), fake_date=None):
@@ -167,6 +171,7 @@ async def update(db: Session):
     """
     Updates the NYT county database with newest data from NYT github
     """
+    now = datetime.now().timestamp()
     try:
         # Make sure repo is up to date and on master
         check_and_reset_repo()
@@ -197,7 +202,7 @@ async def update(db: Session):
         df = pd.read_csv("covid-19-data/live/us-counties.csv", dtype=str)
 
         for indx, row in df.iterrows():
-            db.add(build_new_db_row(row, cmt_hex))
+            db.add(build_new_db_row(row, now, cmt_hex))
 
         db.commit()
 
