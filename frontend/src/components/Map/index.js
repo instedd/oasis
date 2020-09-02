@@ -116,28 +116,26 @@ export default function Map(props, { draggable = true }) {
 
     addLegend(data);
 
+    if (map.loaded()) {
+      load(map, worldData, usStatesData, sdPosData);
+    } else {
+      map.on("load", function () {
+        load(map, worldData, usStatesData, sdPosData);
+      });
+    }
+  };
+
+  const load = async (map, worldData, usStatesData, sdPosData) => {
     if (worldData && worldData.length > 0) {
-      map.on("load", function () {
-        addWorldLayer(map, worldData);
-        addNonUSLayer(map, worldData);
-      });
+      addWorldLayer(map, worldData);
+      addNonUSLayer(map, worldData);
     }
 
-    if (usStatesData && usStatesData.length > 0) {
-      map.on("load", function () {
-        addUSStatesLayer(map, usStatesData);
-      });
-    }
+    if (usStatesData && usStatesData.length > 0)
+      addUSStatesLayer(map, usStatesData);
+    if (sdPosData && sdPosData.length > 0) addSDPostLayer(map, sdPosData);
 
-    if (sdPosData && sdPosData.length > 0) {
-      map.on("load", function () {
-        addSDPostLayer(map, sdPosData);
-      });
-    }
-
-    map.on("load", function () {
-      addStoryLayer(map);
-    });
+    addStoryLayer(map);
   };
 
   const fetchUserLocation = async () => {
@@ -259,7 +257,7 @@ export default function Map(props, { draggable = true }) {
     );
 
     map.on("mousemove", function (e) {
-      var countries = map.queryRenderedFeatures(e.point, {
+      let countries = map.queryRenderedFeatures(e.point, {
         layers: ["world-layer"],
       });
 
@@ -320,7 +318,7 @@ export default function Map(props, { draggable = true }) {
     );
 
     map.on("mousemove", function (e) {
-      var countries = map.queryRenderedFeatures(e.point, {
+      let countries = map.queryRenderedFeatures(e.point, {
         layers: ["non-us-layer"],
       });
 
@@ -419,7 +417,7 @@ export default function Map(props, { draggable = true }) {
     // exclude states outside the 50 states
     const expression = ["match", ["get", "STATE_ID"]];
     usData.forEach(function (row) {
-      var stateID = row.name;
+      let stateID = row.name;
       if (stateID in stateToFIPS) {
         expression.push(stateToFIPS[stateID], getStateColor(row.group));
       }
@@ -445,7 +443,7 @@ export default function Map(props, { draggable = true }) {
 
     // add the information window
     map.on("mousemove", function (e) {
-      var states = map.queryRenderedFeatures(e.point, {
+      let states = map.queryRenderedFeatures(e.point, {
         layers: ["us-states-layer"],
       });
 
@@ -506,7 +504,7 @@ export default function Map(props, { draggable = true }) {
 
     // add the information window
     map.on("mousemove", function (e) {
-      var zipcodes = map.queryRenderedFeatures(e.point, {
+      let zipcodes = map.queryRenderedFeatures(e.point, {
         layers: ["sd-pos-layer"],
       });
 
@@ -547,7 +545,7 @@ export default function Map(props, { draggable = true }) {
   };
 
   const popUpContent = (userStory) => {
-    var content = "";
+    let content = "<p>";
     content += storyStyle;
     if (userStory.myStory) {
       if (userStory.myStory.length > 280) {
@@ -562,15 +560,14 @@ export default function Map(props, { draggable = true }) {
       content +=
         '<hr style="height:1px;border-width:0;color:gray;background-color:gray" </hr>';
     content += demographicStyle;
-    if (userStory.age) content = content + "A " + userStory.age + " years old user";
+    if (userStory.age)
+      content = content + "A " + userStory.age + " years old user";
     else content += "A user";
     if (userStory.profession !== "")
       content +=
-        " working in the " +
-        userStory.profession.toLowerCase() +
-        " industry ";
+        " working in the " + userStory.profession.toLowerCase() + " industry ";
     content = content + " near " + userStory.state;
-    var date = userStory.createdAt ? userStory.createdAt.substring(0, 10) : "";
+    let date = userStory.createdAt ? userStory.createdAt.substring(0, 10) : "";
     if (date !== "") content = content + " on " + date;
     content += ".</p>";
     content += '<div style="line-height:0.8rem;" class="row">';
@@ -581,7 +578,7 @@ export default function Map(props, { draggable = true }) {
   };
 
   const setHover = (marker, content, map) => {
-    var popup = new mapboxgl.Popup({
+    let popup = new mapboxgl.Popup({
       className: classNames(styles.popups),
       closeButton: true,
       closeOnClick: true,
@@ -609,10 +606,10 @@ export default function Map(props, { draggable = true }) {
     // add markers to map
     geojson.features.forEach(function (marker) {
       // create a HTML element for each feature
-      var el = document.createElement("div");
+      let el = document.createElement("div");
       el.className = "marker";
 
-      var content = popUpContent(marker.properties);
+      let content = popUpContent(marker.properties);
       // create the marker
       const sickStatus = marker.properties.sick;
       const currmarker = new mapboxgl.Marker({

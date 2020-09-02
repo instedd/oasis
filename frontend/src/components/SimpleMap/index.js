@@ -1,6 +1,10 @@
 import classNames from "classnames";
 import mapboxgl from "mapbox-gl";
 import React, { useEffect, useState } from "react";
+import Collapse from "@material-ui/core/Collapse";
+import ExpandLessIcon from "@material-ui/icons/ExpandLess";
+import IconButton from "@material-ui/core/IconButton";
+import Divider from "@material-ui/core/Divider";
 import styles from "./styles.module.css";
 import api from "utils";
 import { sicknessStatus, testStatus, posToLatLng } from "../../routes/types";
@@ -24,6 +28,10 @@ export default function Map(props, { draggable = true }) {
   const focusZoom = 8;
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
 
+  const actives = props.actives;
+  const deaths = props.deaths;
+  const recovered = props.recovered;
+
   const dataScope = {
     WORLD: "world",
     US_STATES: "us-states",
@@ -32,10 +40,9 @@ export default function Map(props, { draggable = true }) {
 
   const [map, setMap] = useState(null);
   const [location, setLocation] = useState({
-    lng: -117.1611,
-    lat: 32.7157,
+    lng: 0,
+    lat: 0,
   });
-
   const [legendRanges, setLegendRanges] = useState([]);
 
   useEffect(() => {
@@ -96,21 +103,36 @@ export default function Map(props, { draggable = true }) {
   const addLayers = async (map) => {
     const data = await fetchCovidData(dataScope.ALL);
     //world data including US for world layer
-    const worldData = data["data"]["adm0"];
+    const worldData = data["data"]["adm0"] ? data["data"]["adm0"] : [];
     // US data for state layer
-    const usStatesData = data["data"]["adm1"]["US"];
+    const usStatesData = data["data"]["adm1"]["US"]
+      ? data["data"]["adm1"]["US"]
+      : [];
     // SD postal code data
-    const sdPosData = data["data"]["adm2"];
+    const sdPosData = data["data"]["adm2"] ? data["data"]["adm2"] : [];
 
     addLegend(data);
 
-    map.on("load", function () {
+    if (map.loaded()) {
+      load(map, worldData, usStatesData, sdPosData);
+    } else {
+      map.on("load", function () {
+        load(map, worldData, usStatesData, sdPosData);
+      });
+    }
+  };
+
+  const load = async (map, worldData, usStatesData, sdPosData) => {
+    if (worldData && worldData.length > 0) {
       addWorldLayer(map, worldData);
       addNonUSLayer(map, worldData);
+    }
+
+    if (usStatesData && usStatesData.length > 0)
       addUSStatesLayer(map, usStatesData);
-      addSDPostLayer(map, sdPosData);
-      addStoryLayer(map);
-    });
+    if (sdPosData && sdPosData.length > 0) addSDPostLayer(map, sdPosData);
+
+    addStoryLayer(map);
   };
 
   const fetchUserLocation = async () => {
@@ -137,7 +159,7 @@ export default function Map(props, { draggable = true }) {
   };
 
   const getRandomFloat = () => {
-    return Math.random() * (Math.random() > 0.5 ? -1 : 1);
+    return Math.random() * (Math.random() > 0.5 ? -0.1 : 0.1);
   };
 
   const storiesToGeoJson = (stories) => {
@@ -170,7 +192,7 @@ export default function Map(props, { draggable = true }) {
 
   const postDataToGeojson = (data) => {
     let features = data.map((zipcode) => {
-      let { name, ...properties } = zipcode;
+      let { name } = zipcode;
 
       return {
         type: "Feature",
@@ -190,6 +212,10 @@ export default function Map(props, { draggable = true }) {
 
   const getColor = (group) => {
     return `rgba(${group * 255}, 0, 0, 1)`;
+  };
+
+  const getStateColor = (group) => {
+    return `rgba(${(group - 0.1) * 255}, 10, 12, 1)`;
   };
 
   const addWorldLayer = async (map, data) => {
@@ -326,7 +352,7 @@ export default function Map(props, { draggable = true }) {
     usData.forEach(function (row) {
       var stateID = row.name;
       if (stateID in stateToFIPS) {
-        expression.push(stateToFIPS[stateID], getColor(row.group));
+        expression.push(stateToFIPS[stateID], getStateColor(row.group));
       }
     });
     expression.push("rgba(0,0,0,0)"); // Last value is the default, used where there is no data
@@ -363,7 +389,7 @@ export default function Map(props, { draggable = true }) {
         id: "sd-pos-layer",
         type: "circle",
         source: "sd-pos",
-        minzoom: focusZoom,
+        minzoom: 6,
         paint: {
           // Size circle radius by earthquake magnitude and zoom level
           "circle-radius": ["+", ["/", ["get", "confirmed"], 80], 3],
@@ -387,36 +413,53 @@ export default function Map(props, { draggable = true }) {
     );
   };
 
+  const storyStyle =
+    '<p style="font-size: 18px;line-height: 18px; color:black">';
+  const demographicStyle = '<p style = "line-height:0.9rem;font-size:0.9rem;">';
+
   const addCircle = (status, content) => {
     const color = status.color;
     const word = status.name;
     content +=
       '<div style="position:relative;width: 8px; height: 8px;line-height:0.8rem;font-size:0.8rem;' +
-      "margin-right: 10px;top:5px;float: left;border-radius: 50%;background:";
+      "margin-right: 10px;top:3px;float: left;border-radius: 50%;background:";
     content = content + color + ';"></div>';
     content =
       content +
-      '<p style="position:relative;top:5px;right:5px;float:left;' +
+      '<span style="position:relative;top:0px;right:5px;float:left;' +
       "color:" +
       color +
       ';line-height:0.8rem;font-size:0.8rem;">' +
       word.toUpperCase() +
-      "</p>";
+      "</span>";
     return content;
   };
 
-  const popUpContent = (userStory, content) => {
-    if (userStory.age) content = content + " " + userStory.age + " years old";
-    content += userStory.myStory || userStory.age ? " user " : " User ";
+  const popUpContent = (userStory) => {
+    var content = "<span>";
+    content += storyStyle;
+    if (userStory.myStory) {
+      if (userStory.myStory.length > 280) {
+        content += userStory.myStory.substring(0, 280);
+        content += "...";
+      } else {
+        content += userStory.myStory;
+      }
+    }
+    content += "</span>";
+    if (userStory.myStory)
+      content +=
+        '<hr style="height:1px;border-width:0;color:gray;background-color:gray" </hr>';
+    content += demographicStyle;
+    if (userStory.age)
+      content = content + "A " + userStory.age + " years old user";
+    else content += "A user";
     if (userStory.profession !== "")
-      content =
-        content +
-        " working in the " +
-        userStory.profession.toLowerCase() +
-        " industry ";
-    content = content + "living near " + userStory.state;
-    var date = userStory.createdAt.substring(0, 10);
-    if (userStory.myStory) content = content + " on " + date;
+      content +=
+        " working in the " + userStory.profession.toLowerCase() + " industry ";
+    content = content + " near " + userStory.state;
+    var date = userStory.createdAt ? userStory.createdAt.substring(0, 10) : "";
+    if (date !== "") content = content + " on " + date;
     content += ".</p>";
     content += '<div style="line-height:0.8rem;" class="row">';
     content = addCircle(statusMapping[userStory.sick], content);
@@ -427,9 +470,9 @@ export default function Map(props, { draggable = true }) {
 
   const setHover = (marker, content, map) => {
     var popup = new mapboxgl.Popup({
-      closeButton: false,
-      closeOnClick: false,
-      offset: 25,
+      className: classNames(styles.popups),
+      closeButton: true,
+      closeOnClick: true,
     });
     popup.setHTML(content);
     const element = marker.getElement();
@@ -456,19 +499,8 @@ export default function Map(props, { draggable = true }) {
       // create a HTML element for each feature
       var el = document.createElement("div");
       el.className = "marker";
-      var myStory = marker.properties.myStory;
 
-      var content = "";
-      //add user story if has any
-      if (myStory)
-        content =
-          content +
-          '<p style="font-size: 18px;line-height: 18px;">"' +
-          myStory +
-          '"</p><p style = "line-height:0.9rem;font-size:0.9rem;">- From';
-      else content += '<p style = "line-height:0.8rem;font-size:0.8rem;">';
-      content = popUpContent(marker.properties, content);
-
+      var content = popUpContent(marker.properties);
       // create the marker
       const sickStatus = marker.properties.sick;
       const currmarker = new mapboxgl.Marker({
@@ -479,6 +511,14 @@ export default function Map(props, { draggable = true }) {
       // add marker to map
       currmarker.addTo(map);
     });
+  };
+
+  const [expanded, setExpanded] = React.useState(
+    window.screen.width > 1024 ? true : false
+  );
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
   };
 
   const legend = <div></div>;
