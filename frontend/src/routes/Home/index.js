@@ -1,175 +1,96 @@
-import React from "react";
+import { TextField, Fab, Button } from "@material-ui/core";
 import classNames from "classnames";
-import { Checkbox } from "@material-ui/core";
-import SpeedDial from "@material-ui/lab/SpeedDial";
-import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
-import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
-import { makeStyles } from "@material-ui/core/styles";
-
-import Text from "../../text.json";
-import Pop from "components/PopUp";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import SimpleMap from "components/SimpleMap";
 import paths from "routes/paths";
-
 import styles from "./styles.module.css";
-import history from "../../history";
+import { setMyStory } from "../../actions/story";
 
-const useStyles = makeStyles((theme) => ({
-  speedDial: {
-    "& .MuiFab-label": {
-      width: "max-content",
-      padding: 2,
-    },
-  },
-  button: {
-    "&:hover": {
-      background: "#EA2027",
-      color: "white",
-    },
-    background: "#EA2027",
-    color: "white",
-    size: "large",
-  },
-  terms: {
-    background: "none",
-    color: "white",
-    width: "max-content",
-    borderRadius: 0,
-    boxShadow: "none",
-    "&:hover": {
-      background: "none",
-    },
-  },
-}));
+export default function Home(props, { draggableMapRoutes = [] }) {
+  const dispatch = useDispatch();
 
-const useStylesTooltip = makeStyles((theme) => ({
-  tooltip: {
-    display: "none",
-  },
-}));
+  const [myStory, updateMyStory] = useState("");
+  const [draggableMap, setDraggableMap] = useState(false);
+  const [visibility, setVisibility] = useState("visible");
 
-const actions = [
-  {
-    name: " SIGN IN / SIGN UP ",
-    href: paths.signIn,
-    classes: classNames(styles.signin, "MuiFab-extended"),
-  },
-  {
-    name: " CONTINUE AS GUEST ",
-    href: paths.onboard,
-    state: { onboard: false },
-    classes: "MuiFab-extended",
-  },
-];
+  let location = useLocation();
 
-function App(props) {
-  const classes = useStyles();
-  const classesTooltip = useStylesTooltip();
-  const [open, setOpen] = React.useState(false);
+  useEffect(() => {
+    let shouldDragMap = draggableMapRoutes.includes(location.pathname);
+    if (shouldDragMap !== draggableMap) {
+      setDraggableMap(draggableMapRoutes.includes(location.pathname));
+    }
+  }, [location, draggableMap, setDraggableMap, draggableMapRoutes]);
 
-  const handleClick = () => {
-    setOpen(!open);
+  const handleChange = (event) => {
+    if (event.target.value) {
+      console.log(true);
+      setVisibility("hidden");
+    } else {
+      console.log(false);
+      setVisibility("visible");
+    }
+    updateMyStory(event.target.value);
   };
-  const texts = Text["Terms and Conditions"].texts;
-  const listIndex = Text["Terms and Conditions"].listIndex;
-  const linkIndex = Text["Terms and Conditions"].linkIndex;
+
+  const handleSubmit = (event, route) => {
+    dispatch(setMyStory(myStory));
+
+    props.history.push(route);
+  };
+
   return (
     <>
-      <h1 className={styles.title}>
-        FIGHT COVID-19 <br /> PUT YOUR STORY <br /> ON THE MAP
-      </h1>
-      <div>
-        <SpeedDial
-          ariaLabel="Take action"
-          className={classes.speedDial}
-          icon={<SpeedDialIcon />}
-          onClick={handleClick}
-          open={open}
-          FabProps={{ className: classes.button }}
-        >
-          <SpeedDialAction
-            key="terms"
-            className={classes.terms}
-            tooltipTitle="Terms and Conditions"
-            icon={
-              <div style={{ alignItems: "center", padding: "0px 6px" }}>
-                <Checkbox
-                  id="checkbox"
-                  style={{ color: "white", padding: "0px 2px" }}
-                  onChange={(e) => {
-                    setOpen(true);
-                    if (e.target.checked) {
-                      var warning = document.getElementById("warning");
-                      warning.style.display = "none";
-                    }
-                  }}
-                />
-                <Pop
-                  label={
-                    <span
-                      style={{
-                        textDecoration: "underline",
-                        color: "white",
-                        fontSize: 16,
-                      }}
-                    >
-                      Terms and Conditions
-                    </span>
-                  }
-                  title={
-                    <h2 style={{ textAlign: "center" }}>
-                      Terms and Conditions
-                    </h2>
-                  }
-                  texts={texts}
-                  linkIndex={linkIndex}
-                  listIndex={listIndex}
-                />
-              </div>
-            }
-            TooltipClasses={classesTooltip}
+      <div className={classNames("home", styles.home)}>
+        <h1 className="title">
+          We want to learn from your experience to stop the pandemic.
+        </h1>
+        <div>
+          <TextField
+            id="outlined-multiline-static"
+            placeholder="Everyone have been affected by covid in some way. We all have a covid story, share yours!"
+            multiline
+            rowsMax={10}
+            value={myStory}
+            onChange={handleChange}
+            className={classNames("textarea", styles.textarea)}
+            variant="filled"
           />
-          {actions.map((action) => (
-            <SpeedDialAction
-              key={action.name}
-              icon={action.name}
-              tooltipTitle={action.name}
-              className={action.classes}
-              TooltipClasses={classesTooltip}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                e.nativeEvent.stopImmediatePropagation();
-                setOpen(true);
-                if (document.getElementById("checkbox").checked) {
-                  history.push(action.href, action.state || {});
-                } else {
-                  history.push("", action.state || {});
-                  var warning = document.getElementById("warning");
-                  warning.style.display = "inline";
-                }
-              }}
-            />
-          ))}
-          <SpeedDialAction
-            key="read"
-            className={classes.terms}
-            tooltipTitle="Read"
-            TooltipClasses={classesTooltip}
-            icon={
-              <div
-                id="warning"
-                style={{ alignItems: "center", display: "none" }}
-              >
-                <span style={{ color: "red", fontSize: 12 }}>
-                  <strong>Please read the Terms & Conditions</strong>
-                </span>
-              </div>
+          <Button
+            onClick={() =>
+              props.history.push(paths.onboard, { onboard: false })
             }
-          />
-        </SpeedDial>
+            className={classNames("skipBtn", styles.skipBtn)}
+            style={{ visibility: visibility }}
+          >
+            skip and continue as guest
+          </Button>
+        </div>
+        <div className={classNames("btnGroup", styles.btnGroup)}>
+          <Fab
+            style={{ background: "#0559FD", color: "white" }}
+            aria-label="add"
+            size="medium"
+            onClick={(e) => handleSubmit(e, paths.consent)}
+            variant="extended"
+          >
+            SHARE MY STORY
+          </Fab>
+          <Fab
+            style={{ background: "#9206FF", color: "white" }}
+            aria-label="add"
+            size="medium"
+            onClick={(e) => handleSubmit(e, paths.signUp)}
+            variant="extended"
+          >
+            LEARN MORE
+          </Fab>
+        </div>
       </div>
+      <div className={classNames("background", styles.background)} />
+      <SimpleMap draggable={draggableMap} />
     </>
   );
 }
-
-export default App;

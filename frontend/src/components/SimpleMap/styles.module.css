@@ -1,0 +1,27 @@
+.root {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: -2;
+}
+
+.fill {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+.mask {
+  z-index: 2;
+}
+
+.opaque {
+  filter: saturate(0) contrast(0.4) brightness(0.4);
+}
+
+.map {
+  z-index: 1;
+  transition: all 0.5s;
+}
