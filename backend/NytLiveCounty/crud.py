@@ -56,6 +56,7 @@ def check_and_reset_repo():
     Checks if the NYT repo exists in the current directory, else clones it,
     otherwise checks out master and pulls it
     """
+    subprocess.call("rm -f /app/covid-19-data/.git/index.lock", shell=True)
     if not path.isdir("covid-19-data"):
         subprocess.call(
             "git clone https://github.com/nytimes/covid-19-data.git",
@@ -147,6 +148,9 @@ def seed(db: Session = Depends(get_db), fake_date=None):
 
         while get_day_from_ts(get_ts(cmt)) > STALE_DATE:
             # Checkout data
+            subprocess.call(
+                "rm -f /app/covid-19-data/.git/index.lock", shell=True
+            )
             subprocess.call(
                 f"cd covid-19-data && git checkout -f {cmt.hexsha} && cd ../",
                 shell=True,
