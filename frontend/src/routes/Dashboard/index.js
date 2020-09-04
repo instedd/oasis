@@ -96,7 +96,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       };
       dispatch(submitStory(dto));
     }
-  }, [dispatch, myStory, story]);
+  }, []);
 
   const hasMyStory = story && story.myStory;
   const actions = [
