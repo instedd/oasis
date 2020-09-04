@@ -21,7 +21,7 @@ export default function Map(props, { draggable = true }) {
   const countryMinZoom = 3;
   const stateMaxZoom = 4;
   const initialZoom = 1;
-  const focusZoom = 8;
+  const focusZoom = 1;
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
 
   const dataScope = {
@@ -42,7 +42,7 @@ export default function Map(props, { draggable = true }) {
 
     const map = new mapboxgl.Map({
       container: "map",
-      style: "mapbox://styles/mapbox/dark-v10",
+      style: "mapbox://styles/mapbox/light-v10",
       center: [location.lng, location.lat],
       zoom: initialZoom,
     });

@@ -21,9 +21,12 @@
     height: 100%;
     color: white;
     align-items: flex-start;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: #cad2d3;
 }
 
+.textarea textarea {
+    color: black
+}
 .home h1 {
     font-family: 'Roboto', sans-serif;
     font-weight: 900;
@@ -45,7 +48,7 @@
 
 .background {
     position: absolute;
-    background: #00000082;
+    background: #ffffff82;
     height: 100vh;
     width: calc( 35% + 8rem);
     top: 0;
@@ -70,7 +73,7 @@
 }
 
 .skipBtn {
-    color: #ffffff80 !important;
+    color: #00000080 !important;
     float: right;
 }
 

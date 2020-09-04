@@ -57,6 +57,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
             onChange={handleChange}
             className={classNames("textarea", styles.textarea)}
             variant="filled"
+            style={{ color: "black" }}
           />
           <Button
             onClick={() =>

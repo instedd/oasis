@@ -53,7 +53,7 @@ export default function Map(props, { draggable = true }) {
 
     const map = new mapboxgl.Map({
       container: "map",
-      style: "mapbox://styles/mapbox/dark-v10",
+      style: "mapbox://styles/mapbox/light-v10",
       center: [location.lng, location.lat],
       zoom: initialZoom,
     });

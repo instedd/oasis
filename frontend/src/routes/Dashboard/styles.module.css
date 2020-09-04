@@ -45,7 +45,7 @@
 .box {
     position: absolute;
     padding: 1rem;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: #cacaca80;
     border-radius: 4px;
 }
 
@@ -60,7 +60,7 @@
     font-size: 18px;
     line-height: 26px;
     text-decoration: underline;
-    color: white;
+    color: #343333;;
     display: block;
 }
 
@@ -161,5 +161,5 @@
 }
 
 .resources button {
-    color: white
+    color: #343333;
 }

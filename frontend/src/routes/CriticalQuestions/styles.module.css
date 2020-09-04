@@ -11,7 +11,7 @@
 }
 
 div::before {
-  border-bottom: 1px solid white !important;
+  border-bottom: 1px solid #343333 !important;
 }
 
 .grid-3>div {
@@ -33,7 +33,7 @@ div::before {
 }
 
 .root label {
-  color: white;
+  color: #343333;
   width: max-content;
   font-size: 14px;
 }
@@ -43,7 +43,7 @@ div::before {
 }
 
 .root div {
-  color: white;
+  color: #343333;
 }
 
 .root .MuiFormControl-root {
@@ -84,7 +84,7 @@ div::before {
 
 .location-wrapper ul {
   width: calc(90vw - 16px);
-  background: #49494c;
+  background: #ffffff;
   padding: 0
 }
 
@@ -98,7 +98,7 @@ div::before {
 }
 
 .contact button {
-  color: #ffffff7a;
+  color: #0000007a;
   margin: 1.2rem 0.5rem 0 0;
 }
 
@@ -114,5 +114,5 @@ div::before {
 }
 
 .pop button {
-  color: rgb(255 255 255 / 61%);
+  color: #343333;
 }

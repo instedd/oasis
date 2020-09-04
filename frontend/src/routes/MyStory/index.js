@@ -48,8 +48,9 @@ export default function MyStory(props) {
         value={myStory}
         onChange={handleChange}
         className={classNames("textarea", styles.textarea)}
-        variant="outlined"
+        variant="filled"
       />
+
       <Fab
         style={{
           background: "#EA2027",

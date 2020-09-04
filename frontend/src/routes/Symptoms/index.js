@@ -36,13 +36,13 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   input: {
-    color: "white",
+    color: "#343333",
     "&:before": {
       borderBottom: "1px solid white",
     },
   },
   label: {
-    color: "white",
+    color: "#343333",
     width: "max-content",
     fontSize: 15,
   },
