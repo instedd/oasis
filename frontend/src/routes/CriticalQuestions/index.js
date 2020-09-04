@@ -52,9 +52,11 @@ function CriticalQuestions(props) {
   const [validEmails, setValidEmails] = useState([]);
 
   let nextPage;
-  const { story, status, travels, closeContacts } = useSelector(
-    (state) => state.story
-  );
+  let myStory;
+  const { story, status, travels, closeContacts } = useSelector((state) => {
+    myStory = state.story.myStory;
+    return state.story;
+  });
 
   // the number of times that the user clicks next
   const [next_count, setNextCount] = useState(0);
@@ -174,6 +176,8 @@ function CriticalQuestions(props) {
         var valid_travels = recentTravels.filter(
           (travel) => travel.location && travel.dateOfReturn
         );
+
+        story.myStory = myStory;
 
         const dto = {
           story,
