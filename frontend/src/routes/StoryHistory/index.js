@@ -27,10 +27,13 @@ const useStyles = makeStyles((theme) => ({
   secondaryTail: {
     backgroundColor: theme.palette.secondary.main,
   },
-  root: {
-    "& > *": {
-      margin: theme.spacing(1),
-    },
+  // root: {
+  //   "& > *": {
+  //     margin: theme.spacing(1),
+  //   },
+  // },
+  content: {
+    width: "90vh",
   },
 }));
 
@@ -59,14 +62,14 @@ export default function StoryHistory(props) {
 
   return (
     <>
+      <h1 className="title">MY COVID-19 STORY</h1>
+      <Button variant="contained" color="secondary" onClick={handleClick}>
+        Add New Story
+      </Button>
       <div className={classNames("root", styles.root)}>
-        <h1 className="title">MY COVID-19 STORY</h1>
-        <Button variant="contained" color="secondary" onClick={handleClick}>
-          Add New Story
-        </Button>
         <Timeline>
           {stories.reverse().map((my_story, i) => (
-            <TimelineItem>
+            <TimelineItem key={i}>
               <TimelineOppositeContent>
                 <Typography variant="h6" component="h1">
                   {my_story.createdAt}
@@ -76,11 +79,11 @@ export default function StoryHistory(props) {
                 <TimelineDot></TimelineDot>
                 <TimelineConnector />
               </TimelineSeparator>
-              <TimelineContent>
-                <Paper elevation={3} className={classes.paper}>
-                  <Typography color="white">{my_story.text}</Typography>
-                </Paper>
-              </TimelineContent>
+              <div className={classes.content}>
+                <TimelineContent>
+                  <Typography>{my_story.text}</Typography>
+                </TimelineContent>
+              </div>
             </TimelineItem>
           ))}
         </Timeline>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { TextField, Fab } from "@material-ui/core";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
+import HomeIcon from "@material-ui/icons/Home";
 import classNames from "classnames";
 import styles from "./styles.module.css";
 import { useSelector, useDispatch } from "react-redux";
@@ -61,6 +62,15 @@ export default function MyStory(props) {
         className="fab back-btn"
       >
         <ArrowLeftIcon />
+      </Fab>
+      <Fab
+        style={{ background: "#EA2027" }}
+        aria-label="Go to next page"
+        size="medium"
+        className="fab next-btn"
+        onClick={() => props.history.push(paths.dashboard)}
+      >
+        <HomeIcon />
       </Fab>
     </>
   );
