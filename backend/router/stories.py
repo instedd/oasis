@@ -179,7 +179,10 @@ def create_my_story(
     db: Session = Depends(get_db),
 ):
     check_permissions(current_story, story_id)
-    return crud.create_my_story(db, my_story=my_story)
+    db_my_story = crud.create_my_story(db, my_story=my_story)
+    crud.update_latest_my_story(db, current_story, db_my_story.text)
+
+    return db_my_story
 
 
 @router.put("/{story_id}/my_stories", response_model=schemas.MyStory)
@@ -190,7 +193,10 @@ def update_my_story(
     db: Session = Depends(get_db),
 ):
     check_permissions(current_story, story_id)
-    return crud.update_my_story(db, my_story=my_story)
+    db_my_story = crud.update_my_story(db, my_story=my_story)
+    crud.update_latest_my_story(db, current_story, db_my_story.text)
+
+    return db_my_story
 
 
 @router.delete(

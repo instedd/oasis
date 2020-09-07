@@ -80,12 +80,12 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     }).then((storiesData) => {
       setStats({
         userNum: storiesData.length,
-        storyNum: storiesData.filter((story) => story.myStory).length,
+        storyNum: storiesData.filter((story) => story.latestMyStory).length,
       });
     });
   }, []);
 
-  const hasMyStory = story && story.myStory;
+  const hasMyStory = story && story.latestMyStory;
   const actions = [
     {
       name: "MY STORIES", //hasMyStory ? "UPDATE MY STORY" : "ADD MY STORY",
