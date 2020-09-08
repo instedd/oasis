@@ -54,7 +54,6 @@ export default function StoryHistory(props) {
       });
     }
   }, [dispatch, story]);
-  //console.log(story);
   console.log(stories);
   const handleClick = () => {
     props.history.push(paths.myStory);

@@ -78,9 +78,10 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     api(`stories/all`, {
       method: "GET",
     }).then((storiesData) => {
+      console.log(storiesData);
       setStats({
         userNum: storiesData.length,
-        storyNum: storiesData.filter((story) => story.myStory).length,
+        storyNum: storiesData.filter((story) => story.latestMyStory).length,
       });
     });
   }, []);

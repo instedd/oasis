@@ -13,14 +13,6 @@ export default function MyStory(props) {
   const { story } = useSelector((state) => state.story);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (!story || !story["myStory"]) {
-      setMyStory("");
-    } else {
-      setMyStory(story["myStory"]);
-    }
-  }, [dispatch, story]);
-
   const handleChange = (event) => {
     setMyStory(event.target.value);
   };
