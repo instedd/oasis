@@ -593,7 +593,7 @@ export default function Map(props, { draggable = true }) {
       // create a HTML element for each feature
       var el = document.createElement("div");
       el.className = "marker";
-      var myStory = marker.properties.myStory;
+      var myStory = marker.properties.latestMyStory;
 
       content = "";
       //add user story if has any
@@ -620,9 +620,7 @@ export default function Map(props, { draggable = true }) {
     // Add current user's marker
     // create the popup
     const date = userStory.createdAt;
-    const story = userStory.myStory;
-    console.log(story);
-    console.log(userStory);
+    const story = userStory.latestMyStory;
     var content = '<p style="font-size: 18px;line-height: 18px;">';
     if (story) {
       content = content + '"' + story + '"</p>';
