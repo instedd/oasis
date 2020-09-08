@@ -107,19 +107,29 @@ export default function Map(props, { draggable = true }) {
 
     addLegend(data);
 
-    let loaded = false;
-    if (map.loaded()) {
-      load(map, worldData, usStatesData, usCountyData, sdPosData);
-      loaded = true;
-    } else {
-      map.once("load", function () {
-        loaded = true;
-        load(map, worldData, usStatesData, usCountyData, sdPosData);
-      });
-    }
+    tryToLoad(map, worldData, usStatesData, usCountyData, sdPosData);
+  };
 
-    if (!loaded) {
+  const tryToLoad = async (
+    map,
+    worldData,
+    usStatesData,
+    usCountyData,
+    sdPosData
+  ) => {
+    const trueloading = () => {
+      map.actuallyLoaded = true;
       load(map, worldData, usStatesData, usCountyData, sdPosData);
+    };
+
+    if (map.loaded() || map.actuallyLoaded) {
+      trueloading();
+    } else if (!map.areTilesLoaded()) {
+      map.once("data", trueloading);
+    } else if (!map.isStyleLoaded()) {
+      map.once("styledata", trueloading);
+    } else {
+      trueloading();
     }
   };
 
