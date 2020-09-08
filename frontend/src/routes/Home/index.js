@@ -44,13 +44,11 @@ export default function Home(props, { draggableMapRoutes = [] }) {
   return (
     <>
       <div className={classNames("home", styles.home)}>
-        <h1 className="title">
-          We want to learn from your experience to stop the pandemic.
-        </h1>
+        <h1 className="title">Share your pandemic experience!</h1>
         <div>
           <TextField
             id="outlined-multiline-static"
-            placeholder="Everyone have been affected by covid in some way. We all have a covid story, share yours!"
+            placeholder="COVID-19 has affected everyone. Sick or heathy, we've all had a Pandemic experience. Whether illness, isolation or innovation, put your story on the map, see how you compare to others, share new insights, join your planet"
             multiline
             rowsMax={10}
             value={myStory}
@@ -59,13 +57,11 @@ export default function Home(props, { draggableMapRoutes = [] }) {
             variant="filled"
           />
           <Button
-            onClick={() =>
-              props.history.push(paths.onboard, { onboard: false })
-            }
+            onClick={() => props.history.push(paths.signIn, { onboard: false })}
             className={classNames("skipBtn", styles.skipBtn)}
             style={{ visibility: visibility }}
           >
-            skip and continue as guest
+            skip
           </Button>
         </div>
         <div className={classNames("btnGroup", styles.btnGroup)}>
