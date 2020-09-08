@@ -70,12 +70,30 @@ class StoryCreate(BaseModel):
     longitude: float = None
 
 
+class MyStoryCreate(BaseModel):
+    text: str
+    story_id: int
+
+
+class MyStoryUpdate(MyStoryCreate):
+    id: int
+
+
+class MyStory(MyStoryUpdate):
+    updated_at: date
+    created_at: date
+
+    class Config:
+        orm_mode = True
+
+
 class Story(StoryCreate):
     id: int
     token: str = None
     user: User = None
     travels: List[Travel] = []
     close_contacts: List[CloseContact] = []
+    latest_my_story: str = None
 
     class Config:
         orm_mode = True
@@ -102,23 +120,6 @@ class StorySymptomCreate(BaseModel):
 
 class StorySymptom(StorySymptomCreate):
     id: int
-
-    class Config:
-        orm_mode = True
-
-
-class MyStoryCreate(BaseModel):
-    text: str
-    story_id: int
-
-
-class MyStoryUpdate(MyStoryCreate):
-    id: int
-
-
-class MyStory(MyStoryUpdate):
-    updated_at: date
-    created_at: date
 
     class Config:
         orm_mode = True

@@ -149,3 +149,9 @@ def get_all_my_stories(db: Session):
     )
 
     return db_my_stories
+
+
+def update_latest_my_story(db: Session, story: schemas.Story, my_story):
+    story.latest_my_story = my_story
+    db.add(story)
+    db.commit()
