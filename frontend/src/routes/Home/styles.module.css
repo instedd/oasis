@@ -54,10 +54,11 @@
 }
 
 .btnGroup {
-    width: 100%;
+    width: fit-content;
     display: flex;
-    justify-content: space-evenly;
-    margin-top: 14px;
+    flex-direction: column;
+    text-align: center;
+    margin: 2rem auto 0 auto;
 }
 
 .btnGroup button {

@@ -19,7 +19,7 @@ export default function MyStory(props) {
             onClick={() => props.history.push(paths.signIn)}
             variant="extended"
           >
-            LOGIN AND UPDATE MYSTORY
+            SIGN IN AND UPDATE MYSTORY
           </Fab>
           <Fab
             style={{ background: "#9206FF", color: "white" }}
