@@ -56,6 +56,7 @@ export default function MyStory(props) {
     <>
       <div className={styles.myStory}>
         {prompt}
+        {termsAndConditions}
         <div className={styles.btnGroup}>
           <Fab
             style={{ background: "#0559FD", color: "white" }}
@@ -82,7 +83,6 @@ export default function MyStory(props) {
             continue as guest
           </Button>
         </div>
-        {termsAndConditions}
       </div>
     </>
   );
