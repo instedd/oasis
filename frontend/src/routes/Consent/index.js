@@ -1,10 +1,16 @@
 import React from "react";
-import { Fab, Button } from "@material-ui/core";
+import { Fab, Button, Checkbox } from "@material-ui/core";
 import paths from "routes/paths";
 import styles from "./styles.module.css";
+import Pop from "components/PopUp";
+import Text from "../../text.json";
 
 export default function MyStory(props) {
+  const texts = Text["Terms and Conditions"].texts;
+  const listIndex = Text["Terms and Conditions"].listIndex;
+  const linkIndex = Text["Terms and Conditions"].linkIndex;
   const from = props.history.location.state.from;
+
   const prompt =
     from === "shareBtn" ? (
       <h1 className="title">
@@ -12,7 +18,40 @@ export default function MyStory(props) {
         information about yourself?
       </h1>
     ) : null;
-  console.log(props.history.location.state.from);
+
+  const termsAndConditions = (
+    <div className={styles.termsWrapper}>
+      <Checkbox
+        id="checkbox"
+        style={{ color: "white", padding: "0px 2px" }}
+        onChange={(e) => {
+          if (e.target.checked) {
+            var warning = document.getElementById("warning");
+            warning.style.display = "none";
+          }
+        }}
+      />
+      <Pop
+        label={<span className={styles.terms}> Terms and Conditions</span>}
+        title={<h2 style={{ textAlign: "center" }}>Terms and Conditions</h2>}
+        texts={texts}
+        linkIndex={linkIndex}
+        listIndex={listIndex}
+      />
+      <div id="warning" className={styles.warning}>
+        Please read the Terms & Conditions
+      </div>
+    </div>
+  );
+
+  function handleClick(path) {
+    if (document.getElementById("checkbox").checked) {
+      props.history.push(path);
+    } else {
+      var warning = document.getElementById("warning");
+      warning.style.display = "block";
+    }
+  }
   return (
     <>
       <div className={styles.myStory}>
@@ -22,7 +61,7 @@ export default function MyStory(props) {
             style={{ background: "#0559FD", color: "white" }}
             aria-label="add"
             size="medium"
-            onClick={() => props.history.push(paths.signIn)}
+            onClick={() => handleClick(paths.signIn)}
             variant="extended"
           >
             {from === "shareBtn" ? "SIGN IN AND UPDATE MYSTORY" : "SIGN IN"}
@@ -31,18 +70,19 @@ export default function MyStory(props) {
             style={{ background: "#9206FF", color: "white" }}
             aria-label="add"
             size="medium"
-            onClick={() => props.history.push(paths.signUp)}
+            onClick={() => handleClick(paths.signUp)}
             variant="extended"
           >
             SIGN UP
           </Fab>
+          <Button
+            className={styles.skipBtn}
+            onClick={() => handleClick(paths.onboard, { onboard: false })}
+          >
+            continue as guest
+          </Button>
         </div>
-        <Button
-          className={styles.skipBtn}
-          onClick={() => props.history.push(paths.onboard, { onboard: false })}
-        >
-          continue as guest
-        </Button>
+        {termsAndConditions}
       </div>
     </>
   );

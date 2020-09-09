@@ -17,11 +17,17 @@
     display: flex;
 }
 
+.textarea textarea {
+    font-size: 14px;
+    line-height: 25px;
+    height: inherit;
+}
+
 .textarea>div {
     height: 100%;
     color: white;
     align-items: flex-start;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.7);
 }
 
 .home h1 {
@@ -33,7 +39,7 @@
 }
 
 .home {
-    width: 35%;
+    width: 30%;
     padding-left: 4rem;
     text-align: left;
     margin: auto 0;
@@ -47,22 +53,21 @@
     position: absolute;
     background: #00000082;
     height: 100vh;
-    width: calc( 35% + 8rem);
+    width: calc( 30% + 8rem);
     top: 0;
     left: 0;
     z-index: -1;
 }
 
 .btnGroup {
-    width: fit-content;
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    text-align: center;
-    margin: 2rem auto 0 auto;
+    justify-content: space-evenly;
+    margin-top: 14px;
 }
 
 .btnGroup button {
-    width: 200px !important;
+    width: 190px !important;
     height: 50px !important;
     border-radius: 50px !important;
     font-size: 14px;

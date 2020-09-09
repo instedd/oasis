@@ -25,6 +25,7 @@
   font-weight: 500;
   text-align: left;
   font-size: 28px;
+  padding-bottom: 1rem
 }
 
 .btnGroup {
@@ -32,7 +33,7 @@
   flex-direction: column;
   justify-content: space-evenly;
   width: 280px;
-  height: 200px;
+  height: 250px;
   margin: auto;
 }
 
@@ -46,5 +47,21 @@
 
 .skipBtn {
   color: #ffffff80 !important;
-  float: right;
+}
+
+.warning {
+  color: red;
+  font-size: 12px;
+  display: none;
+}
+
+.termsWrapper button {
+  border-radius: 0
+}
+
+.terms {
+  color: white;
+  font-size: 16px;
+  border-bottom: 1px solid white;
+  font-weight: 900;
 }
