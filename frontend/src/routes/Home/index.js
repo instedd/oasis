@@ -38,7 +38,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
   const handleSubmit = (event, route) => {
     dispatch(setMyStory(myStory));
 
-    props.history.push(route);
+    props.history.push(route, { from: "shareBtn" });
   };
 
   return (
@@ -70,7 +70,9 @@ export default function Home(props, { draggableMapRoutes = [] }) {
             SHARE MY STORY
           </Fab>
           <Button
-            onClick={() => props.history.push(paths.consent)}
+            onClick={() =>
+              props.history.push(paths.consent, { from: "skipBtn" })
+            }
             className={classNames("skipBtn", styles.skipBtn)}
             style={{ visibility: visibility }}
           >
