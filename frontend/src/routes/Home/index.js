@@ -38,7 +38,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
   const handleSubmit = (event, route) => {
     dispatch(setMyStory(myStory));
 
-    props.history.push(route);
+    props.history.push(route, { from: "shareBtn" });
   };
 
   return (
@@ -56,17 +56,10 @@ export default function Home(props, { draggableMapRoutes = [] }) {
             className={classNames("textarea", styles.textarea)}
             variant="filled"
           />
-          <Button
-            onClick={() => props.history.push(paths.signIn, { onboard: false })}
-            className={classNames("skipBtn", styles.skipBtn)}
-            style={{ visibility: visibility }}
-          >
-            skip
-          </Button>
         </div>
         <div className={classNames("btnGroup", styles.btnGroup)}>
           <Fab
-            style={{ background: "#0559FD", color: "white" }}
+            style={{ background: "#9206FF", color: "white" }}
             aria-label="add"
             size="medium"
             onClick={(e) => handleSubmit(e, paths.consent)}
@@ -74,15 +67,15 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           >
             SHARE MY STORY
           </Fab>
-          <Fab
-            style={{ background: "#9206FF", color: "white" }}
-            aria-label="add"
-            size="medium"
-            onClick={(e) => handleSubmit(e, paths.signUp)}
-            variant="extended"
+          <Button
+            onClick={() =>
+              props.history.push(paths.consent, { from: "skipBtn" })
+            }
+            className={classNames("skipBtn", styles.skipBtn)}
+            style={{ visibility: visibility }}
           >
-            LEARN MORE
-          </Fab>
+            skip and continue
+          </Button>
         </div>
       </div>
       <div className={classNames("background", styles.background)} />

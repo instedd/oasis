@@ -32,8 +32,8 @@ export default function Map(props, { draggable = true }) {
 
   const [map, setMap] = useState(null);
   const [location, setLocation] = useState({
-    lng: 0,
-    lat: 0,
+    lng: -117.1611,
+    lat: 32.7157,
   });
   const [legendRanges, setLegendRanges] = useState([]);
 
