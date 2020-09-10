@@ -99,21 +99,23 @@ def build_new_db_row(row, now, commit: str):
     return new_row
 
 
-def add_data(db: Session, path: str, commit_hex: str):
+# def add_data(db: Session, path: str, commit_hex: str):
+def add_data(db: Session, df, commit_hex):
     """
     This function adds a set of data to the database without checking for
     duplicate data, time limit, etc. DOES NOT COMMIT OR ROLLBACK. DOES NOT
     HANDLE EXCEPTIONS - ALL OF THIS MUST BE DONE BY CALLER
     """
     now = datetime.now().timestamp()
-    df = pd.read_csv(path, dtype=str)
-    df = df[df["fips"].notna()]
+    # df = pd.read_csv(path, dtype=str)
+    # df = df[df["fips"].notna()]
 
     for indx, row in df.iterrows():
         db.add(build_new_db_row(row, now, commit_hex))
 
 
-def seed(db: Session = Depends(get_db), fake_date=None):
+# def seed(db: Session = Depends(get_db), fake_date=None):
+def load_all_nyt_data(fake_date=None):
     """
     Replaces the contents of the existing NytLiveCounty database with the
     last 14 days of data from the NYT github repo
@@ -122,52 +124,68 @@ def seed(db: Session = Depends(get_db), fake_date=None):
     database assuming that today is fake_date - type is datetime
     """
     global STALE_DATE
+
+    # Check if repo needs to be pulled, otherwise make sure it's on master
+    check_and_reset_repo()
+
+    # Initialize repo interface
+    repo = Repo("covid-19-data")
+
+    # Set current commit
+    cmt = repo.heads.master.commit
+
+    # If testing, crawl back in time to fake date
+    if fake_date is not None:
+        # cmt_date = pytz.UTC.localize(cmt.authored_datetime)
+        while cmt.authored_datetime > pytz.UTC.localize(fake_date):
+            cmt = cmt.parents[0]  # Assumes no branchpoints :/
+        stale_date = datetime.timestamp(fake_date) - DB_AGE_LIMIT
+        STALE_DATE = get_day_from_ts(stale_date)
+
+    # Define a function to get a timestamp from a git commit
+    def get_ts(commit):
+        return commit.authored_datetime.timestamp()
+
+    # Loop and load data
+    all_records = []  # list of (commit hex, dataframe)
+    while get_day_from_ts(get_ts(cmt)) > STALE_DATE:
+        # Checkout data
+        subprocess.call("rm -f /app/covid-19-data/.git/index.lock", shell=True)
+        subprocess.call(
+            f"cd covid-19-data && git checkout -f {cmt.hexsha} && cd ../",
+            shell=True,
+        )
+
+        # Load data
+        df = pd.read_csv("covid-19-data/live/us-counties.csv", dtype=str)
+        df = df[df["fips"].notna()]
+
+        # Add to all_records
+        all_records.append((cmt.hexsha, df))
+
+        # Set pointer to next commit
+        yesterday = get_day_from_ts(get_ts(cmt)) - 1
+        while get_day_from_ts(get_ts(cmt)) != yesterday:
+            cmt = cmt.parents[0]  # Assumes no branchpoints :/
+
+    return all_records
+
+
+def populate_nyt_data(records, db: Session = Depends(get_db)):
+    # Add data to database
     try:
         # Clear existing database
         db.query(models.NytLiveCounty).delete()
 
-        # Check if repo needs to be pulled otherwise make sure it's on master
-        check_and_reset_repo()
-
-        # Initialize repo object
-        repo = Repo("covid-19-data")
-
-        # Set current commit
-        cmt = repo.heads.master.commit
-
-        # If testing, crawl back in time to fake date
-        if fake_date is not None:
-            # cmt_date = pytz.UTC.localize(cmt.authored_datetime)
-            while cmt.authored_datetime > pytz.UTC.localize(fake_date):
-                cmt = cmt.parents[0]  # Assumes no branchpoints :/
-            stale_date = datetime.timestamp(fake_date) - DB_AGE_LIMIT
-            STALE_DATE = get_day_from_ts(stale_date)
-
-        def get_ts(commit):
-            return commit.authored_datetime.timestamp()
-
-        while get_day_from_ts(get_ts(cmt)) > STALE_DATE:
-            # Checkout data
-            subprocess.call(
-                "rm -f /app/covid-19-data/.git/index.lock", shell=True
-            )
-            subprocess.call(
-                f"cd covid-19-data && git checkout -f {cmt.hexsha} && cd ../",
-                shell=True,
-            )
-
-            # Load data
-            add_data(db, "covid-19-data/live/us-counties.csv", cmt.hexsha)
-
-            # Select next data to load
-            yesterday = get_day_from_ts(get_ts(cmt)) - 1
-            while get_day_from_ts(get_ts(cmt)) != yesterday:
-                cmt = cmt.parents[0]  # Assumes no branchpoints :/
+        # Add records to db
+        for record in records:
+            add_data(db, record[1], record[0])
 
         db.commit()
 
     except Exception:
         traceback.print_exc()
+        print("ABANDONING NYT DATA POPULATION")
         db.rollback()
 
 
@@ -204,6 +222,7 @@ async def update(db: Session):
 
         # Load data
         df = pd.read_csv("covid-19-data/live/us-counties.csv", dtype=str)
+        df = df[df["fips"].notna()]
 
         for indx, row in df.iterrows():
             db.add(build_new_db_row(row, now, cmt_hex))
