@@ -7,10 +7,7 @@ export default function MyStory(props) {
   return (
     <>
       <div className={styles.myStory}>
-        <h1 className="title">
-          We will put your story on the map, would you like to provide us more
-          information about yourself?
-        </h1>
+        <h1 className="title">PUT YOUR STORY ON THE MAP</h1>
         <div className={styles.btnGroup}>
           <Fab
             style={{ background: "#0559FD", color: "white" }}
