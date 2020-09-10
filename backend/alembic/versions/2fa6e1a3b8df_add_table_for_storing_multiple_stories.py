@@ -34,7 +34,7 @@ def upgrade():
     # data migration: insert old stories into the new my_stories table
     op.execute(
         "INSERT INTO my_stories (story_id, text, updated_at, created_at) "
-        + "SELECT stories.id, stories.my_story, GETDATE(), GETDATE() "
+        + "SELECT stories.id, stories.my_story, NOW(), NOW() "
         + "FROM stories WHERE stories.my_story <> ''"
     )
 
