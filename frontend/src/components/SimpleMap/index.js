@@ -407,8 +407,17 @@ export default function Map(props, { draggable = true }) {
 
     const expression = ["match", ["to-string", ["get", "FIPS"]]];
     countyData.forEach(function (row) {
-      expression.push(row.fips, getStateColor(row.group));
+      if (typeof row.fips === "number" || typeof row.fips === "string") {
+        if (!expression.includes(row.fips)) {
+          expression.push(row.fips, getStateColor(row.group));
+        } else {
+          console.log("There is a duplicate fips");
+        }
+      } else {
+        console.log("The fips is not a number or string");
+      }
     });
+
     expression.push("rgba(0,0,0,0)"); // Last value is the default, used where there is no data
 
     map.addLayer(
