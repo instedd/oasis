@@ -44,9 +44,9 @@ export default function MyStory(props) {
     </div>
   );
 
-  function handleClick(path) {
+  function handleClick(path, onboard) {
     if (document.getElementById("checkbox").checked) {
-      props.history.push(path);
+      props.history.push(path, { onboard: onboard });
     } else {
       var warning = document.getElementById("warning");
       warning.style.display = "block";
@@ -78,7 +78,7 @@ export default function MyStory(props) {
           </Fab>
           <Button
             className={styles.skipBtn}
-            onClick={() => handleClick(paths.onboard, { onboard: false })}
+            onClick={() => handleClick(paths.onboard, false)}
           >
             continue as guest
           </Button>
