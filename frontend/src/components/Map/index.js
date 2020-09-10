@@ -277,11 +277,11 @@ export default function Map(props, { draggable = true }) {
 
   const getColor = (group) => {
     if (group === 0.1) {
-      return `rgba(${0.4 * 255}, 0, 0, 1)`;
+      return `rgba(${0.25 * 255}, 0, 0, 1)`;
     }
 
     if (group === 0.2 || group === 0.3) {
-      return `rgba(${0.5 * 255}, 0, 0, 1)`;
+      return `rgba(${0.45 * 255}, 0, 0, 1)`;
     }
 
     if (group === 0.4 || group === 0.5) {
@@ -292,7 +292,19 @@ export default function Map(props, { draggable = true }) {
   };
 
   const getStateColor = (group) => {
-    return `rgba(${(group - 0.15) * 255}, 10, 12, 1)`;
+    if (group === 0.1) {
+      return `rgba(${0.15 * 255}, 20, 20, 1)`;
+    }
+
+    if (group === 0.2 || group === 0.3) {
+      return `rgba(${0.3 * 255}, 20, 20, 1)`;
+    }
+
+    if (group === 0.4 || group === 0.5) {
+      return `rgba(${0.45 * 255}, 20, 20, 1)`;
+    }
+
+    return `rgba(${(group - 0.15) * 255}, 20, 20, 1)`;
   };
 
   const addWorldLayer = async (map, data) => {
