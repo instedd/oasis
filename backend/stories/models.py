@@ -33,6 +33,7 @@ class Story(Base):
     spam = Column(Integer)
     latitude = Column(Numeric(10, 7))
     longitude = Column(Numeric(10, 7))
+    my_story = Column(Text)
     latest_my_story = Column(Text)
 
     user = relationship("User", uselist=False, back_populates="story")
