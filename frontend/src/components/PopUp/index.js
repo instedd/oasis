@@ -31,11 +31,11 @@ export default function Pop({ label, title, texts, listIndex, linkIndex }) {
         open={open}
         anchorEl={anchorEl}
         anchorOrigin={{
-          vertical: "center",
+          vertical: "bottom",
           horizontal: "center",
         }}
         transformOrigin={{
-          vertical: "center",
+          vertical: "bottom",
           horizontal: "center",
         }}
         onClose={handleClose}
