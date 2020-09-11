@@ -13,3 +13,4 @@ requests
 pandas
 jenkspy
 sigfig
+GitPython

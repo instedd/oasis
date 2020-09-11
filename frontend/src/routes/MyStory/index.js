@@ -37,7 +37,11 @@ export default function MyStory(props) {
         variant="outlined"
       />
       <Fab
-        style={{ background: "#EA2027", marginTop: "1.5rem" }}
+        style={{
+          background: "#EA2027",
+          width: 200,
+          margin: "1.5rem auto 0 auto",
+        }}
         aria-label="add"
         size="medium"
         className="fab"

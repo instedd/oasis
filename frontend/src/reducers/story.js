@@ -11,6 +11,7 @@ import {
   SUBMIT_TRAVELS,
   SUBMIT_CLOSE_CONTACTS,
   SUBMIT_CLOSE_CONTACTS_START,
+  SET_MY_STORY,
   SUBMIT_MY_STORY,
 } from "../actions/types";
 
@@ -19,6 +20,7 @@ const initialState = {
   story: null,
   travels: [],
   closeContacts: [],
+  myStory: "",
 };
 
 const story = (state = initialState, action) => {
@@ -91,6 +93,11 @@ const story = (state = initialState, action) => {
       return {
         ...state,
         ...action.payload,
+      };
+    case SET_MY_STORY:
+      return {
+        ...state,
+        myStory: action.payload,
       };
     default:
       return state;

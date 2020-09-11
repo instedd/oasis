@@ -29,7 +29,9 @@ const statusMapping = {
 
 function Dashboard(props, { draggableMapRoutes = [] }) {
   const [open, setOpen] = useState(false);
-  const { story, status } = useSelector((state) => state.story);
+  const { myStory, story, status } = useSelector((state) => {
+    return state.story;
+  });
   let location = useLocation();
   const [draggableMap, setDraggableMap] = useState(false);
   const [expanded, setExpanded] = useState(
@@ -46,8 +48,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       setDraggableMap(draggableMapRoutes.includes(location.pathname));
     }
   }, [location, draggableMap, setDraggableMap, draggableMapRoutes]);
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!story) dispatch(fetchStory());
@@ -94,7 +94,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       classes: "MuiFab-extended",
     },
     {
-      name: "DAILY ASSESSMENT",
+      name: "UPDATE MY STATUS",
       href: paths.onboard,
       state: { onboard: true },
       classes: classNames("MuiFab-extended assessment", styles.assessment),

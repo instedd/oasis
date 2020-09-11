@@ -10,6 +10,9 @@ from starlette.templating import Jinja2Templates
 from router import api
 from auth.main import NotFoundException
 
+import sqlalchemy
+from NytLiveCounty import crud
+
 
 async def homepage(request, exec):
     template = "index.html"
@@ -40,6 +43,25 @@ app.add_middleware(
 app.include_router(api.router, prefix="/api")
 
 app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
+
+# Populate NYT database
+SQLALCHEMY_DATABASE_URL = (
+    f"mysql+pymysql://{os.environ['DATABASE_USER']}"
+    f":{os.environ['DATABASE_PASSWORD']}"
+    f"@{os.environ['DATABASE_HOST']}/{os.environ['DATABASE_NAME']}"
+)
+
+engine = sqlalchemy.create_engine(SQLALCHEMY_DATABASE_URL)
+Session = sqlalchemy.orm.sessionmaker(
+    autocommit=False, autoflush=False, bind=engine
+)
+db = Session()
+
+# crud.seed(db)
+nyt_records = crud.load_all_nyt_data()
+crud.populate_nyt_data(nyt_records, db)
+
+# db.close()
 
 
 @app.exception_handler(NotFoundException)

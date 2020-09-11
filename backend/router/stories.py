@@ -1,5 +1,4 @@
 from typing import List
-import os
 
 from fastapi import Depends, APIRouter, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
@@ -55,8 +54,8 @@ async def create_story(
             "Authorization",
             value=f"Bearer {access_token}",
             httponly=True,
-            max_age=os.environ["COOKIE_EXPIRATION_SECONDS"],
-            expires=os.environ["COOKIE_EXPIRATION_SECONDS"],
+            # max_age=os.environ["COOKIE_EXPIRATION_SECONDS"],
+            # expires=os.environ["COOKIE_EXPIRATION_SECONDS"],
         )
     return response
 
