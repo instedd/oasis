@@ -57,7 +57,9 @@ Session = sqlalchemy.orm.sessionmaker(
 )
 db = Session()
 
-crud.seed(db)
+# crud.seed(db)
+nyt_records = crud.load_all_nyt_data()
+crud.populate_nyt_data(nyt_records, db)
 
 # db.close()
 
