@@ -22,8 +22,8 @@ mapboxgl.accessToken =
   "pk.eyJ1Ijoic3RlNTE5IiwiYSI6ImNrOHc1aHlvYTB0N2ozam51MHFiazE3bmcifQ.AHtFuA-pAqau_AJIy-hzOg";
 
 export default function Map(props, { draggable = true }) {
-  const countryMinZoom = 3.5;
-  const stateMaxZoom = 9;
+  const countryMinZoom = 3;
+  const stateMaxZoom = 4;
   const initialZoom = 1;
   const focusZoom = 8;
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
@@ -77,14 +77,36 @@ export default function Map(props, { draggable = true }) {
   const addLegend = (data) => {
     const clusters = data.clusters;
     const colorGroups = data.groups;
-    const newRanges =
-      clusters &&
-      clusters.map((range, i) => {
-        return {
-          label: `${range[0].toLocaleString()} - ${range[1].toLocaleString()}`,
-          color: getColor(colorGroups[i]),
-        };
-      });
+    const newRanges = clusters && [
+      {
+        label: `${clusters[0][0].toLocaleString()} - ${clusters[0][1].toLocaleString()}`,
+        color: getLegendColor(colorGroups[3]),
+      },
+      {
+        label: `${clusters[1][0].toLocaleString()} - ${clusters[3][1].toLocaleString()}`,
+        color: getLegendColor(colorGroups[4]),
+      },
+      {
+        label: `${clusters[4][0].toLocaleString()} - ${clusters[5][1].toLocaleString()}`,
+        color: getLegendColor(colorGroups[5]),
+      },
+      {
+        label: `${clusters[6][0].toLocaleString()} - ${clusters[6][1].toLocaleString()}`,
+        color: getLegendColor(colorGroups[6]),
+      },
+      {
+        label: `${clusters[7][0].toLocaleString()} - ${clusters[7][1].toLocaleString()}`,
+        color: getLegendColor(colorGroups[7]),
+      },
+      {
+        label: `${clusters[8][0].toLocaleString()} - ${clusters[8][1].toLocaleString()}`,
+        color: getLegendColor(colorGroups[8]),
+      },
+      {
+        label: `${clusters[9][0].toLocaleString()} - ${clusters[9][1].toLocaleString()}`,
+        color: getLegendColor(colorGroups[9]),
+      },
+    ];
     newRanges && setLegendRanges(newRanges);
   };
 
@@ -111,33 +133,60 @@ export default function Map(props, { draggable = true }) {
     const usStatesData = data["data"]["adm1"]["US"]
       ? data["data"]["adm1"]["US"]
       : [];
+    // US data for county layer
+    const usCountyData = data["data"]["adm2"] ? data["data"]["adm2"] : [];
     // SD postal code data
-    const sdPosData = data["data"]["adm2"] ? data["data"]["adm2"] : [];
+    const sdPosData = data["data"]["adm3"] ? data["data"]["adm3"] : [];
 
     addLegend(data);
 
+    tryToLoad(map, worldData, usStatesData, usCountyData, sdPosData);
+  };
+
+  const tryToLoad = async (
+    map,
+    worldData,
+    usStatesData,
+    usCountyData,
+    sdPosData
+  ) => {
+    const trueloading = () => {
+      map.actuallyLoaded = true;
+      load(map, worldData, usStatesData, usCountyData, sdPosData);
+    };
+
+    if (map.loaded() || map.actuallyLoaded) {
+      trueloading();
+    } else if (!map.areTilesLoaded()) {
+      map.once("data", trueloading);
+    } else if (!map.isStyleLoaded()) {
+      map.once("styledata", trueloading);
+    } else {
+      trueloading();
+    }
+  };
+
+  const load = async (
+    map,
+    worldData,
+    usStatesData,
+    usCountyData,
+    sdPosData
+  ) => {
     if (worldData && worldData.length > 0) {
-      map.on("load", function () {
-        addWorldLayer(map, worldData);
-        addNonUSLayer(map, worldData);
-      });
+      addWorldLayer(map, worldData);
+      addNonUSLayer(map, worldData);
     }
 
-    if (usStatesData && usStatesData.length > 0) {
-      map.on("load", function () {
-        addUSStatesLayer(map, usStatesData);
-      });
-    }
+    if (usStatesData && usStatesData.length > 0)
+      addUSStatesLayer(map, usStatesData);
 
-    if (sdPosData && sdPosData.length > 0) {
-      map.on("load", function () {
-        addSDPostLayer(map, sdPosData);
-      });
-    }
+    if (usCountyData && usCountyData.length > 0)
+      addUSCountyLayer(map, usCountyData);
 
-    map.on("load", function () {
-      addStoryLayer(map);
-    });
+    if (sdPosData && sdPosData.length > 0) addSDPostLayer(map, sdPosData);
+
+    addStoryLayer(map);
   };
 
   const fetchUserLocation = async () => {
@@ -222,12 +271,40 @@ export default function Map(props, { draggable = true }) {
     };
   };
 
+  const getLegendColor = (group) => {
+    return `rgba(${group * 255}, 0, 0, 1)`;
+  };
+
   const getColor = (group) => {
+    if (group === 0.1) {
+      return `rgba(${0.25 * 255}, 0, 0, 1)`;
+    }
+
+    if (group === 0.2 || group === 0.3) {
+      return `rgba(${0.45 * 255}, 0, 0, 1)`;
+    }
+
+    if (group === 0.4 || group === 0.5) {
+      return `rgba(${0.6 * 255}, 0, 0, 1)`;
+    }
+
     return `rgba(${group * 255}, 0, 0, 1)`;
   };
 
   const getStateColor = (group) => {
-    return `rgba(${(group - 0.1) * 255}, 10, 12, 1)`;
+    if (group === 0.1) {
+      return `rgba(${0.15 * 255}, 20, 20, 1)`;
+    }
+
+    if (group === 0.2 || group === 0.3) {
+      return `rgba(${0.3 * 255}, 20, 20, 1)`;
+    }
+
+    if (group === 0.4 || group === 0.5) {
+      return `rgba(${0.45 * 255}, 20, 20, 1)`;
+    }
+
+    return `rgba(${(group - 0.15) * 255}, 20, 20, 1)`;
   };
 
   const addWorldLayer = async (map, data) => {
@@ -259,7 +336,7 @@ export default function Map(props, { draggable = true }) {
     );
 
     map.on("mousemove", function (e) {
-      var countries = map.queryRenderedFeatures(e.point, {
+      let countries = map.queryRenderedFeatures(e.point, {
         layers: ["world-layer"],
       });
 
@@ -320,7 +397,7 @@ export default function Map(props, { draggable = true }) {
     );
 
     map.on("mousemove", function (e) {
-      var countries = map.queryRenderedFeatures(e.point, {
+      let countries = map.queryRenderedFeatures(e.point, {
         layers: ["non-us-layer"],
       });
 
@@ -419,7 +496,7 @@ export default function Map(props, { draggable = true }) {
     // exclude states outside the 50 states
     const expression = ["match", ["get", "STATE_ID"]];
     usData.forEach(function (row) {
-      var stateID = row.name;
+      let stateID = row.name;
       if (stateID in stateToFIPS) {
         expression.push(stateToFIPS[stateID], getStateColor(row.group));
       }
@@ -445,7 +522,7 @@ export default function Map(props, { draggable = true }) {
 
     // add the information window
     map.on("mousemove", function (e) {
-      var states = map.queryRenderedFeatures(e.point, {
+      let states = map.queryRenderedFeatures(e.point, {
         layers: ["us-states-layer"],
       });
 
@@ -467,6 +544,59 @@ export default function Map(props, { draggable = true }) {
     });
   };
 
+  const addUSCountyLayer = async (map, data) => {
+    const countyData = await data;
+    // Add the source to query.
+    // https://docs.mapbox.com/mapbox-gl-js/example/queryrenderedfeatures-around-point
+    map.addSource("counties", {
+      type: "vector",
+      url: "mapbox://mapbox.82pkq93d",
+    });
+
+    const expression = ["match", ["to-string", ["get", "FIPS"]]];
+
+    countyData.forEach(function (row) {
+      expression.push(row.fips, getStateColor(row.group));
+    });
+    expression.push("rgba(0,0,0,0)"); // Last value is the default, used where there is no data
+
+    map.addLayer(
+      {
+        id: "us-counties-layer",
+        type: "fill",
+        source: "counties",
+        minzoom: stateMaxZoom,
+        maxzoom: focusZoom,
+        "source-layer": "original",
+        paint: {
+          "fill-color": expression,
+          "fill-outline-color": fillOutlineColor,
+          "fill-opacity": 1,
+        },
+      },
+      "settlement-label"
+    ); // Place polygon under these labels.
+
+    // add the information window
+    map.on("mousemove", function (e) {
+      let counties = map.queryRenderedFeatures(e.point, {
+        layers: ["us-counties-layer"],
+      });
+
+      if (counties.length > 0) {
+        const name = counties[0].properties.COUNTY;
+        const target_counties = countyData.filter(
+          (county) => counties[0].properties.FIPS.toString() === county.fips
+        );
+        const confirmed =
+          target_counties.length > 0 ? target_counties[0].confirmed : "NA";
+
+        document.getElementById("pd").innerHTML =
+          "<h2>" + name + "</h2><h3>" + confirmed + " probable cases</h3>";
+      }
+    });
+  };
+
   const addSDPostLayer = async (map, data) => {
     const sdPosData = await data;
     const geojson = postDataToGeojson(sdPosData);
@@ -481,7 +611,7 @@ export default function Map(props, { draggable = true }) {
         id: "sd-pos-layer",
         type: "circle",
         source: "sd-pos",
-        minzoom: 6,
+        minzoom: focusZoom,
         paint: {
           // Size circle radius by earthquake magnitude and zoom level
           "circle-radius": ["+", ["/", ["get", "confirmed"], 80], 3],
@@ -506,7 +636,7 @@ export default function Map(props, { draggable = true }) {
 
     // add the information window
     map.on("mousemove", function (e) {
-      var zipcodes = map.queryRenderedFeatures(e.point, {
+      let zipcodes = map.queryRenderedFeatures(e.point, {
         layers: ["sd-pos-layer"],
       });
 
@@ -523,6 +653,10 @@ export default function Map(props, { draggable = true }) {
       }
     });
   };
+
+  const storyStyle =
+    '<p style="font-size: 18px;line-height: 18px; color:black">';
+  const demographicStyle = '<p style = "line-height:0.9rem;font-size:0.9rem;">';
 
   const addCircle = (status, content) => {
     const color = status.color;
@@ -542,18 +676,33 @@ export default function Map(props, { draggable = true }) {
     return content;
   };
 
-  const popUpContent = (userStory, content) => {
-    if (userStory.age) content = content + " " + userStory.age + " years old";
-    content += userStory.myStory || userStory.age ? " user " : " User ";
+  const popUpContent = (userStory) => {
+    let content = "<p>";
+    content += storyStyle;
+    if (userStory.latestMyStory) {
+      if (userStory.latestMyStory.length > 280) {
+        content += userStory.latestMyStory.substring(0, 280);
+        content += "...";
+      } else {
+        content += userStory.latestMyStory;
+      }
+    }
+    content += "</p>";
+    if (userStory.latestMyStory)
+      content +=
+        '<hr style="height:1px;border-width:0;color:gray;background-color:gray" </hr>';
+    content += demographicStyle;
+    if (userStory.age)
+      content = content + "A " + userStory.age + " years old user";
+    else content += "A user";
     if (userStory.profession !== "")
-      content =
-        content +
-        " working in the " +
-        userStory.profession.toLowerCase() +
-        " industry ";
-    content = content + "living near " + userStory.state;
-    var date = userStory.createdAt.substring(0, 10);
-    if (userStory.myStory) content = content + " on " + date;
+      content +=
+        " working in the " + userStory.profession.toLowerCase() + " industry ";
+
+    content = content + " near " + userStory.state;
+    let date = userStory.createdAt ? userStory.createdAt.substring(0, 10) : "";
+    if (date !== "") content = content + " on " + date;
+
     content += ".</p>";
     content += '<div style="line-height:0.8rem;" class="row">';
     content = addCircle(statusMapping[userStory.sick], content);
@@ -563,10 +712,10 @@ export default function Map(props, { draggable = true }) {
   };
 
   const setHover = (marker, content, map) => {
-    var popup = new mapboxgl.Popup({
-      closeButton: false,
-      closeOnClick: false,
-      offset: 25,
+    let popup = new mapboxgl.Popup({
+      className: classNames(styles.popups),
+      closeButton: true,
+      closeOnClick: true,
     });
     popup.setHTML(content);
     const element = marker.getElement();
@@ -591,21 +740,10 @@ export default function Map(props, { draggable = true }) {
     // add markers to map
     geojson.features.forEach(function (marker) {
       // create a HTML element for each feature
-      var el = document.createElement("div");
+      let el = document.createElement("div");
       el.className = "marker";
-      var myStory = marker.properties.latestMyStory;
 
-      content = "";
-      //add user story if has any
-      if (myStory)
-        content =
-          content +
-          '<p style="font-size: 18px;line-height: 18px;">"' +
-          myStory +
-          '"</p><p style = "line-height:0.9rem;font-size:0.9rem;">- From';
-      else content += '<p style = "line-height:0.8rem;font-size:0.8rem;">';
-      content = popUpContent(marker.properties, content);
-
+      let content = popUpContent(marker.properties);
       // create the marker
       const sickStatus = marker.properties.sick;
       const currmarker = new mapboxgl.Marker({
@@ -617,15 +755,7 @@ export default function Map(props, { draggable = true }) {
       currmarker.addTo(map);
     });
 
-    // Add current user's marker
-    // create the popup
-    const date = userStory.createdAt;
-    const story = userStory.latestMyStory;
-    var content = '<p style="font-size: 18px;line-height: 18px;">';
-    if (story) {
-      content = content + '"' + story + '"</p>';
-      if (date) content = content + "<p> - on" + date + "</p>";
-    } else content += "You haven't shared your story yet! </p>";
+    const content = popUpContent(userStory);
 
     // create the marker
     if (isInRange(userStory.latitude, userStory.longitude)) {
