@@ -29,13 +29,7 @@ def test_seed_fake_date(setup):
     """
     This test case tests that the "fake_date" parameter to seed works
     """
-    records = crud.load_all_nyt_data(
-        fake_date=datetime(month=8, day=15, year=2020)
-    )
-    # for record in records:
-    #    print(record[1].iloc[0,:])
-    crud.populate_nyt_data(records, setup["db"])
-
+    crud.seed(setup["db"], fake_date=datetime(month=8, day=15, year=2020))
     max_date = setup["db"].query(func.max(models.NytLiveCounty.date)).first()
     assert max_date[0].day == 14  # 14 because newest data before 8/15 at 12am
 
@@ -45,11 +39,7 @@ def test_async_update(setup):
     Tests that the asynchronous update function correctly updates the data
     """
     # Seed old data
-    # crud.seed(setup["db"], fake_date=datetime(month=8, day=15, year=2020))
-    records = crud.load_all_nyt_data(
-        fake_date=datetime(month=8, day=15, year=2020)
-    )
-    crud.populate_nyt_data(records, setup["db"])
+    crud.seed(setup["db"], fake_date=datetime(month=8, day=15, year=2020))
 
     # Execute a query that causes an async update
     setup["app"].get("/api/data/all")
@@ -65,16 +55,6 @@ def test_async_update(setup):
     )
 
     assert max_date == today.day or max_date == yesterday.day
-
-
-def test_no_na_fips(setup):
-    """
-    This function checks that no FIPS entries are NA
-    """
-    data = json.loads(setup["app"].get("/api/data/all").content)
-    county_data = data["data"]["adm2"]
-    for county in county_data:
-        assert type(county["fips"]) == str
 
 
 # For the old NYT API - probably don't want to use
