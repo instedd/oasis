@@ -92,7 +92,8 @@ export const submitMyStory = (id, mystory) => async (dispatch) => {
   });
   dispatch({
     type: SUBMIT_MY_STORY,
-    payload: mystory,
+    // reset myStory in the state to avoid uploading more than once.
+    payload: null,
   });
 };
 

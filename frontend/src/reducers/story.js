@@ -51,7 +51,7 @@ const story = (state = initialState, action) => {
     case SUBMIT_MY_STORY:
       return {
         ...state,
-        story: { ...state.story, myStory: action.payload },
+        myStory: action.payload,
       };
     case FETCH_STORY_START:
       return {

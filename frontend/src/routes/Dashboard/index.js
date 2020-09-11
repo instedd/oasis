@@ -11,7 +11,7 @@ import { useSelector, useDispatch } from "react-redux";
 import paths from "routes/paths";
 import { sicknessStatus, testStatus } from "routes/types";
 import styles from "./styles.module.css";
-import { fetchStory } from "actions/story";
+import { fetchStory, submitMyStory } from "actions/story";
 import { getStoryResources } from "actions/resources";
 import { LOADING } from "actions/types";
 import { useLocation } from "react-router-dom";
@@ -28,6 +28,7 @@ const statusMapping = {
 };
 
 function Dashboard(props, { draggableMapRoutes = [] }) {
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const { myStory, story, status } = useSelector((state) => {
     return state.story;
@@ -52,6 +53,12 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   useEffect(() => {
     if (!story) dispatch(fetchStory());
   }, [dispatch, story]);
+
+  useEffect(() => {
+    if (story && myStory && myStory.length) {
+      dispatch(submitMyStory(story.id, myStory));
+    }
+  }, [dispatch, myStory]);
 
   const handleClick = () => {
     setOpen(!open);
