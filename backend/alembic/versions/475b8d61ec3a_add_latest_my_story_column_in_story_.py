@@ -21,6 +21,11 @@ def upgrade():
     op.add_column(
         "stories", sa.Column("latest_my_story", sa.Text(), nullable=True)
     )
+
+    op.execute(
+        "UPDATE stories SET stories.latest_my_story = stories.my_story "
+        + "WHERE stories.my_story <> ''"
+    )
     # ### end Alembic commands ###
 
 
