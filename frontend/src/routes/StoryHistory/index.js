@@ -9,7 +9,6 @@ import TimelineConnector from "@material-ui/lab/TimelineConnector";
 import TimelineContent from "@material-ui/lab/TimelineContent";
 import TimelineOppositeContent from "@material-ui/lab/TimelineOppositeContent";
 import TimelineDot from "@material-ui/lab/TimelineDot";
-import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import api from "utils";
 import { useSelector, useDispatch } from "react-redux";
@@ -27,11 +26,6 @@ const useStyles = makeStyles((theme) => ({
   secondaryTail: {
     backgroundColor: theme.palette.secondary.main,
   },
-  // root: {
-  //   "& > *": {
-  //     margin: theme.spacing(1),
-  //   },
-  // },
   content: {
     width: "90vh",
   },

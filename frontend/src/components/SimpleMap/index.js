@@ -501,16 +501,16 @@ export default function Map(props, { draggable = true }) {
   const popUpContent = (userStory) => {
     var content = "<span>";
     content += storyStyle;
-    if (userStory.myStory) {
-      if (userStory.myStory.length > 280) {
-        content += userStory.myStory.substring(0, 280);
+    if (userStory.latestMyStory) {
+      if (userStory.latestMyStory.length > 280) {
+        content += userStory.latestMyStory.substring(0, 280);
         content += "...";
       } else {
-        content += userStory.myStory;
+        content += userStory.latestMyStory;
       }
     }
     content += "</span>";
-    if (userStory.myStory)
+    if (userStory.latestMyStory)
       content +=
         '<hr style="height:1px;border-width:0;color:gray;background-color:gray" </hr>';
     content += demographicStyle;
@@ -550,6 +550,7 @@ export default function Map(props, { draggable = true }) {
   const addStoryLayer = async (map) => {
     const storiesData = await fetchStoriesData();
     const geojson = storiesToGeoJson(storiesData);
+    console.log(geojson);
 
     // Add other users' story
     map.addSource("places", {

@@ -92,7 +92,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     });
   }, []);
 
-  const hasMyStory = story && story.latestMyStory;
   const actions = [
     {
       name: "MY STORIES", //hasMyStory ? "UPDATE MY STORY" : "ADD MY STORY",
