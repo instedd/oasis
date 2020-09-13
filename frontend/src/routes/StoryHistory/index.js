@@ -10,6 +10,7 @@ import TimelineContent from "@material-ui/lab/TimelineContent";
 import TimelineOppositeContent from "@material-ui/lab/TimelineOppositeContent";
 import TimelineDot from "@material-ui/lab/TimelineDot";
 import Typography from "@material-ui/core/Typography";
+import Paper from "@material-ui/core/Paper";
 import api from "utils";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "@material-ui/core/Button";
@@ -48,36 +49,51 @@ export default function StoryHistory(props) {
       });
     }
   }, [dispatch, story]);
+
   const handleClick = () => {
     props.history.push(paths.myStory);
   };
 
   return (
     <>
-      <h1 className="title">MY COVID-19 STORY</h1>
-      <Button variant="contained" color="secondary" onClick={handleClick}>
+      <h1 className="title">MY COVID-19 STORY History</h1>
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={handleClick}
+        style={{ marginTop: "20px" }}
+      >
         Add New Story
       </Button>
-      <div className={classNames("root", styles.root)}>
+      <div
+        className={classNames("root", styles.root)}
+        style={{ marginTop: "20px", maxHeight: "60vh" }}
+      >
         <Timeline>
-          {stories.reverse().map((my_story, i) => (
-            <TimelineItem key={i}>
-              <TimelineOppositeContent>
-                <Typography variant="h6" component="h1">
-                  {my_story.createdAt}
-                </Typography>
-              </TimelineOppositeContent>
-              <TimelineSeparator>
-                <TimelineDot></TimelineDot>
-                <TimelineConnector />
-              </TimelineSeparator>
-              <div className={classes.content}>
-                <TimelineContent>
-                  <Typography>{my_story.text}</Typography>
-                </TimelineContent>
-              </div>
-            </TimelineItem>
-          ))}
+          {stories
+            .sort((a, b) => b.id - a.id)
+            .map((my_story, i) => (
+              <TimelineItem key={i}>
+                <TimelineOppositeContent>
+                  <Typography variant="h6" component="h1">
+                    {my_story.createdAt}
+                  </Typography>
+                </TimelineOppositeContent>
+                <TimelineSeparator>
+                  <TimelineDot></TimelineDot>
+                  <TimelineConnector />
+                </TimelineSeparator>
+                <div className={classes.content}>
+                  <TimelineContent>
+                    <Paper elevation={3} className={classes.paper}>
+                      <Typography style={{ textAlign: "left" }}>
+                        {my_story.text}
+                      </Typography>
+                    </Paper>
+                  </TimelineContent>
+                </div>
+              </TimelineItem>
+            ))}
         </Timeline>
         <Fab
           style={{ background: "#9206FF" }}

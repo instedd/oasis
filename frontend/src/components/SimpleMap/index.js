@@ -550,7 +550,6 @@ export default function Map(props, { draggable = true }) {
   const addStoryLayer = async (map) => {
     const storiesData = await fetchStoriesData();
     const geojson = storiesToGeoJson(storiesData);
-    console.log(geojson);
 
     // Add other users' story
     map.addSource("places", {

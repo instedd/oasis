@@ -4,22 +4,8 @@
     overflow:auto;
     -ms-overflow-style: none; 
     scrollbar-width: none;  
-    /*display:flex;*/
   }
 .root::-webkit-scrollbar {
     display: none;
   }
-  .content{
-    width:70%;
-    display:flex;
-  }
-/* .MuiPaper-root{
-  max-height: 100vh;
-    width: 100vh;
-    overflow:auto;
-    -ms-overflow-style: none; 
-    scrollbar-width: none;
-}
-.MuiPaper-root::-webkit-scrollbar {
-  display: none;
-} */
+  
