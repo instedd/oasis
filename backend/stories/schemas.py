@@ -65,26 +65,10 @@ class StoryCreate(BaseModel):
     sickness_start: str = None
     sickness_end: str = None
     close_contacts: List[CloseContact] = []
+    my_story: str = None
     spam: int = 0
     latitude: float = None
     longitude: float = None
-
-
-class MyStoryCreate(BaseModel):
-    text: str
-    story_id: int
-
-
-class MyStoryUpdate(MyStoryCreate):
-    id: int
-
-
-class MyStory(MyStoryUpdate):
-    updated_at: date
-    created_at: date
-
-    class Config:
-        orm_mode = True
 
 
 class Story(StoryCreate):
@@ -93,7 +77,6 @@ class Story(StoryCreate):
     user: User = None
     travels: List[Travel] = []
     close_contacts: List[CloseContact] = []
-    latest_my_story: str = None
 
     class Config:
         orm_mode = True

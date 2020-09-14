@@ -26,8 +26,10 @@ export default function Home(props, { draggableMapRoutes = [] }) {
 
   const handleChange = (event) => {
     if (event.target.value) {
+      console.log(true);
       setVisibility("hidden");
     } else {
+      console.log(false);
       setVisibility("visible");
     }
     updateMyStory(event.target.value);

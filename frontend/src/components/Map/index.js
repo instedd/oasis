@@ -29,10 +29,6 @@ export default function Map(props, { draggable = true }) {
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
 
   const userStory = props.userStory;
-  const latestMyStory =
-    props.latestMyStory && props.latestMyStory.length !== 0
-      ? props.latestMyStory
-      : props.userStory.latestMyStory;
   const actives = props.actives;
   const deaths = props.deaths;
   const recovered = props.recovered;
@@ -560,15 +556,7 @@ export default function Map(props, { draggable = true }) {
     const expression = ["match", ["to-string", ["get", "FIPS"]]];
 
     countyData.forEach(function (row) {
-      if (typeof row.fips === "number" || typeof row.fips === "string") {
-        if (!expression.includes(row.fips)) {
-          expression.push(row.fips, getStateColor(row.group));
-        } else {
-          console.log("There is a duplicate fips");
-        }
-      } else {
-        console.log("The fips is not a number or string");
-      }
+      expression.push(row.fips, getStateColor(row.group));
     });
     expression.push("rgba(0,0,0,0)"); // Last value is the default, used where there is no data
 
@@ -688,20 +676,19 @@ export default function Map(props, { draggable = true }) {
     return content;
   };
 
-  const popUpContent = (userStory, isUser) => {
-    let mystory = isUser ? latestMyStory : userStory.latestMyStory;
+  const popUpContent = (userStory) => {
     let content = "<p>";
     content += storyStyle;
-    if (mystory) {
-      if (mystory.length > 280) {
-        content += mystory.substring(0, 280);
+    if (userStory.myStory) {
+      if (userStory.myStory.length > 280) {
+        content += userStory.myStory.substring(0, 280);
         content += "...";
       } else {
-        content += mystory;
+        content += userStory.myStory;
       }
     }
     content += "</p>";
-    if (mystory)
+    if (userStory.myStory)
       content +=
         '<hr style="height:1px;border-width:0;color:gray;background-color:gray" </hr>';
     content += demographicStyle;
@@ -756,7 +743,7 @@ export default function Map(props, { draggable = true }) {
       let el = document.createElement("div");
       el.className = "marker";
 
-      let content = popUpContent(marker.properties, false);
+      let content = popUpContent(marker.properties);
       // create the marker
       const sickStatus = marker.properties.sick;
       const currmarker = new mapboxgl.Marker({
@@ -768,7 +755,8 @@ export default function Map(props, { draggable = true }) {
       currmarker.addTo(map);
     });
 
-    const content = popUpContent(userStory, true);
+    const content = popUpContent(userStory);
+
     // create the marker
     if (isInRange(userStory.latitude, userStory.longitude)) {
       const marker = new mapboxgl.Marker().setLngLat([
@@ -847,6 +835,9 @@ export default function Map(props, { draggable = true }) {
     <div className={styles.root}>
       <div className={styles.random}>
         The locations of markers are randomized.
+      </div>
+      <div className={styles.refresh}>
+        Please refresh the page if the map is gray.
       </div>
       <div
         style={{ color: "gray" }}
