@@ -1,45 +1,38 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import { TextField, Fab } from "@material-ui/core";
 import ArrowLeftIcon from "@material-ui/icons/ArrowLeft";
+import MapIcon from "@material-ui/icons/Map";
 import classNames from "classnames";
 import styles from "./styles.module.css";
 import { useSelector, useDispatch } from "react-redux";
-import { submitStory } from "actions/story";
+import { submitMyStory } from "actions/story";
+import paths from "routes/paths";
 
 export default function MyStory(props) {
-  const [myStory, setMyStory] = React.useState("");
+  const [myStory, setMyStory] = useState("");
   const { story } = useSelector((state) => state.story);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (!story || !story["myStory"]) {
-      setMyStory("");
-    } else {
-      setMyStory(story["myStory"]);
-    }
-  }, [dispatch, story]);
 
   const handleChange = (event) => {
     setMyStory(event.target.value);
   };
 
-  const handleSubmit = () => {
-    if (story["myStory"] !== myStory) {
-      story["myStory"] = myStory;
-      const dto = {
-        story,
-        travels: [],
-        closeContacts: [],
-      };
-      dispatch(submitStory(dto));
+  const handleSubmitStory = () => {
+    if (!myStory || myStory.length === 0) {
+      document.getElementById("warning").innerHTML =
+        "Your story is empty. Please write a few words to sumbit.";
+    } else {
+      document.getElementById("warning").innerHTML = "";
+      var storyId = story.id;
+      dispatch(submitMyStory(storyId, myStory));
+      props.history.push(paths.storyHistory);
     }
-
-    props.history.push("/dashboard");
   };
 
   return (
     <>
-      <h1 className="title">MY COVID-19 STORY</h1>
+      <h1 className="title">SHARE MY COVID-19 STORY</h1>
+      <div id="warning" style={{ marginBottom: "20px", color: "red" }}></div>
       <TextField
         id="outlined-multiline-static"
         placeholder="We want to learn from your experience to help overcome the pandemic. We all have a COVID-19 story, share yours!"
@@ -60,18 +53,27 @@ export default function MyStory(props) {
         size="medium"
         className="fab"
         variant="extended"
-        onClick={handleSubmit}
+        onClick={handleSubmitStory}
       >
         SHARE MY STORY
       </Fab>
       <Fab
         style={{ background: "#9206FF" }}
         aria-label="add"
-        onClick={() => props.history.push("/dashboard")}
+        onClick={() => props.history.push(paths.storyHistory)}
         size="medium"
         className="fab back-btn"
       >
         <ArrowLeftIcon />
+      </Fab>
+      <Fab
+        style={{ background: "#EA2027" }}
+        aria-label="Go to next page"
+        size="medium"
+        className="fab next-btn"
+        onClick={() => props.history.push(paths.dashboard)}
+      >
+        <MapIcon />
       </Fab>
     </>
   );

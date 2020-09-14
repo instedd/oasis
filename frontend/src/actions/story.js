@@ -15,6 +15,7 @@ import {
   SUBMIT_CLOSE_CONTACTS_START,
   SUBMIT_CLOSE_CONTACTS,
   SET_MY_STORY,
+  SUBMIT_MY_STORY,
 } from "./types";
 import { fields } from "../routes/CriticalQuestions/fields";
 
@@ -80,6 +81,20 @@ export const setMyStory = (myStory) => (dispatch) => {
   dispatch({
     type: SET_MY_STORY,
     payload: myStory,
+  });
+};
+
+export const submitMyStory = (id, mystory) => async (dispatch) => {
+  const newMyStory = { text: mystory, story_id: id };
+  const submitResponse = await api(`stories/${id}/my_stories`, {
+    method: "POST",
+    body: newMyStory,
+  });
+
+  dispatch({
+    type: SUBMIT_MY_STORY,
+    // reset myStory in the state to avoid uploading more than once.
+    payload: null,
   });
 };
 
