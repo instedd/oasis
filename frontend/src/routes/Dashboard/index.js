@@ -59,7 +59,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     if (story && myStory && myStory.length) {
       dispatch(submitMyStory(story.id, myStory));
     }
-  }, [dispatch, myStory]);
+  }, [dispatch, story, myStory]);
 
   const handleClick = () => {
     setOpen(!open);
@@ -177,6 +177,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
           <Map
             draggable={draggableMap}
             userStory={story}
+            latestMyStory={myStory}
             actives={data.confirmed && data.confirmed.toLocaleString()}
             deaths={data.deaths && data.deaths.toLocaleString()}
             recovered={data.recovered && data.recovered.toLocaleString()}

@@ -15,7 +15,7 @@ export default function MyStory(props) {
 
   const prompt =
     from === "shareBtn" ? (
-      <h1 className="title">Sign in to put your story on the map!</h1>
+      <h1 className="title">Put Your Story On the Map</h1>
     ) : null;
 
   const termsAndConditions = (

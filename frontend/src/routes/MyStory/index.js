@@ -71,7 +71,7 @@ export default function MyStory(props) {
         aria-label="Go to next page"
         size="medium"
         className="fab next-btn"
-        onClick={() => props.history.go(paths.dashboard)}
+        onClick={() => props.history.push(paths.dashboard)}
       >
         <MapIcon />
       </Fab>

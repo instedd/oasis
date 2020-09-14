@@ -529,7 +529,6 @@ export default function Map(props, { draggable = true }) {
     content = addCircle(statusMapping[userStory.sick], content);
     content = addCircle(statusMapping[userStory.tested], content);
     content += "</div>";
-    console.log(content);
     return content;
   };
 
