@@ -112,20 +112,6 @@ def update_my_story(db: Session, my_story: schemas.MyStoryUpdate):
     return update(my_story.id, my_story, models.MyStory, db)
 
 
-def delete_my_story(db: Session, my_story_id: int):
-    db_my_story = (
-        db.query(models.MyStory)
-        .filter(models.MyStory.id == my_story_id)
-        .first()
-    )
-
-    if db_my_story:
-        db.delete(db_my_story)
-        db.commit()
-
-    return db_my_story
-
-
 def get_all_my_stories(db: Session):
     subquery = (
         db.query(

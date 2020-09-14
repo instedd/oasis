@@ -184,38 +184,6 @@ def create_my_story(
     return db_my_story
 
 
-@router.put("/{story_id}/my_stories", response_model=schemas.MyStory)
-def update_my_story(
-    story_id: int,
-    my_story: schemas.MyStoryUpdate,
-    current_story: schemas.Story = Depends(main.get_current_story),
-    db: Session = Depends(get_db),
-):
-    check_permissions(current_story, story_id)
-    db_my_story = crud.update_my_story(db, my_story=my_story)
-    crud.update_latest_my_story(db, current_story, db_my_story.text)
-
-    return db_my_story
-
-
-@router.delete(
-    "/{story_id}/my_stories/{my_story_id}", response_model=schemas.MyStory
-)
-def delete_my_story(
-    story_id: int,
-    my_story_id: int,
-    current_story: schemas.Story = Depends(main.get_current_story),
-    db: Session = Depends(get_db),
-):
-    check_permissions(current_story, story_id)
-    db_my_story = crud.delete_my_story(db, my_story_id=my_story_id)
-
-    if not db_my_story:
-        return JSONResponse(None, status_code=404)
-
-    return db_my_story
-
-
 @router.get("/my_stories", response_model=List[schemas.MyStory])
 def get_my_story_of_all_users(db: Session = Depends(get_db),):
     return crud.get_all_my_stories(db)

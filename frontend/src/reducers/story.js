@@ -51,7 +51,11 @@ const story = (state = initialState, action) => {
     case SUBMIT_MY_STORY:
       return {
         ...state,
-        myStory: action.payload,
+        myStory: action.payload.myStory,
+        story: {
+          ...state.story,
+          latestMyStory: action.payload.story.latestMyStory,
+        },
       };
     case FETCH_STORY_START:
       return {
