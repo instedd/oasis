@@ -477,20 +477,19 @@ export default function Map(props, { draggable = true }) {
   };
 
   const storyStyle =
-    '<p style="font-size: 18px;line-height: 18px; color:black;margin:0;">';
-  const demographicStyle =
-    '<p style = "line-height:0.9rem;font-size:0.9rem;margin:0;">';
+    '<p style="font-size: 18px;line-height: 18px; color:black">';
+  const demographicStyle = '<p style = "line-height:0.9rem;font-size:0.9rem;">';
 
   const addCircle = (status, content) => {
     const color = status.color;
     const word = status.name;
     content +=
       '<div style="position:relative;width: 8px; height: 8px;line-height:0.8rem;font-size:0.8rem;' +
-      "margin-right: 10px;top:6px;float: left;border-radius: 50%;background:";
+      "margin-right: 10px;top:3px;float: left;border-radius: 50%;background:";
     content = content + color + ';"></div>';
     content =
       content +
-      '<span style="position:relative;top:3px;right:5px;float:left;' +
+      '<span style="position:relative;top:0px;right:5px;float:left;' +
       "color:" +
       color +
       ';line-height:0.8rem;font-size:0.8rem;">' +
@@ -500,18 +499,18 @@ export default function Map(props, { draggable = true }) {
   };
 
   const popUpContent = (userStory) => {
-    var content = '<p style="margin:0;">';
+    var content = "<span>";
     content += storyStyle;
-    if (userStory.latestMyStory) {
-      if (userStory.latestMyStory.length > 280) {
-        content += userStory.latestMyStory.substring(0, 280);
+    if (userStory.myStory) {
+      if (userStory.myStory.length > 280) {
+        content += userStory.myStory.substring(0, 280);
         content += "...";
       } else {
-        content += userStory.latestMyStory;
+        content += userStory.myStory;
       }
     }
-    content += "</p>";
-    if (userStory.latestMyStory)
+    content += "</span>";
+    if (userStory.myStory)
       content +=
         '<hr style="height:1px;border-width:0;color:gray;background-color:gray" </hr>';
     content += demographicStyle;

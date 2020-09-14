@@ -1,15 +1,6 @@
 import json
 
-from sqlalchemy import (
-    JSON,
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-    Date,
-    Text,
-    Numeric,
-)
+from sqlalchemy import JSON, Column, ForeignKey, Integer, String, Date, Text, Numeric 
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -30,17 +21,15 @@ class Story(Base):
     _medical_conditions = Column(JSON)
     sickness_start = Column(String(64))
     sickness_end = Column(String(64))
+    my_story = Column(Text())
     spam = Column(Integer)
     latitude = Column(Numeric(10, 7))
     longitude = Column(Numeric(10, 7))
-    my_story = Column(Text)
-    latest_my_story = Column(Text)
 
     user = relationship("User", uselist=False, back_populates="story")
     symptoms = relationship("Symptom", secondary="story_symptoms")
     travels = relationship("Travel", lazy="select")
     close_contacts = relationship("CloseContact", lazy="select")
-    my_stories = relationship("MyStory", lazy="select")
 
     @property
     def medical_conditions(self):
@@ -92,10 +81,3 @@ class StoryNotification(Base):
 
     story_id = Column(ForeignKey("stories.id"))
     notification_id = Column(ForeignKey("exposure_notifications.id"))
-
-
-class MyStory(Base):
-    __tablename__ = "my_stories"
-
-    text = Column(Text())
-    story_id = Column(Integer, ForeignKey("stories.id"))

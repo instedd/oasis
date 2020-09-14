@@ -1,7 +1,6 @@
 from typing import List
 
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy.sql.expression import func, and_
 
 from database import Base
 from users.models import User
@@ -29,6 +28,11 @@ def get_story(db: Session, story_id: int):
 
 
 def update_story(db: Session, story_id: int, story: schemas.StoryCreate):
+    # Don't update my_story if given as none for now.
+    # Delete this after frontend is updated.
+    if story.my_story is None:
+        current = get_story(db, story_id)
+        story.my_story = current.my_story
     return update(story_id, story, models.Story, db)
 
 
@@ -98,60 +102,3 @@ def get_all_stories(db: Session):
         .options(joinedload("symptoms"))
         .all()
     )
-
-
-def create_my_story(db: Session, my_story: schemas.MyStoryCreate):
-    db_my_story = models.MyStory(**my_story.dict())
-    db.add(db_my_story)
-    db.commit()
-
-    return db_my_story
-
-
-def update_my_story(db: Session, my_story: schemas.MyStoryUpdate):
-    return update(my_story.id, my_story, models.MyStory, db)
-
-
-def delete_my_story(db: Session, my_story_id: int):
-    db_my_story = (
-        db.query(models.MyStory)
-        .filter(models.MyStory.id == my_story_id)
-        .first()
-    )
-
-    if db_my_story:
-        db.delete(db_my_story)
-        db.commit()
-
-    return db_my_story
-
-
-def get_all_my_stories(db: Session):
-    subquery = (
-        db.query(
-            models.MyStory.story_id,
-            func.max(models.MyStory.updated_at).label("updated_at"),
-        )
-        .group_by(models.MyStory.story_id)
-        .subquery()
-    )
-    db_my_stories = (
-        db.query(models.MyStory)
-        .join(
-            subquery,
-            and_(
-                models.MyStory.story_id == subquery.c.story_id,
-                models.MyStory.updated_at == subquery.c.updated_at,
-            ),
-        )
-        .order_by(models.MyStory.id.asc())
-        .all()
-    )
-
-    return db_my_stories
-
-
-def update_latest_my_story(db: Session, story: schemas.Story, my_story):
-    story.latest_my_story = my_story
-    db.add(story)
-    db.commit()

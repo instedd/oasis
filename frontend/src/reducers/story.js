@@ -12,7 +12,6 @@ import {
   SUBMIT_CLOSE_CONTACTS,
   SUBMIT_CLOSE_CONTACTS_START,
   SET_MY_STORY,
-  SUBMIT_MY_STORY,
 } from "../actions/types";
 
 const initialState = {
@@ -47,11 +46,6 @@ const story = (state = initialState, action) => {
       return {
         ...state,
         story: { ...state.story, tested: action.payload },
-      };
-    case SUBMIT_MY_STORY:
-      return {
-        ...state,
-        myStory: action.payload,
       };
     case FETCH_STORY_START:
       return {
