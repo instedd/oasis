@@ -477,19 +477,20 @@ export default function Map(props, { draggable = true }) {
   };
 
   const storyStyle =
-    '<p style="font-size: 18px;line-height: 18px; color:black">';
-  const demographicStyle = '<p style = "line-height:0.9rem;font-size:0.9rem;">';
+    '<p style="font-size: 18px;line-height: 18px; color:black;margin:0;">';
+  const demographicStyle =
+    '<p style = "line-height:0.9rem;font-size:0.9rem;margin:0;">';
 
   const addCircle = (status, content) => {
     const color = status.color;
     const word = status.name;
     content +=
       '<div style="position:relative;width: 8px; height: 8px;line-height:0.8rem;font-size:0.8rem;' +
-      "margin-right: 10px;top:3px;float: left;border-radius: 50%;background:";
+      "margin-right: 10px;top:6px;float: left;border-radius: 50%;background:";
     content = content + color + ';"></div>';
     content =
       content +
-      '<span style="position:relative;top:0px;right:5px;float:left;' +
+      '<span style="position:relative;top:3px;right:5px;float:left;' +
       "color:" +
       color +
       ';line-height:0.8rem;font-size:0.8rem;">' +
@@ -499,7 +500,7 @@ export default function Map(props, { draggable = true }) {
   };
 
   const popUpContent = (userStory) => {
-    var content = "<span>";
+    let content = '<p style="margin:0;">';
     content += storyStyle;
     if (userStory.myStory) {
       if (userStory.myStory.length > 280) {
@@ -509,7 +510,7 @@ export default function Map(props, { draggable = true }) {
         content += userStory.myStory;
       }
     }
-    content += "</span>";
+    content += "</p>";
     if (userStory.myStory)
       content +=
         '<hr style="height:1px;border-width:0;color:gray;background-color:gray" </hr>';
