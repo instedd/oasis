@@ -58,6 +58,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   useEffect(() => {
     if (story && myStory && myStory.length) {
       dispatch(submitMyStory(story.id, myStory));
+      dispatch(fetchStory());
     }
   }, [dispatch, story, myStory]);
 

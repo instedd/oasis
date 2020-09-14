@@ -29,10 +29,6 @@ export default function Map(props, { draggable = true }) {
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
 
   const userStory = props.userStory;
-  const latestMyStory =
-    props.latestMyStory && props.latestMyStory.length !== 0
-      ? props.latestMyStory
-      : props.userStory.latestMyStory;
   const actives = props.actives;
   const deaths = props.deaths;
   const recovered = props.recovered;
@@ -689,19 +685,18 @@ export default function Map(props, { draggable = true }) {
   };
 
   const popUpContent = (userStory, isUser) => {
-    let mystory = isUser ? latestMyStory : userStory.latestMyStory;
     let content = "<p>";
     content += storyStyle;
-    if (mystory) {
-      if (mystory.length > 280) {
-        content += mystory.substring(0, 280);
+    if (userStory.latestMyStory) {
+      if (userStory.latestMyStory.length > 280) {
+        content += userStory.latestMyStory.substring(0, 280);
         content += "...";
       } else {
-        content += mystory;
+        content += userStory.latestMyStory;
       }
     }
     content += "</p>";
-    if (mystory)
+    if (userStory.latestMyStory)
       content +=
         '<hr style="height:1px;border-width:0;color:gray;background-color:gray" </hr>';
     content += demographicStyle;
@@ -756,7 +751,7 @@ export default function Map(props, { draggable = true }) {
       let el = document.createElement("div");
       el.className = "marker";
 
-      let content = popUpContent(marker.properties, false);
+      let content = popUpContent(marker.properties);
       // create the marker
       const sickStatus = marker.properties.sick;
       const currmarker = new mapboxgl.Marker({
@@ -768,7 +763,7 @@ export default function Map(props, { draggable = true }) {
       currmarker.addTo(map);
     });
 
-    const content = popUpContent(userStory, true);
+    const content = popUpContent(userStory);
     // create the marker
     if (isInRange(userStory.latitude, userStory.longitude)) {
       const marker = new mapboxgl.Marker().setLngLat([
