@@ -764,7 +764,7 @@ export default function Map(props, { draggable = true }) {
     });
 
     const content = popUpContent(userStory);
-
+    console.log(userStory);
     // create the marker
     if (isInRange(userStory.latitude, userStory.longitude)) {
       const marker = new mapboxgl.Marker().setLngLat([

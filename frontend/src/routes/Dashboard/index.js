@@ -33,6 +33,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const { myStory, story, status } = useSelector((state) => {
     return state.story;
   });
+
   let location = useLocation();
   const [draggableMap, setDraggableMap] = useState(false);
   const [expanded, setExpanded] = useState(
