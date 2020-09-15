@@ -11,7 +11,7 @@ import { useSelector, useDispatch } from "react-redux";
 import paths from "routes/paths";
 import { sicknessStatus, testStatus } from "routes/types";
 import styles from "./styles.module.css";
-import { submitStory, fetchStory } from "actions/story";
+import { fetchStory, submitMyStory } from "actions/story";
 import { getStoryResources } from "actions/resources";
 import { LOADING } from "actions/types";
 import { useLocation } from "react-router-dom";
@@ -30,9 +30,12 @@ const statusMapping = {
 function Dashboard(props, { draggableMapRoutes = [] }) {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
+  // This myStory is only temporarily fetched from state to check whether it's needed to submit myStory
+  // For uses in components, use story.latestMyStory
   const { myStory, story, status } = useSelector((state) => {
     return state.story;
   });
+
   let location = useLocation();
   const [draggableMap, setDraggableMap] = useState(false);
   const [expanded, setExpanded] = useState(
@@ -53,6 +56,12 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   useEffect(() => {
     if (!story) dispatch(fetchStory());
   }, [dispatch, story]);
+
+  useEffect(() => {
+    if (story && myStory && myStory.length) {
+      dispatch(submitMyStory(story.id, myStory));
+    }
+  }, [dispatch, story, myStory]);
 
   const handleClick = () => {
     setOpen(!open);
@@ -81,28 +90,16 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     }).then((storiesData) => {
       setStats({
         userNum: storiesData.length,
-        storyNum: storiesData.filter((story) => story.myStory).length,
+        storyNum: storiesData.filter((story) => story.latestMyStory).length,
       });
     });
   }, []);
 
-  useEffect(() => {
-    if (story && myStory && myStory.length > 0) {
-      story.myStory = myStory;
-      const dto = {
-        story,
-        travels: [],
-        closeContacts: [],
-      };
-      dispatch(submitStory(dto));
-    }
-  }, []);
-
-  const hasMyStory = story && story.myStory;
   const actions = [
     {
-      name: hasMyStory ? "UPDATE MY STORY" : "ADD MY STORY",
-      href: paths.myStory,
+      name: "MY STORIES", //hasMyStory ? "UPDATE MY STORY" : "ADD MY STORY",
+      href: paths.storyHistory,
+      //paths.myStory,
       classes: "MuiFab-extended",
     },
     {
@@ -182,6 +179,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
           <Map
             draggable={draggableMap}
             userStory={story}
+            latestMyStory={myStory ? myStory : story.latestMyStory}
             actives={data.confirmed && data.confirmed.toLocaleString()}
             deaths={data.deaths && data.deaths.toLocaleString()}
             recovered={data.recovered && data.recovered.toLocaleString()}

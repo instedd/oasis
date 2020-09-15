@@ -159,3 +159,31 @@ def read_all_stories(db: Session = Depends(get_db)):
     )
 
     return JSONResponse(stories, status_code=200)
+
+
+@router.get("/{story_id}/my_stories", response_model=List[schemas.MyStory])
+def read_my_stories(
+    story_id: int,
+    current_story: schemas.Story = Depends(main.get_current_story),
+):
+    check_permissions(current_story, story_id)
+    return current_story.my_stories
+
+
+@router.post("/{story_id}/my_stories", response_model=schemas.MyStory)
+def create_my_story(
+    story_id: int,
+    my_story: schemas.MyStoryCreate,
+    current_story: schemas.Story = Depends(main.get_current_story),
+    db: Session = Depends(get_db),
+):
+    check_permissions(current_story, story_id)
+    db_my_story = crud.create_my_story(db, my_story=my_story)
+    crud.update_latest_my_story(db, current_story, db_my_story.text)
+
+    return db_my_story
+
+
+@router.get("/my_stories", response_model=List[schemas.MyStory])
+def get_my_story_of_all_users(db: Session = Depends(get_db),):
+    return crud.get_all_my_stories(db)
