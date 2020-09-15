@@ -125,6 +125,7 @@ def fetch_county_data(db: Session = Depends(get_db)):
             "scope": DataScope.ADM2,
         }
         for record in result
+        if record.fips is not None
     ]
 
     confirmed_df = pd.DataFrame(confirmed)
