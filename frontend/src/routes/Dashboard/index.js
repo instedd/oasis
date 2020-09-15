@@ -30,6 +30,8 @@ const statusMapping = {
 function Dashboard(props, { draggableMapRoutes = [] }) {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
+  // This myStory is only temporarily fetched from state to check whether it's needed to submit myStory
+  // For uses in components, use story.latestMyStory
   const { myStory, story, status } = useSelector((state) => {
     return state.story;
   });
@@ -177,7 +179,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
           <Map
             draggable={draggableMap}
             userStory={story}
-            latestMyStory={myStory}
+            latestMyStory={story.latestMyStory}
             actives={data.confirmed && data.confirmed.toLocaleString()}
             deaths={data.deaths && data.deaths.toLocaleString()}
             recovered={data.recovered && data.recovered.toLocaleString()}
