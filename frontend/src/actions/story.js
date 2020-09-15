@@ -85,17 +85,17 @@ export const setMyStory = (myStory) => (dispatch) => {
 };
 
 export const submitMyStory = (id, mystory) => async (dispatch) => {
-  const newMyStory = { text: mystory, story_id: id };
-  const submitResponse = await api(`stories/${id}/my_stories`, {
-    method: "POST",
-    body: newMyStory,
-  });
-
-  // reset myStory in the state to avoid uploading more than once.
   const payload = { myStory: null, story: { latestMyStory: mystory } };
+
   dispatch({
     type: SUBMIT_MY_STORY,
     payload: payload,
+  });
+
+  const newMyStory = { text: mystory, story_id: id };
+  await api(`stories/${id}/my_stories`, {
+    method: "POST",
+    body: newMyStory,
   });
 };
 
