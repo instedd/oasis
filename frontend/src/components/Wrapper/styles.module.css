@@ -16,3 +16,22 @@
   justify-content: center;
   align-items: center;
 }
+
+.poweredBy{
+  position: absolute;
+  z-index: 2;
+  right: 15px;
+  bottom: 35px;
+  display: flex;
+}
+
+.poweredBy span {
+  font-variant: small-caps;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 42px;
+  margin-right: 8px;
+}
+
+.poweredBy img {
+  height: 40px;
+}
