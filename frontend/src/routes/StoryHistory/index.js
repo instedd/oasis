@@ -22,13 +22,10 @@ import paths from "routes/paths";
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: "6px 16px",
-    width: "60vh",
+    width: "60vw",
   },
   secondaryTail: {
     backgroundColor: theme.palette.secondary.main,
-  },
-  content: {
-    width: "90vh",
   },
 }));
 
@@ -56,7 +53,7 @@ export default function StoryHistory(props) {
 
   return (
     <>
-      <h1 className="title">MY COVID-19 STORY History</h1>
+      <h2 className="title">MY COVID-19 STORY HISTORY</h2>
       <Button
         variant="contained"
         color="secondary"
@@ -67,7 +64,7 @@ export default function StoryHistory(props) {
       </Button>
       <div
         className={classNames("root", styles.root)}
-        style={{ marginTop: "20px", maxHeight: "60vh" }}
+        style={{ marginTop: "20px", maxHeight: "50vh" }}
       >
         <Timeline>
           {stories
@@ -86,7 +83,12 @@ export default function StoryHistory(props) {
                 <div className={classes.content}>
                   <TimelineContent>
                     <Paper elevation={3} className={classes.paper}>
-                      <Typography style={{ textAlign: "left" }}>
+                      <Typography
+                        style={{
+                          textAlign: "left",
+                          overflowWrap: "break-word",
+                        }}
+                      >
                         {my_story.text}
                       </Typography>
                     </Paper>
