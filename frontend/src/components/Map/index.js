@@ -711,12 +711,7 @@ export default function Map(props, { draggable = true }) {
     let content = "<p>";
     content += storyStyle;
     if (mystory) {
-      if (mystory.length > 280) {
-        content += mystory.substring(0, 280);
-        content += "...";
-      } else {
-        content += mystory;
-      }
+      content += mystory;
     }
     content += "</p>";
     if (mystory)
@@ -751,9 +746,7 @@ export default function Map(props, { draggable = true }) {
     popup.setHTML(content);
     const element = marker.getElement();
     element.id = "marker";
-    // hover event listener
-    element.addEventListener("mouseenter", () => popup.addTo(map));
-    element.addEventListener("mouseleave", () => popup.remove());
+
     // add popup to marker
     marker.setPopup(popup);
   };
