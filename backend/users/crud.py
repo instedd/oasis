@@ -41,3 +41,7 @@ def authenticate_user(email: str, password: str, token_data, db: Session):
         return False
 
     return user
+
+
+def get_user_count(db: Session):
+    return db.query(models.User).count()
