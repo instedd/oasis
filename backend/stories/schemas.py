@@ -123,3 +123,7 @@ class StorySymptom(StorySymptomCreate):
 
     class Config:
         orm_mode = True
+
+
+class MyStoryWithStory(MyStory):
+    story: Story = None

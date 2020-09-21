@@ -112,7 +112,7 @@ def update_my_story(db: Session, my_story: schemas.MyStoryUpdate):
     return update(my_story.id, my_story, models.MyStory, db)
 
 
-def get_all_my_stories(db: Session):
+def get_all_latest_my_stories(db: Session):
     subquery = (
         db.query(
             models.MyStory.story_id,
@@ -141,3 +141,7 @@ def update_latest_my_story(db: Session, story: schemas.Story, my_story):
     story.latest_my_story = my_story
     db.add(story)
     db.commit()
+
+
+def get_all_my_stories(db: Session):
+    return db.query(models.MyStory).options(joinedload("story")).all()
