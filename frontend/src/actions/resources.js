@@ -63,6 +63,10 @@ export const getStoryResources = (story) => {
       text: "Testing in California",
       site: testCali(story),
     },
+    {
+      text: "Dowload Homebound Beta",
+      site: homeBound(story),
+    },
   ];
 
   // Only keep the resources that matched the requirements, thus, the site is present
@@ -158,6 +162,14 @@ const testCali = withStory((story) => {
   };
 
   return mostRelevant([checkState]);
+});
+
+const homeBound = withStory((story) => {
+  const sick = {
+    predicate: story.sick === sicknessStatus.SICK,
+    link: "https://earth2.ucsd.edu/homebound/",
+  };
+  return mostRelevant([sick]);
 });
 
 const informationForUSCitizens = withStory((story) => {

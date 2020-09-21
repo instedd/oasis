@@ -29,13 +29,7 @@ def test_seed_fake_date(setup):
     """
     This test case tests that the "fake_date" parameter to seed works
     """
-    records = crud.load_all_nyt_data(
-        fake_date=datetime(month=8, day=15, year=2020)
-    )
-    # for record in records:
-    #    print(record[1].iloc[0,:])
-    crud.populate_nyt_data(records, setup["db"])
-
+    crud.seed(setup["db"], fake_date=datetime(month=8, day=15, year=2020))
     max_date = setup["db"].query(func.max(models.NytLiveCounty.date)).first()
     assert max_date[0].day == 14  # 14 because newest data before 8/15 at 12am
 
@@ -45,11 +39,7 @@ def test_async_update(setup):
     Tests that the asynchronous update function correctly updates the data
     """
     # Seed old data
-    # crud.seed(setup["db"], fake_date=datetime(month=8, day=15, year=2020))
-    records = crud.load_all_nyt_data(
-        fake_date=datetime(month=8, day=15, year=2020)
-    )
-    crud.populate_nyt_data(records, setup["db"])
+    crud.seed(setup["db"], fake_date=datetime(month=8, day=15, year=2020))
 
     # Execute a query that causes an async update
     setup["app"].get("/api/data/all")

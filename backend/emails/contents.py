@@ -35,7 +35,7 @@ If you have symptoms (https://www.cdc.gov/coronavirus/2019-ncov/symptoms-testing
  - Self-quarantine until you know you are not infectious. 
  - If you need to leave your home, wear a mask and maintain social distance from others (at least 6 feet) for 14 days or, until cleared by a medical professional.
 
-We encourage you to access the Oasis website (http://1oasis.org/) which has COVID-19 information tailored to your situation, and, if you choose, you can report how you are feeling or anonymously alert potential contacts you have had. 
+We encourage you to access the Oasis website (http://1oasis.ucsd.edu/) which has COVID-19 information tailored to your situation, and, if you choose, you can report how you are feeling or anonymously alert potential contacts you have had. 
 
 You can learn more from the CDC (https://www.cdc.gov/coronavirus/2019-ncov/index.html) about how to care for yourself if you’ve been exposed to COVID-19.
 """
@@ -86,7 +86,7 @@ A user of Oasis has been reported to have COVID-19 and has indicated that they h
         <li>If you need to leave your home, wear a mask and maintain social distance from others (at least 6 feet) for 14 days or, until cleared by a medical professional.</li>
     </ul>
 
-<p>We encourage you to access the <a href='http://1oasis.org/'>Oasis</a> website which has COVID-19 information tailored to your situation, and, if you choose, you can report how you are feeling or anonymously alert potential contacts you have had. 
+<p>We encourage you to access the <a href='http://1oasis.ucsd.edu/'>Oasis</a> website which has COVID-19 information tailored to your situation, and, if you choose, you can report how you are feeling or anonymously alert potential contacts you have had. 
 
 <p>You can learn more from the <a href='https://www.cdc.gov/coronavirus/2019-ncov/index.html'>CDC</a> about how to care for yourself if you’ve been exposed to COVID-19.<p>
 </body>

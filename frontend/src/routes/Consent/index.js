@@ -9,7 +9,9 @@ export default function MyStory(props) {
   const texts = Text["Terms and Conditions"].texts;
   const listIndex = Text["Terms and Conditions"].listIndex;
   const linkIndex = Text["Terms and Conditions"].linkIndex;
-  const from = props.history.location.state.from;
+  const from = props.history.location.state
+    ? props.history.location.state.from
+    : "";
 
   const prompt =
     from === "shareBtn" ? (
