@@ -143,5 +143,5 @@ def update_latest_my_story(db: Session, story: schemas.Story, my_story):
     db.commit()
 
 
-def get_story_count(db: Session):
-    return db.query(models.Story).count()
+def get_my_story_count(db: Session):
+    return db.query(models.MyStory).count()

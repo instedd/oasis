@@ -189,6 +189,6 @@ def get_my_story_of_all_users(db: Session = Depends(get_db)):
     return crud.get_all_my_stories(db)
 
 
-@router.get("/count/")
+@router.get("/my_stories/count")
 def get_story_count(db: Session = Depends(get_db)):
-    return crud.get_story_count(db)
+    return crud.get_my_story_count(db)
