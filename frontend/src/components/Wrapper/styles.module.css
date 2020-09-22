@@ -16,3 +16,24 @@
   justify-content: center;
   align-items: center;
 }
+
+.poweredBy {
+  position: absolute;
+  z-index: 2;
+  top: 25px;
+  left: 90px;
+  display: flex;
+}
+
+.poweredBy span {
+  font-feature-settings: "c2sc";
+  font-variant: small-caps;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 22px;
+  margin-right: 2px;
+}
+
+.poweredBy img {
+  height: 24px;
+}
