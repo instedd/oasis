@@ -185,7 +185,7 @@ def create_my_story(
 
 
 @router.get("/my_stories", response_model=List[schemas.MyStory])
-def get_my_story_of_all_users(db: Session = Depends(get_db)):
+def read_all_latest_my_stories(db: Session = Depends(get_db)):
     return crud.get_all_latest_my_stories(db)
 
 
