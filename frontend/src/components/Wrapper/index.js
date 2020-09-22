@@ -5,7 +5,10 @@ function Wrapper({ children }) {
   return (
     <main className={styles.root}>
       <div className={styles.content}>{children}</div>
-      <div className={styles.poweredBy}>
+      <div
+        className={styles.poweredBy}
+        onClick={() => window.open("https://earth2.ucsd.edu/")}
+      >
         <span>powered by</span>
         <img src="earth2-logo.png" alt="earth2-logo"></img>
       </div>

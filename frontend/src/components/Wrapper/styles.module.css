@@ -17,21 +17,23 @@
   align-items: center;
 }
 
-.poweredBy{
+.poweredBy {
   position: absolute;
   z-index: 2;
-  right: 15px;
-  bottom: 35px;
+  top: 25px;
+  left: 90px;
   display: flex;
 }
 
 .poweredBy span {
+  font-feature-settings: "c2sc";
   font-variant: small-caps;
+  font-size: 12px;
   color: rgba(255, 255, 255, 0.6);
-  line-height: 42px;
-  margin-right: 8px;
+  line-height: 22px;
+  margin-right: 2px;
 }
 
 .poweredBy img {
-  height: 40px;
+  height: 24px;
 }
