@@ -45,7 +45,10 @@ export default function Map(props, { draggable = true }) {
       style: "mapbox://styles/mapbox/dark-v10",
       center: [location.lng, location.lat],
       zoom: initialZoom,
+      attributionControl: false,
     });
+
+    adjustMap(map);
 
     addLayers(map);
     setMap(map);
@@ -62,6 +65,14 @@ export default function Map(props, { draggable = true }) {
         curve: 1,
       });
   }, [location, map]);
+
+  const adjustMap = (map) => {
+    // disable map rotation using right click + drag
+    map.dragRotate.disable();
+
+    // disable map rotation using touch rotation gesture
+    map.touchZoomRotate.disableRotation();
+  };
 
   const addLegend = (data) => {
     const clusters = data.clusters;
