@@ -22,10 +22,14 @@ import paths from "routes/paths";
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: "6px 16px",
-    width: "60vw",
+    overflowWrap: "anywhere",
   },
   secondaryTail: {
     backgroundColor: theme.palette.secondary.main,
+  },
+  typography: {
+    maxWidth: "12vw",
+    overflowWrap: "break-word",
   },
 }));
 
@@ -64,7 +68,7 @@ export default function StoryHistory(props) {
       </Button>
       <div
         className={classNames("root", styles.root)}
-        style={{ marginTop: "20px", maxHeight: "50vh" }}
+        style={{ marginTop: "20px", maxHeight: "50vh", maxWidth: "600px" }}
       >
         <Timeline>
           {stories
@@ -72,7 +76,7 @@ export default function StoryHistory(props) {
             .map((my_story, i) => (
               <TimelineItem key={i}>
                 <TimelineOppositeContent>
-                  <Typography variant="h6" component="h1">
+                  <Typography component="h6" className={classes.typography}>
                     {my_story.createdAt}
                   </Typography>
                 </TimelineOppositeContent>
@@ -86,7 +90,6 @@ export default function StoryHistory(props) {
                       <Typography
                         style={{
                           textAlign: "left",
-                          overflowWrap: "break-word",
                         }}
                       >
                         {my_story.text}
