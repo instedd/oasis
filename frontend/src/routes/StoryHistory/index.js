@@ -31,6 +31,9 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "12vw",
     overflowWrap: "break-word",
   },
+  timeline: {
+    alignItems: "baseline",
+  },
 }));
 
 export default function StoryHistory(props) {
@@ -70,7 +73,7 @@ export default function StoryHistory(props) {
         className={classNames("root", styles.root)}
         style={{ marginTop: "20px", maxHeight: "50vh", maxWidth: "600px" }}
       >
-        <Timeline>
+        <Timeline className={classes.timeline}>
           {stories
             .sort((a, b) => b.id - a.id)
             .map((my_story, i) => (
