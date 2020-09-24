@@ -96,6 +96,7 @@ def get_all_stories(db: Session):
         db.query(models.Story)
         .options(joinedload("travels"))
         .options(joinedload("symptoms"))
+        .options(joinedload("my_stories"))
         .all()
     )
 
