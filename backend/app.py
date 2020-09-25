@@ -10,8 +10,10 @@ from starlette.templating import Jinja2Templates
 from router import api
 from auth.main import NotFoundException
 
-import sqlalchemy
+# import sqlalchemy
 from NytLiveCounty import crud
+
+# from database import get_db
 
 
 async def homepage(request, exec):
@@ -44,28 +46,33 @@ app.include_router(api.router, prefix="/api")
 
 app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
 
-# Populate NYT database
-SQLALCHEMY_DATABASE_URL = (
-    f"mysql+pymysql://{os.environ['DATABASE_USER']}"
-    f":{os.environ['DATABASE_PASSWORD']}"
-    f"@{os.environ['DATABASE_HOST']}/{os.environ['DATABASE_NAME']}"
-)
-
-engine = sqlalchemy.create_engine(SQLALCHEMY_DATABASE_URL)
-Session = sqlalchemy.orm.sessionmaker(
-    autocommit=False, autoflush=False, bind=engine
-)
-db = Session()
-
-# crud.seed(db)
-nyt_records = crud.load_all_nyt_data()
-crud.populate_nyt_data(nyt_records, db)
-
-# db.close()
-
 
 @app.exception_handler(NotFoundException)
 async def not_found_exception_handler(
     request: Request, exc: NotFoundException
 ):
     return JSONResponse(status_code=404, content={"detail": exc.message},)
+
+
+# Populate NYT database
+# asyncio.ensure_future(crud.seed())
+
+# async def local_seed():
+#    asyncio.ensure_future(crud.seed())
+
+# loop = asyncio.get_event_loop()
+# loop.run_until_complete(local_seed())
+
+# def fire_and_forget(f):
+#    def wrapped(*args, **kwargs):
+#        return asyncio.get_event_loop().run_in_executor(None, f,
+#                                                        *args, *kwargs)
+#    return wrapped()
+#
+# @fire_and_forget
+# def local_seed():
+#    crud.seed()
+
+# local_seed()
+
+crud.seed()

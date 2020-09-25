@@ -5,6 +5,9 @@ from sqlalchemy import Column, DateTime, Integer, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+# from NytLiveCounty import crud
+# import asyncio
+
 SQLALCHEMY_DATABASE_URL = (
     f"mysql+pymysql://{os.environ['DATABASE_USER']}"
     f":{os.environ['DATABASE_PASSWORD']}"

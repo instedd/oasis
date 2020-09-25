@@ -9,9 +9,14 @@ from database import get_db
 from NytLiveCounty import crud, schemas
 
 # from datetime import date
-import time
+# import time
+
+import asyncio
 
 router = APIRouter()
+
+# db = get_db()
+# asyncio.ensure_future(crud.seed(next(db)))
 
 
 @router.get("/{county_ids}", response_model=List[schemas.CountyData])
@@ -29,8 +34,8 @@ def get_county_data(county_ids: str, db: Session = Depends(get_db)):
     res = jsonable_encoder(res)
 
     # Check if database needs to be updated
-    if max([rec["timestamp"] for rec in res]) < time.time() - 60 * 60 * 6:
-        crud.update(db)
+    # if max([rec["timestamp"] for rec in res]) < time.time() - 60 * 60 * 6:
+    asyncio.ensure_future(crud.update(db))
 
     # Return result
     return JSONResponse(res, status_code=200)
