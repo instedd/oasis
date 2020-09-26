@@ -44,11 +44,15 @@ export default function Home(props, { draggableMapRoutes = [] }) {
       <div className={classNames("home", styles.home)}>
         <h1 className="title">Share your pandemic experience!</h1>
         <div>
+          COVID-19 has affected everyone. Sick or heathy, we've all had a
+          Pandemic experience. Whether illness, isolation or innovation, put
+          your story on the map, see how you compare to others, share new
+          insights, join your planet!
           <TextField
             id="outlined-multiline-static"
-            placeholder="COVID-19 has affected everyone. Sick or heathy, we've all had a Pandemic experience. Whether illness, isolation or innovation, put your story on the map, see how you compare to others, share new insights, join your planet"
+            placeholder="Type your story here!"
             multiline
-            rowsMax={10}
+            rowsMax={3}
             value={myStory}
             onChange={handleChange}
             className={classNames("textarea", styles.textarea)}
