@@ -28,7 +28,7 @@
 
 .popups {
   offset: 25;
-  max-height: 50vh;
-  width: 500vh;
+  max-height: 15rem;
+  width: 500rem;
   overflow:auto;
 } 
