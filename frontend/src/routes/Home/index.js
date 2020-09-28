@@ -7,9 +7,24 @@ import SimpleMap from "components/SimpleMap";
 import paths from "routes/paths";
 import styles from "./styles.module.css";
 import { setMyStory } from "../../actions/story";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 
 export default function Home(props, { draggableMapRoutes = [] }) {
   const dispatch = useDispatch();
+
+  const useStyles = makeStyles({
+    root: {
+      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+        borderColor: "green",
+      },
+      "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+        borderColor: "red",
+      },
+      "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor: "purple",
+      },
+    },
+  });
 
   const [myStory, updateMyStory] = useState("");
   const [draggableMap, setDraggableMap] = useState(false);
@@ -38,16 +53,19 @@ export default function Home(props, { draggableMapRoutes = [] }) {
 
     props.history.push(route, { from: "shareBtn" });
   };
+  const classes = useStyles();
 
   return (
     <>
       <div className={classNames("home", styles.home)}>
         <h1 className="title">Share your pandemic experience!</h1>
-        <div>
+        <p>
           COVID-19 has affected everyone. Sick or heathy, we've all had a
           Pandemic experience. Whether illness, isolation or innovation, put
           your story on the map, see how you compare to others, share new
           insights, join your planet!
+        </p>
+        <div>
           <TextField
             id="outlined-multiline-static"
             placeholder="Type your story here!"

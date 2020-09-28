@@ -30,12 +30,18 @@
     background-color: rgba(0, 0, 0, 0.7);
 }
 
+.textarea .MuiInputBase-root .MuiOutlinedInput-notchedOutline{
+    border-color: "red!important";
+}
+
 .home h1 {
     font-family: 'Roboto', sans-serif;
     font-weight: 900;
     text-transform: capitalize;
     text-align: left;
-    font-size: 42px;
+    font-size: 40px;
+    padding-top: 0px;
+    padding-bottom: 0px!important;
 }
 
 .home {
