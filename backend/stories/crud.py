@@ -96,6 +96,7 @@ def get_all_stories(db: Session):
         db.query(models.Story)
         .options(joinedload("travels"))
         .options(joinedload("symptoms"))
+        .options(joinedload("my_stories"))
         .all()
     )
 
@@ -112,7 +113,7 @@ def update_my_story(db: Session, my_story: schemas.MyStoryUpdate):
     return update(my_story.id, my_story, models.MyStory, db)
 
 
-def get_all_my_stories(db: Session):
+def get_all_latest_my_stories(db: Session):
     subquery = (
         db.query(
             models.MyStory.story_id,
