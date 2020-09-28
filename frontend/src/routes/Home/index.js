@@ -7,24 +7,9 @@ import SimpleMap from "components/SimpleMap";
 import paths from "routes/paths";
 import styles from "./styles.module.css";
 import { setMyStory } from "../../actions/story";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
 
 export default function Home(props, { draggableMapRoutes = [] }) {
   const dispatch = useDispatch();
-
-  const useStyles = makeStyles({
-    root: {
-      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-        borderColor: "green",
-      },
-      "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-        borderColor: "red",
-      },
-      "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-        borderColor: "purple",
-      },
-    },
-  });
 
   const [myStory, updateMyStory] = useState("");
   const [draggableMap, setDraggableMap] = useState(false);
@@ -53,7 +38,6 @@ export default function Home(props, { draggableMapRoutes = [] }) {
 
     props.history.push(route, { from: "shareBtn" });
   };
-  const classes = useStyles();
 
   return (
     <>
@@ -74,7 +58,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
             value={myStory}
             onChange={handleChange}
             className={classNames("textarea", styles.textarea)}
-            variant="filled"
+            variant="outlined"
           />
         </div>
         <div className={classNames("btnGroup", styles.btnGroup)}>

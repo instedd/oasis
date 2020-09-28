@@ -42,6 +42,11 @@
     font-size: 2.58vw;
     padding-top: 0px;
     padding-bottom: 0px!important;
+    margin-bottom: 1px;
+}
+
+.home p {
+    font-style: italic;
 }
 
 .home {
