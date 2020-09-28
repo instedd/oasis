@@ -46,7 +46,7 @@ class DataScope:
 def fetch_world_data():
     try:
         r = requests.get(url=COVID_WORLD_API_URL)
-    except requests.exceptions.RequestException as e:
+    except (requests.exceptions.RequestException, KeyError) as e:
         print("WARNING: Unable to receive data from api.covid19api.com")
         print(e)
         print("Continuing without it...")

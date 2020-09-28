@@ -187,3 +187,8 @@ def create_my_story(
 @router.get("/my_stories", response_model=List[schemas.MyStory])
 def read_all_latest_my_stories(db: Session = Depends(get_db)):
     return crud.get_all_latest_my_stories(db)
+
+
+@router.get("/my_stories/count")
+def get_story_count(db: Session = Depends(get_db)):
+    return crud.get_my_story_count(db)

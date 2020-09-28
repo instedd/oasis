@@ -22,13 +22,17 @@ import paths from "routes/paths";
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: "6px 16px",
-    width: "60vh",
+    overflowWrap: "anywhere",
   },
   secondaryTail: {
     backgroundColor: theme.palette.secondary.main,
   },
-  content: {
-    width: "90vh",
+  typography: {
+    maxWidth: "12vw",
+    overflowWrap: "break-word",
+  },
+  timeline: {
+    alignItems: "baseline",
   },
 }));
 
@@ -56,7 +60,7 @@ export default function StoryHistory(props) {
 
   return (
     <>
-      <h1 className="title">MY COVID-19 STORY History</h1>
+      <h2 className="title">MY COVID-19 STORY HISTORY</h2>
       <Button
         variant="contained"
         color="secondary"
@@ -67,15 +71,15 @@ export default function StoryHistory(props) {
       </Button>
       <div
         className={classNames("root", styles.root)}
-        style={{ marginTop: "20px", maxHeight: "60vh" }}
+        style={{ marginTop: "20px", maxHeight: "50vh", maxWidth: "600px" }}
       >
-        <Timeline>
+        <Timeline className={classes.timeline}>
           {stories
             .sort((a, b) => b.id - a.id)
             .map((my_story, i) => (
               <TimelineItem key={i}>
                 <TimelineOppositeContent>
-                  <Typography variant="h6" component="h1">
+                  <Typography component="h6" className={classes.typography}>
                     {my_story.createdAt}
                   </Typography>
                 </TimelineOppositeContent>
@@ -86,7 +90,11 @@ export default function StoryHistory(props) {
                 <div className={classes.content}>
                   <TimelineContent>
                     <Paper elevation={3} className={classes.paper}>
-                      <Typography style={{ textAlign: "left" }}>
+                      <Typography
+                        style={{
+                          textAlign: "left",
+                        }}
+                      >
                         {my_story.text}
                       </Typography>
                     </Paper>

@@ -144,5 +144,5 @@ def update_latest_my_story(db: Session, story: schemas.Story, my_story):
     db.commit()
 
 
-def get_all_my_stories(db: Session):
-    return db.query(models.MyStory).options(joinedload("story")).all()
+def get_my_story_count(db: Session):
+    return db.query(models.MyStory).count()

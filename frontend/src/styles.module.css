@@ -1,13 +1,14 @@
 .header {
   position: absolute;
+  width: -moz-fit-content;
   width: fit-content;
   height: 31px;
-  left: 5%;
+  left: 16px;
   top: 22px;
   font-family: Abel;
   font-style: normal;
   font-weight: normal;
-  font-size: 24px;
+  font-size: 28px;
   line-height: 31px;
   color: white;
   z-index: 2;
