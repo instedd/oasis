@@ -23,3 +23,8 @@ async def read_users_me(
     current_user: schemas.User = Depends(main.get_current_user),
 ):
     return current_user
+
+
+@router.get("/count/")
+def get_user_count(db: Session = Depends(get_db)):
+    return crud.get_user_count(db)
