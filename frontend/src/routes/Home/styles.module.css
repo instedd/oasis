@@ -50,8 +50,8 @@
 }
 
 .home {
-    width: 30%;
-    padding-left: 4rem;
+    width: 25%;
+    padding-left: 5vw;
     text-align: left;
     margin: auto 0;
     display: flex;
@@ -60,11 +60,20 @@
     align-self: self-start;
 }
 
+.home p {
+    color: #b3b3b3;
+    font-size: 0.8vw;
+    line-height: 1.4vw;
+    font-weight: 100;
+    font-family: 'Roboto', sans-serif;
+    text-align: justify;
+}
+
 .background {
     position: absolute;
-    background: #00000082;
+    background: #0000009f;
     height: 100vh;
-    width: calc( 30% + 8rem);
+    width: calc( 25% + 10vw);
     top: 0;
     left: 0;
     z-index: -1;
@@ -109,6 +118,13 @@
         align-self: center;
         padding: 0;
     }
+    .home h1 {
+        font-size: 8.25vw;
+    }
+    .home p {
+        font-size: 2.6vw;
+        line-height: 4.8vw;
+    }
 }
 
 @media (max-width: 480px) {
@@ -121,6 +137,13 @@
     }
     .btnGroup button {
         width: 180px !important
+    }
+    .home h1 {
+        font-size: 10.3vw;
+    }
+    .home p {
+        font-size: 3.5vw;
+        line-height: 6.2vw;
     }
 }
 

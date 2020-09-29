@@ -94,6 +94,7 @@ class Story(StoryCreate):
     travels: List[Travel] = []
     close_contacts: List[CloseContact] = []
     latest_my_story: str = None
+    my_stories: List[MyStory] = []
 
     class Config:
         orm_mode = True
