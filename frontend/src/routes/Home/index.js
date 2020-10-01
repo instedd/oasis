@@ -44,8 +44,8 @@ export default function Home(props, { draggableMapRoutes = [] }) {
       <div className={classNames("home", styles.home)}>
         <h1 className="title">Share your pandemic experience!</h1>
         <p>
-          COVID-19 has affected everyone. Sick or heathy, we've all had a
-          Pandemic experience. Whether illness, isolation or innovation, put
+          COVID-19 has affected everyone. Sick or healthy, we've all had a
+          pandemic experience. Whether illness, isolation or innovation, put
           your story on the map, see how you compare to others, share new
           insights, join your planet!
         </p>
