@@ -97,16 +97,16 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       .then((result) => setData(result));
   }, []);
 
-  // useEffect(() => {
-  //   api(`stories/all`, {
-  //     method: "GET",
-  //   }).then((storiesData) => {
-  //     setStats({
-  //       userNum: storiesData.length,
-  //       storyNum: storiesData.filter((story) => story.latestMyStory).length,
-  //     });
-  //   });
-  // }, []);
+  useEffect(() => {
+    api(`stories/all`, {
+      method: "GET",
+    }).then((storiesData) => {
+      setStats({
+        userNum: storiesData.length,
+        storyNum: storiesData.filter((story) => story.latestMyStory).length,
+      });
+    });
+  }, []);
 
   useEffect(() => {
     fetch("https://restcountries.eu/rest/v2/all?fields=name")
@@ -208,6 +208,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const profileBar = () => (
     <div>
       <TextField
+        required
         id={fields.AGE.key}
         label={fields.AGE.label}
         type="number"
@@ -215,6 +216,32 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
         onChange={handleFormChange(fields.AGE)}
         InputProps={{ inputProps: { min: 0 } }}
       />
+      <Select
+        id={fields.SICKNESS.key}
+        label={fields.SICKNESS.label}
+        value={formValues[fields.SICKNESS.key]}
+        onChange={handleFormChange(fields.SICKNESS)}
+        InputLabelProps={{
+          shrink: formValues[fields.SICKNESS.key] === null ? false : true,
+        }}
+      >
+        <MenuItem value={"sick"}>Yes, I am sick</MenuItem>
+        <MenuItem value={"notSick"}>No, I am not sick</MenuItem>
+        <MenuItem value={"recovered"}>No, I have recovered</MenuItem>
+      </Select>
+      <Select
+        id={fields.TESTED.key}
+        label={fields.TESTED.label}
+        value={formValues[fields.TESTED.key]}
+        onChange={handleFormChange(fields.TESTED)}
+        InputLabelProps={{
+          shrink: formValues[fields.TESTED.key] === null ? false : true,
+        }}
+      >
+        <MenuItem value={"positive"}>Yes, I have tested positive</MenuItem>
+        <MenuItem value={"negative"}>Yes, I have tested negative</MenuItem>
+        <MenuItem value={"notTested"}>No, I have not tested</MenuItem>
+      </Select>
       <Select
         id={fields.SEX.key}
         label={fields.SEX.label}
@@ -234,6 +261,9 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
         label={fields.COUNTRY_OF_ORIGIN.label}
         value={formValues[fields.COUNTRY_OF_ORIGIN.key]}
         onChange={handleFormChange(fields.COUNTRY_OF_ORIGIN)}
+        InputLabelProps={{
+          shrink: formValues[fields.SEX.key] === null ? false : true,
+        }}
       >
         {countries.map((option) => (
           <MenuItem key={option.name} value={option.name}>

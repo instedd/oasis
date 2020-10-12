@@ -2,27 +2,37 @@ export const fields = {
   AGE: {
     label: "Age",
     key: "age",
-    initialValue: null,
+    initialValue: undefined,
   },
   SEX: {
     label: "Sex",
     key: "sex",
-    initialValue: null,
+    initialValue: undefined,
   },
   COUNTRY_OF_ORIGIN: {
     label: "Citizenship",
     key: "countryOfOrigin",
-    initialValue: "",
+    initialValue: undefined,
   },
   PROFESSION: {
     label: "Profession",
     key: "profession",
-    initialValue: "",
+    initialValue: undefined,
   },
   MEDICAL_CONDITIONS: {
     label: "Medical conditions",
     key: "medicalConditions",
     initialValue: [],
+  },
+  SICKNESS: {
+    lable: "Are you sick?",
+    key: "sickness",
+    initialValue: undefined,
+  },
+  TESTED: {
+    lable: "Have you been tested for COVID-19?",
+    key: "tested",
+    initialValue: undefined,
   },
 };
 

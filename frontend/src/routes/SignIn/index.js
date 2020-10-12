@@ -11,7 +11,6 @@ import history from "../../history";
 import { signIn } from "actions/auth";
 import { ERROR } from "actions/types";
 import paths from "routes/paths";
-import AuthPaper from "components/AuthPaper";
 import FacebookBtn from "components/FacebookBtn";
 import GoogleBtn from "components/GoogleBtn";
 
