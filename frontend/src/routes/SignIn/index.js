@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignIn() {
+export default function SignIn(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
 
@@ -64,7 +64,7 @@ export default function SignIn() {
   };
 
   return (
-    <AuthPaper>
+    <div>
       <h1 className={styles.title}>Sign In</h1>
       {status && status.detail && (
         <p
@@ -131,7 +131,15 @@ export default function SignIn() {
             </Link>
           </Grid>
         </Grid>
+        <Button
+          className={styles.skipBtn}
+          onClick={() =>
+            props.history.push(paths.dashboard, { onboard: false })
+          }
+        >
+          continue as guest
+        </Button>
       </form>
-    </AuthPaper>
+    </div>
   );
 }

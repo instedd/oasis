@@ -1,10 +1,16 @@
-import Link from "@material-ui/core/Link";
-import SpeedDial from "@material-ui/lab/SpeedDial";
-import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
-import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
-import Collapse from "@material-ui/core/Collapse";
+import {
+  Link,
+  Collapse,
+  IconButton,
+  FormControl,
+  Select,
+  ListItemText,
+  Checkbox,
+  MenuItem,
+  TextField,
+} from "@material-ui/core";
+import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import IconButton from "@material-ui/core/IconButton";
 import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -17,6 +23,11 @@ import { LOADING } from "actions/types";
 import { useLocation } from "react-router-dom";
 import api from "utils";
 import Map from "components/Map";
+import { fields, initialFieldsState } from "./fields";
+import Text from "text.json";
+
+const professions = Text["Profession"];
+const medicalConditions = Text["Medical Conditions"];
 
 const statusMapping = {
   [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
@@ -29,6 +40,8 @@ const statusMapping = {
 
 function Dashboard(props, { draggableMapRoutes = [] }) {
   const dispatch = useDispatch();
+  const [countries, setCountries] = useState([]);
+  const [formValues, setFormValues] = useState(initialFieldsState());
   const [open, setOpen] = useState(false);
   // This myStory is only temporarily fetched from state to check whether it's needed to submit myStory
   // For uses in components, use story.latestMyStory
@@ -84,16 +97,38 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       .then((result) => setData(result));
   }, []);
 
+  // useEffect(() => {
+  //   api(`stories/all`, {
+  //     method: "GET",
+  //   }).then((storiesData) => {
+  //     setStats({
+  //       userNum: storiesData.length,
+  //       storyNum: storiesData.filter((story) => story.latestMyStory).length,
+  //     });
+  //   });
+  // }, []);
+
   useEffect(() => {
-    api(`stories/all`, {
-      method: "GET",
-    }).then((storiesData) => {
-      setStats({
-        userNum: storiesData.length,
-        storyNum: storiesData.filter((story) => story.latestMyStory).length,
-      });
-    });
+    fetch("https://restcountries.eu/rest/v2/all?fields=name")
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          setCountries(result);
+        },
+        () => {}
+      );
   }, []);
+
+  const handleFormChange = (field) => (event) => {
+    const intFields = [fields.AGE];
+    const key = field.key;
+
+    if (intFields.includes(field)) {
+      setFormValues({ ...formValues, [key]: parseInt(event.target.value) });
+    } else {
+      setFormValues({ ...formValues, [key]: event.target.value });
+    }
+  };
 
   const actions = [
     {
@@ -170,6 +205,84 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     </div>
   );
 
+  const profileBar = () => (
+    <div>
+      <TextField
+        id={fields.AGE.key}
+        label={fields.AGE.label}
+        type="number"
+        value={formValues[fields.AGE.key]}
+        onChange={handleFormChange(fields.AGE)}
+        InputProps={{ inputProps: { min: 0 } }}
+      />
+      <Select
+        id={fields.SEX.key}
+        label={fields.SEX.label}
+        value={formValues[fields.SEX.key]}
+        onChange={handleFormChange(fields.SEX)}
+        InputLabelProps={{
+          shrink: formValues[fields.SEX.key] === null ? false : true,
+        }}
+      >
+        <MenuItem value={"male"}>Male</MenuItem>
+        <MenuItem value={"female"}>Female</MenuItem>
+        <MenuItem value={"other"}>Other</MenuItem>
+        <MenuItem>I prefer not to state</MenuItem>
+      </Select>
+
+      <Select
+        label={fields.COUNTRY_OF_ORIGIN.label}
+        value={formValues[fields.COUNTRY_OF_ORIGIN.key]}
+        onChange={handleFormChange(fields.COUNTRY_OF_ORIGIN)}
+      >
+        {countries.map((option) => (
+          <MenuItem key={option.name} value={option.name}>
+            {option.name}
+          </MenuItem>
+        ))}
+      </Select>
+      <Select
+        label={fields.PROFESSION.label}
+        value={formValues[fields.PROFESSION.key]}
+        onChange={handleFormChange(fields.PROFESSION)}
+      >
+        {professions.map((option) => (
+          <MenuItem style={{ fontSize: 13 }} key={option} value={option}>
+            {option}
+          </MenuItem>
+        ))}
+      </Select>
+      <FormControl>
+        <Select
+          label={fields.MEDICAL_CONDITIONS.label}
+          value={formValues[fields.MEDICAL_CONDITIONS.key]}
+          onChange={handleFormChange(fields.MEDICAL_CONDITIONS)}
+          SelectProps={{
+            multiple: true,
+            renderValue: (selected) => selected.join(", "),
+          }}
+        >
+          {medicalConditions.map((name) => (
+            <MenuItem key={name} value={name}>
+              <Checkbox
+                checked={
+                  formValues[fields.MEDICAL_CONDITIONS.key].indexOf(name) > -1
+                }
+              />
+              <ListItemText
+                primary={name}
+                className={classNames(
+                  "checkbox-label",
+                  styles["checkbox-label"]
+                )}
+              />
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </div>
+  );
+
   return (
     <div className={styles.root}>
       {status.type === LOADING || !story ? (
@@ -187,6 +300,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
             storyNum={stats.storyNum && stats.storyNum.toLocaleString()}
           />
           {informationHeader()}
+          {profileBar()}
           <SpeedDial
             ariaLabel="Daily actions"
             className={classNames("speeddial", styles.speeddial)}
