@@ -35,7 +35,17 @@ def create_like(db, like: schemas.LikeCreate, liker_story_id: int):
 
 def get_like_count(db, story_id):
     return (
-        db.query(models.Like).filter(models.Like.story_id == story_id).count()
+        db.query(models.Like)
+        .filter(and_(models.Like.story_id == story_id, models.Like.like == 1))
+        .count()
+    )
+
+
+def get_dislike_count(db, story_id):
+    return (
+        db.query(models.Like)
+        .filter(and_(models.Like.story_id == story_id, models.Like.like == 0))
+        .count()
     )
 
 

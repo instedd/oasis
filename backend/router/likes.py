@@ -55,8 +55,14 @@ async def get_like_count(
     db: Session = Depends(get_db),
 ):
     like_count = crud.get_like_count(db, story_id)
+    dislike_count = crud.get_dislike_count(db, story_id)
     is_like_by_me = crud.is_like_by(db, story_id, current_story.id)
 
     return JSONResponse(
-        {"like_count": like_count, "like": is_like_by_me}, status_code=200,
+        {
+            "like": like_count,
+            "dislike": dislike_count,
+            "like_by_me": is_like_by_me,
+        },
+        status_code=200,
     )
