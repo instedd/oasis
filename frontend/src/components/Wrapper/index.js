@@ -10,7 +10,7 @@ function Wrapper({ children }) {
         onClick={() => window.open("https://earth2.ucsd.edu/")}
       >
         <span>powered by</span>
-        <img src="earth2-logo.png" alt="earth2-logo"></img>
+        <img src="/static/earth2-logo.png" alt="EARTH2.0"></img>
       </div>
     </main>
   );

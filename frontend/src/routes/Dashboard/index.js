@@ -105,7 +105,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     {
       name: "UPDATE MY STATUS",
       href: paths.onboard,
-      state: { onboard: true },
+      state: { onboard: false },
       classes: classNames("MuiFab-extended assessment", styles.assessment),
     },
     {
