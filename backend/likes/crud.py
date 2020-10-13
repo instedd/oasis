@@ -7,11 +7,15 @@ from stories.crud import update
 def get_like_by_story_and_user(
     db: Session, story_id: int, liker_story_id: int
 ):
-    return db.query(models.Like).filter(
-        and_(
-            models.Like.story_id == story_id,
-            models.Like.liker_story_id == liker_story_id,
+    return (
+        db.query(models.Like)
+        .filter(
+            and_(
+                models.Like.story_id == story_id,
+                models.Like.liker_story_id == liker_story_id,
+            )
         )
+        .first()
     )
 
 
@@ -23,7 +27,7 @@ def create_like(db, like: schemas.LikeCreate, liker_story_id: int):
     d = like.dict()
     d["liker_story_id"] = liker_story_id
     db_like = models.Like(**d)
-    db.add(db.like)
+    db.add(db_like)
     db.commit()
     db.refresh(db_like)
     return db_like

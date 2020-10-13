@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
-import json
 
 from auth import main
 from database import get_db
@@ -39,7 +38,7 @@ async def create_like(
     if like_to_update:
         return crud.update_like(db, like_to_update.id, like)
     else:
-        if like.story_id == like.liker_story_id:
+        if like.story_id == current_story.id:
             raise HTTPException(
                 status_code=422,
                 detail="User cannot like or dislike their own stories",
@@ -55,10 +54,9 @@ async def get_like_count(
     current_story: stories_schemas.Story = Depends(main.get_current_story),
     db: Session = Depends(get_db),
 ):
-    like_count = crud.get_like_count(story_id)
-    is_like_by_me = crud.is_like_by(story_id, current_story.id, db)
+    like_count = crud.get_like_count(db, story_id)
+    is_like_by_me = crud.is_like_by(db, story_id, current_story.id)
 
     return JSONResponse(
-        json.dumps({"like_count": like_count, "like": is_like_by_me}),
-        status_code=200,
+        {"like_count": like_count, "like": is_like_by_me}, status_code=200,
     )
