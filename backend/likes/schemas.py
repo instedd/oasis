@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 class LikeCreate(BaseModel):
     like: bool = None
-    story_id: int
+    my_story_id: int
 
 
 class Like(LikeCreate):

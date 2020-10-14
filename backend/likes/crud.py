@@ -5,13 +5,13 @@ from stories.crud import update
 
 
 def get_like_by_story_and_user(
-    db: Session, story_id: int, liker_story_id: int
+    db: Session, my_story_id: int, liker_story_id: int
 ):
     return (
         db.query(models.Like)
         .filter(
             and_(
-                models.Like.story_id == story_id,
+                models.Like.my_story_id == my_story_id,
                 models.Like.liker_story_id == liker_story_id,
             )
         )
@@ -33,24 +33,28 @@ def create_like(db, like: schemas.LikeCreate, liker_story_id: int):
     return db_like
 
 
-def get_like_count(db, story_id):
+def get_like_count(db, my_story_id):
     return (
         db.query(models.Like)
-        .filter(and_(models.Like.story_id == story_id, models.Like.like == 1))
+        .filter(
+            and_(models.Like.my_story_id == my_story_id, models.Like.like == 1)
+        )
         .count()
     )
 
 
-def get_dislike_count(db, story_id):
+def get_dislike_count(db, my_story_id):
     return (
         db.query(models.Like)
-        .filter(and_(models.Like.story_id == story_id, models.Like.like == 0))
+        .filter(
+            and_(models.Like.my_story_id == my_story_id, models.Like.like == 0)
+        )
         .count()
     )
 
 
-def is_like_by(db, story_id, liker_story_id):
-    db_like = get_like_by_story_and_user(db, story_id, liker_story_id)
+def is_like_by(db, my_story_id, liker_story_id):
+    db_like = get_like_by_story_and_user(db, my_story_id, liker_story_id)
     if db_like:
         return db_like.like
     else:
