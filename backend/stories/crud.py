@@ -146,3 +146,11 @@ def update_latest_my_story(db: Session, story: schemas.Story, my_story):
 
 def get_my_story_count(db: Session):
     return db.query(models.MyStory).count()
+
+
+def get_my_story(db: Session, my_story_id: int):
+    return (
+        db.query(models.MyStory)
+        .filter(models.MyStory.id == my_story_id)
+        .first()
+    )
