@@ -62,7 +62,7 @@ def test_async_update(setup):
     setup["app"].get("/api/data/all")
 
     # Sleep some time to give update time to work
-    time.sleep(60)
+    time.sleep(120)
 
     # Check that new max date is today
     today = datetime.now()
