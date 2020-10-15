@@ -67,6 +67,7 @@ def test_async_update(setup):
     # Check that new max date is today
     today = datetime.now()
     yesterday = datetime.fromtimestamp(datetime.timestamp(today) - 86400)
+    print("The async update is checking the database now")
     max_date = (
         setup["db"].query(func.max(models.NytLiveCounty.date)).first()[0].day
     )
