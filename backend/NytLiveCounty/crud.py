@@ -217,6 +217,7 @@ async def update(db: Session):
             .filter(models.NytLiveCounty.timestamp < FIFTEEN_DAYS_AGO)
             .all()
         )
+        print(f"Update found {len(old_recs)} old rows to delete")
         for rec in old_recs:
             db.delete(rec)
 
@@ -229,14 +230,18 @@ async def update(db: Session):
             .filter(models.NytLiveCounty.commit.in_([cmt_hex]))
             .all()
         )
+        print(f"Update found {len(recs_with_hex)} that are in master")
 
         if len(recs_with_hex) > 0:  # we already have this data
+            print("Update() detected up-to-date data, exiting...")
             db.commit()
             return
 
         # Load data
         df = pd.read_csv("covid-19-data/live/us-counties.csv", dtype=str)
 
+        print(f"Update is adding {df.shape[0]} new rows")
+        print(f"The date for one of these is {df.loc[0,'date']}")
         for indx, row in df.iterrows():
             db.add(build_new_db_row(row, now, cmt_hex))
 
