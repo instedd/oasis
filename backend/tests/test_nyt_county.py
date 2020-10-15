@@ -18,13 +18,14 @@ def test_query_counties(setup):
     assert len(json.loads(response.content)["clusters"]) == 5
 '''
 
-
+'''
 def test_query_all_data(setup):
     """
     Test intergration of NYT data with data/all
     """
     response = setup["app"].get("/api/data/all")
     assert len(json.loads(response.content)["clusters"]) == 10
+'''
 
 
 def test_seed_fake_date(setup):
@@ -62,17 +63,18 @@ def test_async_update(setup):
     setup["app"].get("/api/data/all")
 
     # Sleep some time to give update time to work
-    time.sleep(120)
+    time.sleep(10)
 
     # Check that new max date is today
     today = datetime.now()
     yesterday = datetime.fromtimestamp(datetime.timestamp(today) - 86400)
-    print("The async update is checking the database now")
+    print("The async update test is checking the database now")
     max_date = (
         setup["db"].query(func.max(models.NytLiveCounty.date)).first()[0].day
     )
 
     assert max_date == today.day or max_date == yesterday.day
+    assert 1 == 2
 
 
 def test_no_na_fips(setup):
