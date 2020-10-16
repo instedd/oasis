@@ -74,7 +74,6 @@ def test_async_update(setup):
     )
 
     assert max_date == today.day or max_date == yesterday.day
-    assert 1 == 2
 
 
 def test_no_na_fips(setup):
