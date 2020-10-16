@@ -112,8 +112,13 @@ def add_data(df, commit_hex: str):
     db = next(get_db())
 
     try:
+        # for indx, row in df.iterrows():
+        #    db.add(build_new_db_row(row, now, commit_hex))
+        # db.commit()
+        recs = []
         for indx, row in df.iterrows():
-            db.add(build_new_db_row(row, now, commit_hex))
+            recs.append(build_new_db_row(row, now, commit_hex))
+        db.bulk_save_objects(recs)
         db.commit()
 
     except Exception:
@@ -176,23 +181,28 @@ def seed(fake_date=None):
     # clear old data
     db = next(get_db())
     try:
-        old_recs = (
-            db.query(models.NytLiveCounty)
-            .filter(models.NytLiveCounty.timestamp < FIFTEEN_DAYS_AGO)
-            .all()
+        old_recs_count = (
+            db.query(models.NytLiveCounty).filter(
+                models.NytLiveCounty.timestamp < FIFTEEN_DAYS_AGO
+            )
+            # .all()
+            .delete()
         )
-        for rec in old_recs:
-            db.delete(rec)
+        print(f"Old recs count: {old_recs_count}")
+        # for rec in old_recs:
+        #    db.delete(rec)
 
         if fake_date is not None:
-            too_new_recs = (
-                db.query(models.NytLiveCounty)
-                .filter(models.NytLiveCounty.date > fake_date)
-                .all()
+            too_new_recs_count = (
+                db.query(models.NytLiveCounty).filter(
+                    models.NytLiveCounty.date > fake_date
+                )
+                # .all()
+                .delete()
             )
-            print(len(too_new_recs))  # DEBUG
-            for rec in too_new_recs:
-                db.delete(rec)
+            print(f"too_new_recs_count: {too_new_recs_count}")
+            # for rec in too_new_recs:
+            #    db.delete(rec)
 
         db.commit()
 
@@ -202,34 +212,42 @@ def seed(fake_date=None):
         db.rollback()
 
 
-async def update(db: Session):
+# async def update(db: Session):
+async def update():
     """
     Updates the NYT county database with newest data from NYT github
     """
     print("update has been called")
-    now = datetime.now().timestamp()
+    # now = datetime.now().timestamp()
     try:
         # Make sure repo is up to date and on master
         check_and_reset_repo()
 
-        old_recs = (
-            db.query(models.NytLiveCounty)
-            .filter(models.NytLiveCounty.timestamp < FIFTEEN_DAYS_AGO)
-            .all()
+        db = next(get_db())
+        old_recs_count = (
+            db.query(models.NytLiveCounty).filter(
+                models.NytLiveCounty.timestamp < FIFTEEN_DAYS_AGO
+            )
+            # .all()
+            .delete()
         )
-        print(f"Update found {len(old_recs)} old rows to delete")
-        for rec in old_recs:
-            db.delete(rec)
+        db.commit()
+        print(f"old_recs_count: {old_recs_count}")
+        # print(f"Update found {len(old_recs)} old rows to delete")
+        # for rec in old_recs:
+        #    db.delete(rec)
 
         # Identify master commit hash
         repo = Repo("covid-19-data")
         cmt_hex = repo.heads.master.commit.hexsha
 
+        db = next(get_db())
         recs_with_hex = (
             db.query(models.NytLiveCounty)
             .filter(models.NytLiveCounty.commit.in_([cmt_hex]))
             .all()
         )
+        db.commit()
         print(f"Update found {len(recs_with_hex)} that are in master")
 
         if len(recs_with_hex) > 0:  # we already have this data
@@ -242,10 +260,11 @@ async def update(db: Session):
 
         print(f"Update is adding {df.shape[0]} new rows")
         print(f"The date for one of these is {df.loc[0,'date']}")
-        for indx, row in df.iterrows():
-            db.add(build_new_db_row(row, now, cmt_hex))
+        # for indx, row in df.iterrows():
+        #    db.add(build_new_db_row(row, now, cmt_hex))
+        add_data(df, cmt_hex)
 
-        db.commit()
+        # db.commit()
 
     except Exception:
         traceback.print_exc()
