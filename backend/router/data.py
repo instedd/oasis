@@ -219,7 +219,7 @@ async def get_all_data(db: Session = Depends(get_db)):
     # )
 
     # Run update for NYT data
-    asyncio.ensure_future(crud.update(db))
+    asyncio.ensure_future(crud.update())
     # crud.update(db)
 
     return {
