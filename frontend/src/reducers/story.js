@@ -2,6 +2,7 @@ import {
   SET_SICK_STATUS,
   SET_TESTED_STATUS,
   LOADING,
+  SET_STORY,
   SAVED_STORY,
   SAVE_STORY_START,
   FETCH_STORY_START,
@@ -20,7 +21,8 @@ const initialState = {
   story: null,
   travels: [],
   closeContacts: [],
-  myStory: "",
+  tempMyStory: "",
+  tempStory: null,
 };
 
 const story = (state = initialState, action) => {
@@ -38,6 +40,11 @@ const story = (state = initialState, action) => {
         ...state,
         ...action.payload,
       };
+    case SET_STORY:
+      return {
+        ...state,
+        tempStory: action.payload,
+      };
     case SET_SICK_STATUS:
       return {
         ...state,
@@ -51,10 +58,10 @@ const story = (state = initialState, action) => {
     case SUBMIT_MY_STORY:
       return {
         ...state,
-        myStory: action.payload.myStory,
+        tempMyStory: null,
         story: {
           ...state.story,
-          latestMyStory: action.payload.story.latestMyStory,
+          latestMyStory: action.payload.latestMyStory,
         },
       };
     case FETCH_STORY_START:
@@ -101,7 +108,7 @@ const story = (state = initialState, action) => {
     case SET_MY_STORY:
       return {
         ...state,
-        myStory: action.payload,
+        tempMyStory: action.payload,
       };
     default:
       return state;

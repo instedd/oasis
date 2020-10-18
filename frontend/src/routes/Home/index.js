@@ -18,9 +18,11 @@ import { useDispatch } from "react-redux";
 import SimpleMap from "components/SimpleMap";
 import paths from "routes/paths";
 import styles from "./styles.module.css";
-import { setMyStory } from "../../actions/story";
+import { setStory, setMyStory } from "actions/story";
 import { fields, initialFieldsState } from "./fields";
 import PersonPinCircleIcon from "@material-ui/icons/PersonPinCircle";
+import { getGeocoding } from "utils";
+import { sicknessStatus } from "../types";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -93,9 +95,23 @@ export default function Home(props, { draggableMapRoutes = [] }) {
   };
 
   const handleSubmit = (event, route) => {
-    dispatch(setMyStory(myStory));
+    getGeocoding().then((coordinates) => {
+      const { ...story } = formValues;
 
-    props.history.push(route, { from: "shareBtn" });
+      // check if the user has filled valid city, state, and country
+      if (coordinates) {
+        story.latitude = coordinates[1]; // coordinates = [lng, lat]
+        story.longitude = coordinates[0];
+      }
+
+      //TODO: get from slider
+      story.sick = "not_sick";
+      story.tested = "not_tested";
+
+      dispatch(setStory(story));
+      dispatch(setMyStory(myStory));
+      props.history.push(route, { from: "shareBtn" });
+    });
   };
 
   const onQuery = (event) => {
@@ -370,7 +386,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           <Button
             aria-label="skip"
             size="medium"
-            onClick={(e) => handleSubmit(e, paths.signIn)}
+            onClick={() => props.history.push(paths.signIn)}
             style={{ color: "#ffffff80" }}
           >
             SKIP AND CONTINUE

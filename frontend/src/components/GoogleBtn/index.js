@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { GoogleLogin, GoogleLogout } from "react-google-login";
 import Button from "@material-ui/core/Button";
 
-import { externalSignIn } from "actions/auth";
+import { signIn } from "actions/auth";
 
 const CLIENT_ID =
   "194122770228-sf8dnv46cs5dsrqn8g29iksvico2urtb.apps.googleusercontent.com";
@@ -22,7 +22,7 @@ export default function GoogleBtn() {
         email: response.profileObj.email,
         password: response.accessToken,
       };
-      dispatch(externalSignIn(dto));
+      dispatch(signIn(dto, true));
     }
   };
 

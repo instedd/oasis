@@ -29,6 +29,7 @@ import { fields, initialFieldsState } from "./fields";
 import Select from "../../components/Select";
 import AlertDialog from "components/Dialog";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import { getGeocoding } from "utils";
 
 const contactText = Text["Close Contacts"].texts;
 const contactNoticeText = Text["Close Contacts Notice"].texts;
@@ -105,33 +106,6 @@ function CriticalQuestions(props) {
     const newContacts = [...contacts];
     newContacts[index] = contactToUpdate;
     setContacts(newContacts);
-  };
-
-  const getGeocoding = () => {
-    const city = formValues[fields.CITY.key];
-    const state = formValues[fields.STATE.key];
-    const country = formValues[fields.COUNTRY.key];
-
-    const query = city + " " + state + " " + country;
-    const url =
-      "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
-      query +
-      ".json?access_token=" +
-      MAPBOX_APIKEY;
-    return fetch(url)
-      .then((response) => response.json())
-      .then((jsondata) => {
-        if (
-          jsondata &&
-          jsondata.features &&
-          jsondata.features.length &&
-          jsondata.features[0].geometry &&
-          jsondata.features[0].geometry.coordinates &&
-          jsondata.features[0].geometry.coordinates.length >= 2
-        ) {
-          return jsondata.features[0].geometry.coordinates;
-        }
-      });
   };
 
   const handleSubmit = (event) => {

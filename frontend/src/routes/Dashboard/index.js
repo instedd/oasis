@@ -18,7 +18,7 @@ import { useSelector, useDispatch } from "react-redux";
 import paths from "routes/paths";
 import { sicknessStatus, testStatus } from "routes/types";
 import styles from "./styles.module.css";
-import { fetchStory, submitMyStory } from "actions/story";
+import { fetchStory, submitMyStory, submitStory } from "actions/story";
 import { getStoryResources } from "actions/resources";
 import { LOADING } from "actions/types";
 import { useLocation } from "react-router-dom";
@@ -68,7 +68,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const classes = useStyles();
   // This myStory is only temporarily fetched from state to check whether it's needed to submit myStory
   // For uses in components, use story.latestMyStory
-  const { myStory, story, status } = useSelector((state) => {
+  const { myStory, story, status, tempStory } = useSelector((state) => {
     return state.story;
   });
 
@@ -83,21 +83,28 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   };
 
   useEffect(() => {
+    if (tempStory) {
+      const nextPage = paths.dashboard;
+      const dto = {
+        story: tempStory,
+        nextPage,
+        travels: [],
+        closeContacts: [],
+      };
+      dispatch(submitStory(dto));
+    } else if (!story) {
+      dispatch(fetchStory());
+    } else if (story && myStory && myStory.length) {
+      dispatch(submitMyStory(story.id, myStory));
+    }
+  }, []);
+
+  useEffect(() => {
     let shouldDragMap = draggableMapRoutes.includes(location.pathname);
     if (shouldDragMap !== draggableMap) {
       setDraggableMap(draggableMapRoutes.includes(location.pathname));
     }
   }, [location, draggableMap, setDraggableMap, draggableMapRoutes]);
-
-  useEffect(() => {
-    if (!story) dispatch(fetchStory());
-  }, [dispatch, story]);
-
-  useEffect(() => {
-    if (story && myStory && myStory.length) {
-      dispatch(submitMyStory(story.id, myStory));
-    }
-  }, [dispatch, story, myStory]);
 
   const handleClick = () => {
     setOpen(!open);
@@ -152,6 +159,24 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     } else {
       setFormValues({ ...formValues, [key]: event.target.value });
     }
+  };
+
+  const handleSubmit = () => {
+    const { ...newStory } = formValues;
+    Object.assign(story, newStory);
+    //TODO: delete this
+    story.medical_conditions = [];
+
+    const nextPage = paths.dashboard;
+
+    const dto = {
+      story: story,
+      nextPage,
+      travels: [],
+      closeContacts: [],
+    };
+
+    dispatch(submitStory(dto, true));
   };
 
   const actions = [
@@ -318,7 +343,9 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
         </Grid>
       </Grid>
       <Grid item xs={2}>
-        <Button className={classes.submitBtn}>Submit</Button>
+        <Button className={classes.submitBtn} onClick={() => handleSubmit()}>
+          Submit
+        </Button>
       </Grid>
     </Grid>
   );

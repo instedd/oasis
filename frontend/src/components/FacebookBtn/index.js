@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import Button from "@material-ui/core/Button";
 import FacebookLogin from "react-facebook-login";
 
-import { externalSignIn } from "../../actions/auth";
+import { signIn } from "../../actions/auth";
 
 const APP_ID = "725054974718611";
 
@@ -17,7 +17,7 @@ export default function FacebookBtn() {
         password: response.accessToken,
       };
 
-      dispatch(externalSignIn(dto));
+      dispatch(signIn(dto, true));
     }
   };
 

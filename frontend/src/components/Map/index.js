@@ -726,7 +726,7 @@ export default function Map(props, { draggable = true }) {
     if (userStory.age)
       content = content + "A " + userStory.age + " years old user";
     else content += "A user";
-    if (userStory.profession !== "")
+    if (userStory.profession && userStory.profession !== "")
       content +=
         " working in the " + userStory.profession.toLowerCase() + " industry ";
 
