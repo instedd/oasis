@@ -163,3 +163,9 @@
 .resources button {
     color: white
 }
+
+.grid-1>div {
+    width: calc((90% - 8px*6)/3);
+    margin: 8px;
+    text-align: left;
+  }

@@ -2,12 +2,13 @@ import {
   Link,
   Collapse,
   IconButton,
-  FormControl,
   Select,
   ListItemText,
   Checkbox,
   MenuItem,
   TextField,
+  Grid,
+  Button,
 } from "@material-ui/core";
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -25,9 +26,30 @@ import api from "utils";
 import Map from "components/Map";
 import { fields, initialFieldsState } from "./fields";
 import Text from "text.json";
+import { withStyles, makeStyles } from "@material-ui/core/styles";
+import zIndex from "@material-ui/core/styles/zIndex";
 
 const professions = Text["Profession"];
 const medicalConditions = Text["Medical Conditions"];
+
+const useStyles = makeStyles((theme) => ({
+  profileBar: {
+    border: "1px solid #fff",
+    padding: "1rem",
+    zIndex: 2,
+    background: "black",
+    borderRadius: 5,
+    bottom: 60,
+    position: "absolute",
+    width: "70%",
+    right: 200,
+  },
+  submitBtn: {
+    background: "var(--primary) !important",
+    color: "white",
+    verticalAlign: "center",
+  },
+}));
 
 const statusMapping = {
   [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
@@ -43,6 +65,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const [countries, setCountries] = useState([]);
   const [formValues, setFormValues] = useState(initialFieldsState());
   const [open, setOpen] = useState(false);
+  const classes = useStyles();
   // This myStory is only temporarily fetched from state to check whether it's needed to submit myStory
   // For uses in components, use story.latestMyStory
   const { myStory, story, status } = useSelector((state) => {
@@ -122,6 +145,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const handleFormChange = (field) => (event) => {
     const intFields = [fields.AGE];
     const key = field.key;
+    console.log(!formValues[fields.SEX.key]);
 
     if (intFields.includes(field)) {
       setFormValues({ ...formValues, [key]: parseInt(event.target.value) });
@@ -206,111 +230,97 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   );
 
   const profileBar = () => (
-    <div>
-      <TextField
-        required
-        id={fields.AGE.key}
-        label={fields.AGE.label}
-        type="number"
-        value={formValues[fields.AGE.key]}
-        onChange={handleFormChange(fields.AGE)}
-        InputProps={{ inputProps: { min: 0 } }}
-      />
-      <Select
-        id={fields.SICKNESS.key}
-        label={fields.SICKNESS.label}
-        value={formValues[fields.SICKNESS.key]}
-        onChange={handleFormChange(fields.SICKNESS)}
-        InputLabelProps={{
-          shrink: formValues[fields.SICKNESS.key] === null ? false : true,
-        }}
-      >
-        <MenuItem value={"sick"}>Yes, I am sick</MenuItem>
-        <MenuItem value={"notSick"}>No, I am not sick</MenuItem>
-        <MenuItem value={"recovered"}>No, I have recovered</MenuItem>
-      </Select>
-      <Select
-        id={fields.TESTED.key}
-        label={fields.TESTED.label}
-        value={formValues[fields.TESTED.key]}
-        onChange={handleFormChange(fields.TESTED)}
-        InputLabelProps={{
-          shrink: formValues[fields.TESTED.key] === null ? false : true,
-        }}
-      >
-        <MenuItem value={"positive"}>Yes, I have tested positive</MenuItem>
-        <MenuItem value={"negative"}>Yes, I have tested negative</MenuItem>
-        <MenuItem value={"notTested"}>No, I have not tested</MenuItem>
-      </Select>
-      <Select
-        id={fields.SEX.key}
-        label={fields.SEX.label}
-        value={formValues[fields.SEX.key]}
-        onChange={handleFormChange(fields.SEX)}
-        InputLabelProps={{
-          shrink: formValues[fields.SEX.key] === null ? false : true,
-        }}
-      >
-        <MenuItem value={"male"}>Male</MenuItem>
-        <MenuItem value={"female"}>Female</MenuItem>
-        <MenuItem value={"other"}>Other</MenuItem>
-        <MenuItem>I prefer not to state</MenuItem>
-      </Select>
-
-      <Select
-        label={fields.COUNTRY_OF_ORIGIN.label}
-        value={formValues[fields.COUNTRY_OF_ORIGIN.key]}
-        onChange={handleFormChange(fields.COUNTRY_OF_ORIGIN)}
-        InputLabelProps={{
-          shrink: formValues[fields.SEX.key] === null ? false : true,
-        }}
-      >
-        {countries.map((option) => (
-          <MenuItem key={option.name} value={option.name}>
-            {option.name}
-          </MenuItem>
-        ))}
-      </Select>
-      <Select
-        label={fields.PROFESSION.label}
-        value={formValues[fields.PROFESSION.key]}
-        onChange={handleFormChange(fields.PROFESSION)}
-      >
-        {professions.map((option) => (
-          <MenuItem style={{ fontSize: 13 }} key={option} value={option}>
-            {option}
-          </MenuItem>
-        ))}
-      </Select>
-      <FormControl>
-        <Select
-          label={fields.MEDICAL_CONDITIONS.label}
-          value={formValues[fields.MEDICAL_CONDITIONS.key]}
-          onChange={handleFormChange(fields.MEDICAL_CONDITIONS)}
-          SelectProps={{
-            multiple: true,
-            renderValue: (selected) => selected.join(", "),
-          }}
-        >
-          {medicalConditions.map((name) => (
-            <MenuItem key={name} value={name}>
-              <Checkbox
-                checked={
-                  formValues[fields.MEDICAL_CONDITIONS.key].indexOf(name) > -1
-                }
-              />
-              <ListItemText
-                primary={name}
-                className={classNames(
-                  "checkbox-label",
-                  styles["checkbox-label"]
-                )}
-              />
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </div>
+    <Grid container spacing={1} className={classes.profileBar}>
+      <Grid container item spacing={2} sm={10} xs={10}>
+        <Grid item sm={4} xs={1}>
+          <TextField
+            required
+            id={fields.AGE.key}
+            label={fields.AGE.label}
+            type="number"
+            value={formValues[fields.AGE.key]}
+            onChange={handleFormChange(fields.AGE)}
+            InputProps={{ inputProps: { min: 0 } }}
+          />
+        </Grid>
+        <Grid item sm={4} xs={1}>
+          <Select
+            id={fields.SEX.key}
+            label={fields.SEX.label}
+            value=""
+            onChange={handleFormChange(fields.SEX)}
+            InputLabelProps={{
+              shrink: formValues[fields.SEX.key],
+            }}
+          >
+            <MenuItem value={"male"}>Male</MenuItem>
+            <MenuItem value={"female"}>Female</MenuItem>
+            <MenuItem value={"other"}>Other</MenuItem>
+            <MenuItem>I prefer not to state</MenuItem>
+          </Select>
+        </Grid>
+        <Grid item sm={4} xs={1}>
+          <Select
+            label={fields.COUNTRY_OF_ORIGIN.label}
+            value={formValues[fields.COUNTRY_OF_ORIGIN.key]}
+            onChange={handleFormChange(fields.COUNTRY_OF_ORIGIN)}
+            InputLabelProps={{
+              shrink: formValues[fields.SEX.key] === null ? false : true,
+            }}
+          >
+            {countries.map((option) => (
+              <MenuItem key={option.name} value={option.name}>
+                {option.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </Grid>
+        <Grid item sm={6} xs={1}>
+          <Select
+            label={fields.PROFESSION.label}
+            value={formValues[fields.PROFESSION.key]}
+            onChange={handleFormChange(fields.PROFESSION)}
+          >
+            {professions.map((option) => (
+              <MenuItem style={{ fontSize: 13 }} key={option} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </Select>
+        </Grid>
+        <Grid item sm={6} xs={1}>
+          <Select
+            label={fields.MEDICAL_CONDITIONS.label}
+            value={formValues[fields.MEDICAL_CONDITIONS.key]}
+            onChange={handleFormChange(fields.MEDICAL_CONDITIONS)}
+            SelectProps={{
+              multiple: true,
+              renderValue: (selected) => selected.join(", "),
+            }}
+          >
+            {medicalConditions.map((name) => (
+              <MenuItem key={name} value={name}>
+                <Checkbox
+                  checked={
+                    formValues[fields.MEDICAL_CONDITIONS.key].indexOf(name) > -1
+                  }
+                />
+                <ListItemText
+                  primary={name}
+                  className={classNames(
+                    "checkbox-label",
+                    styles["checkbox-label"]
+                  )}
+                />
+              </MenuItem>
+            ))}
+          </Select>
+        </Grid>
+      </Grid>
+      <Grid item xs={2}>
+        <Button className={classes.submitBtn}>Submit</Button>
+      </Grid>
+    </Grid>
   );
 
   return (

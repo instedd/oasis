@@ -30,7 +30,7 @@
     background-color: rgba(0, 0, 0, 0.7);
 }
 
-.textarea .MuiInputBase-root .MuiOutlinedInput-notchedOutline{
+.textarea .MuiInputBase-root .MuiOutlinedInput-notchedOutline {
     border-color: "red!important";
 }
 
@@ -74,8 +74,9 @@
 .btnGroup {
     width: 100%;
     display: flex;
-    justify-content: space-evenly;
     margin-top: 14px;
+    flex-direction: column;
+    align-items: center;
 }
 
 .btnGroup button {
@@ -131,4 +132,9 @@
 
 .visible {
     visibility: visible;
+}
+
+.profileBar {
+    background-color: black;
+    z-index: 2;
 }

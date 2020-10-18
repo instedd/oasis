@@ -5,9 +5,14 @@ import {
   ListItem,
   List,
   ListItemText,
+  Slider,
+  Grid,
+  Button,
+  IconButton,
 } from "@material-ui/core";
 import classNames from "classnames";
 import React, { useEffect, useState } from "react";
+import { withStyles, makeStyles } from "@material-ui/core/styles";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import SimpleMap from "components/SimpleMap";
@@ -15,15 +20,61 @@ import paths from "routes/paths";
 import styles from "./styles.module.css";
 import { setMyStory } from "../../actions/story";
 import { fields, initialFieldsState } from "./fields";
+import PersonPinCircleIcon from "@material-ui/icons/PersonPinCircle";
 
+const useStyles = makeStyles((theme) => ({
+  container: {
+    marginTop: "1rem",
+  },
+  list: {
+    position: "absolute",
+    top: 65,
+    zIndex: 2,
+    background: "#000",
+    width: "max-content",
+  },
+}));
 export default function Home(props, { draggableMapRoutes = [] }) {
   const dispatch = useDispatch();
+  const classes = useStyles();
 
   const [myStory, updateMyStory] = useState("");
   const [draggableMap, setDraggableMap] = useState(false);
-  const [visibility, setVisibility] = useState("visible");
   const [locationList, setListItems] = useState([]);
   const [formValues, setFormValues] = useState(initialFieldsState());
+
+  const sicknessMarks = [
+    {
+      value: 0,
+      label: "sick",
+    },
+    {
+      value: 1,
+      label: "not sick",
+    },
+    {
+      value: 2,
+      label: "recovered",
+    },
+  ];
+  const testedMarks = [
+    {
+      value: 0,
+      label: "not tested",
+    },
+    {
+      value: 1,
+      label: "tested positive",
+    },
+    {
+      value: 2,
+      label: "tested negative",
+    },
+  ];
+
+  function valuetext(value) {
+    return `${value}`;
+  }
 
   let location = useLocation();
 
@@ -38,11 +89,6 @@ export default function Home(props, { draggableMapRoutes = [] }) {
   }, [location, draggableMap, setDraggableMap, draggableMapRoutes]);
 
   const handleChange = (event) => {
-    if (event.target.value) {
-      setVisibility("hidden");
-    } else {
-      setVisibility("visible");
-    }
     updateMyStory(event.target.value);
   };
 
@@ -112,6 +158,182 @@ export default function Home(props, { draggableMapRoutes = [] }) {
     setFormValues({ ...formValues, [key]: event.target.value });
   };
 
+  const DarkSlider = withStyles({
+    root: {
+      color: "#fff",
+      height: 8,
+    },
+    thumb: {
+      height: 24,
+      width: 24,
+      backgroundColor: "#fff",
+      border: "2px solid currentColor",
+      marginTop: -8,
+      marginLeft: -12,
+      "&:focus, &:hover, &$active": {
+        boxShadow: "inherit",
+      },
+    },
+    active: {},
+    track: {
+      height: 8,
+      borderRadius: 4,
+    },
+    rail: {
+      height: 8,
+      borderRadius: 4,
+    },
+    mark: {
+      display: "none",
+    },
+    markLabel: {
+      color: "#ffffff80",
+      fontVariant: "small-caps",
+      paddingTop: 2,
+    },
+  })(Slider);
+
+  const LightTextField = withStyles({
+    root: {
+      "& .MuiOutlinedInput-root": {
+        "& fieldset": {
+          borderColor: "#fff",
+          borderRadius: 4,
+        },
+        "&:hover fieldset": {
+          borderColor: "#ffff",
+        },
+        color: "white",
+      },
+      ".MuiOutlinedInput-input": {
+        color: "white",
+      },
+      "& label": {
+        color: "#ffffff80",
+        fontSize: 12,
+      },
+    },
+  })(TextField);
+
+  const locations = () => (
+    <Grid container spacing={1} className={classes.container}>
+      <Grid item xs={4}>
+        <FormControl>
+          <LightTextField
+            label={fields.CITY.label}
+            value={formValues[fields.CITY.key]}
+            onChange={onQuery}
+            InputProps={{ inputProps: { min: 0 } }}
+            variant="outlined"
+          />
+          <List dense id="on_list" className={classes.list}>
+            {locationList.map((item, index) => (
+              <ListItem
+                key={index}
+                button
+                onClick={() => {
+                  setFormValues({
+                    ...formValues,
+                    city: item.city,
+                    state: item.state,
+                    country: item.country,
+                  });
+                  setListItems([]);
+                }}
+              >
+                <ListItemText>
+                  {item.city}, {item.state}, {item.country}
+                </ListItemText>
+              </ListItem>
+            ))}
+            {formValues[fields.CITY.key] && formValues[fields.CITY.key].length && (
+              <ListItem
+                key="off"
+                button
+                onClick={() => {
+                  document.getElementById("on_list").style.display = "none";
+                }}
+              >
+                <ListItemText style={{ color: "red" }}>
+                  Turn Off Adrress Autocompletion
+                </ListItemText>
+              </ListItem>
+            )}
+          </List>
+          <List dense id="off_list">
+            {formValues[fields.CITY.key] &&
+              formValues[fields.CITY.key].length &&
+              document.getElementById("on_list").style.display === "none" && (
+                <ListItem
+                  key="on"
+                  button
+                  onClick={(e) => {
+                    document.getElementById("on_list").style.display = "inline";
+                    document.getElementById("off_list").style.display = "none";
+                  }}
+                >
+                  <ListItemText style={{ color: "green" }}>
+                    Turn On Adrress Autocompletion
+                  </ListItemText>
+                </ListItem>
+              )}
+          </List>
+        </FormControl>
+      </Grid>
+      <Grid item xs={4}>
+        <LightTextField
+          label={fields.STATE.label + " *"}
+          value={formValues[fields.STATE.key]}
+          onChange={handleFormChange(fields.STATE)}
+          InputProps={{ inputProps: { min: 0 } }}
+          variant="outlined"
+        />
+      </Grid>
+      <Grid item xs={3}>
+        <LightTextField
+          label={fields.COUNTRY.label + " *"}
+          value={formValues[fields.COUNTRY.key]}
+          onChange={handleFormChange(fields.COUNTRY)}
+          InputProps={{ inputProps: { min: 0 } }}
+          variant="outlined"
+        />
+      </Grid>
+      <Grid item xs={1}>
+        <IconButton aria-label="location" style={{ color: "#ffffff" }}>
+          <PersonPinCircleIcon />
+        </IconButton>
+      </Grid>
+    </Grid>
+  );
+
+  const sliders = () => (
+    <Grid container spacing={1} className={classes.container}>
+      <Grid item xs={12}>
+        <DarkSlider
+          defaultValue={1}
+          getAriaValueText={valuetext}
+          aria-labelledby="sickness-slider"
+          min={0}
+          max={2}
+          step={1}
+          track={false}
+          marks={sicknessMarks}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <DarkSlider
+          defaultValue={1}
+          getAriaValueText={valuetext}
+          aria-labelledby="tested-slider"
+          min={0}
+          max={2}
+          step={1}
+          track={false}
+          marks={testedMarks}
+        />
+      </Grid>
+    </Grid>
+  );
   return (
     <>
       <div className={classNames("home", styles.home)}>
@@ -133,94 +355,8 @@ export default function Home(props, { draggableMapRoutes = [] }) {
             variant="outlined"
           />
         </div>
-        <div
-          className={classNames("location-wrapper", styles["location-wrapper"])}
-        >
-          <div className={classNames("grid-1", styles["grid-1"])}>
-            <FormControl>
-              <TextField
-                label={fields.CITY.label}
-                value={formValues[fields.CITY.key]}
-                onChange={onQuery}
-                InputProps={{ inputProps: { min: 0 } }}
-                variant="outlined"
-              />
-              <List dense id="on_list">
-                {locationList.map((item, index) => (
-                  <ListItem
-                    key={index}
-                    button
-                    onClick={() => {
-                      setFormValues({
-                        ...formValues,
-                        city: item.city,
-                        state: item.state,
-                        country: item.country,
-                      });
-                      setListItems([]);
-                    }}
-                  >
-                    <ListItemText>
-                      {item.city}, {item.state}, {item.country}
-                    </ListItemText>
-                  </ListItem>
-                ))}
-                {formValues[fields.CITY.key] &&
-                  formValues[fields.CITY.key].length && (
-                    <ListItem
-                      key="off"
-                      button
-                      onClick={() => {
-                        document.getElementById("on_list").style.display =
-                          "none";
-                      }}
-                    >
-                      <ListItemText style={{ color: "red" }}>
-                        Turn Off Adrress Autocompletion
-                      </ListItemText>
-                    </ListItem>
-                  )}
-              </List>
-              <List dense id="off_list">
-                {formValues[fields.CITY.key] &&
-                  formValues[fields.CITY.key].length &&
-                  document.getElementById("on_list").style.display ===
-                    "none" && (
-                    <ListItem
-                      key="on"
-                      button
-                      onClick={(e) => {
-                        document.getElementById("on_list").style.display =
-                          "inline";
-                        document.getElementById("off_list").style.display =
-                          "none";
-                      }}
-                    >
-                      <ListItemText style={{ color: "green" }}>
-                        Turn On Adrress Autocompletion
-                      </ListItemText>
-                    </ListItem>
-                  )}
-              </List>
-            </FormControl>
-
-            <TextField
-              label={fields.STATE.label + " *"}
-              value={formValues[fields.STATE.key]}
-              onChange={handleFormChange(fields.STATE)}
-              InputProps={{ inputProps: { min: 0 } }}
-              variant="outlined"
-            />
-
-            <TextField
-              label={fields.COUNTRY.label + " *"}
-              value={formValues[fields.COUNTRY.key]}
-              onChange={handleFormChange(fields.COUNTRY)}
-              InputProps={{ inputProps: { min: 0 } }}
-              variant="outlined"
-            />
-          </div>
-        </div>
+        {locations()}
+        {sliders()}
         <div className={classNames("btnGroup", styles.btnGroup)}>
           <Fab
             style={{ background: "#9206FF", color: "white" }}
@@ -231,8 +367,17 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           >
             SHARE MY STORY
           </Fab>
+          <Button
+            aria-label="skip"
+            size="medium"
+            onClick={(e) => handleSubmit(e, paths.signIn)}
+            style={{ color: "#ffffff80" }}
+          >
+            SKIP AND CONTINUE
+          </Button>
         </div>
       </div>
+
       <div className={classNames("background", styles.background)} />
       <SimpleMap draggable={draggableMap} />
     </>
