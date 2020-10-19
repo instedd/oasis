@@ -80,6 +80,23 @@ export default function Home(props, { draggableMapRoutes = [] }) {
     });
   };
 
+  const fetchUserLocation = async () => {
+    let tempList = [];
+    const response = await fetch(`https://freegeoip.app/json/`);
+
+    if (response.status >= 200 && response.status < 300) {
+      const jsonResponse = await response.json();
+      let city = jsonResponse.city;
+      let state = jsonResponse.region_name;
+      let country = jsonResponse.country_name;
+
+      tempList.push({ city: city, state: state, country: country });
+    } else {
+      alert("Cannot locate your city.");
+    }
+    setListItems(tempList);
+  };
+
   const onQuery = (event) => {
     let tempList = [];
     const query = event.target.value;
@@ -194,37 +211,6 @@ export default function Home(props, { draggableMapRoutes = [] }) {
                 </ListItemText>
               </ListItem>
             ))}
-            {formValues[fields.CITY.key] && formValues[fields.CITY.key].length && (
-              <ListItem
-                key="off"
-                button
-                onClick={() => {
-                  document.getElementById("on_list").style.display = "none";
-                }}
-              >
-                <ListItemText style={{ color: "red" }}>
-                  Turn Off Adrress Autocompletion
-                </ListItemText>
-              </ListItem>
-            )}
-          </List>
-          <List dense id="off_list">
-            {formValues[fields.CITY.key] &&
-              formValues[fields.CITY.key].length &&
-              document.getElementById("on_list").style.display === "none" && (
-                <ListItem
-                  key="on"
-                  button
-                  onClick={(e) => {
-                    document.getElementById("on_list").style.display = "inline";
-                    document.getElementById("off_list").style.display = "none";
-                  }}
-                >
-                  <ListItemText style={{ color: "green" }}>
-                    Turn On Adrress Autocompletion
-                  </ListItemText>
-                </ListItem>
-              )}
           </List>
         </FormControl>
       </Grid>
@@ -247,7 +233,11 @@ export default function Home(props, { draggableMapRoutes = [] }) {
         />
       </Grid>
       <Grid item xs={1}>
-        <IconButton aria-label="location" style={{ color: "#ffffff" }}>
+        <IconButton
+          aria-label="location"
+          style={{ color: "#ffffff" }}
+          onClick={fetchUserLocation}
+        >
           <PersonPinCircleIcon />
         </IconButton>
       </Grid>
