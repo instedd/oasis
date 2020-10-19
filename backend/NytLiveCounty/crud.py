@@ -145,7 +145,8 @@ def seed(fake_date=None):
     repo = Repo("covid-19-data")
 
     # Set current commit
-    cmt = repo.heads.master.commit
+    # cmt = repo.heads.master.commit
+    cmt = repo.head.commit
 
     # If testing, crawl back in time to fake date
     if fake_date is not None:
@@ -239,7 +240,8 @@ async def update():
 
         # Identify master commit hash
         repo = Repo("covid-19-data")
-        cmt_hex = repo.heads.master.commit.hexsha
+        # cmt_hex = repo.heads.master.commit.hexsha
+        cmt_hex = repo.head.commit.hexsha
 
         db = next(get_db())
         recs_with_hex = (
