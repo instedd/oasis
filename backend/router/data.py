@@ -44,9 +44,14 @@ class DataScope:
 
 
 def fetch_world_data():
+    excepts = (
+        requests.exceptions.RequestException,
+        KeyError,
+        requests.exceptions.ConnectionError,
+    )
     try:
         r = requests.get(url=COVID_WORLD_API_URL)
-    except (requests.exceptions.RequestException, KeyError) as e:
+    except excepts as e:
         print("WARNING: Unable to receive data from api.covid19api.com")
         print(e)
         print("Continuing without it...")
@@ -214,7 +219,7 @@ async def get_all_data(db: Session = Depends(get_db)):
     # )
 
     # Run update for NYT data
-    asyncio.ensure_future(crud.update(db))
+    asyncio.ensure_future(crud.update())
     # crud.update(db)
 
     return {
