@@ -685,7 +685,7 @@ export default function Map(props, { draggable = true }) {
   };
 
   const storyStyle =
-    '<p style="font-size: 18px;line-height: 18px; color:black">';
+    '<p style="font-size: 18px;line-height: 18px; color:black;overflow: auto;max-height:100px">';
   const demographicStyle = '<p style = "line-height:0.9rem;font-size:0.9rem;">';
 
   const addCircle = (status, content) => {
@@ -711,12 +711,7 @@ export default function Map(props, { draggable = true }) {
     let content = "<p>";
     content += storyStyle;
     if (mystory) {
-      if (mystory.length > 280) {
-        content += mystory.substring(0, 280);
-        content += "...";
-      } else {
-        content += mystory;
-      }
+      content += mystory;
     }
     content += "</p>";
     if (mystory)
@@ -752,8 +747,8 @@ export default function Map(props, { draggable = true }) {
     const element = marker.getElement();
     element.id = "marker";
     // hover event listener
-    element.addEventListener("mouseenter", () => popup.addTo(map));
-    element.addEventListener("mouseleave", () => popup.remove());
+    // element.addEventListener("mouseenter", () => popup.addTo(map));
+    // element.addEventListener("mouseleave", () => popup.remove());
     // add popup to marker
     marker.setPopup(popup);
   };

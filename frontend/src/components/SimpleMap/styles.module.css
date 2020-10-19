@@ -28,4 +28,7 @@
 
 .popups {
   offset: 25;
+  overflow: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 } 
