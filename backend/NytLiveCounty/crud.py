@@ -11,7 +11,8 @@ from os import path
 import subprocess
 from git import Repo
 import time
-from fastapi import Depends
+
+# from fastapi import Depends
 from database import get_db
 
 from . import models
@@ -99,71 +100,20 @@ def build_new_db_row(row, now, commit: str):
     return new_row
 
 
-def add_data(db: Session, path: str, commit_hex: str):
+def add_data(df, commit_hex: str):
     """
     This function adds a set of data to the database without checking for
     duplicate data, time limit, etc. DOES NOT COMMIT OR ROLLBACK. DOES NOT
     HANDLE EXCEPTIONS - ALL OF THIS MUST BE DONE BY CALLER
     """
     now = datetime.now().timestamp()
-    df = pd.read_csv(path, dtype=str)
-    df = df[df["fips"].notna()]
+    # df = pd.read_csv(path, dtype=str)
+    # df = df[df["fips"].notna()]
+    db = next(get_db())
 
-    for indx, row in df.iterrows():
-        db.add(build_new_db_row(row, now, commit_hex))
-
-
-def seed(db: Session = Depends(get_db), fake_date=None):
-    """
-    Replaces the contents of the existing NytLiveCounty database with the
-    last 14 days of data from the NYT github repo
-
-    fake_date is for testing purposes - it forces the function to populate the
-    database assuming that today is fake_date - type is datetime
-    """
-    global STALE_DATE
     try:
-        # Clear existing database
-        db.query(models.NytLiveCounty).delete()
-
-        # Check if repo needs to be pulled otherwise make sure it's on master
-        check_and_reset_repo()
-
-        # Initialize repo object
-        repo = Repo("covid-19-data")
-
-        # Set current commit
-        cmt = repo.heads.master.commit
-
-        # If testing, crawl back in time to fake date
-        if fake_date is not None:
-            # cmt_date = pytz.UTC.localize(cmt.authored_datetime)
-            while cmt.authored_datetime > pytz.UTC.localize(fake_date):
-                cmt = cmt.parents[0]  # Assumes no branchpoints :/
-            stale_date = datetime.timestamp(fake_date) - DB_AGE_LIMIT
-            STALE_DATE = get_day_from_ts(stale_date)
-
-        def get_ts(commit):
-            return commit.authored_datetime.timestamp()
-
-        while get_day_from_ts(get_ts(cmt)) > STALE_DATE:
-            # Checkout data
-            subprocess.call(
-                "rm -f /app/covid-19-data/.git/index.lock", shell=True
-            )
-            subprocess.call(
-                f"cd covid-19-data && git checkout -f {cmt.hexsha} && cd ../",
-                shell=True,
-            )
-
-            # Load data
-            add_data(db, "covid-19-data/live/us-counties.csv", cmt.hexsha)
-
-            # Select next data to load
-            yesterday = get_day_from_ts(get_ts(cmt)) - 1
-            while get_day_from_ts(get_ts(cmt)) != yesterday:
-                cmt = cmt.parents[0]  # Assumes no branchpoints :/
-
+        for indx, row in df.iterrows():
+            db.add(build_new_db_row(row, now, commit_hex))
         db.commit()
 
     except Exception:
@@ -171,10 +121,92 @@ def seed(db: Session = Depends(get_db), fake_date=None):
         db.rollback()
 
 
+# async def seed(fake_date = None):
+def seed(fake_date=None):
+    """
+    Replaces the contents of the existing NytLiveCounty database with the
+    last 14 days of data from the NYT github repo
+    fake_date is for testing purposes - it forces the function to populate the
+    database assuming that today is fake_date - type is datetime
+    """
+    global STALE_DATE
+    # Clear existing database
+    # db.query(models.NytLiveCounty).delete()
+
+    # Check if repo needs to be pulled otherwise make sure it's on master
+    check_and_reset_repo()
+
+    # Initialize repo object
+    repo = Repo("covid-19-data")
+
+    # Set current commit
+    cmt = repo.heads.master.commit
+
+    # If testing, crawl back in time to fake date
+    if fake_date is not None:
+        # cmt_date = pytz.UTC.localize(cmt.authored_datetime)
+        while cmt.authored_datetime > pytz.UTC.localize(fake_date):
+            cmt = cmt.parents[0]  # Assumes no branchpoints :/
+        stale_date = datetime.timestamp(fake_date) - DB_AGE_LIMIT
+        STALE_DATE = get_day_from_ts(stale_date)
+
+    def get_ts(commit):
+        return commit.authored_datetime.timestamp()
+
+    while get_day_from_ts(get_ts(cmt)) > STALE_DATE:
+        # Checkout data
+        subprocess.call("rm -f /app/covid-19-data/.git/index.lock", shell=True)
+        subprocess.call(
+            f"cd covid-19-data && git checkout -f {cmt.hexsha} && cd ../",
+            shell=True,
+        )
+
+        # Load data
+        # add_data(db, "covid-19-data/live/us-counties.csv", cmt.hexsha)
+
+        df = pd.read_csv("covid-19-data/live/us-counties.csv", dtype=str)
+        df = df[df["fips"].notna()]
+        add_data(df, cmt.hexsha)
+
+        # Select next data to load
+        yesterday = get_day_from_ts(get_ts(cmt)) - 1
+        while get_day_from_ts(get_ts(cmt)) != yesterday:
+            cmt = cmt.parents[0]  # Assumes no branchpoints :/
+
+    # clear old data
+    db = next(get_db())
+    try:
+        old_recs = (
+            db.query(models.NytLiveCounty)
+            .filter(models.NytLiveCounty.timestamp < FIFTEEN_DAYS_AGO)
+            .all()
+        )
+        for rec in old_recs:
+            db.delete(rec)
+
+        if fake_date is not None:
+            too_new_recs = (
+                db.query(models.NytLiveCounty)
+                .filter(models.NytLiveCounty.date > fake_date)
+                .all()
+            )
+            print(len(too_new_recs))  # DEBUG
+            for rec in too_new_recs:
+                db.delete(rec)
+
+        db.commit()
+
+    except Exception:
+        traceback.print_exc()
+        print("ABANDONING NYT DATA POPULATION")
+        db.rollback()
+
+
 async def update(db: Session):
     """
     Updates the NYT county database with newest data from NYT github
     """
+    print("update has been called")
     now = datetime.now().timestamp()
     try:
         # Make sure repo is up to date and on master
@@ -213,6 +245,8 @@ async def update(db: Session):
     except Exception:
         traceback.print_exc()
         db.rollback()
+
+    print("reached the end of update")
 
 
 def get_nyt_data(db: Session, county_ids: List[str]):

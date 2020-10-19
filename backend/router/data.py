@@ -105,13 +105,11 @@ def fetch_sd_zip_code_data():
 
 
 def fetch_county_data(db: Session = Depends(get_db)):
-    most_recent_timestamp = db.query(
-        func.max(models.NytLiveCounty.timestamp)
-    ).first()[0]
+    most_recent_date = db.query(func.max(models.NytLiveCounty.date)).first()[0]
 
     result = (
         db.query(models.NytLiveCounty)
-        .filter(models.NytLiveCounty.timestamp == most_recent_timestamp)
+        .filter(models.NytLiveCounty.date == most_recent_date)
         .all()
     )
 
@@ -217,6 +215,7 @@ async def get_all_data(db: Session = Depends(get_db)):
 
     # Run update for NYT data
     asyncio.ensure_future(crud.update(db))
+    # crud.update(db)
 
     return {
         "data": grouped_data,
