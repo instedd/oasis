@@ -74,9 +74,10 @@
 .btnGroup {
     width: 100%;
     display: flex;
-    margin-top: 14px;
+    margin-top: 2rem;
     flex-direction: column;
     align-items: center;
+    
 }
 
 .btnGroup button {

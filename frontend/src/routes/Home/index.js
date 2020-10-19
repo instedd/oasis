@@ -5,7 +5,7 @@ import {
   ListItem,
   List,
   ListItemText,
-  Slider,
+  MenuItem,
   Grid,
   Button,
   IconButton,
@@ -22,11 +22,10 @@ import { setStory, setMyStory } from "actions/story";
 import { fields, initialFieldsState } from "./fields";
 import PersonPinCircleIcon from "@material-ui/icons/PersonPinCircle";
 import { getGeocoding } from "utils";
-import { sicknessStatus } from "../types";
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    marginTop: "1rem",
+    marginTop: 12,
   },
   list: {
     position: "absolute",
@@ -44,39 +43,6 @@ export default function Home(props, { draggableMapRoutes = [] }) {
   const [draggableMap, setDraggableMap] = useState(false);
   const [locationList, setListItems] = useState([]);
   const [formValues, setFormValues] = useState(initialFieldsState());
-
-  const sicknessMarks = [
-    {
-      value: 0,
-      label: "sick",
-    },
-    {
-      value: 1,
-      label: "not sick",
-    },
-    {
-      value: 2,
-      label: "recovered",
-    },
-  ];
-  const testedMarks = [
-    {
-      value: 0,
-      label: "not tested",
-    },
-    {
-      value: 1,
-      label: "tested positive",
-    },
-    {
-      value: 2,
-      label: "tested negative",
-    },
-  ];
-
-  function valuetext(value) {
-    return `${value}`;
-  }
 
   let location = useLocation();
 
@@ -174,41 +140,6 @@ export default function Home(props, { draggableMapRoutes = [] }) {
     setFormValues({ ...formValues, [key]: event.target.value });
   };
 
-  const DarkSlider = withStyles({
-    root: {
-      color: "#fff",
-      height: 8,
-    },
-    thumb: {
-      height: 24,
-      width: 24,
-      backgroundColor: "#fff",
-      border: "2px solid currentColor",
-      marginTop: -8,
-      marginLeft: -12,
-      "&:focus, &:hover, &$active": {
-        boxShadow: "inherit",
-      },
-    },
-    active: {},
-    track: {
-      height: 8,
-      borderRadius: 4,
-    },
-    rail: {
-      height: 8,
-      borderRadius: 4,
-    },
-    mark: {
-      display: "none",
-    },
-    markLabel: {
-      color: "#ffffff80",
-      fontVariant: "small-caps",
-      paddingTop: 2,
-    },
-  })(Slider);
-
   const LightTextField = withStyles({
     root: {
       "& .MuiOutlinedInput-root": {
@@ -221,11 +152,12 @@ export default function Home(props, { draggableMapRoutes = [] }) {
         },
         color: "white",
       },
-      ".MuiOutlinedInput-input": {
-        color: "white",
-      },
+      width: "100%",
       "& label": {
         color: "#ffffff80",
+        fontSize: 12,
+      },
+      "& .MuiSelect-outlined.MuiSelect-outlined, .MuiOutlinedInput-input": {
         fontSize: 12,
       },
     },
@@ -233,7 +165,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
 
   const locations = () => (
     <Grid container spacing={1} className={classes.container}>
-      <Grid item xs={4}>
+      <Grid item xs={3}>
         <FormControl>
           <LightTextField
             label={fields.CITY.label}
@@ -296,7 +228,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           </List>
         </FormControl>
       </Grid>
-      <Grid item xs={4}>
+      <Grid item xs={5}>
         <LightTextField
           label={fields.STATE.label + " *"}
           value={formValues[fields.STATE.key]}
@@ -322,31 +254,47 @@ export default function Home(props, { draggableMapRoutes = [] }) {
     </Grid>
   );
 
-  const sliders = () => (
-    <Grid container spacing={1} className={classes.container}>
-      <Grid item xs={12}>
-        <DarkSlider
-          defaultValue={1}
-          getAriaValueText={valuetext}
-          aria-labelledby="sickness-slider"
-          min={0}
-          max={2}
-          step={1}
-          track={false}
-          marks={sicknessMarks}
-        />
+  const status = () => (
+    <Grid container spacing={1}>
+      <Grid container item xs={5}>
+        <LightTextField
+          label={fields.SICKNESSSTATUS.label + " *"}
+          select
+          value={formValues[fields.SICKNESSSTATUS.key]}
+          onChange={handleFormChange(fields.SICKNESSSTATUS)}
+          variant="outlined"
+        >
+          <MenuItem key="sick" value="sick">
+            Yes, I am sick
+          </MenuItem>
+          <MenuItem key="not sick" value="not sick">
+            {" "}
+            No, I am not sick
+          </MenuItem>
+          <MenuItem key="recovered" value="recovered">
+            No, I have recovered
+          </MenuItem>
+        </LightTextField>
       </Grid>
-      <Grid item xs={12}>
-        <DarkSlider
-          defaultValue={1}
-          getAriaValueText={valuetext}
-          aria-labelledby="tested-slider"
-          min={0}
-          max={2}
-          step={1}
-          track={false}
-          marks={testedMarks}
-        />
+
+      <Grid container item xs={7}>
+        <LightTextField
+          label={fields.TESTEDSTATUS.label + " *"}
+          select
+          value={formValues[fields.TESTEDSTATUS.key]}
+          onChange={handleFormChange(fields.TESTEDSTATUS)}
+          variant="outlined"
+        >
+          <MenuItem key="positive" value="positive">
+            Yes, tested positive
+          </MenuItem>
+          <MenuItem key="negative" value="negative">
+            Yes, tested negative
+          </MenuItem>
+          <MenuItem key="not tested" value="not tested">
+            No, I have not tested
+          </MenuItem>
+        </LightTextField>
       </Grid>
     </Grid>
   );
@@ -372,7 +320,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           />
         </div>
         {locations()}
-        {sliders()}
+        {status()}
         <div className={classNames("btnGroup", styles.btnGroup)}>
           <Fab
             style={{ background: "#9206FF", color: "white" }}

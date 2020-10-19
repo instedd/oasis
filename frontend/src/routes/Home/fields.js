@@ -14,6 +14,16 @@ export const fields = {
     key: "country",
     initialValue: "",
   },
+  SICKNESSSTATUS: {
+    label: "Are you sick?",
+    key: "sicknessStatus",
+    initialValue: "",
+  },
+  TESTEDSTATUS: {
+    label: "Have you been tested for COVID-19?",
+    key: "testedStatus",
+    initialValue: "",
+  },
 };
 
 export const initialFieldsState = () => {

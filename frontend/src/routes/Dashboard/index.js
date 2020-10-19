@@ -26,8 +26,7 @@ import api from "utils";
 import Map from "components/Map";
 import { fields, initialFieldsState } from "./fields";
 import Text from "text.json";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
-import zIndex from "@material-ui/core/styles/zIndex";
+import { makeStyles } from "@material-ui/core/styles";
 
 const professions = Text["Profession"];
 const medicalConditions = Text["Medical Conditions"];
@@ -152,7 +151,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const handleFormChange = (field) => (event) => {
     const intFields = [fields.AGE];
     const key = field.key;
-    console.log(!formValues[fields.SEX.key]);
+    console.log(formValues[fields.MEDICAL_CONDITIONS]);
 
     if (intFields.includes(field)) {
       setFormValues({ ...formValues, [key]: parseInt(event.target.value) });
