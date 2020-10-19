@@ -2,7 +2,8 @@ import json
 
 from NytLiveCounty import crud, models
 from datetime import datetime
-import time
+
+# import time
 from sqlalchemy import func
 
 # import asyncio
@@ -50,6 +51,7 @@ def test_seed_fake_date(setup):
     )
 
 
+'''
 def test_async_update(setup):
     """
     Tests that the asynchronous update function correctly updates the data
@@ -74,6 +76,7 @@ def test_async_update(setup):
     )
 
     assert max_date == today.day or max_date == yesterday.day
+'''
 
 
 def test_no_na_fips(setup):
