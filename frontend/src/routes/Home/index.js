@@ -1,10 +1,6 @@
 import {
   TextField,
   Fab,
-  FormControl,
-  ListItem,
-  List,
-  ListItemText,
   MenuItem,
   Grid,
   Button,
@@ -183,36 +179,13 @@ export default function Home(props, { draggableMapRoutes = [] }) {
   const locations = () => (
     <Grid container spacing={1} className={classes.container}>
       <Grid item xs={3}>
-        <FormControl>
-          <LightTextField
-            label={fields.CITY.label}
-            value={formValues[fields.CITY.key]}
-            onChange={onQuery}
-            InputProps={{ inputProps: { min: 0 } }}
-            variant="outlined"
-          />
-          <List dense id="on_list" className={classes.list}>
-            {locationList.map((item, index) => (
-              <ListItem
-                key={index}
-                button
-                onClick={() => {
-                  setFormValues({
-                    ...formValues,
-                    city: item.city,
-                    state: item.state,
-                    country: item.country,
-                  });
-                  setListItems([]);
-                }}
-              >
-                <ListItemText>
-                  {item.city}, {item.state}, {item.country}
-                </ListItemText>
-              </ListItem>
-            ))}
-          </List>
-        </FormControl>
+        <LightTextField
+          label={fields.CITY.label}
+          value={formValues[fields.CITY.key]}
+          onChange={onQuery}
+          InputProps={{ inputProps: { min: 0 } }}
+          variant="outlined"
+        />
       </Grid>
       <Grid item xs={5}>
         <LightTextField
@@ -288,6 +261,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
       </Grid>
     </Grid>
   );
+
   return (
     <>
       <div className={classNames("home", styles.home)}>

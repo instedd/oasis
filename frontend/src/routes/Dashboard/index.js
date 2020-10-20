@@ -9,6 +9,8 @@ import {
   TextField,
   Grid,
   Button,
+  InputBase,
+  InputLabel,
 } from "@material-ui/core";
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -26,7 +28,7 @@ import api from "utils";
 import Map from "components/Map";
 import { fields, initialFieldsState } from "./fields";
 import Text from "text.json";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 
 const professions = Text["Profession"];
 const medicalConditions = Text["Medical Conditions"];
@@ -47,6 +49,11 @@ const useStyles = makeStyles((theme) => ({
     background: "var(--primary) !important",
     color: "white",
     verticalAlign: "center",
+  },
+  root: {
+    "label + &": {
+      color: "white",
+    },
   },
 }));
 
@@ -220,6 +227,21 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     </div>
   );
 
+  const LightTextField = withStyles((theme) => ({
+    root: {
+      color: "white",
+      borderBottom: "1px solid white",
+      "& label": {
+        color: "#ffffff80",
+      },
+      margin: theme.spacing(1),
+      "& .MuiInputBase-root": {
+        color: "#ffffff",
+      },
+      width: "25ch",
+    },
+  }))(TextField);
+
   const resources = () => (
     <>
       <div className={classNames(styles.resources)}>
@@ -257,9 +279,8 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     <Grid container spacing={1} className={classes.profileBar}>
       <Grid container item spacing={2} sm={10} xs={10}>
         <Grid item sm={4} xs={1}>
-          <TextField
+          <LightTextField
             required
-            id={fields.AGE.key}
             label={fields.AGE.label}
             type="number"
             value={formValues[fields.AGE.key]}
@@ -268,28 +289,42 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
           />
         </Grid>
         <Grid item sm={4} xs={1}>
-          <Select
-            id={fields.SEX.key}
+          <LightTextField
+            required
+            select
             label={fields.SEX.label}
-            value=""
+            value={formValues[fields.SEX.key]}
             onChange={handleFormChange(fields.SEX)}
             InputLabelProps={{
               shrink: formValues[fields.SEX.key],
             }}
           >
-            <MenuItem value={"male"}>Male</MenuItem>
-            <MenuItem value={"female"}>Female</MenuItem>
-            <MenuItem value={"other"}>Other</MenuItem>
-            <MenuItem>I prefer not to state</MenuItem>
-          </Select>
+            <MenuItem value={"male"} key={"male"}>
+              Male
+            </MenuItem>
+            <MenuItem value={"female"} key={"female"}>
+              Female
+            </MenuItem>
+            <MenuItem value={"other"} key={"other"}>
+              Other
+            </MenuItem>
+            <MenuItem value={"not stated"} key={"not stated"}>
+              I prefer not to state
+            </MenuItem>
+          </LightTextField>
         </Grid>
         <Grid item sm={4} xs={1}>
-          <Select
+          <LightTextField
+            required
+            select
             label={fields.COUNTRY_OF_ORIGIN.label}
             value={formValues[fields.COUNTRY_OF_ORIGIN.key]}
             onChange={handleFormChange(fields.COUNTRY_OF_ORIGIN)}
             InputLabelProps={{
-              shrink: formValues[fields.SEX.key] === null ? false : true,
+              shrink:
+                formValues[fields.COUNTRY_OF_ORIGIN.key] === null
+                  ? false
+                  : true,
             }}
           >
             {countries.map((option) => (
@@ -297,10 +332,12 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
                 {option.name}
               </MenuItem>
             ))}
-          </Select>
+          </LightTextField>
         </Grid>
         <Grid item sm={6} xs={1}>
-          <Select
+          <LightTextField
+            required
+            select
             label={fields.PROFESSION.label}
             value={formValues[fields.PROFESSION.key]}
             onChange={handleFormChange(fields.PROFESSION)}
@@ -310,10 +347,12 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
                 {option}
               </MenuItem>
             ))}
-          </Select>
+          </LightTextField>
         </Grid>
         <Grid item sm={6} xs={1}>
-          <Select
+          <LightTextField
+            required
+            select
             label={fields.MEDICAL_CONDITIONS.label}
             value={formValues[fields.MEDICAL_CONDITIONS.key]}
             onChange={handleFormChange(fields.MEDICAL_CONDITIONS)}
@@ -338,7 +377,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
                 />
               </MenuItem>
             ))}
-          </Select>
+          </LightTextField>
         </Grid>
       </Grid>
       <Grid item xs={2}>

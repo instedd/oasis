@@ -2,22 +2,22 @@ export const fields = {
   AGE: {
     label: "Age",
     key: "age",
-    initialValue: "null",
+    initialValue: null,
   },
   SEX: {
     label: "Sex",
     key: "sex",
-    initialValue: "",
+    initialValue: null,
   },
   COUNTRY_OF_ORIGIN: {
     label: "Citizenship",
     key: "countryOfOrigin",
-    initialValue: "",
+    initialValue: null,
   },
   PROFESSION: {
     label: "Profession",
     key: "profession",
-    initialValue: "",
+    initialValue: null,
   },
   MEDICAL_CONDITIONS: {
     label: "Medical conditions",
