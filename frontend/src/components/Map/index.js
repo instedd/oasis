@@ -746,9 +746,6 @@ export default function Map(props, { draggable = true }) {
     popup.setHTML(content);
     const element = marker.getElement();
     element.id = "marker";
-    // hover event listener
-    // element.addEventListener("mouseenter", () => popup.addTo(map));
-    // element.addEventListener("mouseleave", () => popup.remove());
     // add popup to marker
     marker.setPopup(popup);
   };
