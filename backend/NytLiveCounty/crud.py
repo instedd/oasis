@@ -28,6 +28,15 @@ NYT_CURR_URL = (
 FIFTEEN_DAYS_AGO = time.time() - 60 * 60 * 24 * 15
 
 
+def run_git_command(cmd):
+    """
+    A wrapper for git commands with subprocess that makes sure the
+    lockfile is removed every time.
+    """
+    subprocess.call("rm -f /app/covid-19-data/.git/index.lock", shell=True)
+    subprocess.call(cmd, shell=True)
+
+
 def get_day_from_ts(ts):
     """
     Gets the day of the YEAR (integer) from a unix timestamp
@@ -57,17 +66,13 @@ def check_and_reset_repo():
     Checks if the NYT repo exists in the current directory, else clones it,
     otherwise checks out master and pulls it
     """
-    subprocess.call("rm -f /app/covid-19-data/.git/index.lock", shell=True)
     if not path.isdir("covid-19-data"):
-        subprocess.call(
-            "git clone https://github.com/nytimes/covid-19-data.git",
-            shell=True,
+        run_git_command(
+            "git clone https://github.com/nytimes/covid-19-data.git"
         )
     else:
-        subprocess.call(
-            "cd covid-19-data && git checkout -f master && cd ../", shell=True
-        )
-        subprocess.call("cd covid-19-data && git pull && cd ../", shell=True)
+        run_git_command("cd covid-19-data && git checkout -f master && cd ../")
+        run_git_command("cd covid-19-data && git pull && cd ../")
 
 
 def build_new_db_row(row, now, commit: str):
@@ -161,10 +166,8 @@ def seed(fake_date=None):
 
     while get_day_from_ts(get_ts(cmt)) > STALE_DATE:
         # Checkout data
-        subprocess.call("rm -f /app/covid-19-data/.git/index.lock", shell=True)
-        subprocess.call(
-            f"cd covid-19-data && git checkout -f {cmt.hexsha} && cd ../",
-            shell=True,
+        run_git_command(
+            f"cd covid-19-data && git checkout -f {cmt.hexsha} && cd ../"
         )
 
         # Load data
