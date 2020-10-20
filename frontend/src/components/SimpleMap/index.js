@@ -488,7 +488,7 @@ export default function Map(props, { draggable = true }) {
   };
 
   const storyStyle =
-    '<p style="font-size: 18px;line-height: 18px; color:black;margin:0;">';
+    '<p style="font-size: 18px;line-height: 18px; color:black;margin:0;overflow: auto;max-height:100px;">';
   const demographicStyle =
     '<p style = "line-height:0.9rem;font-size:0.9rem;margin:0;">';
 
@@ -514,12 +514,7 @@ export default function Map(props, { draggable = true }) {
     var content = '<p style="margin:0;">';
     content += storyStyle;
     if (userStory.latestMyStory) {
-      if (userStory.latestMyStory.length > 280) {
-        content += userStory.latestMyStory.substring(0, 280);
-        content += "...";
-      } else {
-        content += userStory.latestMyStory;
-      }
+      content += userStory.latestMyStory;
     }
     content += "</p>";
     if (userStory.latestMyStory)
@@ -553,8 +548,8 @@ export default function Map(props, { draggable = true }) {
     const element = marker.getElement();
     element.id = "marker";
     // hover event listener
-    element.addEventListener("mouseenter", () => popup.addTo(map));
-    element.addEventListener("mouseleave", () => popup.remove());
+    //element.addEventListener("mouseenter", () => popup.addTo(map));
+    // element.addEventListener("mouseleave", () => popup.remove());
     // add popup to marker
     marker.setPopup(popup);
   };
