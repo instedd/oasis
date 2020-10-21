@@ -81,7 +81,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const [open, setOpen] = useState(false);
   const classes = useStyles();
   const [errorMsg, setErrorMsg] = useState({ display: "none", required: null });
-  let barDisplay = true;
+  let barDisplay = false;
   // This myStory is only temporarily fetched from state to check whether it's needed to submit myStory
   // For uses in components, use story.latestMyStory
   const { myStory, story, status, tempStory } = useSelector((state) => {
@@ -179,6 +179,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     } else {
       setFormValues({ ...formValues, [key]: event.target.value });
     }
+    console.log(story);
   };
 
   const handleSubmit = () => {
