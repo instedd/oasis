@@ -141,12 +141,6 @@
     color: white
 }
 
-.grid-1>div {
-    width: calc((90% - 8px*6)/3);
-    margin: 8px;
-    text-align: left;
-}
-
 .errorMsg {
     margin-left: 16px;
     font-size: 15px;

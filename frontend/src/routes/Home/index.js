@@ -74,13 +74,13 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           story.longitude = coordinates[0];
         }
 
-        //TODO: get from slider
-        story.sick = "not_sick";
-        story.tested = "not_tested";
-
+        story.sick = formValues.sicknessStatus;
+        story.tested = formValues.testedStatus;
+        console.log(story);
+        console.log(myStory);
         dispatch(setStory(story));
         dispatch(setMyStory(myStory));
-        props.history.push(route, { from: "shareBtn" });
+        // props.history.push(route, { from: "shareBtn" });
       });
     }
   };
@@ -99,11 +99,12 @@ export default function Home(props, { draggableMapRoutes = [] }) {
     } else {
       alert("Cannot locate your city.");
     }
+
     setFormValues({
       ...formValues,
-      city: tempCity,
-      state: tempState,
-      country: tempCountry,
+      ["city"]: tempCity,
+      ["state"]: tempState,
+      ["country"]: tempCountry,
     });
     console.log(formValues);
   };
@@ -142,8 +143,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
         <LightTextField
           label={fields.CITY.label}
           value={formValues[fields.CITY.key]}
-          onChange={handleFormChange(fields.CITY)}
-          InputProps={{ inputProps: { min: 0 } }}
+          onChange={() => handleFormChange(fields.CITY)}
           variant="outlined"
         />
       </Grid>
@@ -152,7 +152,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           required
           label={fields.STATE.label}
           value={formValues[fields.STATE.key]}
-          onChange={handleFormChange(fields.STATE)}
+          onChange={() => handleFormChange(fields.STATE)}
           variant="outlined"
         />
       </Grid>
@@ -161,7 +161,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           required
           label={fields.COUNTRY.label}
           value={formValues[fields.COUNTRY.key]}
-          onChange={handleFormChange(fields.COUNTRY)}
+          onChange={() => handleFormChange(fields.COUNTRY)}
           variant="outlined"
         />
       </Grid>

@@ -32,10 +32,9 @@ const medicalConditions = Text["Medical Conditions"];
 
 const useStyles = makeStyles((theme) => ({
   profileBar: {
-    width: 800,
+    width: 600,
     bottom: 0,
-    left: 0,
-    padding: "20px 30px 4rem 30px",
+    padding: "0px 30px 40px 20px",
     zIndex: 2,
     position: "absolute",
     background: "rgba(0, 0, 0, 0.6)",
@@ -46,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
   ["@media (max-width: 780px)"]: {
     profileBar: {
       width: "100%",
+      left: 0,
       padding: "0px 40px 5rem 10px",
       right: 0,
       margin: 0,
@@ -81,7 +81,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const [open, setOpen] = useState(false);
   const classes = useStyles();
   const [errorMsg, setErrorMsg] = useState({ display: "none", required: null });
-  const [barDisplay, setBarDisplay] = useState(true);
+  let barDisplay = true;
   // This myStory is only temporarily fetched from state to check whether it's needed to submit myStory
   // For uses in components, use story.latestMyStory
   const { myStory, story, status, tempStory } = useSelector((state) => {
@@ -113,6 +113,11 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     } else if (story && myStory && myStory.length) {
       dispatch(submitMyStory(story.id, myStory));
     }
+    Object.keys(formValues).forEach((key) => {
+      if (formValues[key] === null) {
+        barDisplay = true;
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -188,7 +193,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
         required: tempList.join(", ").replace("countryOfOrigin", "citizenship"),
       });
     } else {
-      setBarDisplay(false);
       const { ...newStory } = formValues;
       Object.assign(story, newStory);
       //TODO: delete this
@@ -204,6 +208,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       };
 
       dispatch(submitStory(dto, true));
+      barDisplay = false;
     }
   };
 
@@ -259,11 +264,11 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       "& label": {
         color: "#ffffff80",
       },
-      margin: theme.spacing(1),
       "& .MuiInputBase-root": {
         color: "#ffffff",
       },
       width: "100%",
+      margin: 0,
     },
     ["@media (max-width: 780px)"]: {
       root: {
@@ -276,6 +281,8 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       },
     },
   }))(TextField);
+
+  console.log(story);
 
   const resources = () => (
     <>
@@ -363,7 +370,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
           ))}
         </LightTextField>
       </Grid>
-      <Grid item xs={2} style={{ marginBottom: 8, marginTop: "auto" }}>
+      <Grid item xs={2} style={{ marginTop: "auto" }}>
         <Button className={classes.submitBtn} onClick={() => handleSubmit()}>
           Submit
         </Button>
