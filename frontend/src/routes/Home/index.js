@@ -105,7 +105,6 @@ export default function Home(props, { draggableMapRoutes = [] }) {
       state: tempState,
       country: tempCountry,
     });
-    console.log(formValues);
   };
 
   const handleFormChange = (field) => (event) => {
