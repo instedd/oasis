@@ -1,6 +1,5 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import Button from "@material-ui/core/Button";
 import FacebookLogin from "react-facebook-login";
 
 import { signIn } from "../../actions/auth";

@@ -19,7 +19,6 @@
     background-color: #9206FF !important;
 }
 
-
 .speeddial {
     position: absolute;
     bottom: 80px;
@@ -68,27 +67,10 @@
     margin-top: 0;
 }
 
-.top {
-    top: 1rem;
-}
-
-.left {
-    left: 3rem;
-    text-align: left;
-}
-
-.right {
-    right: 3rem;
-    text-align: right;
-}
-
-.bottom {
-    bottom: 2rem;
-}
-
 .header {
     text-align: left;
     right: 3rem;
+    top: 0
 }
 
 .header h3 {
@@ -125,32 +107,22 @@
         font-size: 12px;
         position: absolute;
     }
-    .left {
-        left: 0;
-        right: 50%;
-    }
-    .right {
-        right: 0;
-        left: 50%;
-    }
     .wrapper {
         right: 0;
-    }
-    .top {
-        top: 0rem;
-        padding-top: 4rem;
-        padding-bottom: 0.8rem;
-    }
-    .bottom {
-        bottom: 0;
     }
     .box {
         border-radius: 0;
     }
     .header {
-        width: 100%;
         text-align: left;
-        left: 0rem;
+        left: 0;
+        right: 0;
+        top: 0;
+        z-index: 0;
+        padding-top: 4rem;
+    }
+    .errorMsg {
+        font-size: 12px;
     }
 }
 
@@ -168,4 +140,13 @@
     width: calc((90% - 8px*6)/3);
     margin: 8px;
     text-align: left;
-  }
+}
+
+.errorMsg {
+    margin-left: 16px;
+    font-size: 15px;
+    color: var(--primary);
+    margin-top: 20px;
+    width: 100%;
+    text-align: left;
+}

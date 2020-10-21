@@ -2,15 +2,12 @@ import {
   Link,
   Collapse,
   IconButton,
-  Select,
   ListItemText,
   Checkbox,
   MenuItem,
   TextField,
   Grid,
   Button,
-  InputBase,
-  InputLabel,
 } from "@material-ui/core";
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -35,20 +32,31 @@ const medicalConditions = Text["Medical Conditions"];
 
 const useStyles = makeStyles((theme) => ({
   profileBar: {
-    border: "1px solid #fff",
-    padding: "1rem",
+    width: 800,
+    bottom: 0,
+    left: 0,
+    padding: "20px 30px 4rem 30px",
     zIndex: 2,
-    background: "black",
-    borderRadius: 5,
-    bottom: 60,
     position: "absolute",
-    width: "70%",
-    right: 200,
+    background: "rgba(0, 0, 0, 0.6)",
+    "& .MuiMenuItem-root": {
+      whiteSpace: "normal",
+    },
+  },
+  ["@media (max-width: 780px)"]: {
+    profileBar: {
+      width: "100%",
+      padding: "0px 40px 5rem 10px",
+      right: 0,
+      margin: 0,
+    },
   },
   submitBtn: {
     background: "var(--primary) !important",
     color: "white",
     verticalAlign: "center",
+    width: "100%",
+    marginLeft: 10,
   },
   root: {
     "label + &": {
@@ -72,6 +80,8 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const [formValues, setFormValues] = useState(initialFieldsState());
   const [open, setOpen] = useState(false);
   const classes = useStyles();
+  const [errorMsg, setErrorMsg] = useState({ display: "none", required: null });
+  const [barDisplay, setBarDisplay] = useState(true);
   // This myStory is only temporarily fetched from state to check whether it's needed to submit myStory
   // For uses in components, use story.latestMyStory
   const { myStory, story, status, tempStory } = useSelector((state) => {
@@ -158,7 +168,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const handleFormChange = (field) => (event) => {
     const intFields = [fields.AGE];
     const key = field.key;
-    console.log(formValues[fields.MEDICAL_CONDITIONS]);
 
     if (intFields.includes(field)) {
       setFormValues({ ...formValues, [key]: parseInt(event.target.value) });
@@ -168,21 +177,35 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   };
 
   const handleSubmit = () => {
-    const { ...newStory } = formValues;
-    Object.assign(story, newStory);
-    //TODO: delete this
-    story.medical_conditions = [];
+    let tempList = [];
+    Object.keys(formValues).forEach((key) => {
+      console.log(formValues[key]);
+      if (formValues[key] === null) tempList.push(key);
+    });
+    console.log(tempList);
+    if (tempList.length > 0) {
+      setErrorMsg({
+        display: "block",
+        required: tempList.join(", ").replace("countryOfOrigin", "citizenship"),
+      });
+    } else {
+      setBarDisplay(false);
+      const { ...newStory } = formValues;
+      Object.assign(story, newStory);
+      //TODO: delete this
+      story.medical_conditions = [];
 
-    const nextPage = paths.dashboard;
+      const nextPage = paths.dashboard;
 
-    const dto = {
-      story: story,
-      nextPage,
-      travels: [],
-      closeContacts: [],
-    };
+      const dto = {
+        story: story,
+        nextPage,
+        travels: [],
+        closeContacts: [],
+      };
 
-    dispatch(submitStory(dto, true));
+      dispatch(submitStory(dto, true));
+    }
   };
 
   const actions = [
@@ -230,6 +253,9 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const LightTextField = withStyles((theme) => ({
     root: {
       color: "white",
+      "& .MuiSelect-select.MuiSelect-select": {
+        textAlign: "left",
+      },
       borderBottom: "1px solid white",
       "& label": {
         color: "#ffffff80",
@@ -238,7 +264,17 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       "& .MuiInputBase-root": {
         color: "#ffffff",
       },
-      width: "25ch",
+      width: "100%",
+    },
+    ["@media (max-width: 780px)"]: {
+      root: {
+        "& label": {
+          fontSize: 12,
+        },
+        "& .MuiSelect-select.MuiSelect-select": {
+          fontSize: 12,
+        },
+      },
     },
   }))(TextField);
 
@@ -276,114 +312,106 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   );
 
   const profileBar = () => (
-    <Grid container spacing={1} className={classes.profileBar}>
-      <Grid container item spacing={2} sm={10} xs={10}>
-        <Grid item sm={4} xs={1}>
-          <LightTextField
-            required
-            label={fields.AGE.label}
-            type="number"
-            value={formValues[fields.AGE.key]}
-            onChange={handleFormChange(fields.AGE)}
-            InputProps={{ inputProps: { min: 0 } }}
-          />
-        </Grid>
-        <Grid item sm={4} xs={1}>
-          <LightTextField
-            required
-            select
-            label={fields.SEX.label}
-            value={formValues[fields.SEX.key]}
-            onChange={handleFormChange(fields.SEX)}
-            InputLabelProps={{
-              shrink: formValues[fields.SEX.key],
-            }}
-          >
-            <MenuItem value={"male"} key={"male"}>
-              Male
-            </MenuItem>
-            <MenuItem value={"female"} key={"female"}>
-              Female
-            </MenuItem>
-            <MenuItem value={"other"} key={"other"}>
-              Other
-            </MenuItem>
-            <MenuItem value={"not stated"} key={"not stated"}>
-              I prefer not to state
-            </MenuItem>
-          </LightTextField>
-        </Grid>
-        <Grid item sm={4} xs={1}>
-          <LightTextField
-            required
-            select
-            label={fields.COUNTRY_OF_ORIGIN.label}
-            value={formValues[fields.COUNTRY_OF_ORIGIN.key]}
-            onChange={handleFormChange(fields.COUNTRY_OF_ORIGIN)}
-            InputLabelProps={{
-              shrink:
-                formValues[fields.COUNTRY_OF_ORIGIN.key] === null
-                  ? false
-                  : true,
-            }}
-          >
-            {countries.map((option) => (
-              <MenuItem key={option.name} value={option.name}>
-                {option.name}
-              </MenuItem>
-            ))}
-          </LightTextField>
-        </Grid>
-        <Grid item sm={6} xs={1}>
-          <LightTextField
-            required
-            select
-            label={fields.PROFESSION.label}
-            value={formValues[fields.PROFESSION.key]}
-            onChange={handleFormChange(fields.PROFESSION)}
-          >
-            {professions.map((option) => (
-              <MenuItem style={{ fontSize: 13 }} key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </LightTextField>
-        </Grid>
-        <Grid item sm={6} xs={1}>
-          <LightTextField
-            required
-            select
-            label={fields.MEDICAL_CONDITIONS.label}
-            value={formValues[fields.MEDICAL_CONDITIONS.key]}
-            onChange={handleFormChange(fields.MEDICAL_CONDITIONS)}
-            SelectProps={{
-              multiple: true,
-              renderValue: (selected) => selected.join(", "),
-            }}
-          >
-            {medicalConditions.map((name) => (
-              <MenuItem key={name} value={name}>
-                <Checkbox
-                  checked={
-                    formValues[fields.MEDICAL_CONDITIONS.key].indexOf(name) > -1
-                  }
-                />
-                <ListItemText
-                  primary={name}
-                  className={classNames(
-                    "checkbox-label",
-                    styles["checkbox-label"]
-                  )}
-                />
-              </MenuItem>
-            ))}
-          </LightTextField>
-        </Grid>
+    <Grid container spacing={2} className={classes.profileBar}>
+      <div
+        style={{ display: errorMsg.display }}
+        className={classNames(styles.errorMsg)}
+      >
+        Please complete the following fields: {errorMsg.required}
+      </div>
+      <Grid item xs={3}>
+        <LightTextField
+          required
+          label={fields.AGE.label}
+          type="number"
+          value={formValues[fields.AGE.key]}
+          onChange={handleFormChange(fields.AGE)}
+          InputProps={{ inputProps: { min: 0 } }}
+        />
       </Grid>
-      <Grid item xs={2}>
+      <Grid item xs={3}>
+        <LightTextField
+          required
+          select
+          label={fields.SEX.label}
+          value={formValues[fields.SEX.key]}
+          onChange={handleFormChange(fields.SEX)}
+        >
+          <MenuItem value={"male"} key={"male"}>
+            Male
+          </MenuItem>
+          <MenuItem value={"female"} key={"female"}>
+            Female
+          </MenuItem>
+          <MenuItem value={"other"} key={"other"}>
+            Other
+          </MenuItem>
+          <MenuItem>I prefer not to state</MenuItem>
+        </LightTextField>
+      </Grid>
+      <Grid item xs={4}>
+        <LightTextField
+          required
+          select
+          label={fields.COUNTRY_OF_ORIGIN.label}
+          value={formValues[fields.COUNTRY_OF_ORIGIN.key]}
+          onChange={handleFormChange(fields.COUNTRY_OF_ORIGIN)}
+        >
+          {countries.map((option) => (
+            <MenuItem key={option.name} value={option.name}>
+              {option.name}
+            </MenuItem>
+          ))}
+        </LightTextField>
+      </Grid>
+      <Grid item xs={2} style={{ marginBottom: 8, marginTop: "auto" }}>
         <Button className={classes.submitBtn} onClick={() => handleSubmit()}>
           Submit
         </Button>
+      </Grid>
+      <Grid item xs={6}>
+        <LightTextField
+          required
+          select
+          label={fields.PROFESSION.label}
+          value={formValues[fields.PROFESSION.key]}
+          onChange={handleFormChange(fields.PROFESSION)}
+        >
+          {professions.map((option) => (
+            <MenuItem style={{ fontSize: 13 }} key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </LightTextField>
+      </Grid>
+      <Grid item xs={6}>
+        <LightTextField
+          select
+          label={fields.MEDICAL_CONDITIONS.label}
+          value={formValues[fields.MEDICAL_CONDITIONS.key]}
+          onChange={handleFormChange(fields.MEDICAL_CONDITIONS)}
+          SelectProps={{
+            multiple: true,
+            renderValue: (selected) => selected.join(", "),
+          }}
+        >
+          {medicalConditions.map((name) => (
+            <MenuItem key={name} value={name}>
+              <Checkbox
+                checked={
+                  formValues[fields.MEDICAL_CONDITIONS.key].indexOf(name) > -1
+                }
+              />
+              <ListItemText
+                primary={name}
+                className={classNames(
+                  "checkbox-label",
+                  styles["checkbox-label"]
+                )}
+              />
+            </MenuItem>
+          ))}
+        </LightTextField>
       </Grid>
     </Grid>
   );
@@ -405,7 +433,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
             storyNum={stats.storyNum && stats.storyNum.toLocaleString()}
           />
           {informationHeader()}
-          {profileBar()}
+          {barDisplay ? profileBar() : ""}
           <SpeedDial
             ariaLabel="Daily actions"
             className={classNames("speeddial", styles.speeddial)}

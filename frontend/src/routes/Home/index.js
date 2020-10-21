@@ -18,7 +18,6 @@ import { setStory, setMyStory } from "actions/story";
 import { fields, initialFieldsState } from "./fields";
 import PersonPinCircleIcon from "@material-ui/icons/PersonPinCircle";
 import { getGeocoding } from "utils";
-import { AssignmentReturn } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   container: {
