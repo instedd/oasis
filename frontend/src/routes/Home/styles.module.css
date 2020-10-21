@@ -139,3 +139,11 @@
     background-color: black;
     z-index: 2;
 }
+
+.errorMsg {
+    color: #EA2027;
+    text-align: center;
+    font-size: 14px;
+    padding-top: 8px;
+    margin: auto;
+}

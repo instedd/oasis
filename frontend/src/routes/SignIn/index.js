@@ -5,7 +5,7 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 
 import history from "../../history";
 import { signIn } from "actions/auth";
@@ -20,6 +20,8 @@ const useStyles = makeStyles((theme) => ({
   form: {
     width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(1),
+    maxWidth: 400,
+    padding: "2rem",
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
@@ -62,6 +64,26 @@ export default function SignIn(props) {
     }
   };
 
+  const LightTextField = withStyles({
+    root: {
+      "& .MuiOutlinedInput-root": {
+        "& fieldset": {
+          borderColor: "#fff",
+          borderRadius: 4,
+        },
+        "&:hover fieldset": {
+          borderColor: "#ffff",
+        },
+        color: "white",
+      },
+      width: "100%",
+      background: "rgba(0, 0, 0, 0.7)",
+      "& label": {
+        color: "#ffffff80",
+      },
+    },
+  })(TextField);
+
   return (
     <div>
       <h1 className={styles.title}>Sign In</h1>
@@ -77,14 +99,13 @@ export default function SignIn(props) {
       )}
       <p id="incomplete_error" style={{ color: "red" }}></p>
       <form className={classes.form} noValidate>
-        <TextField
+        <LightTextField
           error={
             formValues.email.length > 0 && !validateEmail(formValues.email)
           }
           variant="outlined"
           margin="normal"
           required
-          fullWidth
           id="email"
           label="Email Address"
           name="email"
@@ -98,11 +119,10 @@ export default function SignIn(props) {
               : null
           }
         />
-        <TextField
+        <LightTextField
           variant="outlined"
           margin="normal"
           required
-          fullWidth
           name="password"
           label="Password"
           type="password"
@@ -130,15 +150,14 @@ export default function SignIn(props) {
             </Link>
           </Grid>
         </Grid>
-        <Button
-          className={styles.skipBtn}
-          onClick={() =>
-            props.history.push(paths.dashboard, { onboard: false })
-          }
-        >
-          continue as guest
-        </Button>
       </form>
+      <Button
+        className={styles.skipBtn}
+        style={{ color: "#ffffff80" }}
+        onClick={() => props.history.push(paths.dashboard, { onboard: false })}
+      >
+        continue as guest
+      </Button>
     </div>
   );
 }

@@ -18,17 +18,11 @@ import { setStory, setMyStory } from "actions/story";
 import { fields, initialFieldsState } from "./fields";
 import PersonPinCircleIcon from "@material-ui/icons/PersonPinCircle";
 import { getGeocoding } from "utils";
+import { AssignmentReturn } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   container: {
     marginTop: 12,
-  },
-  list: {
-    position: "absolute",
-    top: 65,
-    zIndex: 2,
-    background: "#000",
-    width: "max-content",
   },
 }));
 export default function Home(props, { draggableMapRoutes = [] }) {
@@ -37,13 +31,13 @@ export default function Home(props, { draggableMapRoutes = [] }) {
 
   const [myStory, updateMyStory] = useState("");
   const [draggableMap, setDraggableMap] = useState(false);
-  const [locationList, setListItems] = useState([]);
   const [formValues, setFormValues] = useState(initialFieldsState());
+  const [errorMsg, setErrorMsg] = useState({
+    display: "none",
+    requiredFields: null,
+  });
 
   let location = useLocation();
-
-  const MAPBOX_APIKEY =
-    "pk.eyJ1IjoieXVzMjUyIiwiYSI6ImNrYTZhM2VlcjA2M2UzMm1uOWh5YXhvdGoifQ.ZIzOiYbBfwJsV168m42iFg";
 
   useEffect(() => {
     let shouldDragMap = draggableMapRoutes.includes(location.pathname);
@@ -57,96 +51,57 @@ export default function Home(props, { draggableMapRoutes = [] }) {
   };
 
   const handleSubmit = (event, route) => {
-    getGeocoding().then((coordinates) => {
-      const { ...story } = formValues;
+    console.log(formValues);
+    if (!formValues.state) {
+      if (!formValues.country)
+        setErrorMsg({ display: "block", requiredFields: "state and country" });
+      else setErrorMsg({ display: "block", requiredFields: "state" });
+    } else {
+      if (!formValues.country)
+        setErrorMsg({ display: "block", requiredFields: "country" });
+      else {
+        getGeocoding().then((coordinates) => {
+          const { ...story } = formValues;
 
-      // check if the user has filled valid city, state, and country
-      if (coordinates) {
-        story.latitude = coordinates[1]; // coordinates = [lng, lat]
-        story.longitude = coordinates[0];
+          // check if the user has filled valid city, state, and country
+          if (coordinates) {
+            story.latitude = coordinates[1]; // coordinates = [lng, lat]
+            story.longitude = coordinates[0];
+          }
+
+          //TODO: get from slider
+          story.sick = "not_sick";
+          story.tested = "not_tested";
+
+          dispatch(setStory(story));
+          dispatch(setMyStory(myStory));
+          props.history.push(route, { from: "shareBtn" });
+        });
       }
-
-      //TODO: get from slider
-      story.sick = "not_sick";
-      story.tested = "not_tested";
-
-      dispatch(setStory(story));
-      dispatch(setMyStory(myStory));
-      props.history.push(route, { from: "shareBtn" });
-    });
+    }
   };
-
   const fetchUserLocation = async () => {
-    let tempList = [];
+    let tempCity,
+      tempState,
+      tempCountry = "";
     const response = await fetch(`https://freegeoip.app/json/`);
 
     if (response.status >= 200 && response.status < 300) {
       const jsonResponse = await response.json();
-      let city = jsonResponse.city;
-      let state = jsonResponse.region_name;
-      let country = jsonResponse.country_name;
-
-      tempList.push({ city: city, state: state, country: country });
+      tempCity = jsonResponse.city;
+      tempState = jsonResponse.region_name;
+      tempCountry = jsonResponse.country_name;
     } else {
       alert("Cannot locate your city.");
     }
-    setListItems(tempList);
-  };
-
-  const onQuery = (event) => {
-    let tempList = [];
-    const query = event.target.value;
-    const url =
-      "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
-      query +
-      ".json?access_token=" +
-      MAPBOX_APIKEY;
     setFormValues({
       ...formValues,
-      city: query,
+      city: tempCity,
+      state: tempState,
+      country: tempCountry,
     });
-    fetch(url)
-      .then((response) => response.json())
-      .then((jsondata) => {
-        if ("features" in jsondata && jsondata.features.length > 0) {
-          const places = jsondata.features;
-          places.forEach((place) => {
-            const place_name = place.place_name;
-            const address = place_name.split(",");
-            let city = "";
-            let state = "";
-            let country = "";
-            if (address.length > 0) {
-              country = address[address.length - 1].trim();
-            }
-
-            if (address.length > 1) {
-              state = address[address.length - 2].trim();
-            }
-            if (address.length > 2) {
-              city = address[address.length - 3].trim();
-            }
-            const result = { city: city, state: state, country: country };
-            tempList.push(result);
-          });
-          setListItems(removeDuplicates(tempList, "state"));
-        } else {
-          setListItems([]);
-        }
-      });
+    console.log(formValues);
   };
-
-  function removeDuplicates(array, key) {
-    let lookup = {};
-    let result = [];
-    array.forEach((element) => {
-      if (!lookup[element[key]]) {
-        lookup[element[key]] = true;
-        result.push(element);
-      }
-    });
-    return result;
-  }
 
   const handleFormChange = (field) => (event) => {
     const key = field.key;
@@ -176,32 +131,34 @@ export default function Home(props, { draggableMapRoutes = [] }) {
     },
   })(TextField);
 
+  let myRef = {};
+
   const locations = () => (
     <Grid container spacing={1} className={classes.container}>
       <Grid item xs={3}>
         <LightTextField
           label={fields.CITY.label}
           value={formValues[fields.CITY.key]}
-          onChange={onQuery}
+          onChange={handleFormChange(fields.CITY)}
           InputProps={{ inputProps: { min: 0 } }}
           variant="outlined"
         />
       </Grid>
       <Grid item xs={5}>
         <LightTextField
-          label={fields.STATE.label + " *"}
+          required
+          label={fields.STATE.label}
           value={formValues[fields.STATE.key]}
           onChange={handleFormChange(fields.STATE)}
-          InputProps={{ inputProps: { min: 0 } }}
           variant="outlined"
         />
       </Grid>
       <Grid item xs={3}>
         <LightTextField
-          label={fields.COUNTRY.label + " *"}
+          required
+          label={fields.COUNTRY.label}
           value={formValues[fields.COUNTRY.key]}
           onChange={handleFormChange(fields.COUNTRY)}
-          InputProps={{ inputProps: { min: 0 } }}
           variant="outlined"
         />
       </Grid>
@@ -214,11 +171,14 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           <PersonPinCircleIcon />
         </IconButton>
       </Grid>
+      <div style={{ display: errorMsg.display }} className={styles.errorMsg}>
+        Please complete the following fields: {errorMsg.requiredFields}{" "}
+      </div>
     </Grid>
   );
 
   const status = () => (
-    <Grid container spacing={1}>
+    <Grid container spacing={1} className={classes.container}>
       <Grid container item xs={5}>
         <LightTextField
           label={fields.SICKNESSSTATUS.label + " *"}
@@ -299,7 +259,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
             aria-label="skip"
             size="medium"
             onClick={() => props.history.push(paths.signIn)}
-            style={{ color: "#ffffff80" }}
+            style={{ color: "#ffffff80", fontSize: 10 }}
           >
             SKIP AND CONTINUE
           </Button>
