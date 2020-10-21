@@ -184,7 +184,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const handleSubmit = () => {
     let tempList = [];
     Object.keys(formValues).forEach((key) => {
-      console.log(formValues[key]);
       if (formValues[key] === null) tempList.push(key);
     });
     if (tempList.length > 0) {
@@ -281,8 +280,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       },
     },
   }))(TextField);
-
-  console.log(story);
 
   const resources = () => (
     <>

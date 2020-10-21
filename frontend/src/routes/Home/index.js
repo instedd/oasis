@@ -52,10 +52,8 @@ export default function Home(props, { draggableMapRoutes = [] }) {
   const handleSubmit = (event, route) => {
     let tempList = [];
     Object.keys(formValues).forEach((key) => {
-      console.log(formValues[key]);
       if (formValues[key] === null && key !== "city") tempList.push(key);
     });
-    console.log(tempList);
     if (tempList.length > 0) {
       setErrorMsg({
         display: "block",
@@ -68,7 +66,6 @@ export default function Home(props, { draggableMapRoutes = [] }) {
       getGeocoding().then((coordinates) => {
         const { ...story } = formValues;
 
-        // check if the user has filled valid city, state, and country
         if (coordinates) {
           story.latitude = coordinates[1]; // coordinates = [lng, lat]
           story.longitude = coordinates[0];
@@ -76,11 +73,9 @@ export default function Home(props, { draggableMapRoutes = [] }) {
 
         story.sick = formValues.sicknessStatus;
         story.tested = formValues.testedStatus;
-        console.log(story);
-        console.log(myStory);
+
         dispatch(setStory(story));
         dispatch(setMyStory(myStory));
-        // props.history.push(route, { from: "shareBtn" });
       });
     }
   };
@@ -106,7 +101,6 @@ export default function Home(props, { draggableMapRoutes = [] }) {
       ["state"]: tempState,
       ["country"]: tempCountry,
     });
-    console.log(formValues);
   };
 
   const handleFormChange = (field) => (event) => {
