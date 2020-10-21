@@ -63,13 +63,17 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           .replace("testedStatus", "have you been tested for COVID-19?"),
       });
     } else {
-      getGeocoding().then((coordinates) => {
+      getGeocoding(
+        formValues[fields.CITY.key],
+        formValues[fields.STATE.key],
+        formValues[fields.COUNTRY.key]
+      ).then((coordinates) => {
         const { ...story } = formValues;
         if (coordinates) {
           story.latitude = coordinates[1]; // coordinates = [lng, lat]
           story.longitude = coordinates[0];
         }
-        console.log(story);
+
         dispatch(setStory(story));
         dispatch(setMyStory(myStory));
         props.history.push(route, { from: "shareBtn" });
