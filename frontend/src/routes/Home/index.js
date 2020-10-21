@@ -72,7 +72,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
         console.log(story);
         dispatch(setStory(story));
         dispatch(setMyStory(myStory));
-        // props.history.push(route, { from: "shareBtn" });
+        props.history.push(route, { from: "shareBtn" });
       });
     }
   };
