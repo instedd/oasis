@@ -65,17 +65,14 @@ export default function Home(props, { draggableMapRoutes = [] }) {
     } else {
       getGeocoding().then((coordinates) => {
         const { ...story } = formValues;
-
         if (coordinates) {
           story.latitude = coordinates[1]; // coordinates = [lng, lat]
           story.longitude = coordinates[0];
         }
-
-        story.sick = formValues.sicknessStatus;
-        story.tested = formValues.testedStatus;
-
+        console.log(story);
         dispatch(setStory(story));
         dispatch(setMyStory(myStory));
+        // props.history.push(route, { from: "shareBtn" });
       });
     }
   };
