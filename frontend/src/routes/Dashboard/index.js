@@ -182,7 +182,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       console.log(formValues[key]);
       if (formValues[key] === null) tempList.push(key);
     });
-    console.log(tempList);
     if (tempList.length > 0) {
       setErrorMsg({
         display: "block",

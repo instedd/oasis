@@ -50,35 +50,41 @@ export default function Home(props, { draggableMapRoutes = [] }) {
   };
 
   const handleSubmit = (event, route) => {
-    console.log(formValues);
-    if (!formValues.state) {
-      if (!formValues.country)
-        setErrorMsg({ display: "block", requiredFields: "state and country" });
-      else setErrorMsg({ display: "block", requiredFields: "state" });
+    let tempList = [];
+    Object.keys(formValues).forEach((key) => {
+      console.log(formValues[key]);
+      if (formValues[key] === null && key !== "city") tempList.push(key);
+    });
+    console.log(tempList);
+    if (tempList.length > 0) {
+      setErrorMsg({
+        display: "block",
+        required: tempList
+          .join(", ")
+          .replace("sicknessStatus", "are you sick?")
+          .replace("testedStatus", "have you been tested for COVID-19?"),
+      });
     } else {
-      if (!formValues.country)
-        setErrorMsg({ display: "block", requiredFields: "country" });
-      else {
-        getGeocoding().then((coordinates) => {
-          const { ...story } = formValues;
+      getGeocoding().then((coordinates) => {
+        const { ...story } = formValues;
 
-          // check if the user has filled valid city, state, and country
-          if (coordinates) {
-            story.latitude = coordinates[1]; // coordinates = [lng, lat]
-            story.longitude = coordinates[0];
-          }
+        // check if the user has filled valid city, state, and country
+        if (coordinates) {
+          story.latitude = coordinates[1]; // coordinates = [lng, lat]
+          story.longitude = coordinates[0];
+        }
 
-          //TODO: get from slider
-          story.sick = "not_sick";
-          story.tested = "not_tested";
+        //TODO: get from slider
+        story.sick = "not_sick";
+        story.tested = "not_tested";
 
-          dispatch(setStory(story));
-          dispatch(setMyStory(myStory));
-          props.history.push(route, { from: "shareBtn" });
-        });
-      }
+        dispatch(setStory(story));
+        dispatch(setMyStory(myStory));
+        props.history.push(route, { from: "shareBtn" });
+      });
     }
   };
+
   const fetchUserLocation = async () => {
     let tempCity,
       tempState,
@@ -130,8 +136,6 @@ export default function Home(props, { draggableMapRoutes = [] }) {
     },
   })(TextField);
 
-  let myRef = {};
-
   const locations = () => (
     <Grid container spacing={1} className={classes.container}>
       <Grid item xs={3}>
@@ -170,15 +174,12 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           <PersonPinCircleIcon />
         </IconButton>
       </Grid>
-      <div style={{ display: errorMsg.display }} className={styles.errorMsg}>
-        Please complete the following fields: {errorMsg.requiredFields}{" "}
-      </div>
     </Grid>
   );
 
   const status = () => (
     <Grid container spacing={1} className={classes.container}>
-      <Grid container item xs={5}>
+      <Grid container item xs={4}>
         <LightTextField
           label={fields.SICKNESSSTATUS.label + " *"}
           select
@@ -190,7 +191,6 @@ export default function Home(props, { draggableMapRoutes = [] }) {
             Yes, I am sick
           </MenuItem>
           <MenuItem key="not sick" value="not sick">
-            {" "}
             No, I am not sick
           </MenuItem>
           <MenuItem key="recovered" value="recovered">
@@ -199,7 +199,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
         </LightTextField>
       </Grid>
 
-      <Grid container item xs={7}>
+      <Grid container item xs={8}>
         <LightTextField
           label={fields.TESTEDSTATUS.label + " *"}
           select
@@ -218,6 +218,9 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           </MenuItem>
         </LightTextField>
       </Grid>
+      <div style={{ display: errorMsg.display }} className={styles.errorMsg}>
+        Please complete the following fields: {errorMsg.required}
+      </div>
     </Grid>
   );
 

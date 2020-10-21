@@ -2,27 +2,27 @@ export const fields = {
   CITY: {
     label: "City / Town",
     key: "city",
-    initialValue: "",
+    initialValue: null,
   },
   STATE: {
     label: "State / Province",
     key: "state",
-    initialValue: "",
+    initialValue: null,
   },
   COUNTRY: {
     label: "Country",
     key: "country",
-    initialValue: "",
+    initialValue: null,
   },
   SICKNESSSTATUS: {
     label: "Are you sick?",
     key: "sicknessStatus",
-    initialValue: "",
+    initialValue: null,
   },
   TESTEDSTATUS: {
     label: "Have you been tested for COVID-19?",
     key: "testedStatus",
-    initialValue: "",
+    initialValue: null,
   },
 };
 
