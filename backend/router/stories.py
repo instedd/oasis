@@ -51,11 +51,7 @@ async def create_story(
     if not token_data:
         access_token = main.create_access_token(data={"story_id": db_story.id})
         response.set_cookie(
-            "Authorization",
-            value=f"Bearer {access_token}",
-            httponly=True,
-            # max_age=os.environ["COOKIE_EXPIRATION_SECONDS"],
-            # expires=os.environ["COOKIE_EXPIRATION_SECONDS"],
+            "Authorization", value=f"Bearer {access_token}", httponly=True,
         )
     return response
 

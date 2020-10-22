@@ -119,7 +119,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     Object.keys(formValues).forEach((key) => {
       if (formValues[key] === null) {
         setBarDisplay(true);
-        return;
       }
     });
   }, [story, tempMyStory]);
@@ -432,7 +431,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
           <Map
             draggable={draggableMap}
             userStory={story}
-            latestMyStory={myStory ? myStory : story.latestMyStory}
+            latestMyStory={tempMyStory ? tempMyStory : story.latestMyStory}
             actives={data.confirmed && data.confirmed.toLocaleString()}
             deaths={data.deaths && data.deaths.toLocaleString()}
             recovered={data.recovered && data.recovered.toLocaleString()}
