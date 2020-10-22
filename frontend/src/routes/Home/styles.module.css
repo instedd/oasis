@@ -77,7 +77,6 @@
     margin-top: 2rem;
     flex-direction: column;
     align-items: center;
-    
 }
 
 .btnGroup button {
@@ -125,6 +124,13 @@
     .btnGroup button {
         width: 180px !important
     }
+    .container input, .container label {
+        font-size: 12px;
+    }
+
+    .container div {
+        font-size: 12px;
+    }
 }
 
 .hidden {
@@ -146,4 +152,18 @@
     font-size: 14px;
     padding-top: 8px;
     margin: auto;
+}
+
+.container input, .container label {
+    color: white;
+}
+
+.container fieldset, .container fieldset:hover {
+    border-color: white !important;
+}
+
+.container div {
+    width: 100%;
+    color: white;
+    text-align: left;
 }

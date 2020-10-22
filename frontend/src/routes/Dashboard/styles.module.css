@@ -129,6 +129,12 @@
     .errorMsg {
         font-size: 12px;
     }
+    .profileBar input, .profileBar label {
+        font-size: 12px;
+    }
+    .profileBar div {
+        font-size: 12px;
+    }
 }
 
 .resources {
@@ -142,10 +148,24 @@
 }
 
 .errorMsg {
-    margin-left: 16px;
+    margin-left: 8px;
     font-size: 15px;
-    color: var(--primary);
+    color: var(--primary) !important;
     margin-top: 20px;
     width: 100%;
+    text-align: left;
+}
+
+.profileBar input, .profileBar label {
+    color: white;
+}
+
+.profileBar fieldset, .profileBar fieldset:hover {
+    border-color: white !important;
+}
+
+.profileBar div {
+    width: 100%;
+    color: white;
     text-align: left;
 }

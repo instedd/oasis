@@ -46,7 +46,6 @@ const useStyles = makeStyles((theme) => ({
     profileBar: {
       width: "100%",
       left: 0,
-      padding: "0px 40px 5rem 10px",
       right: 0,
       margin: 0,
     },
@@ -56,7 +55,6 @@ const useStyles = makeStyles((theme) => ({
     color: "white",
     verticalAlign: "center",
     width: "100%",
-    marginLeft: 10,
   },
   root: {
     "label + &": {
@@ -178,7 +176,9 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     const key = field.key;
 
     if (intFields.includes(field)) {
-      setFormValues({ ...formValues, [key]: parseInt(event.target.value) });
+      if (/^\d+$/.test(event.target.value))
+        setFormValues({ ...formValues, [key]: parseInt(event.target.value) });
+      else setFormValues({ ...formValues, [key]: "" });
     } else {
       setFormValues({ ...formValues, [key]: event.target.value });
     }
@@ -256,34 +256,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     </div>
   );
 
-  const LightTextField = withStyles((theme) => ({
-    root: {
-      color: "white",
-      "& .MuiSelect-select.MuiSelect-select": {
-        textAlign: "left",
-      },
-      borderBottom: "1px solid white",
-      "& label": {
-        color: "#ffffff80",
-      },
-      "& .MuiInputBase-root": {
-        color: "#ffffff",
-      },
-      width: "100%",
-      margin: 0,
-    },
-    ["@media (max-width: 780px)"]: {
-      root: {
-        "& label": {
-          fontSize: 12,
-        },
-        "& .MuiSelect-select.MuiSelect-select": {
-          fontSize: 12,
-        },
-      },
-    },
-  }))(TextField);
-
   const resources = () => (
     <>
       <div className={classNames(styles.resources)}>
@@ -318,25 +290,30 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   );
 
   const profileBar = () => (
-    <Grid container spacing={2} className={classes.profileBar}>
+    <Grid
+      container
+      spacing={2}
+      className={classNames(classes.profileBar, styles.profileBar)}
+    >
       <div
         style={{ display: errorMsg.display }}
         className={classNames(styles.errorMsg)}
       >
         Please complete the following fields: {errorMsg.required}
       </div>
-      <Grid item xs={3}>
-        <LightTextField
+      <Grid item md={3} xs={3}>
+        <TextField
           required
           label={fields.AGE.label}
-          type="number"
           value={formValues[fields.AGE.key]}
-          onChange={() => handleFormChange(fields.AGE)}
-          InputProps={{ inputProps: { min: 0 } }}
+          onChange={handleFormChange(fields.AGE)}
+          InputLabelProps={{
+            shrink: !formValues[fields.AGE.key] ? false : true,
+          }}
         />
       </Grid>
-      <Grid item xs={3}>
-        <LightTextField
+      <Grid item md={3} xs={3}>
+        <TextField
           required
           select
           label={fields.SEX.label}
@@ -352,11 +329,13 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
           <MenuItem value={"other"} key={"other"}>
             Other
           </MenuItem>
-          <MenuItem>I prefer not to state</MenuItem>
-        </LightTextField>
+          <MenuItem value={"not stated"} key={"not stated"}>
+            I prefer not to state
+          </MenuItem>
+        </TextField>
       </Grid>
-      <Grid item xs={4}>
-        <LightTextField
+      <Grid item md={4} xs={4}>
+        <TextField
           required
           select
           label={fields.COUNTRY_OF_ORIGIN.label}
@@ -368,15 +347,15 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
               {option.name}
             </MenuItem>
           ))}
-        </LightTextField>
+        </TextField>
       </Grid>
-      <Grid item xs={2} style={{ marginTop: "auto" }}>
+      <Grid item md={2} xs={2} style={{ marginTop: "auto" }}>
         <Button className={classes.submitBtn} onClick={() => handleSubmit()}>
           Submit
         </Button>
       </Grid>
-      <Grid item xs={6}>
-        <LightTextField
+      <Grid item md={6} xs={5}>
+        <TextField
           required
           select
           label={fields.PROFESSION.label}
@@ -388,10 +367,10 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
               {option}
             </MenuItem>
           ))}
-        </LightTextField>
+        </TextField>
       </Grid>
-      <Grid item xs={6}>
-        <LightTextField
+      <Grid item md={6} xs={5}>
+        <TextField
           select
           label={fields.MEDICAL_CONDITIONS.label}
           value={formValues[fields.MEDICAL_CONDITIONS.key]}
@@ -417,7 +396,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
               />
             </MenuItem>
           ))}
-        </LightTextField>
+        </TextField>
       </Grid>
     </Grid>
   );

@@ -8,7 +8,7 @@ import {
 } from "@material-ui/core";
 import classNames from "classnames";
 import React, { useEffect, useState } from "react";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import SimpleMap from "components/SimpleMap";
@@ -109,33 +109,14 @@ export default function Home(props, { draggableMapRoutes = [] }) {
     setFormValues({ ...formValues, [key]: event.target.value });
   };
 
-  const LightTextField = withStyles({
-    root: {
-      "& .MuiOutlinedInput-root": {
-        "& fieldset": {
-          borderColor: "#fff",
-          borderRadius: 4,
-        },
-        "&:hover fieldset": {
-          borderColor: "#ffff",
-        },
-        color: "white",
-      },
-      width: "100%",
-      "& label": {
-        color: "#ffffff80",
-        fontSize: 12,
-      },
-      "& .MuiSelect-outlined.MuiSelect-outlined, .MuiOutlinedInput-input": {
-        fontSize: 12,
-      },
-    },
-  })(TextField);
-
   const locations = () => (
-    <Grid container spacing={1} className={classes.container}>
+    <Grid
+      container
+      spacing={1}
+      className={classNames(classes.container, styles.container)}
+    >
       <Grid item xs={3}>
-        <LightTextField
+        <TextField
           label={fields.CITY.label}
           value={formValues[fields.CITY.key]}
           onChange={() => handleFormChange(fields.CITY)}
@@ -143,7 +124,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
         />
       </Grid>
       <Grid item xs={5}>
-        <LightTextField
+        <TextField
           required
           label={fields.STATE.label}
           value={formValues[fields.STATE.key]}
@@ -152,7 +133,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
         />
       </Grid>
       <Grid item xs={3}>
-        <LightTextField
+        <TextField
           required
           label={fields.COUNTRY.label}
           value={formValues[fields.COUNTRY.key]}
@@ -173,9 +154,13 @@ export default function Home(props, { draggableMapRoutes = [] }) {
   );
 
   const status = () => (
-    <Grid container spacing={1} className={classes.container}>
+    <Grid
+      container
+      spacing={1}
+      className={classNames(classes.container, styles.container)}
+    >
       <Grid container item xs={4}>
-        <LightTextField
+        <TextField
           label={fields.SICKNESSSTATUS.label + " *"}
           select
           value={formValues[fields.SICKNESSSTATUS.key]}
@@ -191,11 +176,11 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           <MenuItem key="recovered" value={sicknessStatus.RECOVERED}>
             No, I have recovered
           </MenuItem>
-        </LightTextField>
+        </TextField>
       </Grid>
 
       <Grid container item xs={8}>
-        <LightTextField
+        <TextField
           label={fields.TESTEDSTATUS.label + " *"}
           select
           value={formValues[fields.TESTEDSTATUS.key]}
@@ -211,7 +196,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           <MenuItem key="not tested" value={testStatus.NOT_TESTED}>
             No, I have not tested
           </MenuItem>
-        </LightTextField>
+        </TextField>
       </Grid>
       <div style={{ display: errorMsg.display }} className={styles.errorMsg}>
         Please complete the following fields: {errorMsg.required}
