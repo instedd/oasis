@@ -153,11 +153,11 @@ export default function Home(props, { draggableMapRoutes = [] }) {
       </Grid>
       <Grid item xs={1}>
         <IconButton
-          aria-label="location"
+          title="Locate Your City"
           style={{ color: "#ffffff" }}
           onClick={fetchUserLocation}
         >
-          <PersonPinCircleIcon />
+          <PersonPinCircleIcon fontSize="large" />
         </IconButton>
       </Grid>
     </Grid>

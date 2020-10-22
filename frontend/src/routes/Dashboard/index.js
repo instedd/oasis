@@ -114,7 +114,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       dispatch(submitMyStory(story.id, tempMyStory));
     }
     if (story) {
-      const required = ["age", "sex", "professionn", "countryOfOrigin"];
+      const required = ["age", "sex", "profession", "countryOfOrigin"];
       Object.keys(story).forEach((key) => {
         if (required.includes(key) && story[key] === null) {
           setBarDisplay(true);
