@@ -74,9 +74,6 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           story.latitude = coordinates[1]; // coordinates = [lng, lat]
           story.longitude = coordinates[0];
         }
-
-        console.log(story);
-
         dispatch(setStory(story));
         dispatch(setMyStory(myStory));
         props.history.push(route, { from: "shareBtn" });

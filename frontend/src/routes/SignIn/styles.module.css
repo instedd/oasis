@@ -2,3 +2,15 @@
   color: rgb(255, 255, 255);
   margin-top: 0;
 }
+
+.form input, .form label {
+  color: white;
+}
+
+.form fieldset,  .form fieldset:hover{
+  border-color: white !important; 
+}
+
+.form div {
+  width: 100%;
+}

@@ -332,7 +332,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
           label={fields.AGE.label}
           type="number"
           value={formValues[fields.AGE.key]}
-          onChange={handleFormChange(fields.AGE)}
+          onChange={() => handleFormChange(fields.AGE)}
           InputProps={{ inputProps: { min: 0 } }}
         />
       </Grid>
