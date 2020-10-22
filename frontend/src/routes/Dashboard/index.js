@@ -431,7 +431,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
           <Map
             draggable={draggableMap}
             userStory={story}
-            latestMyStory={myStory ? myStory : story.latestMyStory}
+            latestMyStory={tempMyStory ? tempMyStory : story.latestMyStory}
             actives={data.confirmed && data.confirmed.toLocaleString()}
             deaths={data.deaths && data.deaths.toLocaleString()}
             recovered={data.recovered && data.recovered.toLocaleString()}
