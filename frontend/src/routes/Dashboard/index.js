@@ -119,7 +119,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     Object.keys(formValues).forEach((key) => {
       if (formValues[key] === null) {
         setBarDisplay(true);
-        return;
       }
     });
   }, [story, tempMyStory]);
