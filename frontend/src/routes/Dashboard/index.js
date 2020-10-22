@@ -113,12 +113,14 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     } else if (story && tempMyStory && tempMyStory.length) {
       dispatch(submitMyStory(story.id, tempMyStory));
     }
-
-    Object.keys(formValues).forEach((key) => {
-      if (formValues[key] === null) {
-        setBarDisplay(true);
-      }
-    });
+    if (story) {
+      const required = ["age", "sex", "professionn", "countryOfOrigin"];
+      Object.keys(story).forEach((key) => {
+        if (required.includes(key) && story[key] === null) {
+          setBarDisplay(true);
+        }
+      });
+    }
   }, [story, tempMyStory]);
 
   useEffect(() => {
@@ -197,8 +199,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     } else {
       const { ...newStory } = formValues;
       Object.assign(story, newStory);
-      //TODO: delete this
-      story.medical_conditions = [];
 
       const nextPage = paths.dashboard;
 

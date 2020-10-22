@@ -111,6 +111,13 @@
         align-self: center;
         padding: 0;
     }
+    .container input, .container label {
+        font-size: 12px;
+    }
+
+    .container div {
+        font-size: 12px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -124,13 +131,7 @@
     .btnGroup button {
         width: 180px !important
     }
-    .container input, .container label {
-        font-size: 12px;
-    }
 
-    .container div {
-        font-size: 12px;
-    }
 }
 
 .hidden {
@@ -156,6 +157,7 @@
 
 .container input, .container label {
     color: white;
+    font-size: 14px;
 }
 
 .container fieldset, .container fieldset:hover {

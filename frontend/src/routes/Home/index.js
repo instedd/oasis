@@ -121,6 +121,9 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           value={formValues[fields.CITY.key]}
           onChange={() => handleFormChange(fields.CITY)}
           variant="outlined"
+          InputLabelProps={{
+            shrink: !formValues[fields.CITY.key] ? false : true,
+          }}
         />
       </Grid>
       <Grid item xs={5}>
@@ -130,6 +133,9 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           value={formValues[fields.STATE.key]}
           onChange={() => handleFormChange(fields.STATE)}
           variant="outlined"
+          InputLabelProps={{
+            shrink: !formValues[fields.STATE.key] ? false : true,
+          }}
         />
       </Grid>
       <Grid item xs={3}>
@@ -139,6 +145,9 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           value={formValues[fields.COUNTRY.key]}
           onChange={() => handleFormChange(fields.COUNTRY)}
           variant="outlined"
+          InputLabelProps={{
+            shrink: !formValues[fields.COUNTRY.key] ? false : true,
+          }}
         />
       </Grid>
       <Grid item xs={1}>
