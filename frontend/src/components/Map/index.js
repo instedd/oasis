@@ -721,7 +721,7 @@ export default function Map(props, { draggable = true }) {
     if (userStory.age)
       content = content + "A " + userStory.age + " years old user";
     else content += "A user";
-    if (userStory.profession !== "")
+    if (userStory.profession && userStory.profession !== "")
       content +=
         " working in the " + userStory.profession.toLowerCase() + " industry ";
 
@@ -855,9 +855,6 @@ export default function Map(props, { draggable = true }) {
 
   return (
     <div className={styles.root}>
-      <div className={styles.random}>
-        The locations of markers are randomized.
-      </div>
       <div
         style={{ color: "gray" }}
         className={classNames([

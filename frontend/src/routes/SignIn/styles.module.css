@@ -1,13 +1,16 @@
 .title {
-  color: black;
+  color: rgb(255, 255, 255);
   margin-top: 0;
 }
 
-.status {
-  color: grey;
-  margin: 0;
+.form input, .form label {
+  color: white;
 }
 
-.status.error {
-  color: red;
+.form fieldset,  .form fieldset:hover{
+  border-color: white !important; 
+}
+
+.form div {
+  width: 100%;
 }

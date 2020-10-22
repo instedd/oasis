@@ -23,14 +23,13 @@ import history from "./history";
 import store from "store/configureStore";
 import * as serviceWorker from "./serviceWorker";
 import Wrapper from "components/Wrapper";
-import Consent from "routes/Consent";
-import ReactGA from 'react-ga';
+import ReactGA from "react-ga";
 
 const TRACKINGID = "UA-179246573-1"; // Replace with your Google Analytics tracking ID
 ReactGA.initialize(TRACKINGID);
 
 // Initialize google analytics page view tracking
-history.listen(location => {
+history.listen((location) => {
   ReactGA.set({ page: location.pathname }); // Update the user's current page
   ReactGA.pageview(location.pathname); // Record a pageview for the given page
 });
@@ -62,7 +61,6 @@ ReactDOM.render(
             <Route path={paths.myStory} component={MyStory} />
             <Route path={paths.storyHistory} component={StoryHistory} />
             <Route path={paths.dashboard} component={Dashboard} />
-            <Route path={paths.consent} component={Consent} />
           </Switch>
         </Wrapper>
       </Router>

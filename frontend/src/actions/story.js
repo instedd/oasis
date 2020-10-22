@@ -3,6 +3,7 @@ import history from "../history";
 import {
   SET_SICK_STATUS,
   SET_TESTED_STATUS,
+  SET_STORY,
   SAVED_STORY,
   SAVE_STORY_START,
   SUCCESS,
@@ -26,8 +27,15 @@ const isValidStory = (dto) => invalidFields(dto.story).length === 0;
 const invalidFields = (dto) =>
   mandatoryFields.filter((field) => !(field.key in dto && dto[field.key]));
 
-export const submitStory = (dto) => async (dispatch) => {
-  if (!isValidStory(dto)) {
+export const setStory = (story) => async (dispatch) => {
+  dispatch({
+    type: SET_STORY,
+    payload: story,
+  });
+};
+
+export const submitStory = (dto, update = false) => async (dispatch) => {
+  if (!isValidStory(dto) && !update) {
     return dispatch({
       type: INVALID_STORY,
       payload: {
@@ -58,6 +66,7 @@ export const submitStory = (dto) => async (dispatch) => {
     payload: {
       status: error || { type: SUCCESS },
       story: (!error && updatedStory) || null,
+      tempStory: null,
     },
   });
 
@@ -85,7 +94,7 @@ export const setMyStory = (myStory) => (dispatch) => {
 };
 
 export const submitMyStory = (id, mystory) => async (dispatch) => {
-  const payload = { myStory: null, story: { latestMyStory: mystory } };
+  const payload = { latestMyStory: mystory };
 
   dispatch({
     type: SUBMIT_MY_STORY,

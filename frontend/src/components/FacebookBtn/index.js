@@ -1,9 +1,8 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import Button from "@material-ui/core/Button";
 import FacebookLogin from "react-facebook-login";
 
-import { externalSignIn } from "../../actions/auth";
+import { signIn } from "../../actions/auth";
 
 const APP_ID = "725054974718611";
 
@@ -17,7 +16,7 @@ export default function FacebookBtn() {
         password: response.accessToken,
       };
 
-      dispatch(externalSignIn(dto));
+      dispatch(signIn(dto, true));
     }
   };
 
@@ -27,20 +26,32 @@ export default function FacebookBtn() {
         appId={APP_ID}
         fields="name,email,picture"
         callback={onLoginSuccess}
-        textButton=""
-        buttonStyle={{ all: "unset" }}
+        textButton="SIGN IN WITH FACEBOOK"
+        buttonStyle={{
+          width: "100%",
+          height: 36,
+          borderRadius: 4,
+          fontSize: 14,
+          backgroundColor: "rgb(255, 255, 255)",
+          fontWeight: 500,
+          padding: 0,
+          display: "flex",
+          justifyContent: "center",
+          lineHeight: "36px",
+          color: "gray",
+          border: "none",
+        }}
         icon={
-          <Button
-            style={{ background: "white", color: "gray", width: "286px" }}
-            variant="contained"
-          >
-            <img
-              alt="f"
-              src="https://img.icons8.com/fluent/22/000000/facebook-new.png"
-              style={{ paddingRight: "5px" }}
-            />
-            SIGN IN WITH FACEBOOK
-          </Button>
+          <img
+            alt="f"
+            src="https://img.icons8.com/fluent/22/000000/facebook-new.png"
+            style={{
+              paddingRight: "5px",
+              width: 22,
+              height: 22,
+              margin: "5px 0",
+            }}
+          />
         }
       />
     </div>

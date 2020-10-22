@@ -1,22 +1,67 @@
-import Link from "@material-ui/core/Link";
-import SpeedDial from "@material-ui/lab/SpeedDial";
-import SpeedDialAction from "@material-ui/lab/SpeedDialAction";
-import SpeedDialIcon from "@material-ui/lab/SpeedDialIcon";
-import Collapse from "@material-ui/core/Collapse";
+import {
+  Link,
+  Collapse,
+  IconButton,
+  ListItemText,
+  Checkbox,
+  MenuItem,
+  TextField,
+  Grid,
+  Button,
+} from "@material-ui/core";
+import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import IconButton from "@material-ui/core/IconButton";
 import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import paths from "routes/paths";
 import { sicknessStatus, testStatus } from "routes/types";
 import styles from "./styles.module.css";
-import { fetchStory, submitMyStory } from "actions/story";
+import { fetchStory, submitMyStory, submitStory } from "actions/story";
 import { getStoryResources } from "actions/resources";
 import { LOADING } from "actions/types";
 import { useLocation } from "react-router-dom";
 import api from "utils";
 import Map from "components/Map";
+import { fields, initialFieldsState } from "./fields";
+import Text from "text.json";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
+
+const professions = Text["Profession"];
+const medicalConditions = Text["Medical Conditions"];
+
+const useStyles = makeStyles((theme) => ({
+  profileBar: {
+    width: 600,
+    bottom: 0,
+    padding: "0px 30px 40px 20px",
+    zIndex: 2,
+    position: "absolute",
+    background: "rgba(0, 0, 0, 0.6)",
+    "& .MuiMenuItem-root": {
+      whiteSpace: "normal",
+    },
+  },
+  ["@media (max-width: 780px)"]: {
+    profileBar: {
+      width: "100%",
+      left: 0,
+      right: 0,
+      margin: 0,
+    },
+  },
+  submitBtn: {
+    background: "var(--primary) !important",
+    color: "white",
+    verticalAlign: "center",
+    width: "100%",
+  },
+  root: {
+    "label + &": {
+      color: "white",
+    },
+  },
+}));
 
 const statusMapping = {
   [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
@@ -29,12 +74,19 @@ const statusMapping = {
 
 function Dashboard(props, { draggableMapRoutes = [] }) {
   const dispatch = useDispatch();
+  const [countries, setCountries] = useState([]);
+  const [formValues, setFormValues] = useState(initialFieldsState());
   const [open, setOpen] = useState(false);
+  const classes = useStyles();
+  const [errorMsg, setErrorMsg] = useState({ display: "none", required: null });
+  const [barDisplay, setBarDisplay] = useState(false);
   // This myStory is only temporarily fetched from state to check whether it's needed to submit myStory
   // For uses in components, use story.latestMyStory
-  const { myStory, story, status } = useSelector((state) => {
-    return state.story;
-  });
+  const { myStory, story, status, tempStory, tempMyStory } = useSelector(
+    (state) => {
+      return state.story;
+    }
+  );
 
   let location = useLocation();
   const [draggableMap, setDraggableMap] = useState(false);
@@ -47,21 +99,36 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   };
 
   useEffect(() => {
+    if (tempStory) {
+      const nextPage = paths.dashboard;
+      const dto = {
+        story: tempStory,
+        nextPage,
+        travels: [],
+        closeContacts: [],
+      };
+      dispatch(submitStory(dto));
+    } else if (!story) {
+      dispatch(fetchStory());
+    } else if (story && tempMyStory && tempMyStory.length) {
+      dispatch(submitMyStory(story.id, tempMyStory));
+    }
+    if (story) {
+      const required = ["age", "sex", "profession", "countryOfOrigin"];
+      Object.keys(story).forEach((key) => {
+        if (required.includes(key) && story[key] === null) {
+          setBarDisplay(true);
+        }
+      });
+    }
+  }, [story, tempMyStory]);
+
+  useEffect(() => {
     let shouldDragMap = draggableMapRoutes.includes(location.pathname);
     if (shouldDragMap !== draggableMap) {
       setDraggableMap(draggableMapRoutes.includes(location.pathname));
     }
   }, [location, draggableMap, setDraggableMap, draggableMapRoutes]);
-
-  useEffect(() => {
-    if (!story) dispatch(fetchStory());
-  }, [dispatch, story]);
-
-  useEffect(() => {
-    if (story && myStory && myStory.length) {
-      dispatch(submitMyStory(story.id, myStory));
-    }
-  }, [dispatch, story, myStory]);
 
   const handleClick = () => {
     setOpen(!open);
@@ -94,6 +161,58 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       });
     });
   }, []);
+
+  useEffect(() => {
+    fetch("https://restcountries.eu/rest/v2/all?fields=name")
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          setCountries(result);
+        },
+        () => {}
+      );
+  }, []);
+
+  const handleFormChange = (field) => (event) => {
+    const intFields = [fields.AGE];
+    const key = field.key;
+
+    if (intFields.includes(field)) {
+      if (/^\d+$/.test(event.target.value))
+        setFormValues({ ...formValues, [key]: parseInt(event.target.value) });
+      else setFormValues({ ...formValues, [key]: "" });
+    } else {
+      setFormValues({ ...formValues, [key]: event.target.value });
+    }
+  };
+
+  const handleSubmit = () => {
+    let tempList = [];
+    Object.keys(formValues).forEach((key) => {
+      if (formValues[key] === null) tempList.push(key);
+    });
+    if (tempList.length > 0) {
+      setErrorMsg({
+        display: "block",
+        required: tempList.join(", ").replace("countryOfOrigin", "citizenship"),
+      });
+    } else {
+      const { ...newStory } = formValues;
+      Object.assign(story, newStory);
+
+      const nextPage = paths.dashboard;
+
+      const dto = {
+        story: story,
+        nextPage,
+        travels: [],
+        closeContacts: [],
+      };
+
+      dispatch(submitStory(dto, true));
+      setBarDisplay(false);
+    }
+  };
 
   const actions = [
     {
@@ -170,6 +289,118 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     </div>
   );
 
+  const profileBar = () => (
+    <Grid
+      container
+      spacing={2}
+      className={classNames(classes.profileBar, styles.profileBar)}
+    >
+      <div
+        style={{ display: errorMsg.display }}
+        className={classNames(styles.errorMsg)}
+      >
+        Please complete the following fields: {errorMsg.required}
+      </div>
+      <Grid item md={3} xs={3}>
+        <TextField
+          required
+          label={fields.AGE.label}
+          value={formValues[fields.AGE.key]}
+          onChange={handleFormChange(fields.AGE)}
+          InputLabelProps={{
+            shrink: !formValues[fields.AGE.key] ? false : true,
+          }}
+        />
+      </Grid>
+      <Grid item md={3} xs={3}>
+        <TextField
+          required
+          select
+          label={fields.SEX.label}
+          value={formValues[fields.SEX.key]}
+          onChange={handleFormChange(fields.SEX)}
+        >
+          <MenuItem value={"male"} key={"male"}>
+            Male
+          </MenuItem>
+          <MenuItem value={"female"} key={"female"}>
+            Female
+          </MenuItem>
+          <MenuItem value={"other"} key={"other"}>
+            Other
+          </MenuItem>
+          <MenuItem value={"not stated"} key={"not stated"}>
+            I prefer not to state
+          </MenuItem>
+        </TextField>
+      </Grid>
+      <Grid item md={4} xs={4}>
+        <TextField
+          required
+          select
+          label={fields.COUNTRY_OF_ORIGIN.label}
+          value={formValues[fields.COUNTRY_OF_ORIGIN.key]}
+          onChange={handleFormChange(fields.COUNTRY_OF_ORIGIN)}
+        >
+          {countries.map((option) => (
+            <MenuItem key={option.name} value={option.name}>
+              {option.name}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Grid>
+      <Grid item md={2} xs={2} style={{ marginTop: "auto" }}>
+        <Button className={classes.submitBtn} onClick={() => handleSubmit()}>
+          Submit
+        </Button>
+      </Grid>
+      <Grid item md={6} xs={5}>
+        <TextField
+          required
+          select
+          label={fields.PROFESSION.label}
+          value={formValues[fields.PROFESSION.key]}
+          onChange={handleFormChange(fields.PROFESSION)}
+        >
+          {professions.map((option) => (
+            <MenuItem style={{ fontSize: 13 }} key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </TextField>
+      </Grid>
+      <Grid item md={6} xs={5}>
+        <TextField
+          select
+          label={fields.MEDICAL_CONDITIONS.label}
+          value={formValues[fields.MEDICAL_CONDITIONS.key]}
+          onChange={handleFormChange(fields.MEDICAL_CONDITIONS)}
+          SelectProps={{
+            multiple: true,
+            renderValue: (selected) => selected.join(", "),
+          }}
+        >
+          {medicalConditions.map((name) => (
+            <MenuItem key={name} value={name}>
+              <Checkbox
+                checked={
+                  formValues[fields.MEDICAL_CONDITIONS.key].indexOf(name) > -1
+                }
+              />
+              <ListItemText
+                primary={name}
+                className={classNames(
+                  "checkbox-label",
+                  styles["checkbox-label"]
+                )}
+              />
+            </MenuItem>
+          ))}
+        </TextField>
+      </Grid>
+    </Grid>
+  );
+
   return (
     <div className={styles.root}>
       {status.type === LOADING || !story ? (
@@ -179,7 +410,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
           <Map
             draggable={draggableMap}
             userStory={story}
-            latestMyStory={myStory ? myStory : story.latestMyStory}
+            latestMyStory={tempMyStory ? tempMyStory : story.latestMyStory}
             actives={data.confirmed && data.confirmed.toLocaleString()}
             deaths={data.deaths && data.deaths.toLocaleString()}
             recovered={data.recovered && data.recovered.toLocaleString()}
@@ -187,6 +418,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
             storyNum={stats.storyNum && stats.storyNum.toLocaleString()}
           />
           {informationHeader()}
+          {barDisplay ? profileBar() : ""}
           <SpeedDial
             ariaLabel="Daily actions"
             className={classNames("speeddial", styles.speeddial)}

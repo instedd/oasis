@@ -30,7 +30,7 @@
     background-color: rgba(0, 0, 0, 0.7);
 }
 
-.textarea .MuiInputBase-root .MuiOutlinedInput-notchedOutline{
+.textarea .MuiInputBase-root .MuiOutlinedInput-notchedOutline {
     border-color: "red!important";
 }
 
@@ -74,8 +74,9 @@
 .btnGroup {
     width: 100%;
     display: flex;
-    justify-content: space-evenly;
-    margin-top: 14px;
+    margin-top: 2rem;
+    flex-direction: column;
+    align-items: center;
 }
 
 .btnGroup button {
@@ -110,6 +111,13 @@
         align-self: center;
         padding: 0;
     }
+    .container input, .container label {
+        font-size: 12px;
+    }
+
+    .container div {
+        font-size: 12px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -123,6 +131,7 @@
     .btnGroup button {
         width: 180px !important
     }
+
 }
 
 .hidden {
@@ -131,4 +140,32 @@
 
 .visible {
     visibility: visible;
+}
+
+.profileBar {
+    background-color: black;
+    z-index: 2;
+}
+
+.errorMsg {
+    color: #EA2027;
+    text-align: center;
+    font-size: 14px;
+    padding-top: 8px;
+    margin: auto;
+}
+
+.container input, .container label {
+    color: white;
+    font-size: 14px;
+}
+
+.container fieldset, .container fieldset:hover {
+    border-color: white !important;
+}
+
+.container div {
+    width: 100%;
+    color: white;
+    text-align: left;
 }
