@@ -16,12 +16,12 @@ export const fields = {
   },
   SICKNESSSTATUS: {
     label: "Are you sick?",
-    key: "sicknessStatus",
+    key: "sick",
     initialValue: null,
   },
   TESTEDSTATUS: {
     label: "Have you been tested for COVID-19?",
-    key: "testedStatus",
+    key: "tested",
     initialValue: null,
   },
 };

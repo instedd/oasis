@@ -52,10 +52,8 @@ export default function Home(props, { draggableMapRoutes = [] }) {
   const handleSubmit = (event, route) => {
     let tempList = [];
     Object.keys(formValues).forEach((key) => {
-      console.log(formValues[key]);
       if (formValues[key] === null && key !== "city") tempList.push(key);
     });
-    console.log(tempList);
     if (tempList.length > 0) {
       setErrorMsg({
         display: "block",
@@ -65,18 +63,16 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           .replace("testedStatus", "have you been tested for COVID-19?"),
       });
     } else {
-      getGeocoding().then((coordinates) => {
+      getGeocoding(
+        formValues[fields.CITY.key],
+        formValues[fields.STATE.key],
+        formValues[fields.COUNTRY.key]
+      ).then((coordinates) => {
         const { ...story } = formValues;
-
-        // check if the user has filled valid city, state, and country
         if (coordinates) {
           story.latitude = coordinates[1]; // coordinates = [lng, lat]
           story.longitude = coordinates[0];
         }
-
-        //TODO: get from slider
-        story.sick = "not_sick";
-        story.tested = "not_tested";
 
         dispatch(setStory(story));
         dispatch(setMyStory(myStory));
@@ -99,11 +95,12 @@ export default function Home(props, { draggableMapRoutes = [] }) {
     } else {
       alert("Cannot locate your city.");
     }
+
     setFormValues({
       ...formValues,
-      city: tempCity,
-      state: tempState,
-      country: tempCountry,
+      ["city"]: tempCity,
+      ["state"]: tempState,
+      ["country"]: tempCountry,
     });
   };
 
@@ -141,8 +138,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
         <LightTextField
           label={fields.CITY.label}
           value={formValues[fields.CITY.key]}
-          onChange={handleFormChange(fields.CITY)}
-          InputProps={{ inputProps: { min: 0 } }}
+          onChange={() => handleFormChange(fields.CITY)}
           variant="outlined"
         />
       </Grid>
@@ -151,7 +147,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           required
           label={fields.STATE.label}
           value={formValues[fields.STATE.key]}
-          onChange={handleFormChange(fields.STATE)}
+          onChange={() => handleFormChange(fields.STATE)}
           variant="outlined"
         />
       </Grid>
@@ -160,7 +156,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           required
           label={fields.COUNTRY.label}
           value={formValues[fields.COUNTRY.key]}
-          onChange={handleFormChange(fields.COUNTRY)}
+          onChange={() => handleFormChange(fields.COUNTRY)}
           variant="outlined"
         />
       </Grid>
