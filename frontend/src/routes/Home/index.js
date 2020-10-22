@@ -18,6 +18,7 @@ import { setStory, setMyStory } from "actions/story";
 import { fields, initialFieldsState } from "./fields";
 import PersonPinCircleIcon from "@material-ui/icons/PersonPinCircle";
 import { getGeocoding } from "utils";
+import { sicknessStatus, testStatus } from "routes/types";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -73,6 +74,8 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           story.latitude = coordinates[1]; // coordinates = [lng, lat]
           story.longitude = coordinates[0];
         }
+
+        console.log(story);
 
         dispatch(setStory(story));
         dispatch(setMyStory(myStory));
@@ -182,13 +185,13 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           onChange={handleFormChange(fields.SICKNESSSTATUS)}
           variant="outlined"
         >
-          <MenuItem key="sick" value="sick">
+          <MenuItem key="sick" value={sicknessStatus.SICK}>
             Yes, I am sick
           </MenuItem>
-          <MenuItem key="not sick" value="not sick">
+          <MenuItem key="not sick" value={sicknessStatus.NOT_SICK}>
             No, I am not sick
           </MenuItem>
-          <MenuItem key="recovered" value="recovered">
+          <MenuItem key="recovered" value={sicknessStatus.RECOVERED}>
             No, I have recovered
           </MenuItem>
         </LightTextField>
@@ -202,13 +205,13 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           onChange={handleFormChange(fields.TESTEDSTATUS)}
           variant="outlined"
         >
-          <MenuItem key="positive" value="positive">
+          <MenuItem key="positive" value={testStatus.POSITIVE}>
             Yes, tested positive
           </MenuItem>
-          <MenuItem key="negative" value="negative">
+          <MenuItem key="negative" value={testStatus.NEGATIVE}>
             Yes, tested negative
           </MenuItem>
-          <MenuItem key="not tested" value="not tested">
+          <MenuItem key="not tested" value={testStatus.NOT_TESTED}>
             No, I have not tested
           </MenuItem>
         </LightTextField>

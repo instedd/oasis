@@ -31,11 +31,7 @@ async def login_for_access_token(
     access_token = main.create_access_token(data={"email": user.email})
     response = JSONResponse({}, status_code=200)
     response.set_cookie(
-        "Authorization",
-        value=f"Bearer {access_token}",
-        httponly=True,
-        # max_age=os.environ["COOKIE_EXPIRATION_SECONDS"],
-        # expires=os.environ["COOKIE_EXPIRATION_SECONDS"],
+        "Authorization", value=f"Bearer {access_token}", httponly=True,
     )
     return response
 
@@ -54,6 +50,14 @@ async def external_login(
 
     access_token = main.create_access_token(data={"email": user.email})
     response = JSONResponse({}, status_code=200)
+    # response = JSONResponse(
+    #     {},
+    #     status_code=200,
+    #     headers={
+    #         "set-cookie": f"Authorization=Bearer {access_token}; "
+    #         f"HttpOnly; Path=/; Secure; SameSite=None"
+    #     },
+    # )
     response.set_cookie(
         "Authorization",
         value=f"Bearer {access_token}",

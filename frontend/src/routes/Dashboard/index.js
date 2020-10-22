@@ -84,9 +84,11 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const [barDisplay, setBarDisplay] = useState(false);
   // This myStory is only temporarily fetched from state to check whether it's needed to submit myStory
   // For uses in components, use story.latestMyStory
-  const { myStory, story, status, tempStory } = useSelector((state) => {
-    return state.story;
-  });
+  const { myStory, story, status, tempStory, tempMyStory } = useSelector(
+    (state) => {
+      return state.story;
+    }
+  );
 
   let location = useLocation();
   const [draggableMap, setDraggableMap] = useState(false);
@@ -110,16 +112,17 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       dispatch(submitStory(dto));
     } else if (!story) {
       dispatch(fetchStory());
-    } else if (story && myStory && myStory.length) {
-      dispatch(submitMyStory(story.id, myStory));
+    } else if (story && tempMyStory && tempMyStory.length) {
+      dispatch(submitMyStory(story.id, tempMyStory));
     }
+
     Object.keys(formValues).forEach((key) => {
       if (formValues[key] === null) {
         setBarDisplay(true);
         return;
       }
     });
-  }, []);
+  }, [story, tempMyStory]);
 
   useEffect(() => {
     let shouldDragMap = draggableMapRoutes.includes(location.pathname);
