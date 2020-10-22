@@ -113,7 +113,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     } else if (!story) {
       dispatch(fetchStory());
     } else if (story && tempMyStory && tempMyStory.length) {
-      dispatch(submitMyStory(story.id, myStory));
+      dispatch(submitMyStory(story.id, tempMyStory));
     }
   }, [story, tempMyStory]);
 
