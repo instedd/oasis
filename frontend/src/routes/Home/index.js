@@ -117,9 +117,10 @@ export default function Home(props, { draggableMapRoutes = [] }) {
     >
       <Grid item xs={3}>
         <TextField
+          required
           label={fields.CITY.label}
           value={formValues[fields.CITY.key]}
-          onChange={() => handleFormChange(fields.CITY)}
+          onChange={handleFormChange(fields.CITY)}
           variant="outlined"
           InputLabelProps={{
             shrink: !formValues[fields.CITY.key] ? false : true,
@@ -131,7 +132,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           required
           label={fields.STATE.label}
           value={formValues[fields.STATE.key]}
-          onChange={() => handleFormChange(fields.STATE)}
+          onChange={handleFormChange(fields.STATE)}
           variant="outlined"
           InputLabelProps={{
             shrink: !formValues[fields.STATE.key] ? false : true,
@@ -143,7 +144,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
           required
           label={fields.COUNTRY.label}
           value={formValues[fields.COUNTRY.key]}
-          onChange={() => handleFormChange(fields.COUNTRY)}
+          onChange={handleFormChange(fields.COUNTRY)}
           variant="outlined"
           InputLabelProps={{
             shrink: !formValues[fields.COUNTRY.key] ? false : true,
