@@ -99,3 +99,5 @@ class MyStory(Base):
 
     text = Column(Text())
     story_id = Column(Integer, ForeignKey("stories.id"))
+
+    story = relationship("Story", back_populates="my_stories")
