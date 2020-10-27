@@ -28,6 +28,15 @@ NYT_CURR_URL = (
 FIFTEEN_DAYS_AGO = time.time() - 60 * 60 * 24 * 15
 
 
+def run_git_command(cmd):
+    """
+    A wrapper for git commands with subprocess that makes sure the
+    lockfile is removed every time.
+    """
+    subprocess.call("rm -f /app/covid-19-data/.git/index.lock", shell=True)
+    subprocess.call(cmd, shell=True)
+
+
 def get_day_from_ts(ts):
     """
     Gets the day of the YEAR (integer) from a unix timestamp
@@ -57,17 +66,13 @@ def check_and_reset_repo():
     Checks if the NYT repo exists in the current directory, else clones it,
     otherwise checks out master and pulls it
     """
-    subprocess.call("rm -f /app/covid-19-data/.git/index.lock", shell=True)
     if not path.isdir("covid-19-data"):
-        subprocess.call(
-            "git clone https://github.com/nytimes/covid-19-data.git",
-            shell=True,
+        run_git_command(
+            "git clone https://github.com/nytimes/covid-19-data.git"
         )
     else:
-        subprocess.call(
-            "cd covid-19-data && git checkout -f master && cd ../", shell=True
-        )
-        subprocess.call("cd covid-19-data && git pull && cd ../", shell=True)
+        run_git_command("cd covid-19-data && git checkout -f master && cd ../")
+        run_git_command("cd covid-19-data && git pull && cd ../")
 
 
 def build_new_db_row(row, now, commit: str):
@@ -112,8 +117,13 @@ def add_data(df, commit_hex: str):
     db = next(get_db())
 
     try:
+        # for indx, row in df.iterrows():
+        #    db.add(build_new_db_row(row, now, commit_hex))
+        # db.commit()
+        recs = []
         for indx, row in df.iterrows():
-            db.add(build_new_db_row(row, now, commit_hex))
+            recs.append(build_new_db_row(row, now, commit_hex))
+        db.bulk_save_objects(recs)
         db.commit()
 
     except Exception:
@@ -140,7 +150,8 @@ def seed(fake_date=None):
     repo = Repo("covid-19-data")
 
     # Set current commit
-    cmt = repo.heads.master.commit
+    # cmt = repo.heads.master.commit
+    cmt = repo.head.commit
 
     # If testing, crawl back in time to fake date
     if fake_date is not None:
@@ -155,10 +166,8 @@ def seed(fake_date=None):
 
     while get_day_from_ts(get_ts(cmt)) > STALE_DATE:
         # Checkout data
-        subprocess.call("rm -f /app/covid-19-data/.git/index.lock", shell=True)
-        subprocess.call(
-            f"cd covid-19-data && git checkout -f {cmt.hexsha} && cd ../",
-            shell=True,
+        run_git_command(
+            f"cd covid-19-data && git checkout -f {cmt.hexsha} && cd ../"
         )
 
         # Load data
@@ -176,23 +185,28 @@ def seed(fake_date=None):
     # clear old data
     db = next(get_db())
     try:
-        old_recs = (
-            db.query(models.NytLiveCounty)
-            .filter(models.NytLiveCounty.timestamp < FIFTEEN_DAYS_AGO)
-            .all()
+        old_recs_count = (
+            db.query(models.NytLiveCounty).filter(
+                models.NytLiveCounty.timestamp < FIFTEEN_DAYS_AGO
+            )
+            # .all()
+            .delete()
         )
-        for rec in old_recs:
-            db.delete(rec)
+        print(f"Old recs count: {old_recs_count}")
+        # for rec in old_recs:
+        #    db.delete(rec)
 
         if fake_date is not None:
-            too_new_recs = (
-                db.query(models.NytLiveCounty)
-                .filter(models.NytLiveCounty.date > fake_date)
-                .all()
+            too_new_recs_count = (
+                db.query(models.NytLiveCounty).filter(
+                    models.NytLiveCounty.date > fake_date
+                )
+                # .all()
+                .delete()
             )
-            print(len(too_new_recs))  # DEBUG
-            for rec in too_new_recs:
-                db.delete(rec)
+            print(f"too_new_recs_count: {too_new_recs_count}")
+            # for rec in too_new_recs:
+            #    db.delete(rec)
 
         db.commit()
 
@@ -202,45 +216,60 @@ def seed(fake_date=None):
         db.rollback()
 
 
-async def update(db: Session):
+# async def update(db: Session):
+async def update():
     """
     Updates the NYT county database with newest data from NYT github
     """
     print("update has been called")
-    now = datetime.now().timestamp()
+    # now = datetime.now().timestamp()
     try:
         # Make sure repo is up to date and on master
         check_and_reset_repo()
 
-        old_recs = (
-            db.query(models.NytLiveCounty)
-            .filter(models.NytLiveCounty.timestamp < FIFTEEN_DAYS_AGO)
-            .all()
+        db = next(get_db())
+        old_recs_count = (
+            db.query(models.NytLiveCounty).filter(
+                models.NytLiveCounty.timestamp < FIFTEEN_DAYS_AGO
+            )
+            # .all()
+            .delete()
         )
-        for rec in old_recs:
-            db.delete(rec)
+        db.commit()
+        print(f"old_recs_count: {old_recs_count}")
+        # print(f"Update found {len(old_recs)} old rows to delete")
+        # for rec in old_recs:
+        #    db.delete(rec)
 
         # Identify master commit hash
         repo = Repo("covid-19-data")
-        cmt_hex = repo.heads.master.commit.hexsha
+        # cmt_hex = repo.heads.master.commit.hexsha
+        cmt_hex = repo.head.commit.hexsha
 
+        db = next(get_db())
         recs_with_hex = (
             db.query(models.NytLiveCounty)
             .filter(models.NytLiveCounty.commit.in_([cmt_hex]))
             .all()
         )
+        db.commit()
+        print(f"Update found {len(recs_with_hex)} that are in master")
 
         if len(recs_with_hex) > 0:  # we already have this data
+            print("Update() detected up-to-date data, exiting...")
             db.commit()
             return
 
         # Load data
         df = pd.read_csv("covid-19-data/live/us-counties.csv", dtype=str)
 
-        for indx, row in df.iterrows():
-            db.add(build_new_db_row(row, now, cmt_hex))
+        print(f"Update is adding {df.shape[0]} new rows")
+        print(f"The date for one of these is {df.loc[0,'date']}")
+        # for indx, row in df.iterrows():
+        #    db.add(build_new_db_row(row, now, cmt_hex))
+        add_data(df, cmt_hex)
 
-        db.commit()
+        # db.commit()
 
     except Exception:
         traceback.print_exc()

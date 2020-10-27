@@ -12,7 +12,6 @@ const paths = {
   confirm: "/confirm",
   healthMeasurements: "/measurements",
   myStory: "/mystory",
-  consent: "/consent",
   storyHistory: "/storyhistory",
 };
 

@@ -685,7 +685,7 @@ export default function Map(props, { draggable = true }) {
   };
 
   const storyStyle =
-    '<p style="font-size: 18px;line-height: 18px; color:black">';
+    '<p style="font-size: 18px;line-height: 18px; color:black;overflow: auto;max-height:100px;">';
   const demographicStyle = '<p style = "line-height:0.9rem;font-size:0.9rem;">';
 
   const addCircle = (status, content) => {
@@ -711,12 +711,7 @@ export default function Map(props, { draggable = true }) {
     let content = "<p>";
     content += storyStyle;
     if (mystory) {
-      if (mystory.length > 280) {
-        content += mystory.substring(0, 280);
-        content += "...";
-      } else {
-        content += mystory;
-      }
+      content += mystory;
     }
     content += "</p>";
     if (mystory)
@@ -726,7 +721,7 @@ export default function Map(props, { draggable = true }) {
     if (userStory.age)
       content = content + "A " + userStory.age + " years old user";
     else content += "A user";
-    if (userStory.profession !== "")
+    if (userStory.profession && userStory.profession !== "")
       content +=
         " working in the " + userStory.profession.toLowerCase() + " industry ";
 
@@ -751,9 +746,6 @@ export default function Map(props, { draggable = true }) {
     popup.setHTML(content);
     const element = marker.getElement();
     element.id = "marker";
-    // hover event listener
-    element.addEventListener("mouseenter", () => popup.addTo(map));
-    element.addEventListener("mouseleave", () => popup.remove());
     // add popup to marker
     marker.setPopup(popup);
   };
@@ -863,9 +855,6 @@ export default function Map(props, { draggable = true }) {
 
   return (
     <div className={styles.root}>
-      <div className={styles.random}>
-        The locations of markers are randomized.
-      </div>
       <div
         style={{ color: "gray" }}
         className={classNames([

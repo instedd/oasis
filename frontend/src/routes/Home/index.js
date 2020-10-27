@@ -1,19 +1,41 @@
-import { TextField, Fab, Button } from "@material-ui/core";
+import {
+  TextField,
+  Fab,
+  MenuItem,
+  Grid,
+  Button,
+  IconButton,
+} from "@material-ui/core";
 import classNames from "classnames";
 import React, { useEffect, useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import SimpleMap from "components/SimpleMap";
 import paths from "routes/paths";
 import styles from "./styles.module.css";
-import { setMyStory } from "../../actions/story";
+import { setStory, setMyStory } from "actions/story";
+import { fields, initialFieldsState } from "./fields";
+import PersonPinCircleIcon from "@material-ui/icons/PersonPinCircle";
+import { getGeocoding } from "utils";
+import { sicknessStatus, testStatus } from "routes/types";
 
+const useStyles = makeStyles((theme) => ({
+  container: {
+    marginTop: 12,
+  },
+}));
 export default function Home(props, { draggableMapRoutes = [] }) {
   const dispatch = useDispatch();
+  const classes = useStyles();
 
   const [myStory, updateMyStory] = useState("");
   const [draggableMap, setDraggableMap] = useState(false);
-  const [visibility, setVisibility] = useState("visible");
+  const [formValues, setFormValues] = useState(initialFieldsState());
+  const [errorMsg, setErrorMsg] = useState({
+    display: "none",
+    requiredFields: null,
+  });
 
   let location = useLocation();
 
@@ -25,19 +47,172 @@ export default function Home(props, { draggableMapRoutes = [] }) {
   }, [location, draggableMap, setDraggableMap, draggableMapRoutes]);
 
   const handleChange = (event) => {
-    if (event.target.value) {
-      setVisibility("hidden");
-    } else {
-      setVisibility("visible");
-    }
     updateMyStory(event.target.value);
   };
 
   const handleSubmit = (event, route) => {
-    dispatch(setMyStory(myStory));
-
-    props.history.push(route, { from: "shareBtn" });
+    let tempList = [];
+    Object.keys(formValues).forEach((key) => {
+      if (formValues[key] === null && key !== "city") tempList.push(key);
+    });
+    if (tempList.length > 0) {
+      setErrorMsg({
+        display: "block",
+        required: tempList
+          .join(", ")
+          .replace("sicknessStatus", "are you sick?")
+          .replace("testedStatus", "have you been tested for COVID-19?"),
+      });
+    } else {
+      getGeocoding(
+        formValues[fields.CITY.key],
+        formValues[fields.STATE.key],
+        formValues[fields.COUNTRY.key]
+      ).then((coordinates) => {
+        const { ...story } = formValues;
+        if (coordinates) {
+          story.latitude = coordinates[1]; // coordinates = [lng, lat]
+          story.longitude = coordinates[0];
+        }
+        dispatch(setStory(story));
+        dispatch(setMyStory(myStory));
+        props.history.push(route, { from: "shareBtn" });
+      });
+    }
   };
+
+  const fetchUserLocation = async () => {
+    let tempCity,
+      tempState,
+      tempCountry = "";
+    const response = await fetch(`https://freegeoip.app/json/`);
+
+    if (response.status >= 200 && response.status < 300) {
+      const jsonResponse = await response.json();
+      tempCity = jsonResponse.city;
+      tempState = jsonResponse.region_name;
+      tempCountry = jsonResponse.country_name;
+    } else {
+      alert("Cannot locate your city.");
+    }
+
+    setFormValues({
+      ...formValues,
+      ["city"]: tempCity,
+      ["state"]: tempState,
+      ["country"]: tempCountry,
+    });
+  };
+
+  const handleFormChange = (field) => (event) => {
+    const key = field.key;
+    setFormValues({ ...formValues, [key]: event.target.value });
+  };
+
+  const locations = () => (
+    <Grid
+      container
+      spacing={1}
+      className={classNames(classes.container, styles.container)}
+    >
+      <Grid item xs={3}>
+        <TextField
+          required
+          label={fields.CITY.label}
+          value={formValues[fields.CITY.key]}
+          onChange={handleFormChange(fields.CITY)}
+          variant="outlined"
+          InputLabelProps={{
+            shrink: !formValues[fields.CITY.key] ? false : true,
+          }}
+        />
+      </Grid>
+      <Grid item xs={5}>
+        <TextField
+          required
+          label={fields.STATE.label}
+          value={formValues[fields.STATE.key]}
+          onChange={handleFormChange(fields.STATE)}
+          variant="outlined"
+          InputLabelProps={{
+            shrink: !formValues[fields.STATE.key] ? false : true,
+          }}
+        />
+      </Grid>
+      <Grid item xs={3}>
+        <TextField
+          required
+          label={fields.COUNTRY.label}
+          value={formValues[fields.COUNTRY.key]}
+          onChange={handleFormChange(fields.COUNTRY)}
+          variant="outlined"
+          InputLabelProps={{
+            shrink: !formValues[fields.COUNTRY.key] ? false : true,
+          }}
+        />
+      </Grid>
+      <Grid item xs={1}>
+        <IconButton
+          title="Locate Your City"
+          style={{ color: "#ffffff" }}
+          onClick={fetchUserLocation}
+        >
+          <PersonPinCircleIcon fontSize="large" />
+        </IconButton>
+      </Grid>
+    </Grid>
+  );
+
+  const status = () => (
+    <Grid
+      container
+      spacing={1}
+      className={classNames(classes.container, styles.container)}
+    >
+      <Grid container item xs={4}>
+        <TextField
+          label={fields.SICKNESSSTATUS.label + " *"}
+          select
+          value={formValues[fields.SICKNESSSTATUS.key]}
+          onChange={handleFormChange(fields.SICKNESSSTATUS)}
+          variant="outlined"
+        >
+          <MenuItem key="sick" value={sicknessStatus.SICK}>
+            Yes, I am sick
+          </MenuItem>
+          <MenuItem key="not sick" value={sicknessStatus.NOT_SICK}>
+            No, I am not sick
+          </MenuItem>
+          <MenuItem key="recovered" value={sicknessStatus.RECOVERED}>
+            No, I have recovered
+          </MenuItem>
+        </TextField>
+      </Grid>
+
+      <Grid container item xs={8}>
+        <TextField
+          label={fields.TESTEDSTATUS.label + " *"}
+          select
+          value={formValues[fields.TESTEDSTATUS.key]}
+          onChange={handleFormChange(fields.TESTEDSTATUS)}
+          variant="outlined"
+        >
+          <MenuItem key="positive" value={testStatus.POSITIVE}>
+            Yes, tested positive
+          </MenuItem>
+          <MenuItem key="negative" value={testStatus.NEGATIVE}>
+            Yes, tested negative
+          </MenuItem>
+          <MenuItem key="not tested" value={testStatus.NOT_TESTED}>
+            No, I have not tested
+          </MenuItem>
+        </TextField>
+      </Grid>
+      <div style={{ display: errorMsg.display }} className={styles.errorMsg}>
+        Please complete the following fields: {errorMsg.required}
+      </div>
+    </Grid>
+  );
 
   return (
     <>
@@ -51,7 +226,6 @@ export default function Home(props, { draggableMapRoutes = [] }) {
         </p>
         <div>
           <TextField
-            id="outlined-multiline-static"
             placeholder="Type your story here!"
             multiline
             rowsMax={3}
@@ -61,27 +235,29 @@ export default function Home(props, { draggableMapRoutes = [] }) {
             variant="outlined"
           />
         </div>
+        {locations()}
+        {status()}
         <div className={classNames("btnGroup", styles.btnGroup)}>
           <Fab
             style={{ background: "#9206FF", color: "white" }}
             aria-label="add"
             size="medium"
-            onClick={(e) => handleSubmit(e, paths.consent)}
+            onClick={(e) => handleSubmit(e, paths.signIn)}
             variant="extended"
           >
             SHARE MY STORY
           </Fab>
           <Button
-            onClick={() =>
-              props.history.push(paths.consent, { from: "skipBtn" })
-            }
-            className={classNames("skipBtn", styles.skipBtn)}
-            style={{ visibility: visibility }}
+            aria-label="skip"
+            size="medium"
+            onClick={() => props.history.push(paths.signIn)}
+            style={{ color: "#ffffff80", fontSize: 10 }}
           >
-            skip and continue
+            SKIP AND CONTINUE
           </Button>
         </div>
       </div>
+
       <div className={classNames("background", styles.background)} />
       <SimpleMap draggable={draggableMap} />
     </>

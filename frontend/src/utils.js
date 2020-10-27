@@ -71,4 +71,30 @@ export const snakeToCamelCase = (str) =>
 
 const camelToSnakeCase = (str) => str.replace(/([A-Z])/g, "_$1").toLowerCase();
 
+export const getGeocoding = (city, state, country) => {
+  const MAPBOX_APIKEY =
+    "pk.eyJ1IjoieXVzMjUyIiwiYSI6ImNrYTZhM2VlcjA2M2UzMm1uOWh5YXhvdGoifQ.ZIzOiYbBfwJsV168m42iFg";
+
+  const query = city + " " + state + " " + country;
+  const url =
+    "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
+    query +
+    ".json?access_token=" +
+    MAPBOX_APIKEY;
+  return fetch(url)
+    .then((response) => response.json())
+    .then((jsondata) => {
+      if (
+        jsondata &&
+        jsondata.features &&
+        jsondata.features.length &&
+        jsondata.features[0].geometry &&
+        jsondata.features[0].geometry.coordinates &&
+        jsondata.features[0].geometry.coordinates.length >= 2
+      ) {
+        return jsondata.features[0].geometry.coordinates;
+      }
+    });
+};
+
 export default api;

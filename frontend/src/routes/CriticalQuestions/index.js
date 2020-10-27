@@ -29,6 +29,7 @@ import { fields, initialFieldsState } from "./fields";
 import Select from "../../components/Select";
 import AlertDialog from "components/Dialog";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import { getGeocoding } from "utils";
 
 const contactText = Text["Close Contacts"].texts;
 const contactNoticeText = Text["Close Contacts Notice"].texts;
@@ -107,33 +108,6 @@ function CriticalQuestions(props) {
     setContacts(newContacts);
   };
 
-  const getGeocoding = () => {
-    const city = formValues[fields.CITY.key];
-    const state = formValues[fields.STATE.key];
-    const country = formValues[fields.COUNTRY.key];
-
-    const query = city + " " + state + " " + country;
-    const url =
-      "https://api.mapbox.com/geocoding/v5/mapbox.places/" +
-      query +
-      ".json?access_token=" +
-      MAPBOX_APIKEY;
-    return fetch(url)
-      .then((response) => response.json())
-      .then((jsondata) => {
-        if (
-          jsondata &&
-          jsondata.features &&
-          jsondata.features.length &&
-          jsondata.features[0].geometry &&
-          jsondata.features[0].geometry.coordinates &&
-          jsondata.features[0].geometry.coordinates.length >= 2
-        ) {
-          return jsondata.features[0].geometry.coordinates;
-        }
-      });
-  };
-
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -156,7 +130,11 @@ function CriticalQuestions(props) {
         document.getElementById("error").style.display = "inline";
       }
       document.getElementById("reminder").innerHTML = "";
-      getGeocoding().then((coordinates) => {
+      getGeocoding(
+        formValues[fields.CITY.key],
+        formValues[fields.STATE.key],
+        formValues[fields.COUNTRY.key]
+      ).then((coordinates) => {
         const { ...story } = formValues;
         if (story.sick === sicknessStatus.NOT_SICK) nextPage = paths.dashboard;
         else nextPage = paths.symptoms;
