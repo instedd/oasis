@@ -188,31 +188,3 @@ def read_all_latest_my_stories(db: Session = Depends(get_db)):
 @router.get("/my_stories/count")
 def get_story_count(db: Session = Depends(get_db)):
     return crud.get_my_story_count(db)
-
-
-@router.post("/search", response_model=List[schemas.MyStoryWithStory])
-def search_my_story(query: schemas.Search, db: Session = Depends(get_db)):
-    if len(query.text) == 0:
-        raise HTTPException(
-            status_code=422,
-            detail="Search for empty string is not allowed",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    return crud.search_my_story(db, query.text)
-
-
-@router.get("/explore", response_model=List[schemas.MyStoryWithStory])
-def explore(
-    current_story: schemas.Story = Depends(main.get_current_story),
-    db: Session = Depends(get_db),
-):
-    if not current_story:
-        msg = "User needs to submit a story before user can get a story feed."
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=msg,
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    return crud.get_story_feed(
-        db, current_story.id, current_story.latitude, current_story.longitude
-    )

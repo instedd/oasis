@@ -124,11 +124,3 @@ class StorySymptom(StorySymptomCreate):
 
     class Config:
         orm_mode = True
-
-
-class Search(BaseModel):
-    text: str
-
-
-class MyStoryWithStory(MyStory):
-    story: Story = None
