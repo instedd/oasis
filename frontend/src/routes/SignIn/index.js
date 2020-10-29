@@ -30,6 +30,9 @@ const useStyles = makeStyles((theme) => ({
 export default function SignIn(props) {
   const dispatch = useDispatch();
   const classes = useStyles();
+  const from = props.history.location.state
+    ? props.history.location.state.from
+    : "";
 
   const { status, user } = useSelector((state) => state.auth);
 
@@ -108,13 +111,15 @@ export default function SignIn(props) {
       </Button>
       <GoogleBtn />
       <FacebookBtn />
-      <Grid container justify="flex-end">
-        <Grid item>
-          <Link onClick={() => history.push(paths.signUp)} variant="body2">
-            Don't have an account? Sign up
-          </Link>
+      {from === "shareBtn" && (
+        <Grid container justify="flex-end">
+          <Grid item>
+            <Link onClick={() => history.push(paths.signUp)} variant="body2">
+              Don't have an account? Sign up
+            </Link>
+          </Grid>
         </Grid>
-      </Grid>
+      )}
     </form>
   );
 
@@ -133,13 +138,26 @@ export default function SignIn(props) {
       )}
       <p id="incomplete_error" style={{ color: "red" }}></p>
       {form()}
-      <Button
-        className={styles.skipBtn}
-        style={{ color: "#ffffff80" }}
-        onClick={() => props.history.push(paths.dashboard, { onboard: false })}
-      >
-        continue as guest
-      </Button>
+      {from === "shareBtn" && (
+        <Button
+          className={styles.skipBtn}
+          style={{ color: "#ffffff80" }}
+          onClick={() =>
+            props.history.push(paths.dashboard, { onboard: false })
+          }
+        >
+          continue as guest
+        </Button>
+      )}
+      <div>
+        <Button
+          className={styles.skipBtn}
+          style={{ color: "#ffffff80" }}
+          onClick={() => props.history.push(paths.home, { onboard: false })}
+        >
+          Back to Home Page
+        </Button>
+      </div>
     </div>
   );
 }
