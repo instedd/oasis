@@ -8,7 +8,6 @@ import {
 import api from "utils";
 import history from "../history";
 import paths from "routes/paths";
-import { getCurrentStory } from "./story";
 
 export const signUp = (userDTO) => async (dispatch) => {
   dispatch({ type: SIGN_UP_START });
