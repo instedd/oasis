@@ -5,7 +5,7 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 
 import history from "../../history";
 import { signIn } from "actions/auth";
@@ -149,7 +149,7 @@ export default function SignIn(props) {
           continue as guest
         </Button>
       )}
-      <div>
+      {from !== "shareBtn" && (
         <Button
           className={styles.skipBtn}
           style={{ color: "#ffffff80" }}
@@ -157,7 +157,7 @@ export default function SignIn(props) {
         >
           Back to Home Page
         </Button>
-      </div>
+      )}
     </div>
   );
 }

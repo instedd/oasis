@@ -98,9 +98,9 @@ export default function Home(props, { draggableMapRoutes = [] }) {
 
     setFormValues({
       ...formValues,
-      ["city"]: tempCity,
-      ["state"]: tempState,
-      ["country"]: tempCountry,
+      city: tempCity,
+      state: tempState,
+      country: tempCountry,
     });
   };
 
