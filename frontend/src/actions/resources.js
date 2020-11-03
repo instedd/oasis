@@ -64,7 +64,7 @@ export const getStoryResources = (story) => {
       site: testCali(story),
     },
     {
-      text: "Dowload Homebound Beta",
+      text: "Download Homebound Beta",
       site: homeBound(story),
     },
   ];
