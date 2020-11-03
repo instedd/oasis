@@ -141,6 +141,22 @@ export const getCurrentStory = async (dispatch) => {
   return story;
 };
 
+/**
+ * backend call to create or update like/dislike
+ * @param my_story_id id of the my story to update
+ * @param like a boolean. like when true, dislike when false and neither when null.
+ * @returns {Promise<*>} returns when there is any error
+ */
+export const updateLike = async (my_story_id, like) => {
+  const dto = {
+    like: like,
+    my_story_id: target_story_id,
+  };
+
+  const { error } = await api(`likes/`, { method: "POST", body: dto });
+  return error;
+};
+
 const submitTravels = (travels, storyId) =>
   submitStoryComponents(storyId)(
     "travels",
