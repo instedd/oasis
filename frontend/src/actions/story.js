@@ -150,7 +150,7 @@ export const getCurrentStory = async (dispatch) => {
 export const updateLike = async (my_story_id, like) => {
   const dto = {
     like: like,
-    my_story_id: target_story_id,
+    my_story_id: my_story_id,
   };
 
   const { error } = await api(`likes/`, { method: "POST", body: dto });
