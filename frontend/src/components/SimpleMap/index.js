@@ -35,7 +35,6 @@ export default function Map(props, { draggable = true }) {
     lng: -117.1611,
     lat: 32.7157,
   });
-  const [legendRanges, setLegendRanges] = useState([]);
 
   useEffect(() => {
     getUserLocation();
@@ -74,20 +73,6 @@ export default function Map(props, { draggable = true }) {
     map.touchZoomRotate.disableRotation();
   };
 
-  const addLegend = (data) => {
-    const clusters = data.clusters;
-    const colorGroups = data.groups;
-    const newRanges =
-      clusters &&
-      clusters.map((range, i) => {
-        return {
-          label: `${range[0].toLocaleString()} - ${range[1].toLocaleString()}`,
-          color: getColor(colorGroups[i]),
-        };
-      });
-    newRanges && setLegendRanges(newRanges);
-  };
-
   const getUserLocation = async () => {
     const userLocation = await fetchUserLocation();
     if (userLocation) {
@@ -115,8 +100,6 @@ export default function Map(props, { draggable = true }) {
     const usCountyData = data["data"]["adm2"] ? data["data"]["adm2"] : [];
     // SD postal code data
     const sdPosData = data["data"]["adm3"] ? data["data"]["adm3"] : [];
-
-    addLegend(data);
 
     tryToLoad(map, worldData, usStatesData, usCountyData, sdPosData);
   };
@@ -580,15 +563,6 @@ export default function Map(props, { draggable = true }) {
     });
   };
 
-  const legend = <div></div>;
-
-  const draggableDependantFeatures = () => {
-    if (draggable) {
-      return legendRanges.length !== 0 ? legend : null;
-    }
-    return <div className={classNames(styles.fill, styles.mask)} />;
-  };
-
   return (
     <div className={styles.root}>
       <div
@@ -600,7 +574,6 @@ export default function Map(props, { draggable = true }) {
         ])}
         id="map"
       ></div>
-      {draggableDependantFeatures()}
     </div>
   );
 }
