@@ -146,3 +146,37 @@ def update_latest_my_story(db: Session, story: schemas.Story, my_story):
 
 def get_my_story_count(db: Session):
     return db.query(models.MyStory).count()
+
+
+def get_my_story(db: Session, my_story_id: int):
+    return (
+        db.query(models.MyStory)
+        .filter(models.MyStory.id == my_story_id)
+        .first()
+    )
+
+
+def search_my_story(db: Session, query: str):
+    return (
+        db.query(models.MyStory)
+        .filter(models.MyStory.text.like("%" + query + "%"))
+        .order_by(models.MyStory.updated_at.desc())
+        .options(joinedload("story"))
+        .all()
+    )
+
+
+def get_story_feed(db: Session, cur_id, lat, lng):
+    dist = func.sqrt(
+        func.pow(models.Story.latitude - lat, 2)
+        + func.pow(models.Story.longitude - lng, 2)
+    )
+    return (
+        db.query(models.MyStory)
+        .join(models.Story)
+        .filter(models.Story.id != cur_id)
+        .order_by(dist)
+        .order_by(models.MyStory.updated_at.desc())
+        .limit(100)
+        .all()
+    )

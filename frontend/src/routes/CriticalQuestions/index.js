@@ -130,7 +130,11 @@ function CriticalQuestions(props) {
         document.getElementById("error").style.display = "inline";
       }
       document.getElementById("reminder").innerHTML = "";
-      getGeocoding().then((coordinates) => {
+      getGeocoding(
+        formValues[fields.CITY.key],
+        formValues[fields.STATE.key],
+        formValues[fields.COUNTRY.key]
+      ).then((coordinates) => {
         const { ...story } = formValues;
         if (story.sick === sicknessStatus.NOT_SICK) nextPage = paths.dashboard;
         else nextPage = paths.symptoms;

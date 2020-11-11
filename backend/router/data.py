@@ -44,9 +44,14 @@ class DataScope:
 
 
 def fetch_world_data():
+    excepts = (
+        requests.exceptions.RequestException,
+        KeyError,
+        requests.exceptions.ConnectionError,
+    )
     try:
         r = requests.get(url=COVID_WORLD_API_URL)
-    except (requests.exceptions.RequestException, KeyError) as e:
+    except excepts as e:
         print("WARNING: Unable to receive data from api.covid19api.com")
         print(e)
         print("Continuing without it...")
@@ -88,8 +93,9 @@ def fetch_sd_zip_code_data():
     r = requests.get(url=COVID_SD_ZIP_CODE_API_URL)
     data = r.json()
     features = data["features"]
-    confirmed = list(
-        map(
+    confirmed = [
+        d
+        for d in map(
             lambda entry: {
                 "name": entry["attributes"]["ziptext"],
                 "confirmed": entry["attributes"]["case_count"]
@@ -99,19 +105,18 @@ def fetch_sd_zip_code_data():
             },
             features,
         )
-    )
+        if d["name"] is not None
+    ]
 
     return confirmed
 
 
 def fetch_county_data(db: Session = Depends(get_db)):
-    most_recent_timestamp = db.query(
-        func.max(models.NytLiveCounty.timestamp)
-    ).first()[0]
+    most_recent_date = db.query(func.max(models.NytLiveCounty.date)).first()[0]
 
     result = (
         db.query(models.NytLiveCounty)
-        .filter(models.NytLiveCounty.timestamp == most_recent_timestamp)
+        .filter(models.NytLiveCounty.date == most_recent_date)
         .all()
     )
 
@@ -216,7 +221,8 @@ async def get_all_data(db: Session = Depends(get_db)):
     # )
 
     # Run update for NYT data
-    asyncio.ensure_future(crud.update(db))
+    asyncio.ensure_future(crud.update())
+    # crud.update(db)
 
     return {
         "data": grouped_data,

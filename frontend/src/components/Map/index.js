@@ -1,9 +1,6 @@
 import classNames from "classnames";
 import mapboxgl from "mapbox-gl";
 import React, { useEffect, useState } from "react";
-import Collapse from "@material-ui/core/Collapse";
-import ExpandLessIcon from "@material-ui/icons/ExpandLess";
-import IconButton from "@material-ui/core/IconButton";
 import Divider from "@material-ui/core/Divider";
 import styles from "./styles.module.css";
 import api from "utils";
@@ -50,7 +47,6 @@ export default function Map(props, { draggable = true }) {
     lng: 0,
     lat: 0,
   });
-  const [legendRanges, setLegendRanges] = useState([]);
 
   useEffect(() => {
     getUserLocation();
@@ -96,42 +92,6 @@ export default function Map(props, { draggable = true }) {
     map.touchZoomRotate.disableRotation();
   };
 
-  const addLegend = (data) => {
-    const clusters = data.clusters;
-    const colorGroups = data.groups;
-    const newRanges = clusters && [
-      {
-        label: `${clusters[0][0].toLocaleString()} - ${clusters[0][1].toLocaleString()}`,
-        color: getLegendColor(colorGroups[3]),
-      },
-      {
-        label: `${clusters[1][0].toLocaleString()} - ${clusters[3][1].toLocaleString()}`,
-        color: getLegendColor(colorGroups[4]),
-      },
-      {
-        label: `${clusters[4][0].toLocaleString()} - ${clusters[5][1].toLocaleString()}`,
-        color: getLegendColor(colorGroups[5]),
-      },
-      {
-        label: `${clusters[6][0].toLocaleString()} - ${clusters[6][1].toLocaleString()}`,
-        color: getLegendColor(colorGroups[6]),
-      },
-      {
-        label: `${clusters[7][0].toLocaleString()} - ${clusters[7][1].toLocaleString()}`,
-        color: getLegendColor(colorGroups[7]),
-      },
-      {
-        label: `${clusters[8][0].toLocaleString()} - ${clusters[8][1].toLocaleString()}`,
-        color: getLegendColor(colorGroups[8]),
-      },
-      {
-        label: `${clusters[9][0].toLocaleString()} - ${clusters[9][1].toLocaleString()}`,
-        color: getLegendColor(colorGroups[9]),
-      },
-    ];
-    newRanges && setLegendRanges(newRanges);
-  };
-
   const getUserLocation = async () => {
     const userLocation = await fetchUserLocation();
     if (userLocation) {
@@ -159,8 +119,6 @@ export default function Map(props, { draggable = true }) {
     const usCountyData = data["data"]["adm2"] ? data["data"]["adm2"] : [];
     // SD postal code data
     const sdPosData = data["data"]["adm3"] ? data["data"]["adm3"] : [];
-
-    addLegend(data);
 
     tryToLoad(map, worldData, usStatesData, usCountyData, sdPosData);
   };
@@ -248,7 +206,8 @@ export default function Map(props, { draggable = true }) {
         story &&
         isInRange(story.latitude, story.longitude) &&
         !story.spam &&
-        story.id !== userStory.id
+        story.id !== userStory.id &&
+        story.latestMyStory
     );
 
     let features = stories.map((story) => {
@@ -293,39 +252,11 @@ export default function Map(props, { draggable = true }) {
     };
   };
 
-  const getLegendColor = (group) => {
-    return `rgba(${group * 255}, 0, 0, 1)`;
-  };
-
   const getColor = (group) => {
-    if (group === 0.1) {
-      return `rgba(${0.25 * 255}, 0, 0, 1)`;
-    }
-
-    if (group === 0.2 || group === 0.3) {
-      return `rgba(${0.45 * 255}, 0, 0, 1)`;
-    }
-
-    if (group === 0.4 || group === 0.5) {
-      return `rgba(${0.6 * 255}, 0, 0, 1)`;
-    }
-
     return `rgba(${group * 255}, 0, 0, 1)`;
   };
 
   const getStateColor = (group) => {
-    if (group === 0.1) {
-      return `rgba(${0.15 * 255}, 20, 20, 1)`;
-    }
-
-    if (group === 0.2 || group === 0.3) {
-      return `rgba(${0.3 * 255}, 20, 20, 1)`;
-    }
-
-    if (group === 0.4 || group === 0.5) {
-      return `rgba(${0.45 * 255}, 20, 20, 1)`;
-    }
-
     return `rgba(${(group - 0.15) * 255}, 20, 20, 1)`;
   };
 
@@ -685,7 +616,7 @@ export default function Map(props, { draggable = true }) {
   };
 
   const storyStyle =
-    '<p style="font-size: 18px;line-height: 18px; color:black">';
+    '<p style="font-size: 18px;line-height: 18px; color:black;overflow: auto;max-height:100px;">';
   const demographicStyle = '<p style = "line-height:0.9rem;font-size:0.9rem;">';
 
   const addCircle = (status, content) => {
@@ -711,12 +642,7 @@ export default function Map(props, { draggable = true }) {
     let content = "<p>";
     content += storyStyle;
     if (mystory) {
-      if (mystory.length > 280) {
-        content += mystory.substring(0, 280);
-        content += "...";
-      } else {
-        content += mystory;
-      }
+      content += mystory;
     }
     content += "</p>";
     if (mystory)
@@ -751,9 +677,6 @@ export default function Map(props, { draggable = true }) {
     popup.setHTML(content);
     const element = marker.getElement();
     element.id = "marker";
-    // hover event listener
-    element.addEventListener("mouseenter", () => popup.addTo(map));
-    element.addEventListener("mouseleave", () => popup.remove());
     // add popup to marker
     marker.setPopup(popup);
   };
@@ -800,36 +723,8 @@ export default function Map(props, { draggable = true }) {
     }
   };
 
-  const [expanded, setExpanded] = React.useState(
-    window.screen.width > 1024 ? true : false
-  );
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
-
   const legend = (
     <div className={classNames(styles.legendWrapper)}>
-      <div className={classNames(styles.legend)} id="legend">
-        <div className={classNames(styles.legendCollapse)}>
-          <h3>Confirmed Cases</h3>
-          <IconButton
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="show more"
-          >
-            <ExpandLessIcon />
-          </IconButton>
-        </div>
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          {legendRanges.map((range, i) => (
-            <div className={classNames(styles.legendItem)} key={i}>
-              <span style={{ backgroundColor: range.color }}></span>
-              {range.label}
-            </div>
-          ))}
-        </Collapse>
-      </div>
       <div className={classNames(styles.statusLegend)}>
         <div>
           <h2> Global Total </h2>
@@ -854,13 +749,6 @@ export default function Map(props, { draggable = true }) {
     </div>
   );
 
-  const draggableDependantFeatures = () => {
-    if (draggable) {
-      return legendRanges.length !== 0 ? legend : null;
-    }
-    return <div className={classNames(styles.fill, styles.mask)} />;
-  };
-
   return (
     <div className={styles.root}>
       <div
@@ -872,7 +760,7 @@ export default function Map(props, { draggable = true }) {
         ])}
         id="map"
       ></div>
-      {draggableDependantFeatures()}
+      {legend}
     </div>
   );
 }

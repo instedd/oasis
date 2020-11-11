@@ -25,7 +25,7 @@ import api from "utils";
 import Map from "components/Map";
 import { fields, initialFieldsState } from "./fields";
 import Text from "text.json";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 
 const professions = Text["Profession"];
 const medicalConditions = Text["Medical Conditions"];
@@ -42,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
       whiteSpace: "normal",
     },
   },
+  // eslint-disable-next-line
   ["@media (max-width: 780px)"]: {
     profileBar: {
       width: "100%",
@@ -82,11 +83,9 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const [barDisplay, setBarDisplay] = useState(false);
   // This myStory is only temporarily fetched from state to check whether it's needed to submit myStory
   // For uses in components, use story.latestMyStory
-  const { myStory, story, status, tempStory, tempMyStory } = useSelector(
-    (state) => {
-      return state.story;
-    }
-  );
+  const { story, status, tempStory, tempMyStory } = useSelector((state) => {
+    return state.story;
+  });
 
   let location = useLocation();
   const [draggableMap, setDraggableMap] = useState(false);
@@ -114,13 +113,14 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       dispatch(submitMyStory(story.id, tempMyStory));
     }
     if (story) {
-      const required = ["age", "sex", "professionn", "countryOfOrigin"];
+      const required = ["age", "sex", "profession"];
       Object.keys(story).forEach((key) => {
         if (required.includes(key) && story[key] === null) {
           setBarDisplay(true);
         }
       });
     }
+    // eslint-disable-next-line
   }, [story, tempMyStory]);
 
   useEffect(() => {
@@ -189,12 +189,14 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const handleSubmit = () => {
     let tempList = [];
     Object.keys(formValues).forEach((key) => {
-      if (formValues[key] === null) tempList.push(key);
+      if (formValues[key] === null && key !== "countryOfOrigin")
+        tempList.push(key);
     });
     if (tempList.length > 0) {
+      console.log(tempList);
       setErrorMsg({
         display: "block",
-        required: tempList.join(", ").replace("countryOfOrigin", "citizenship"),
+        required: tempList.join(", "),
       });
     } else {
       const { ...newStory } = formValues;
@@ -336,7 +338,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       </Grid>
       <Grid item md={4} xs={4}>
         <TextField
-          required
           select
           label={fields.COUNTRY_OF_ORIGIN.label}
           value={formValues[fields.COUNTRY_OF_ORIGIN.key]}

@@ -35,7 +35,6 @@ export default function Map(props, { draggable = true }) {
     lng: -117.1611,
     lat: 32.7157,
   });
-  const [legendRanges, setLegendRanges] = useState([]);
 
   useEffect(() => {
     getUserLocation();
@@ -74,20 +73,6 @@ export default function Map(props, { draggable = true }) {
     map.touchZoomRotate.disableRotation();
   };
 
-  const addLegend = (data) => {
-    const clusters = data.clusters;
-    const colorGroups = data.groups;
-    const newRanges =
-      clusters &&
-      clusters.map((range, i) => {
-        return {
-          label: `${range[0].toLocaleString()} - ${range[1].toLocaleString()}`,
-          color: getColor(colorGroups[i]),
-        };
-      });
-    newRanges && setLegendRanges(newRanges);
-  };
-
   const getUserLocation = async () => {
     const userLocation = await fetchUserLocation();
     if (userLocation) {
@@ -115,8 +100,6 @@ export default function Map(props, { draggable = true }) {
     const usCountyData = data["data"]["adm2"] ? data["data"]["adm2"] : [];
     // SD postal code data
     const sdPosData = data["data"]["adm3"] ? data["data"]["adm3"] : [];
-
-    addLegend(data);
 
     tryToLoad(map, worldData, usStatesData, usCountyData, sdPosData);
   };
@@ -488,7 +471,7 @@ export default function Map(props, { draggable = true }) {
   };
 
   const storyStyle =
-    '<p style="font-size: 18px;line-height: 18px; color:black;margin:0;">';
+    '<p style="font-size: 18px;line-height: 18px; color:black;margin:0;overflow: auto;max-height:100px;">';
   const demographicStyle =
     '<p style = "line-height:0.9rem;font-size:0.9rem;margin:0;">';
 
@@ -514,12 +497,7 @@ export default function Map(props, { draggable = true }) {
     var content = '<p style="margin:0;">';
     content += storyStyle;
     if (userStory.latestMyStory) {
-      if (userStory.latestMyStory.length > 280) {
-        content += userStory.latestMyStory.substring(0, 280);
-        content += "...";
-      } else {
-        content += userStory.latestMyStory;
-      }
+      content += userStory.latestMyStory;
     }
     content += "</p>";
     if (userStory.latestMyStory)
@@ -552,9 +530,6 @@ export default function Map(props, { draggable = true }) {
     popup.setHTML(content);
     const element = marker.getElement();
     element.id = "marker";
-    // hover event listener
-    element.addEventListener("mouseenter", () => popup.addTo(map));
-    element.addEventListener("mouseleave", () => popup.remove());
     // add popup to marker
     marker.setPopup(popup);
   };
@@ -588,15 +563,6 @@ export default function Map(props, { draggable = true }) {
     });
   };
 
-  const legend = <div></div>;
-
-  const draggableDependantFeatures = () => {
-    if (draggable) {
-      return legendRanges.length !== 0 ? legend : null;
-    }
-    return <div className={classNames(styles.fill, styles.mask)} />;
-  };
-
   return (
     <div className={styles.root}>
       <div
@@ -608,7 +574,6 @@ export default function Map(props, { draggable = true }) {
         ])}
         id="map"
       ></div>
-      {draggableDependantFeatures()}
     </div>
   );
 }
