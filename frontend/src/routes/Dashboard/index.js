@@ -113,7 +113,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       dispatch(submitMyStory(story.id, tempMyStory));
     }
     if (story) {
-      const required = ["age", "sex", "profession", "countryOfOrigin"];
+      const required = ["age", "sex", "profession"];
       Object.keys(story).forEach((key) => {
         if (required.includes(key) && story[key] === null) {
           setBarDisplay(true);
@@ -189,12 +189,14 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const handleSubmit = () => {
     let tempList = [];
     Object.keys(formValues).forEach((key) => {
-      if (formValues[key] === null) tempList.push(key);
+      if (formValues[key] === null && key !== "countryOfOrigin")
+        tempList.push(key);
     });
     if (tempList.length > 0) {
+      console.log(tempList);
       setErrorMsg({
         display: "block",
-        required: tempList.join(", ").replace("countryOfOrigin", "citizenship"),
+        required: tempList.join(", "),
       });
     } else {
       const { ...newStory } = formValues;
@@ -336,7 +338,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       </Grid>
       <Grid item md={4} xs={4}>
         <TextField
-          required
           select
           label={fields.COUNTRY_OF_ORIGIN.label}
           value={formValues[fields.COUNTRY_OF_ORIGIN.key]}
