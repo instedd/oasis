@@ -93,8 +93,9 @@ def fetch_sd_zip_code_data():
     r = requests.get(url=COVID_SD_ZIP_CODE_API_URL)
     data = r.json()
     features = data["features"]
-    confirmed = list(
-        map(
+    confirmed = [
+        d
+        for d in map(
             lambda entry: {
                 "name": entry["attributes"]["ziptext"],
                 "confirmed": entry["attributes"]["case_count"]
@@ -104,7 +105,8 @@ def fetch_sd_zip_code_data():
             },
             features,
         )
-    )
+        if d["name"] is not None
+    ]
 
     return confirmed
 
