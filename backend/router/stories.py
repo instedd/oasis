@@ -216,3 +216,8 @@ def explore(
     return crud.get_story_feed(
         db, current_story.id, current_story.latitude, current_story.longitude
     )
+
+
+@router.get("/common/{num}/last/{days}")
+def get_most_common_words(num: int, days: int, db: Session = Depends(get_db)):
+    return crud.get_word_freq(db, num, days)

@@ -2,10 +2,17 @@ from typing import List
 
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.sql.expression import func, and_
+import string
+import datetime
+import nltk
+from nltk.corpus import stopwords
+from nltk.probability import FreqDist
 
 from database import Base
 from users.models import User
 from . import models, schemas
+
+nltk.download("stopwords")
 
 
 def update(model_id: int, dto: schemas.BaseModel, model: Base, db: Session):
@@ -180,3 +187,28 @@ def get_story_feed(db: Session, cur_id, lat, lng):
         .limit(100)
         .all()
     )
+
+
+def get_word_freq(db: Session, num, days):
+    current_time = datetime.datetime.utcnow()
+    days_ago = current_time - datetime.timedelta(days=days)
+
+    all_stories = (
+        db.query(models.MyStory.text)
+        .filter(models.MyStory.updated_at > days_ago)
+        .all()
+    )
+    all_stories = [
+        text.lower().translate(str.maketrans("", "", string.punctuation))
+        for sublist in all_stories
+        for text in sublist
+    ]
+    swords = set(stopwords.words("english"))
+    fdist = FreqDist(
+        word
+        for story in all_stories
+        for word in story.split()
+        if word not in swords
+    )
+
+    return fdist.most_common(num)
