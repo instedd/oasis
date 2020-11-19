@@ -5,6 +5,8 @@ html, #root, body {
 
 :root {
   --primary: #EA2027;
+  --red: #EA2027;
+  --purple: #9206FF;
 }
 
 body {

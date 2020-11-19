@@ -27,12 +27,6 @@ import { fields, initialFieldsState } from "./fields";
 import Text from "text.json";
 import { makeStyles } from "@material-ui/core/styles";
 
-//widget
-import ThumbUpIcon from "@material-ui/icons/ThumbUp";
-import ThumbDownIcon from "@material-ui/icons/ThumbDown";
-import { Widgets } from "@material-ui/icons";
-//widget
-
 const professions = Text["Profession"];
 const medicalConditions = Text["Medical Conditions"];
 
@@ -93,10 +87,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     return state.story;
   });
 
-  //widget
-  const { comment, submitComment } = useState("");
-  //widget
-
   let location = useLocation();
   const [draggableMap, setDraggableMap] = useState(false);
   const [expanded, setExpanded] = useState(
@@ -132,8 +122,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     }
     // eslint-disable-next-line
   }, [story, tempMyStory]);
-
-  console.log(story);
 
   useEffect(() => {
     let shouldDragMap = draggableMapRoutes.includes(location.pathname);
@@ -283,11 +271,12 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
         </IconButton>
       </div>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        {getStoryResources(story).map((resource) => (
+        {getStoryResources(story).map((resource, i) => (
           <Link
             href={resource.site}
             {...(resource.color ? { style: { color: resource.color } } : {})}
             target="_blank"
+            key={i}
           >
             {resource.text}
           </Link>
@@ -414,31 +403,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     </Grid>
   );
 
-  //widget
-  const storiesWidget = () => (
-    <div className={classNames("widget", styles.widget)}>
-      Test
-      <div className={classNames("btnGroup", styles.btnGroup)}>
-        <IconButton>
-          <ThumbUpIcon />
-        </IconButton>
-        <IconButton>
-          <ThumbDownIcon />
-        </IconButton>
-      </div>
-      <TextField
-        placeholder="comment here"
-        multiline
-        rowsMax={3}
-        value={comment}
-        onChange={submitComment}
-        className={classNames("comment", styles.comment)}
-        variant="outlined"
-      ></TextField>
-    </div>
-  );
-  //widget
-
   return (
     <div className={styles.root}>
       {status.type === LOADING || !story ? (
@@ -455,10 +419,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
             userNum={stats.userNum && stats.userNum.toLocaleString()}
             storyNum={stats.storyNum && stats.storyNum.toLocaleString()}
           />
-          <div className={classNames(styles.right)}>
-            {informationHeader()}
-            {storiesWidget()}
-          </div>
+          <div className={classNames(styles.right)}>{informationHeader()}</div>
           {barDisplay ? profileBar() : ""}
           <SpeedDial
             ariaLabel="Daily actions"

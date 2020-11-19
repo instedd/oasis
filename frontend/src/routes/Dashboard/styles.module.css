@@ -45,6 +45,7 @@
     padding: 1rem;
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 4px;
+    position: absolute;
 }
 
 .wrapper div {
@@ -168,44 +169,3 @@
     color: white;
     text-align: left;
 }
-
-/* widget */
-.widget {
-    z-index: 2;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    background: #0009;
-    width: 300px;
-    right: 50px;
-    border-radius: 5px;
-    padding: 15px;
-    margin-top: 20px
-}
-
-.right {
-    z-index: 2;
-    position: absolute;
-    top: 0;
-    right: 50px;
-}
-
-.btnGroup button{
-    color: white;
-}
-
-.comment input, .comment label {
-    color: white;
-    font-size: 14px;
-}
-
-.comment fieldset, .comment fieldset:hover {
-    border-color: white !important;
-}
-
-.comment div {
-    width: 100%;
-    color: white;
-    text-align: left;
-}
-/* widget */

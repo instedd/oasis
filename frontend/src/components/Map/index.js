@@ -5,6 +5,20 @@ import Divider from "@material-ui/core/Divider";
 import styles from "./styles.module.css";
 import api from "utils";
 import { sicknessStatus, testStatus, posToLatLng } from "../../routes/types";
+import {
+  IconButton,
+  TextField,
+  Card,
+  CardHeader,
+  CardContent,
+  CardActions,
+  Collapse,
+} from "@material-ui/core";
+
+import ThumbUpIcon from "@material-ui/icons/ThumbUp";
+import ThumbDownIcon from "@material-ui/icons/ThumbDown";
+import CheckIcon from "@material-ui/icons/Check";
+import ChatIcon from "@material-ui/icons/Forum";
 
 const statusMapping = {
   [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
@@ -24,6 +38,60 @@ export default function Map(props, { draggable = true }) {
   const initialZoom = 1;
   const focusZoom = 8;
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
+  const [myComment, setMyComment] = useState("");
+
+  const [expanded, setExpanded] = useState(false);
+
+  const handleExpandClick = () => {
+    var element = document.getElementById("chatIcon");
+    element.classList.toggle("active");
+    if (element.classList.contains("active")) {
+      element.style.color = "var(--purple)";
+    } else element.style.color = "white";
+    setExpanded(!expanded);
+  };
+
+  //TO DO: replace card content here
+  const [card, setCard] = useState({
+    title: "Test",
+    content:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+    comments: ["Lorem ipsum dolor sit amet", "consectetur adipiscing elit"],
+  });
+
+  //TO DO: replace submit function here
+  function submitMyComment() {
+    if (myComment) {
+      setCard({ ...card, comments: [...card.comments, myComment] });
+    }
+    console.log(myComment);
+  }
+
+  function thumbUp() {
+    var up = document.getElementById("thumbUpIcon");
+    var down = document.getElementById("thumbDownIcon");
+    up.classList.toggle("active");
+    if (down.classList.contains("active")) {
+      down.style.color = "white";
+      down.classList.toggle("active");
+    }
+    if (up.classList.contains("active")) {
+      up.style.color = "var(--purple)";
+    } else up.style.color = "white";
+  }
+
+  function thumbDown() {
+    var down = document.getElementById("thumbDownIcon");
+    var up = document.getElementById("thumbUpIcon");
+    down.classList.toggle("active");
+    if (up.classList.contains("active")) {
+      up.style.color = "white";
+      up.classList.toggle("active");
+    }
+    if (down.classList.contains("active")) {
+      down.style.color = "var(--purple)";
+    } else down.style.color = "white";
+  }
 
   const userStory = props.userStory;
   const latestMyStory =
@@ -723,29 +791,80 @@ export default function Map(props, { draggable = true }) {
     }
   };
 
-  const legend = (
-    <div className={classNames(styles.legendWrapper)}>
-      <div className={classNames(styles.statusLegend)}>
-        <div>
-          <h2> Global Total </h2>
-          <h3>
-            Confirmed: {actives} <br />
-            Deaths: {deaths} <br />
-            Recovered: {recovered}
-          </h3>
-        </div>
-        <div id="pd">
-          <h2> Confirmed Cases </h2>
-          <h3> Hover over/Click a state or country!</h3>
-        </div>
-        <Divider style={{ color: "black" }} />
-        <div style={{ paddingTop: 5, color: "#dcd6d3" }}>
-          <em>
-            <p id="users_num">There are {userNum} users on OASIS</p>
-            <p id="stories_num">{storyNum} of them shared their stories</p>
-          </em>
-        </div>
+  const statusLegend = () => (
+    <div className={classNames(styles.statusLegend)}>
+      <div>
+        <h2> Global Total </h2>
+        <h3>
+          Confirmed: {actives} <br />
+          Deaths: {deaths} <br />
+          Recovered: {recovered}
+        </h3>
       </div>
+      <div id="pd">
+        <h2> Confirmed Cases </h2>
+        <h3> Hover over/Click a state or country!</h3>
+      </div>
+      <Divider style={{ color: "black" }} />
+      <div style={{ paddingTop: 5, color: "#dcd6d3" }}>
+        <em>
+          <p id="users_num">There are {userNum} users on OASIS</p>
+          <p id="stories_num">{storyNum} of them shared their stories</p>
+        </em>
+      </div>
+    </div>
+  );
+  const storiesWidget = () => (
+    <div className={classNames("widget", styles.widget)}>
+      <Card>
+        <CardHeader title={card.title} />
+        <CardContent className={styles.cardContent}>{card.content}</CardContent>
+
+        <CardActions
+          disableSpacing
+          className={classNames("btnGroup", styles.btnGroup)}
+        >
+          <IconButton id="thumbUpIcon" onClick={() => thumbUp()}>
+            <ThumbUpIcon />
+          </IconButton>
+          <IconButton id="thumbDownIcon" onClick={() => thumbDown()}>
+            <ThumbDownIcon />
+          </IconButton>
+          <IconButton
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="show more"
+            className={styles.right}
+            id="chatIcon"
+          >
+            <ChatIcon />
+          </IconButton>
+        </CardActions>
+
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <TextField
+            placeholder="Add a comment.."
+            multiline
+            rowsMax={3}
+            className={classNames("myComment", styles.myComment)}
+            value={myComment}
+            onChange={(event) => setMyComment(event.target.value)}
+            variant="outlined"
+            InputProps={{
+              endAdornment: (
+                <IconButton onClick={() => submitMyComment(myComment)}>
+                  <CheckIcon />
+                </IconButton>
+              ),
+            }}
+          ></TextField>
+          <CardContent className={styles.comments}>
+            {card.comments.map((item, i) => (
+              <div key={i}>{item}</div>
+            ))}
+          </CardContent>
+        </Collapse>
+      </Card>
     </div>
   );
 
@@ -760,7 +879,10 @@ export default function Map(props, { draggable = true }) {
         ])}
         id="map"
       ></div>
-      {legend}
+      <div className={classNames(styles.legendWrapper)}>
+        {storiesWidget()}
+        {statusLegend()}
+      </div>
     </div>
   );
 }
