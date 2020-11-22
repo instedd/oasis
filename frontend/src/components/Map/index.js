@@ -42,6 +42,58 @@ export default function Map(props, { draggable = true }) {
 
   const [expanded, setExpanded] = useState(false);
 
+  const userStory = props.userStory;
+  const latestMyStory =
+    props.latestMyStory && props.latestMyStory.length !== 0
+      ? props.latestMyStory
+      : props.userStory.latestMyStory;
+  const actives = props.actives;
+  const deaths = props.deaths;
+  const recovered = props.recovered;
+  const storyList = props.storyList;
+  console.log(storyList);
+
+  const dataScope = {
+    WORLD: "world",
+    US_STATES: "us-states",
+    ALL: "all",
+  };
+
+  const [map, setMap] = useState(null);
+  const [location, setLocation] = useState({
+    lng: 0,
+    lat: 0,
+  });
+
+  useEffect(() => {
+    getUserLocation();
+
+    const map = new mapboxgl.Map({
+      container: "map",
+      style: "mapbox://styles/mapbox/dark-v10",
+      center: [location.lng, location.lat],
+      zoom: initialZoom,
+      attributionControl: false,
+    });
+
+    adjustMap(map);
+
+    addLayers(map);
+    setMap(map);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    map &&
+      map.flyTo({
+        center: [location.lng, location.lat],
+        zoom: focusZoom,
+        speed: 0.6,
+        curve: 1,
+      });
+  }, [location, map]);
+
   const handleExpandClick = () => {
     var element = document.getElementById("chatIcon");
     element.classList.toggle("active");
@@ -92,58 +144,6 @@ export default function Map(props, { draggable = true }) {
       down.style.color = "var(--purple)";
     } else down.style.color = "white";
   }
-
-  const userStory = props.userStory;
-  const latestMyStory =
-    props.latestMyStory && props.latestMyStory.length !== 0
-      ? props.latestMyStory
-      : props.userStory.latestMyStory;
-  const actives = props.actives;
-  const deaths = props.deaths;
-  const recovered = props.recovered;
-  const userNum = props.userNum;
-  const storyNum = props.storyNum;
-
-  const dataScope = {
-    WORLD: "world",
-    US_STATES: "us-states",
-    ALL: "all",
-  };
-
-  const [map, setMap] = useState(null);
-  const [location, setLocation] = useState({
-    lng: 0,
-    lat: 0,
-  });
-
-  useEffect(() => {
-    getUserLocation();
-
-    const map = new mapboxgl.Map({
-      container: "map",
-      style: "mapbox://styles/mapbox/dark-v10",
-      center: [location.lng, location.lat],
-      zoom: initialZoom,
-      attributionControl: false,
-    });
-
-    adjustMap(map);
-
-    addLayers(map);
-    setMap(map);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    map &&
-      map.flyTo({
-        center: [location.lng, location.lat],
-        zoom: focusZoom,
-        speed: 0.6,
-        curve: 1,
-      });
-  }, [location, map]);
 
   const adjustMap = (map) => {
     // Add zoom and rotation controls to the map.
@@ -805,65 +805,18 @@ export default function Map(props, { draggable = true }) {
         <h2> Confirmed Cases </h2>
         <h3> Hover over/Click a state or country!</h3>
       </div>
-      <Divider style={{ color: "black" }} />
-      <div style={{ paddingTop: 5, color: "#dcd6d3" }}>
-        <em>
-          <p id="users_num">There are {userNum} users on OASIS</p>
-          <p id="stories_num">{storyNum} of them shared their stories</p>
-        </em>
-      </div>
     </div>
   );
   const storiesWidget = () => (
     <div className={classNames("widget", styles.widget)}>
+      <CardHeader title={"Nearest Stories"} />
       <Card>
-        <CardHeader title={card.title} />
-        <CardContent className={styles.cardContent}>{card.content}</CardContent>
-
-        <CardActions
-          disableSpacing
-          className={classNames("btnGroup", styles.btnGroup)}
-        >
-          <IconButton id="thumbUpIcon" onClick={() => thumbUp()}>
-            <ThumbUpIcon />
-          </IconButton>
-          <IconButton id="thumbDownIcon" onClick={() => thumbDown()}>
-            <ThumbDownIcon />
-          </IconButton>
-          <IconButton
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="show more"
-            className={styles.right}
-            id="chatIcon"
-          >
-            <ChatIcon />
-          </IconButton>
-        </CardActions>
-
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <TextField
-            placeholder="Add a comment.."
-            multiline
-            rowsMax={3}
-            className={classNames("myComment", styles.myComment)}
-            value={myComment}
-            onChange={(event) => setMyComment(event.target.value)}
-            variant="outlined"
-            InputProps={{
-              endAdornment: (
-                <IconButton onClick={() => submitMyComment(myComment)}>
-                  <CheckIcon />
-                </IconButton>
-              ),
-            }}
-          ></TextField>
-          <CardContent className={styles.comments}>
-            {card.comments.map((item, i) => (
-              <div key={i}>{item}</div>
+        <CardContent className={styles.cardContent}>
+          {storyList &&
+            storyList.map((userStory) => (
+              <Card>{userStory.text + " - on " + userStory.createdAt}</Card>
             ))}
-          </CardContent>
-        </Collapse>
+        </CardContent>
       </Card>
     </div>
   );

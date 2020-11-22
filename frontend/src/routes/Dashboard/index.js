@@ -138,11 +138,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     confirmed: null,
     deaths: null,
     recovered: null,
-  });
-
-  const [stats, setStats] = useState({
-    userNum: null,
-    storyNum: null,
+    storyList: null,
   });
 
   useEffect(() => {
@@ -152,12 +148,11 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   }, []);
 
   useEffect(() => {
-    api(`stories/all`, {
+    api(`stories/explore`, {
       method: "GET",
-    }).then((storiesData) => {
-      setStats({
-        userNum: storiesData.length,
-        storyNum: storiesData.filter((story) => story.latestMyStory).length,
+    }).then((stories) => {
+      setData({
+        storyList: stories,
       });
     });
   }, []);
@@ -193,7 +188,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
         tempList.push(key);
     });
     if (tempList.length > 0) {
-      console.log(tempList);
       setErrorMsg({
         display: "block",
         required: tempList.join(", "),
@@ -416,8 +410,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
             actives={data.confirmed && data.confirmed.toLocaleString()}
             deaths={data.deaths && data.deaths.toLocaleString()}
             recovered={data.recovered && data.recovered.toLocaleString()}
-            userNum={stats.userNum && stats.userNum.toLocaleString()}
-            storyNum={stats.storyNum && stats.storyNum.toLocaleString()}
+            storyList={data.storyList}
           />
           <div className={classNames(styles.right)}>{informationHeader()}</div>
           {barDisplay ? profileBar() : ""}
