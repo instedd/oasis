@@ -138,22 +138,23 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     confirmed: null,
     deaths: null,
     recovered: null,
-    storyList: null,
   });
 
-  useEffect(() => {
-    fetch("https://covid19api.herokuapp.com/latest")
-      .then((res) => res.json())
-      .then((result) => setData(result));
-  }, []);
+  const [storyList, setStoryList] = useState([]);
+
+  useEffect(
+    () =>
+      fetch("https://covid19api.herokuapp.com/latest")
+        .then((res) => res.json())
+        .then((result) => setData(result)),
+    []
+  );
 
   useEffect(() => {
     api(`stories/explore`, {
       method: "GET",
     }).then((stories) => {
-      setData({
-        storyList: stories,
-      });
+      setStoryList(stories);
     });
   }, []);
 
@@ -167,7 +168,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
         () => {}
       );
   }, []);
-
+  console.log(data);
   const handleFormChange = (field) => (event) => {
     const intFields = [fields.AGE];
     const key = field.key;
@@ -410,7 +411,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
             actives={data.confirmed && data.confirmed.toLocaleString()}
             deaths={data.deaths && data.deaths.toLocaleString()}
             recovered={data.recovered && data.recovered.toLocaleString()}
-            storyList={data.storyList}
+            storyList={storyList}
           />
           <div className={classNames(styles.right)}>{informationHeader()}</div>
           {barDisplay ? profileBar() : ""}
