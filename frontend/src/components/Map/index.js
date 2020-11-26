@@ -1,24 +1,11 @@
 import classNames from "classnames";
 import mapboxgl from "mapbox-gl";
 import React, { useEffect, useState } from "react";
-import Divider from "@material-ui/core/Divider";
 import styles from "./styles.module.css";
 import api from "utils";
 import { sicknessStatus, testStatus, posToLatLng } from "../../routes/types";
-import {
-  IconButton,
-  TextField,
-  Card,
-  CardHeader,
-  CardContent,
-  CardActions,
-  Collapse,
-} from "@material-ui/core";
-
-import ThumbUpIcon from "@material-ui/icons/ThumbUp";
-import ThumbDownIcon from "@material-ui/icons/ThumbDown";
-import CheckIcon from "@material-ui/icons/Check";
-import ChatIcon from "@material-ui/icons/Forum";
+import { Card, CardContent } from "@material-ui/core";
+import Widget from "../Widget";
 
 const statusMapping = {
   [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
@@ -38,9 +25,8 @@ export default function Map(props, { draggable = true }) {
   const initialZoom = 1;
   const focusZoom = 8;
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
-  const [myComment, setMyComment] = useState("");
 
-  const [expanded, setExpanded] = useState(false);
+  const [storyIndex, setStoryIndex] = useState(0);
 
   const userStory = props.userStory;
   const latestMyStory =
@@ -51,7 +37,6 @@ export default function Map(props, { draggable = true }) {
   const deaths = props.deaths;
   const recovered = props.recovered;
   const storyList = props.storyList;
-  console.log(storyList);
 
   const dataScope = {
     WORLD: "world",
@@ -93,57 +78,6 @@ export default function Map(props, { draggable = true }) {
         curve: 1,
       });
   }, [location, map]);
-
-  const handleExpandClick = () => {
-    var element = document.getElementById("chatIcon");
-    element.classList.toggle("active");
-    if (element.classList.contains("active")) {
-      element.style.color = "var(--purple)";
-    } else element.style.color = "white";
-    setExpanded(!expanded);
-  };
-
-  //TO DO: replace card content here
-  const [card, setCard] = useState({
-    title: "Test",
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
-    comments: ["Lorem ipsum dolor sit amet", "consectetur adipiscing elit"],
-  });
-
-  //TO DO: replace submit function here
-  function submitMyComment() {
-    if (myComment) {
-      setCard({ ...card, comments: [...card.comments, myComment] });
-    }
-    console.log(myComment);
-  }
-
-  function thumbUp() {
-    var up = document.getElementById("thumbUpIcon");
-    var down = document.getElementById("thumbDownIcon");
-    up.classList.toggle("active");
-    if (down.classList.contains("active")) {
-      down.style.color = "white";
-      down.classList.toggle("active");
-    }
-    if (up.classList.contains("active")) {
-      up.style.color = "var(--purple)";
-    } else up.style.color = "white";
-  }
-
-  function thumbDown() {
-    var down = document.getElementById("thumbDownIcon");
-    var up = document.getElementById("thumbUpIcon");
-    down.classList.toggle("active");
-    if (up.classList.contains("active")) {
-      up.style.color = "white";
-      up.classList.toggle("active");
-    }
-    if (down.classList.contains("active")) {
-      down.style.color = "var(--purple)";
-    } else down.style.color = "white";
-  }
 
   const adjustMap = (map) => {
     // Add zoom and rotation controls to the map.
@@ -809,13 +743,14 @@ export default function Map(props, { draggable = true }) {
   );
   const storiesWidget = () => (
     <div className={classNames("widget", styles.widget)}>
-      <CardHeader title={"Nearest Stories"} />
       <Card>
-        <CardContent className={styles.cardContent}>
-          {storyList &&
-            storyList.map((userStory) => (
-              <Card>{userStory.text + " - on " + userStory.createdAt}</Card>
-            ))}
+        <CardContent>
+          <div className={classNames(styles.creatAt)}>
+            {storyList[storyIndex].createdAt}
+          </div>
+          <div className={classNames(styles.cardContent)}>
+            {storyList[storyIndex].text}
+          </div>
         </CardContent>
       </Card>
     </div>
@@ -833,9 +768,16 @@ export default function Map(props, { draggable = true }) {
         id="map"
       ></div>
       <div className={classNames(styles.legendWrapper)}>
-        {storiesWidget()}
-        {statusLegend()}
+        {/* {storiesWidget()} */}
+        {/* {statusLegend()} */}
       </div>
+      <Widget
+        userStory={userStory}
+        actives={actives}
+        deaths={deaths}
+        recovered={recovered}
+        storyList={storyList}
+      />
     </div>
   );
 }

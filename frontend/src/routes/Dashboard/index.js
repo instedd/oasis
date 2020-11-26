@@ -30,7 +30,7 @@ import { makeStyles } from "@material-ui/core/styles";
 const professions = Text["Profession"];
 const medicalConditions = Text["Medical Conditions"];
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   profileBar: {
     width: 600,
     bottom: 0,
@@ -134,21 +134,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     setOpen(!open);
   };
 
-  const [data, setData] = useState({
-    confirmed: null,
-    deaths: null,
-    recovered: null,
-  });
-
   const [storyList, setStoryList] = useState([]);
-
-  useEffect(
-    () =>
-      fetch("https://covid19api.herokuapp.com/latest")
-        .then((res) => res.json())
-        .then((result) => setData(result)),
-    []
-  );
 
   useEffect(() => {
     api(`stories/explore`, {
@@ -168,7 +154,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
         () => {}
       );
   }, []);
-  console.log(data);
+
   const handleFormChange = (field) => (event) => {
     const intFields = [fields.AGE];
     const key = field.key;
@@ -283,7 +269,7 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
   const informationHeader = () => (
     <div className={classNames(styles.box, styles.top, styles.header)}>
       {userStatus()}
-      {resources()}
+      {/* {resources()} */}
     </div>
   );
 
@@ -408,9 +394,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
             draggable={draggableMap}
             userStory={story}
             latestMyStory={tempMyStory ? tempMyStory : story.latestMyStory}
-            actives={data.confirmed && data.confirmed.toLocaleString()}
-            deaths={data.deaths && data.deaths.toLocaleString()}
-            recovered={data.recovered && data.recovered.toLocaleString()}
             storyList={storyList}
           />
           <div className={classNames(styles.right)}>{informationHeader()}</div>
