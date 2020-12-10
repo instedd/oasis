@@ -1,0 +1,47 @@
+.resources a {
+    text-align: left;
+    color: white;
+    text-decoration: underline;
+    line-height: 2rem;
+}
+
+svg {
+    vertical-align: middle;
+    margin-right: 8px
+}
+
+.link {
+    text-align: left;
+}
+
+.stats {
+    text-align: left;
+    line-height: 1.5rem;
+}
+
+.storyList {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.storyList div {
+    width: calc(50% - 2.6rem);
+    border: 1px solid white;
+    border-radius: 10px;
+    text-align: left;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.storyList div p {
+    overflow: scroll;
+}
+
+.storyList div span {
+    font-size: 10px;
+    display: block;
+    margin-top: 10px;
+    color: var(--primary);
+}

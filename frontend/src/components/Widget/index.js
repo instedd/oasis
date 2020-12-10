@@ -5,14 +5,10 @@ import { getStoryResources } from "actions/resources";
 import {
   Tabs,
   Tab,
-  Box,
   Link,
-  Card,
-  CardContent,
   FormControl,
   InputBase,
   IconButton,
-  Collapse,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
@@ -22,20 +18,20 @@ import EqualizerIcon from "@material-ui/icons/Equalizer";
 import LinkIcon from "@material-ui/icons/Link";
 import SearchIcon from "@material-ui/icons/Search";
 import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
+import Masonry from "react-masonry-component";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     zIndex: 2,
     position: "fixed",
     height: "100%",
-    display: "flex",
     background: "rgba(0,0,0,0.8)",
-    width: "max-content",
+    width: 400,
     maxWidth: "100%;",
-    paddingTop: 80,
+    paddingTop: 70,
   },
   tabPanel: {
-    width: 340,
+    padding: "2rem",
   },
   searchBar: {
     display: "flex",
@@ -53,6 +49,11 @@ const useStyles = makeStyles((theme) => ({
   iconButton: {
     padding: 10,
     color: "white",
+  },
+  tab: {
+    fontSize: 12,
+    height: 50,
+    minWidth: 120,
   },
   expand: {
     transform: "rotate(0deg)",
@@ -97,16 +98,7 @@ export default function Widget(props) {
         id={`tabpanel-${index}`}
         aria-labelledby={`tabpanel-${index}`}
       >
-        {value === index && (
-          <Collapse
-            in={expanded}
-            className={classes.tabPanel}
-            timeout="auto"
-            unmountOnExit
-          >
-            <div>{children}</div>
-          </Collapse>
-        )}
+        {value === index && <div className={classes.tabPanel}>{children}</div>}
       </div>
     );
   }
@@ -133,11 +125,14 @@ export default function Widget(props) {
     <div className={classNames(styles.stats)}>
       <div>
         <h2> Global Total </h2>
-        <h3>
-          Confirmed: {data.confirmed}
-          Deaths: {data.deaths}
-          Recovered: {data.recovered}
-        </h3>
+        <div>Confirmed: {data.confirmed}</div>
+        <div> Deaths: {data.deaths}</div>
+        <div> Recovered: {data.recovered}</div>
+      </div>
+      <br></br>
+      <div id="pd">
+        <h2> Confirmed Cases </h2>
+        <div> Hover over/Click a state or country!</div>
       </div>
     </div>
   );
@@ -145,20 +140,23 @@ export default function Widget(props) {
   const resources = (
     <div className={classNames(styles.resources)}>
       {getStoryResources(userStory).map((resource, i) => (
-        <Link
-          href={resource.site}
-          {...(resource.color ? { style: { color: resource.color } } : {})}
-          target="_blank"
-          key={i}
-        >
-          {resource.text}
-        </Link>
+        <div className={classNames(styles.link)}>
+          <LinkIcon />
+          <Link
+            href={resource.site}
+            {...(resource.color ? { style: { color: resource.color } } : {})}
+            target="_blank"
+            key={i}
+          >
+            {resource.text}
+          </Link>
+        </div>
       ))}
     </div>
   );
 
   const stories = (
-    <div className={classNames(styles.storyList)}>
+    <div>
       <FormControl className={classes.searchBar}>
         <InputBase
           className={classes.input}
@@ -173,14 +171,14 @@ export default function Widget(props) {
           <SearchIcon />
         </IconButton>
       </FormControl>
-      {storyList.map((story, index) => (
-        <Card key={index}>
-          <CardContent>
-            {story.createAt}
-            {story.text}
-          </CardContent>
-        </Card>
-      ))}
+      <Masonry className={classNames(styles.storyList)}>
+        {storyList.map((story, index) => (
+          <div key={index}>
+            <p>{story.text}</p>
+            <span> create at: {story.createAt}</span>
+          </div>
+        ))}
+      </Masonry>
     </div>
   );
 
@@ -193,11 +191,10 @@ export default function Widget(props) {
   return (
     <div className={classes.root}>
       <Tabs
-        orientation="vertical"
-        variant="scrollable"
+        variant="fullWidth"
         value={tabIndex}
         onChange={handleChange}
-        aria-label="Vertical tabs"
+        aria-label="tabs"
         className={classes.tabs}
       >
         {tabs.map((tab, index) => (
@@ -205,6 +202,7 @@ export default function Widget(props) {
             key={index}
             label={tab.label}
             icon={tab.icon}
+            className={classes.tab}
             {...a11yProps(index)}
           />
         ))}

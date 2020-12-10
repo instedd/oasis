@@ -239,33 +239,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     </div>
   );
 
-  const resources = () => (
-    <>
-      <div className={classNames(styles.resources)}>
-        <h3>RESOURCES</h3>
-        <IconButton
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ExpandMoreIcon />
-        </IconButton>
-      </div>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        {getStoryResources(story).map((resource, i) => (
-          <Link
-            href={resource.site}
-            {...(resource.color ? { style: { color: resource.color } } : {})}
-            target="_blank"
-            key={i}
-          >
-            {resource.text}
-          </Link>
-        ))}
-      </Collapse>
-    </>
-  );
-
   const informationHeader = () => (
     <div className={classNames(styles.box, styles.top, styles.header)}>
       {userStatus()}

@@ -16,7 +16,7 @@ body {
   background-size: cover;
   background-image: url(/static/background.png);
   height: 100%;
-  font-family: 'Rubik', 'Abel', sans-serif !important;
+  font-family: 'Roboto', sans-serif;
   color: white !important;
 }
 
