@@ -295,26 +295,28 @@ export default function Map(props, { draggable = true }) {
         layers: ["world-layer"],
       });
 
-      if (countries.length > 0) {
-        const country_name = countries[0].properties.name;
-        const country = covidData.filter(
-          (country) => country.name === country_name
-        );
+      if (document.getElementById("pd")) {
+        if (countries.length > 0) {
+          const country_name = countries[0].properties.name;
+          const country = covidData.filter(
+            (country) => country.name === country_name
+          );
 
-        if (country.length > 0 && country[0].confirmed) {
-          document.getElementById("pd").innerHTML =
-            "<h2>" +
-            country_name +
-            "</h2><h3>" +
-            country[0].confirmed +
-            " cases confirmed</h3>";
+          if (country.length > 0 && country[0].confirmed) {
+            document.getElementById("pd").innerHTML =
+              "<h2>" +
+              country_name +
+              "</h2><h3>" +
+              country[0].confirmed +
+              " cases confirmed</h3>";
+          } else {
+            document.getElementById("pd").innerHTML =
+              "<h2>" + country_name + "</h2><h3> NA </h3>";
+          }
         } else {
           document.getElementById("pd").innerHTML =
-            "<h2>" + country_name + "</h2><h3> NA </h3>";
+            "<h2> Confirmed Cases </h2> <h3>Hover over/Click a state or country!</h3>";
         }
-      } else {
-        document.getElementById("pd").innerHTML =
-          "<h2> Confirmed Cases </h2> <h3>Hover over/Click a state or country!</h3>";
       }
     });
   };
@@ -366,16 +368,18 @@ export default function Map(props, { draggable = true }) {
           (country) => country.name === country_name
         );
 
-        if (country.length > 0 && country[0].confirmed) {
-          document.getElementById("pd").innerHTML =
-            "<h2>" +
-            country_name +
-            "</h2><h3>" +
-            country[0].confirmed +
-            " cases confirmed</h3>";
-        } else {
-          document.getElementById("pd").innerHTML =
-            "<h2>" + country_name + "</h2><h3> NA </h3>";
+        if (document.getElementById("pd")) {
+          if (country.length > 0 && country[0].confirmed) {
+            document.getElementById("pd").innerHTML =
+              "<h2>" +
+              country_name +
+              "</h2><h3>" +
+              country[0].confirmed +
+              " cases confirmed</h3>";
+          } else {
+            document.getElementById("pd").innerHTML =
+              "<h2>" + country_name + "</h2><h3> NA </h3>";
+          }
         }
       }
     });
@@ -489,12 +493,14 @@ export default function Map(props, { draggable = true }) {
         const confirmed = usData.filter((state) => state.name === abbr_name)[0]
           .confirmed;
 
-        document.getElementById("pd").innerHTML =
-          "<h2>" +
-          state_name +
-          "</h2><h3>" +
-          confirmed +
-          " cases confirmed</h3>";
+        if (document.getElementById("pd")) {
+          document.getElementById("pd").innerHTML =
+            "<h2>" +
+            state_name +
+            "</h2><h3>" +
+            confirmed +
+            " cases confirmed</h3>";
+        }
       }
     });
   };
@@ -546,7 +552,7 @@ export default function Map(props, { draggable = true }) {
         layers: ["us-counties-layer"],
       });
 
-      if (counties.length > 0) {
+      if (counties.length > 0 && document.getElementById("pd")) {
         const name = counties[0].properties.COUNTY;
         const target_counties = countyData.filter(
           (county) => counties[0].properties.FIPS.toString() === county.fips
@@ -603,7 +609,7 @@ export default function Map(props, { draggable = true }) {
         layers: ["sd-pos-layer"],
       });
 
-      if (zipcodes.length > 0) {
+      if (zipcodes.length > 0 && document.getElementById("pd")) {
         const name = zipcodes[0].properties.name;
         const confirmed = zipcodes[0].properties.confirmed;
 
