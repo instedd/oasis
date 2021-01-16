@@ -59,7 +59,11 @@ def get_like_count(
 ):
     like_count = crud.get_like_count(db, my_story_id)
     dislike_count = crud.get_dislike_count(db, my_story_id)
-    is_like_by_me = crud.is_like_by(db, my_story_id, current_story.id)
+    is_like_by_me = (
+        crud.is_like_by(db, my_story_id, current_story.id)
+        if current_story
+        else None
+    )
 
     return JSONResponse(
         {

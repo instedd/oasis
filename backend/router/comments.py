@@ -1,6 +1,7 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from starlette.responses import JSONResponse
 
 from auth import main
 from stories import schemas as stories_schemas
@@ -60,3 +61,40 @@ def get_comment(
     comment_id: int, db: Session = Depends(get_db),
 ):
     return crud.get_comment(db, comment_id)
+
+
+@router.post("/{comment_id}/like", response_model=schemas.CommentLike)
+def like_comment(
+    comment_id: int,
+    dto: schemas.CommentLikeCreate,
+    current_story: stories_schemas.Story = Depends(main.get_current_story),
+    db: Session = Depends(get_db),
+):
+    if not current_story:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User must first share their story before "
+            + "liking or dislike a comment",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    return crud.like_comment(db, comment_id, current_story.id, dto.like)
+
+
+@router.get("/{comment_id}/like")
+def count_like(
+    comment_id: int,
+    current_story: stories_schemas.Story = Depends(main.get_current_story),
+    db: Session = Depends(get_db),
+):
+    d = crud.count_like(db, comment_id)
+    db_like = (
+        crud.get_like_by_comment_and_user(db, comment_id, current_story.id)
+        if current_story
+        else None
+    )
+
+    like_by_me = db_like.like if db_like else None
+    d["like_by_me"] = like_by_me
+
+    return JSONResponse(d, status_code=200,)

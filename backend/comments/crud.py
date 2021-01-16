@@ -1,4 +1,6 @@
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.expression import and_
+
 from . import models, schemas
 from stories.crud import update
 
@@ -37,3 +39,59 @@ def get_comment(db: Session, comment_id):
     )
 
     return db_comment
+
+
+def get_like_by_comment_and_user(db: Session, comment_id, story_id):
+    return (
+        db.query(models.CommentLike)
+        .filter(
+            and_(
+                models.CommentLike.comment_id == comment_id,
+                models.CommentLike.story_id == story_id,
+            )
+        )
+        .first()
+    )
+
+
+def like_comment(db: Session, comment_id, story_id, is_like):
+    like = schemas.CommentLike(
+        like=is_like, comment_id=comment_id, story_id=story_id
+    )
+
+    db_like = get_like_by_comment_and_user(db, comment_id, story_id)
+    if db_like:
+        update(db_like.id, like, models.CommentLike, db)
+    else:
+        db_like = models.CommentLike(**like.dict())
+        db.add(db_like)
+        db.commit()
+
+    db.refresh(db_like)
+    return db_like
+
+
+def count_like(db: Session, comment_id):
+    like = (
+        db.query(models.CommentLike)
+        .filter(
+            and_(
+                models.CommentLike.comment_id == comment_id,
+                models.CommentLike.like == 1,
+            )
+        )
+        .count()
+    )
+
+    dislike = (
+        db.query(models.CommentLike)
+        .filter(
+            and_(
+                models.CommentLike.comment_id == comment_id,
+                models.CommentLike.like == 0,
+            )
+        )
+        .count()
+    )
+
+    return {"like": like, "dislike": dislike}

@@ -24,3 +24,15 @@ class Comment(CommentCreate):
 
     class Config:
         orm_mode = True
+
+
+class CommentLikeCreate(BaseModel):
+    like: bool = None
+
+
+class CommentLike(CommentLikeCreate):
+    comment_id: int
+    story_id: int
+
+    class Config:
+        orm_mode = True
