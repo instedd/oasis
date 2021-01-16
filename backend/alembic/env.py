@@ -9,6 +9,7 @@ from stories import models as story_models
 from users import models as user_models
 from NytLiveCounty import models as nyt_models
 from likes import models as like_models
+from comments import models as comment_model
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

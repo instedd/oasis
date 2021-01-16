@@ -41,6 +41,7 @@ class Story(Base):
     travels = relationship("Travel", lazy="select")
     close_contacts = relationship("CloseContact", lazy="select")
     my_stories = relationship("MyStory", lazy="select")
+    comments = relationship("Comment", lazy="select")
 
     @property
     def medical_conditions(self):
@@ -101,3 +102,4 @@ class MyStory(Base):
     story_id = Column(Integer, ForeignKey("stories.id"))
 
     story = relationship("Story", back_populates="my_stories")
+    comments = relationship("Comment", lazy="select")
