@@ -9,6 +9,7 @@ import {
   FormControl,
   InputBase,
   IconButton,
+  Button,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
@@ -18,7 +19,6 @@ import EqualizerIcon from "@material-ui/icons/Equalizer";
 import LinkIcon from "@material-ui/icons/Link";
 import SearchIcon from "@material-ui/icons/Search";
 import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
-import Masonry from "react-masonry-component";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -30,9 +30,6 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "100%;",
     paddingTop: 70,
   },
-  tabPanel: {
-    padding: "2rem",
-  },
   searchBar: {
     display: "flex",
     padding: "2px 4px",
@@ -40,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
     border: "1px solid white",
     borderRadius: 40,
     flexDirection: "row",
+    margin: "1rem 2rem 0 2rem;",
   },
   input: {
     marginLeft: theme.spacing(1),
@@ -81,8 +79,9 @@ export default function Widget(props) {
     deaths: "",
     recovered: "",
   });
+  const [expanded, setExpanded] = useState(false);
+  const [storyIndex, setStoryIndex] = useState(-1);
   const storyList = props.storyList;
-  const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -171,14 +170,40 @@ export default function Widget(props) {
           <SearchIcon />
         </IconButton>
       </FormControl>
-      <Masonry className={classNames(styles.storyList)}>
-        {storyList.map((story, index) => (
-          <div key={index}>
-            <p>{story.text}</p>
-            <span> create at: {story.createAt}</span>
+      <div className={classNames(styles.storyList)}>
+        {storyIndex < 0 ? (
+          storyList.map((story, index) => (
+            <div key={index} className={classNames(styles.storyItem)}>
+              <p>{story.text}</p>
+              <div className={classNames(styles.storyBtn)}>
+                <span className={classNames(styles.createAt)}>
+                  {" "}
+                  create at: {story.updatedAt}
+                </span>
+                <Button size="small" onClick={() => setStoryIndex(index)}>
+                  More
+                </Button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div
+            key={storyIndex}
+            className={classNames(styles.expandedStoryItem)}
+          >
+            <p>{storyList[storyIndex].text}</p>
+            <div className={classNames(styles.storyBtn)}>
+              <span className={classNames(styles.createAt)}>
+                {" "}
+                create at: {storyList[storyIndex].updatedAt}
+              </span>
+              <Button size="small" onClick={() => setStoryIndex(-1)}>
+                Back
+              </Button>
+            </div>
           </div>
-        ))}
-      </Masonry>
+        )}
+      </div>
     </div>
   );
 
