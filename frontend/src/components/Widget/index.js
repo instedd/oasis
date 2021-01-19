@@ -10,9 +10,10 @@ import {
   InputBase,
   IconButton,
   Button,
+  Collapse,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
@@ -24,7 +25,6 @@ const useStyles = makeStyles((theme) => ({
   root: {
     zIndex: 2,
     position: "fixed",
-    height: "100%",
     background: "rgba(0,0,0,0.8)",
     width: 400,
     maxWidth: "100%;",
@@ -37,7 +37,6 @@ const useStyles = makeStyles((theme) => ({
     border: "1px solid white",
     borderRadius: 40,
     flexDirection: "row",
-    margin: "1rem 2rem 0 2rem;",
   },
   input: {
     marginLeft: theme.spacing(1),
@@ -63,6 +62,9 @@ const useStyles = makeStyles((theme) => ({
   expandOpen: {
     transform: "rotate(180deg)",
   },
+  tabPanel: {
+    height: "calc(100vh - 70px - 72px - 44px)",
+  },
 }));
 
 function a11yProps(index) {
@@ -79,7 +81,7 @@ export default function Widget(props) {
     deaths: "",
     recovered: "",
   });
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const [storyIndex, setStoryIndex] = useState(-1);
   const storyList = props.storyList;
 
@@ -155,21 +157,23 @@ export default function Widget(props) {
   );
 
   const stories = (
-    <div>
-      <FormControl className={classes.searchBar}>
-        <InputBase
-          className={classes.input}
-          placeholder="Search Keywords"
-          inputProps={{ "aria-label": "search google maps" }}
-        />
-        <IconButton
-          type="submit"
-          className={classes.iconButton}
-          aria-label="search"
-        >
-          <SearchIcon />
-        </IconButton>
-      </FormControl>
+    <div className={classNames(styles.stories)}>
+      <div className={styles.searchBarWrapper}>
+        <FormControl className={classes.searchBar}>
+          <InputBase
+            className={classes.input}
+            placeholder="Search Keywords"
+            inputProps={{ "aria-label": "search google maps" }}
+          />
+          <IconButton
+            type="submit"
+            className={classes.iconButton}
+            aria-label="search"
+          >
+            <SearchIcon />
+          </IconButton>
+        </FormControl>
+      </div>
       <div className={classNames(styles.storyList)}>
         {storyIndex < 0 ? (
           storyList.map((story, index) => (
@@ -231,22 +235,28 @@ export default function Widget(props) {
             {...a11yProps(index)}
           />
         ))}
-        <IconButton
-          className={clsx(classes.expand, classes.iconButton, {
-            [classes.expandOpen]: expanded,
-          })}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ChevronRightIcon />
-        </IconButton>
       </Tabs>
-      {tabs.map((tab, index) => (
-        <TabPanel key={index} value={tabIndex} index={index}>
-          {tab.content}
-        </TabPanel>
-      ))}
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        {tabs.map((tab, index) => (
+          <TabPanel
+            key={index}
+            value={tabIndex}
+            index={index}
+            lassName={classes.tabPanel}
+          >
+            {tab.content}
+          </TabPanel>
+        ))}
+      </Collapse>
+      <IconButton
+        className={clsx(classes.expand, classes.iconButton, {
+          [classes.expandOpen]: expanded,
+        })}
+        onClick={handleExpandClick}
+        aria-label="expand"
+      >
+        <ExpandMoreIcon />
+      </IconButton>
     </div>
   );
 }

@@ -5,7 +5,7 @@
     line-height: 2rem;
 }
 
-svg {
+.resources svg, .stats svg, .stories svg {
     vertical-align: middle;
     margin-right: 8px
 }
@@ -19,13 +19,14 @@ svg {
     line-height: 1.5rem;
 }
 
-.resources, .stats{
-    margin: 2rem
+.resources, .stats {
+    padding: 2rem
 }
 
 .storyList {
     overflow: scroll;
     height: 65vh;
+    margin-top: 1rem;
 }
 
 .storyItem {
@@ -33,14 +34,15 @@ svg {
     border-radius: 10px;
     text-align: left;
     padding: 1rem;
-    margin: 1rem 2rem 0 2rem;
+    margin: 0 2rem 1rem 2rem;
+    ;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-.storyItem p, .expandedStoryItem p{
+.storyItem p, .expandedStoryItem p {
     overflow: scroll;
 }
 
@@ -72,4 +74,14 @@ svg {
     padding: 1rem;
     margin: 1rem 2rem 0rem 2rem;
     overflow: hidden;
+}
+
+.expandBtn {
+    right: 0px;
+    position: absolute !important;
+    color: white !important;
+}
+
+.searchBarWrapper {
+    padding: 1rem 2rem 0 2rem;
 }
