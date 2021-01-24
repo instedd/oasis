@@ -7,6 +7,7 @@ from auth import main
 from stories import schemas as stories_schemas
 from database import get_db
 from comments import crud, schemas
+from router.stories import check_permissions
 
 router = APIRouter()
 
@@ -44,15 +45,22 @@ def get_comments_by_my_story(my_story_id: int, db: Session = Depends(get_db)):
 def update_comment(
     comment_id: int,
     comment: schemas.CommentUpdate,
+    current_story: stories_schemas.Story = Depends(main.get_current_story),
     db: Session = Depends(get_db),
 ):
+    db_comment = crud.get_comment(db, comment_id)
+    check_permissions(current_story, db_comment.story_id)
     return crud.update_comment(db, comment_id, comment)
 
 
 @router.delete("/{comment_id}")
 def delete_comment(
-    comment_id: int, db: Session = Depends(get_db),
+    comment_id: int,
+    current_story: stories_schemas.Story = Depends(main.get_current_story),
+    db: Session = Depends(get_db),
 ):
+    db_comment = crud.get_comment(db, comment_id)
+    check_permissions(current_story, db_comment.story_id)
     crud.delete_comment(db, comment_id)
 
 
