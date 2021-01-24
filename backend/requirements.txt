@@ -7,7 +7,7 @@ async-generator
 pymysql
 alembic
 bcrypt
-pyjwt
+pyjwt==1.7.1
 python-multipart
 requests
 pandas
