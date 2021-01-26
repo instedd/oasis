@@ -155,7 +155,7 @@ export default function SignIn(props) {
           style={{ color: "#ffffff80" }}
           onClick={() => props.history.push(paths.home, { onboard: false })}
         >
-          Back to Home Page
+          Don't have an account? Back to Home Page
         </Button>
       )}
     </div>

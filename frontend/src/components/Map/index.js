@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import api from "utils";
 import { sicknessStatus, testStatus, posToLatLng } from "../../routes/types";
-import { Card, CardContent } from "@material-ui/core";
 import Widget from "../Widget";
 
 const statusMapping = {
@@ -25,8 +24,6 @@ export default function Map(props, { draggable = true }) {
   const initialZoom = 1;
   const focusZoom = 8;
   const fillOutlineColor = "rgba(86, 101, 115, 0.5)";
-
-  const [storyIndex, setStoryIndex] = useState(0);
 
   const userStory = props.userStory;
   const latestMyStory =
@@ -583,7 +580,7 @@ export default function Map(props, { draggable = true }) {
         minzoom: focusZoom,
         paint: {
           // Size circle radius by earthquake magnitude and zoom level
-          "circle-radius": ["+", ["/", ["get", "confirmed"], 80], 3],
+          "circle-radius": ["+", ["/", ["get", "confirmed"], 300], 3],
           // Color circle by earthquake magnitude
           "circle-color": "rgb(239,138,98)",
           "circle-stroke-color": "white",
@@ -731,37 +728,6 @@ export default function Map(props, { draggable = true }) {
     }
   };
 
-  const statusLegend = () => (
-    <div className={classNames(styles.statusLegend)}>
-      <div>
-        <h2> Global Total </h2>
-        <h3>
-          Confirmed: {actives} <br />
-          Deaths: {deaths} <br />
-          Recovered: {recovered}
-        </h3>
-      </div>
-      <div id="pd">
-        <h2> Confirmed Cases </h2>
-        <h3> Hover over/Click a state or country!</h3>
-      </div>
-    </div>
-  );
-  const storiesWidget = () => (
-    <div className={classNames("widget", styles.widget)}>
-      <Card>
-        <CardContent>
-          <div className={classNames(styles.creatAt)}>
-            {storyList[storyIndex].createdAt}
-          </div>
-          <div className={classNames(styles.cardContent)}>
-            {storyList[storyIndex].text}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-
   return (
     <div className={styles.root}>
       <div
@@ -773,10 +739,7 @@ export default function Map(props, { draggable = true }) {
         ])}
         id="map"
       ></div>
-      <div className={classNames(styles.legendWrapper)}>
-        {/* {storiesWidget()} */}
-        {/* {statusLegend()} */}
-      </div>
+      <div className={classNames(styles.legendWrapper)}></div>
       <Widget
         userStory={userStory}
         actives={actives}

@@ -1,7 +1,4 @@
 import {
-  Link,
-  Collapse,
-  IconButton,
   ListItemText,
   Checkbox,
   MenuItem,
@@ -10,7 +7,6 @@ import {
   Button,
 } from "@material-ui/core";
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -18,7 +14,6 @@ import paths from "routes/paths";
 import { sicknessStatus, testStatus } from "routes/types";
 import styles from "./styles.module.css";
 import { fetchStory, submitMyStory, submitStory } from "actions/story";
-import { getStoryResources } from "actions/resources";
 import { LOADING } from "actions/types";
 import { useLocation } from "react-router-dom";
 import api from "utils";
@@ -89,13 +84,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
 
   let location = useLocation();
   const [draggableMap, setDraggableMap] = useState(false);
-  const [expanded, setExpanded] = useState(
-    window.screen.width > 1024 ? true : false
-  );
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
 
   useEffect(() => {
     if (tempStory) {
