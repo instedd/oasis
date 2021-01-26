@@ -1,6 +1,15 @@
 from fastapi import APIRouter
 
-from router import auth, stories, users, symptoms, data, nyt_live_county, likes
+from router import (
+    auth,
+    stories,
+    users,
+    symptoms,
+    data,
+    nyt_live_county,
+    likes,
+    comments,
+)
 
 router = APIRouter()
 
@@ -19,3 +28,5 @@ router.include_router(
 )
 
 router.include_router(likes.router, prefix="/likes", tags=["likes"])
+
+router.include_router(comments.router, prefix="/comments")
