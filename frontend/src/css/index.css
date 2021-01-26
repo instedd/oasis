@@ -5,6 +5,8 @@ html, #root, body {
 
 :root {
   --primary: #EA2027;
+  --red: #EA2027;
+  --purple: #9206FF;
 }
 
 body {
@@ -14,7 +16,7 @@ body {
   background-size: cover;
   background-image: url(/static/background.png);
   height: 100%;
-  font-family: 'Rubik', 'Abel', sans-serif !important;
+  font-family: 'Roboto', sans-serif;
   color: white !important;
 }
 

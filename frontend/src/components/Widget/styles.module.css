@@ -1,0 +1,87 @@
+.resources a {
+    text-align: left;
+    color: white;
+    text-decoration: underline;
+    line-height: 2rem;
+}
+
+.resources svg, .stats svg, .stories svg {
+    vertical-align: middle;
+    margin-right: 8px
+}
+
+.link {
+    text-align: left;
+}
+
+.stats {
+    text-align: left;
+    line-height: 1.5rem;
+}
+
+.resources, .stats {
+    padding: 2rem
+}
+
+.storyList {
+    overflow: scroll;
+    height: 65vh;
+    margin-top: 1rem;
+}
+
+.storyItem {
+    border: 1px solid white;
+    border-radius: 10px;
+    text-align: left;
+    padding: 1rem;
+    margin: 0 2rem 1rem 2rem;
+    ;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.storyItem p, .expandedStoryItem p {
+    overflow: scroll;
+}
+
+.createAt {
+    font-size: 10px;
+    display: block;
+    margin-top: 10px;
+    color: var(--primary);
+}
+
+.storyItem button, .storyItem button:hover, .expandedStoryItem button, .expandedStoryItem button:hover {
+    color: white;
+    background: var(--primary);
+    width: 50px;
+    font-size: 0.6rem;
+    min-width: 0;
+}
+
+.storyBtn {
+    display: flex;
+    margin-top: 10px;
+    justify-content: space-between;
+}
+
+.expandedStoryItem {
+    border: 1px solid white;
+    border-radius: 10px;
+    text-align: left;
+    padding: 1rem;
+    margin: 0rem 2rem 1rem 2rem;
+    overflow: hidden;
+}
+
+.expandBtn {
+    right: 0px;
+    position: absolute !important;
+    color: white !important;
+}
+
+.searchBarWrapper {
+    padding: 1rem 2rem 0 2rem;
+}

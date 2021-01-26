@@ -449,7 +449,7 @@ export default function Map(props, { draggable = true }) {
         minzoom: focusZoom,
         paint: {
           // Size circle radius by earthquake magnitude and zoom level
-          "circle-radius": ["+", ["/", ["get", "confirmed"], 80], 3],
+          "circle-radius": ["+", ["/", ["get", "confirmed"], 300], 3],
           // Color circle by earthquake magnitude
           "circle-color": "rgb(239,138,98)",
           "circle-stroke-color": "white",

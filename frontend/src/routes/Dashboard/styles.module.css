@@ -42,10 +42,10 @@
 }
 
 .box {
-    position: absolute;
     padding: 1rem;
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 4px;
+    position: absolute;
 }
 
 .wrapper div {

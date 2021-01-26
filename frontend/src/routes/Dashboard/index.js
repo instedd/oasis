@@ -1,7 +1,4 @@
 import {
-  Link,
-  Collapse,
-  IconButton,
   ListItemText,
   Checkbox,
   MenuItem,
@@ -10,7 +7,6 @@ import {
   Button,
 } from "@material-ui/core";
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -18,7 +14,6 @@ import paths from "routes/paths";
 import { sicknessStatus, testStatus } from "routes/types";
 import styles from "./styles.module.css";
 import { fetchStory, submitMyStory, submitStory } from "actions/story";
-import { getStoryResources } from "actions/resources";
 import { LOADING } from "actions/types";
 import { useLocation } from "react-router-dom";
 import api from "utils";
@@ -30,7 +25,7 @@ import { makeStyles } from "@material-ui/core/styles";
 const professions = Text["Profession"];
 const medicalConditions = Text["Medical Conditions"];
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   profileBar: {
     width: 600,
     bottom: 0,
@@ -89,13 +84,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
 
   let location = useLocation();
   const [draggableMap, setDraggableMap] = useState(false);
-  const [expanded, setExpanded] = useState(
-    window.screen.width > 1024 ? true : false
-  );
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
 
   useEffect(() => {
     if (tempStory) {
@@ -134,31 +122,13 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     setOpen(!open);
   };
 
-  const [data, setData] = useState({
-    confirmed: null,
-    deaths: null,
-    recovered: null,
-  });
-
-  const [stats, setStats] = useState({
-    userNum: null,
-    storyNum: null,
-  });
+  const [storyList, setStoryList] = useState([]);
 
   useEffect(() => {
-    fetch("https://covid19api.herokuapp.com/latest")
-      .then((res) => res.json())
-      .then((result) => setData(result));
-  }, []);
-
-  useEffect(() => {
-    api(`stories/all`, {
+    api(`stories/explore`, {
       method: "GET",
-    }).then((storiesData) => {
-      setStats({
-        userNum: storiesData.length,
-        storyNum: storiesData.filter((story) => story.latestMyStory).length,
-      });
+    }).then((stories) => {
+      setStoryList(stories);
     });
   }, []);
 
@@ -193,7 +163,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
         tempList.push(key);
     });
     if (tempList.length > 0) {
-      console.log(tempList);
       setErrorMsg({
         display: "block",
         required: tempList.join(", "),
@@ -258,36 +227,10 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     </div>
   );
 
-  const resources = () => (
-    <>
-      <div className={classNames(styles.resources)}>
-        <h3>RESOURCES</h3>
-        <IconButton
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ExpandMoreIcon />
-        </IconButton>
-      </div>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        {getStoryResources(story).map((resource) => (
-          <Link
-            href={resource.site}
-            {...(resource.color ? { style: { color: resource.color } } : {})}
-            target="_blank"
-          >
-            {resource.text}
-          </Link>
-        ))}
-      </Collapse>
-    </>
-  );
-
   const informationHeader = () => (
     <div className={classNames(styles.box, styles.top, styles.header)}>
       {userStatus()}
-      {resources()}
+      {/* {resources()} */}
     </div>
   );
 
@@ -412,13 +355,9 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
             draggable={draggableMap}
             userStory={story}
             latestMyStory={tempMyStory ? tempMyStory : story.latestMyStory}
-            actives={data.confirmed && data.confirmed.toLocaleString()}
-            deaths={data.deaths && data.deaths.toLocaleString()}
-            recovered={data.recovered && data.recovered.toLocaleString()}
-            userNum={stats.userNum && stats.userNum.toLocaleString()}
-            storyNum={stats.storyNum && stats.storyNum.toLocaleString()}
+            storyList={storyList}
           />
-          {informationHeader()}
+          <div className={classNames(styles.right)}>{informationHeader()}</div>
           {barDisplay ? profileBar() : ""}
           <SpeedDial
             ariaLabel="Daily actions"
