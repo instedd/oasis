@@ -1,4 +1,5 @@
 from typing import List
+import random
 
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.sql.expression import func, and_
@@ -171,12 +172,28 @@ def get_story_feed(db: Session, cur_id, lat, lng):
         func.pow(models.Story.latitude - lat, 2)
         + func.pow(models.Story.longitude - lng, 2)
     )
-    return (
+
+    db_my_stories = (
         db.query(models.MyStory)
         .join(models.Story)
         .filter(models.Story.id != cur_id)
         .order_by(dist)
         .order_by(models.MyStory.updated_at.desc())
-        .limit(100)
         .all()
     )
+
+    return rand_per_story(db_my_stories)
+
+
+def rand_per_story(arr: [models.MyStory]):
+    seen = set()
+    output = []
+
+    random.shuffle(arr)
+
+    for ms in arr:
+        if ms.story_id not in seen:
+            seen.add(ms.story_id)
+            output.append(ms)
+
+    return output

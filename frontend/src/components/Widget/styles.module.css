@@ -19,18 +19,27 @@
     line-height: 1.5rem;
 }
 
+<<<<<<< HEAD
 .stories {
     height: 100%;
 }
 
+=======
+>>>>>>> d6739434ad3ddddf1a917d477a497b1541bfc08d
 .resources, .stats {
     padding: 2rem
 }
 
 .storyList {
+<<<<<<< HEAD
     overflow-y: scroll;
     margin-top: 1rem;
     height: calc(100% - 66px - 1rem);
+=======
+    overflow: scroll;
+    height: 65vh;
+    margin-top: 1rem;
+>>>>>>> d6739434ad3ddddf1a917d477a497b1541bfc08d
 }
 
 .storyItem {
@@ -39,15 +48,26 @@
     text-align: left;
     padding: 1rem;
     margin: 0 2rem 1rem 2rem;
+<<<<<<< HEAD
 }
 
 .storyItem p, .expandedStoryItem p {
+=======
+    ;
+>>>>>>> d6739434ad3ddddf1a917d477a497b1541bfc08d
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
+<<<<<<< HEAD
+=======
+.storyItem p, .expandedStoryItem p {
+    overflow: scroll;
+}
+
+>>>>>>> d6739434ad3ddddf1a917d477a497b1541bfc08d
 .createAt {
     font-size: 10px;
     display: block;
@@ -55,7 +75,11 @@
     color: var(--primary);
 }
 
+<<<<<<< HEAD
 .storyItem button, .storyItem button:hover {
+=======
+.storyItem button, .storyItem button:hover, .expandedStoryItem button, .expandedStoryItem button:hover {
+>>>>>>> d6739434ad3ddddf1a917d477a497b1541bfc08d
     color: white;
     background: var(--primary);
     width: 50px;
@@ -63,29 +87,39 @@
     min-width: 0;
 }
 
+<<<<<<< HEAD
 .expandedStory button, .expandedStory button:hover {
     color: white;
     background: var(--primary);
 }
 
+=======
+>>>>>>> d6739434ad3ddddf1a917d477a497b1541bfc08d
 .storyBtn {
     display: flex;
     margin-top: 10px;
     justify-content: space-between;
 }
 
+<<<<<<< HEAD
 .expandedStory {
     height: 100%
 }
 
 .expandedStory .content {
+=======
+.expandedStoryItem {
+>>>>>>> d6739434ad3ddddf1a917d477a497b1541bfc08d
     border: 1px solid white;
     border-radius: 10px;
     text-align: left;
     padding: 1rem;
     margin: 0rem 2rem 1rem 2rem;
     overflow: hidden;
+<<<<<<< HEAD
     height: calc(100% - 90px);
+=======
+>>>>>>> d6739434ad3ddddf1a917d477a497b1541bfc08d
 }
 
 .expandBtn {
