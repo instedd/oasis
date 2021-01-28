@@ -204,7 +204,6 @@ export default function Widget(props) {
               <p>{story.text}</p>
               <div className={classNames(styles.storyBtn)}>
                 <span className={classNames(styles.createAt)}>
-                  {" "}
                   create at: {story.updatedAt}
                 </span>
                 <Button size="small" onClick={() => setStoryIndex(index)}>
@@ -218,7 +217,6 @@ export default function Widget(props) {
             <div key={storyIndex} className={classNames(styles.content)}>
               <p>{storyList[storyIndex].text}</p>
               <div className={classNames(styles.createAt)}>
-                {" "}
                 create at: {storyList[storyIndex].updatedAt}
               </div>
             </div>

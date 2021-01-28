@@ -124,7 +124,7 @@
   offset: 25;
 }
 
-.widget{
+.widget {
   color: white;
   display: flex;
   flex-direction: column;
@@ -135,7 +135,6 @@
   width: 300px;
   z-index: 2;
 }
-
 
 .cardContent {
   height: 50px;
