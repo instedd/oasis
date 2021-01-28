@@ -11,6 +11,7 @@ import {
   IconButton,
   Button,
   Collapse,
+  Fab,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -174,7 +175,7 @@ export default function Widget(props) {
           </IconButton>
         </FormControl>
       </div>
-      <div className={classNames(styles.storyList)}>
+      <div className={classNames("storyList", styles.storyList)}>
         {storyIndex < 0 ? (
           storyList.map((story, index) => (
             <div key={index} className={classNames(styles.storyItem)}>
@@ -191,20 +192,17 @@ export default function Widget(props) {
             </div>
           ))
         ) : (
-          <div
-            key={storyIndex}
-            className={classNames(styles.expandedStoryItem)}
-          >
-            <p>{storyList[storyIndex].text}</p>
-            <div className={classNames(styles.storyBtn)}>
-              <span className={classNames(styles.createAt)}>
+          <div className={classNames(styles.expandedStory)}>
+            <div key={storyIndex} className={classNames(styles.content)}>
+              <p>{storyList[storyIndex].text}</p>
+              <div className={classNames(styles.createAt)}>
                 {" "}
                 create at: {storyList[storyIndex].updatedAt}
-              </span>
-              <Button size="small" onClick={() => setStoryIndex(-1)}>
-                Back
-              </Button>
+              </div>
             </div>
+            <Button size="small" onClick={() => setStoryIndex(-1)}>
+              Back
+            </Button>
           </div>
         )}
       </div>

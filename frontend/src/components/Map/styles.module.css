@@ -139,7 +139,7 @@
 
 .cardContent {
   height: 50px;
-  overflow: scroll;
+  overflow: auto;
   padding-top: 0 !important;
   margin-bottom: 10px;
 }
