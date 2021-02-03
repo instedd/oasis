@@ -41,11 +41,8 @@
     margin: 0 2rem 1rem 2rem;
 }
 
-.storyItem p, .expandedStoryItem p {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+.storyItem p, .expandedStory p {
+    word-wrap: break-word;
 }
 
 .createAt {

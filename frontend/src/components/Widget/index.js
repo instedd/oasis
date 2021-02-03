@@ -84,7 +84,11 @@ export default function Widget(props) {
     recovered: "",
   });
   const [expanded, setExpanded] = useState(true);
-  const [storyIndex, setStoryIndex] = useState(-1);
+  const [singleStory, setSingleStory] = useState({
+    status: false,
+    list: null,
+    index: -1,
+  });
   const storyList = props.storyList;
   const [nums, setNums] = useState({
     userNum: null,
@@ -214,7 +218,12 @@ export default function Widget(props) {
             <span className={classNames(styles.createAt)}>
               create at: {story.updatedAt}
             </span>
-            <Button size="small" onClick={() => setStoryIndex(index)}>
+            <Button
+              size="small"
+              onClick={() =>
+                setSingleStory({ status: true, list: storyList, index: index })
+              }
+            >
               More
             </Button>
           </div>
@@ -244,7 +253,16 @@ export default function Widget(props) {
               <span className={classNames(styles.createAt)}>
                 create at: {story.updatedAt}
               </span>
-              <Button size="small" onClick={() => setStoryIndex(index)}>
+              <Button
+                size="small"
+                onClick={() =>
+                  setSingleStory({
+                    status: true,
+                    list: searchList,
+                    index: index,
+                  })
+                }
+              >
                 More
               </Button>
             </div>
@@ -254,17 +272,22 @@ export default function Widget(props) {
     );
   else searchResults = <h4 style={{ color: "var(--primary)" }}>{errorMsg}</h4>;
 
-  let singleStory;
-  if (storyIndex >= 0) {
-    singleStory = (
+  let expandedStory;
+  if (singleStory.list !== null && singleStory.index !== -1) {
+    expandedStory = (
       <div className={classNames(styles.expandedStory)}>
-        <div key={storyIndex} className={classNames(styles.content)}>
-          <p>{storyList[storyIndex].text}</p>
+        <div key={singleStory.index} className={classNames(styles.content)}>
+          <p>{singleStory.list[singleStory.index].text}</p>
           <div className={classNames(styles.createAt)}>
-            create at: {storyList[storyIndex].updatedAt}
+            create at: {singleStory.list[singleStory.index].updatedAt}
           </div>
         </div>
-        <Button size="small" onClick={() => setStoryIndex(-1)}>
+        <Button
+          size="small"
+          onClick={() =>
+            setSingleStory({ status: false, list: null, index: -1 })
+          }
+        >
           Back
         </Button>
       </div>
@@ -295,8 +318,8 @@ export default function Widget(props) {
         </FormControl>
       </div>
       <div className={classNames("storyList", styles.storyList)}>
-        {searchResults}
-        {storyIndex < 0 ? nearestStories : singleStory}
+        {singleStory.status ? expandedStory : searchResults}
+        {singleStory.status ? expandedStory : nearestStories}
       </div>
     </div>
   );
