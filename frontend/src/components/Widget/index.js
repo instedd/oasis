@@ -20,6 +20,7 @@ import EqualizerIcon from "@material-ui/icons/Equalizer";
 import LinkIcon from "@material-ui/icons/Link";
 import SearchIcon from "@material-ui/icons/Search";
 import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
+import api from "utils";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -84,6 +85,21 @@ export default function Widget(props) {
   const [expanded, setExpanded] = useState(true);
   const [storyIndex, setStoryIndex] = useState(-1);
   const storyList = props.storyList;
+  const [nums, setNums] = useState({
+    userNum: null,
+    storyNum: null,
+  });
+
+  useEffect(() => {
+    api(`stories/all`, {
+      method: "GET",
+    }).then((storiesData) => {
+      setNums({
+        userNum: storiesData.length,
+        storyNum: storiesData.filter((story) => story.latestMyStory).length,
+      });
+    });
+  }, []);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -125,15 +141,22 @@ export default function Widget(props) {
   const stats = (
     <div className={classNames(styles.stats)}>
       <div>
-        <h2> Global Total </h2>
+        <h3> Global Total </h3>
         <div>Confirmed: {data.confirmed}</div>
         <div> Deaths: {data.deaths}</div>
         <div> Recovered: {data.recovered}</div>
       </div>
       <br></br>
       <div id="pd">
-        <h2> Confirmed Cases </h2>
+        <h3> Confirmed Cases </h3>
         <div> Hover over/Click a state or country!</div>
+      </div>
+
+      <br></br>
+      <div>
+        <h3> Usage Statistics </h3>
+        <p id="users_num">There are {nums.userNum} users on OASIS</p>
+        <p id="stories_num">{nums.storyNum} of them shared their stories</p>
       </div>
     </div>
   );
@@ -174,14 +197,13 @@ export default function Widget(props) {
           </IconButton>
         </FormControl>
       </div>
-      <div className={classNames(styles.storyList)}>
+      <div className={classNames("storyList", styles.storyList)}>
         {storyIndex < 0 ? (
           storyList.map((story, index) => (
             <div key={index} className={classNames(styles.storyItem)}>
               <p>{story.text}</p>
               <div className={classNames(styles.storyBtn)}>
                 <span className={classNames(styles.createAt)}>
-                  {" "}
                   create at: {story.updatedAt}
                 </span>
                 <Button size="small" onClick={() => setStoryIndex(index)}>
@@ -191,20 +213,16 @@ export default function Widget(props) {
             </div>
           ))
         ) : (
-          <div
-            key={storyIndex}
-            className={classNames(styles.expandedStoryItem)}
-          >
-            <p>{storyList[storyIndex].text}</p>
-            <div className={classNames(styles.storyBtn)}>
-              <span className={classNames(styles.createAt)}>
-                {" "}
+          <div className={classNames(styles.expandedStory)}>
+            <div key={storyIndex} className={classNames(styles.content)}>
+              <p>{storyList[storyIndex].text}</p>
+              <div className={classNames(styles.createAt)}>
                 create at: {storyList[storyIndex].updatedAt}
-              </span>
-              <Button size="small" onClick={() => setStoryIndex(-1)}>
-                Back
-              </Button>
+              </div>
             </div>
+            <Button size="small" onClick={() => setStoryIndex(-1)}>
+              Back
+            </Button>
           </div>
         )}
       </div>
