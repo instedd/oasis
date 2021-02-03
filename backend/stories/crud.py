@@ -95,6 +95,7 @@ def update_close_contact(db: Session, close_contact: schemas.CloseContact):
 def get_all_stories(db: Session):
     return (
         db.query(models.Story)
+        .filter(models.Story.spam <= 3)
         .options(joinedload("travels"))
         .options(joinedload("symptoms"))
         .options(joinedload("my_stories"))
