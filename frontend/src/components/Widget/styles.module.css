@@ -5,7 +5,7 @@
     line-height: 2rem;
 }
 
-.resources svg, .stats svg, .stories svg {
+.resources svg {
     vertical-align: middle;
     margin-right: 8px
 }
@@ -41,11 +41,8 @@
     margin: 0 2rem 1rem 2rem;
 }
 
-.storyItem p, .expandedStoryItem p {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+.storyItem p, .expandedStory p {
+    word-wrap: break-word;
 }
 
 .createAt {
@@ -96,4 +93,14 @@
 
 .searchBarWrapper {
     padding: 1rem 2rem 0 2rem;
+}
+
+.searchTitle {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 2rem;
+}
+
+.searchTitle button {
+    color: white
 }

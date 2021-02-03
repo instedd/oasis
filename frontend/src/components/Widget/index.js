@@ -20,6 +20,7 @@ import EqualizerIcon from "@material-ui/icons/Equalizer";
 import LinkIcon from "@material-ui/icons/Link";
 import SearchIcon from "@material-ui/icons/Search";
 import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
+import RemoveIcon from "@material-ui/icons/Remove";
 import api from "utils";
 
 const useStyles = makeStyles((theme) => ({
@@ -83,12 +84,36 @@ export default function Widget(props) {
     recovered: "",
   });
   const [expanded, setExpanded] = useState(true);
-  const [storyIndex, setStoryIndex] = useState(-1);
+  const [singleStory, setSingleStory] = useState({
+    status: false,
+    list: null,
+    index: -1,
+  });
   const storyList = props.storyList;
   const [nums, setNums] = useState({
     userNum: null,
     storyNum: null,
   });
+  const [searchList, setSearchList] = useState([]);
+  const [keyword, setKeyword] = useState("");
+  const handleKeywordChange = (event) => {
+    setKeyword(event.target.value);
+  };
+  const [errorMsg, setErrorMsg] = useState(null);
+  function searchStories(keyword) {
+    if (!keyword) {
+      setErrorMsg("Please enter keywords for searching");
+      return false;
+    }
+
+    api(`stories/search`, {
+      method: "POST",
+      body: { text: keyword },
+    }).then((results) => {
+      if (results.length === 0) setErrorMsg("No search result");
+      else setSearchList(results);
+    });
+  }
 
   useEffect(() => {
     api(`stories/all`, {
@@ -179,52 +204,122 @@ export default function Widget(props) {
     </div>
   );
 
+  const nearestStories = (
+    <div>
+      <h4>Nearest Stories</h4>
+      {storyList.map((story, index) => (
+        <div key={index} className={classNames(styles.storyItem)}>
+          <p>
+            {story.text.length > 200
+              ? story.text.substring(0, 200) + "..."
+              : story.text}
+          </p>
+          <div className={classNames(styles.storyBtn)}>
+            <span className={classNames(styles.createAt)}>
+              create at: {story.updatedAt}
+            </span>
+            <Button
+              size="small"
+              onClick={() =>
+                setSingleStory({ status: true, list: storyList, index: index })
+              }
+            >
+              More
+            </Button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  let searchResults;
+  if (searchList.length > 0)
+    searchResults = (
+      <div>
+        <div className={classNames(styles.searchTitle)}>
+          <h4>Search Results</h4>
+          <IconButton onClick={() => setSearchList([])}>
+            <RemoveIcon />
+          </IconButton>
+        </div>
+        {searchList.map((story, index) => (
+          <div key={index} className={classNames(styles.storyItem)}>
+            <p>
+              {story.text.length > 200
+                ? story.text.substring(0, 200) + "..."
+                : story.text}
+            </p>
+            <div className={classNames(styles.storyBtn)}>
+              <span className={classNames(styles.createAt)}>
+                create at: {story.updatedAt}
+              </span>
+              <Button
+                size="small"
+                onClick={() =>
+                  setSingleStory({
+                    status: true,
+                    list: searchList,
+                    index: index,
+                  })
+                }
+              >
+                More
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  else searchResults = <h4 style={{ color: "var(--primary)" }}>{errorMsg}</h4>;
+
+  let expandedStory;
+  if (singleStory.list !== null && singleStory.index !== -1) {
+    expandedStory = (
+      <div className={classNames(styles.expandedStory)}>
+        <div key={singleStory.index} className={classNames(styles.content)}>
+          <p>{singleStory.list[singleStory.index].text}</p>
+          <div className={classNames(styles.createAt)}>
+            create at: {singleStory.list[singleStory.index].updatedAt}
+          </div>
+        </div>
+        <Button
+          size="small"
+          onClick={() =>
+            setSingleStory({ status: false, list: null, index: -1 })
+          }
+        >
+          Back
+        </Button>
+      </div>
+    );
+  }
+
   const stories = (
     <div className={classNames(styles.stories)}>
       <div className={styles.searchBarWrapper}>
         <FormControl className={classes.searchBar}>
           <InputBase
             className={classes.input}
+            value={keyword}
+            error
+            onChange={handleKeywordChange}
             placeholder="Search Keywords"
-            inputProps={{ "aria-label": "search google maps" }}
+            inputProps={{ "aria-label": "searchbar" }}
+            autoFocus
           />
           <IconButton
             type="submit"
             className={classes.iconButton}
             aria-label="search"
+            onClick={() => searchStories(keyword)}
           >
             <SearchIcon />
           </IconButton>
         </FormControl>
       </div>
       <div className={classNames("storyList", styles.storyList)}>
-        {storyIndex < 0 ? (
-          storyList.map((story, index) => (
-            <div key={index} className={classNames(styles.storyItem)}>
-              <p>{story.text}</p>
-              <div className={classNames(styles.storyBtn)}>
-                <span className={classNames(styles.createAt)}>
-                  create at: {story.updatedAt}
-                </span>
-                <Button size="small" onClick={() => setStoryIndex(index)}>
-                  More
-                </Button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className={classNames(styles.expandedStory)}>
-            <div key={storyIndex} className={classNames(styles.content)}>
-              <p>{storyList[storyIndex].text}</p>
-              <div className={classNames(styles.createAt)}>
-                create at: {storyList[storyIndex].updatedAt}
-              </div>
-            </div>
-            <Button size="small" onClick={() => setStoryIndex(-1)}>
-              Back
-            </Button>
-          </div>
-        )}
+        {singleStory.status ? expandedStory : searchResults}
+        {singleStory.status ? expandedStory : nearestStories}
       </div>
     </div>
   );
