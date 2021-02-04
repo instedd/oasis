@@ -94,15 +94,19 @@ export default function Widget(props) {
     userNum: null,
     storyNum: null,
   });
-  const [searchList, setSearchList] = useState([]);
   const [keyword, setKeyword] = useState("");
+  const [searchResults, setSearchResults] = useState("");
+
   const handleKeywordChange = (event) => {
     setKeyword(event.target.value);
   };
-  const [errorMsg, setErrorMsg] = useState(null);
   function searchStories(keyword) {
     if (!keyword) {
-      setErrorMsg("Please enter keywords for searching");
+      setSearchResults(
+        <h4 style={{ color: "var(--primary)" }}>
+          Please enter keywords for searching
+        </h4>
+      );
       return false;
     }
 
@@ -110,8 +114,52 @@ export default function Widget(props) {
       method: "POST",
       body: { text: keyword },
     }).then((results) => {
-      if (results.length === 0) setErrorMsg("No search result");
-      else setSearchList(results);
+      if (results.length === 0)
+        setSearchResults(
+          <h4 style={{ color: "var(--primary)" }}>No search result</h4>
+        );
+      else {
+        setSearchResults(
+          <div>
+            <div className={classNames(styles.searchTitle)}>
+              <h4>Search Results</h4>
+              <IconButton
+                onClick={() => {
+                  setSearchResults("");
+                }}
+              >
+                <RemoveIcon />
+              </IconButton>
+            </div>
+            {results.map((story, index) => (
+              <div key={index} className={classNames(styles.storyItem)}>
+                <p>
+                  {story.text.length > 200
+                    ? story.text.substring(0, 200) + "..."
+                    : story.text}
+                </p>
+                <div className={classNames(styles.storyBtn)}>
+                  <span className={classNames(styles.createAt)}>
+                    create at: {story.updatedAt}
+                  </span>
+                  <Button
+                    size="small"
+                    onClick={() =>
+                      setSingleStory({
+                        status: true,
+                        list: results,
+                        index: index,
+                      })
+                    }
+                  >
+                    More
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      }
     });
   }
 
@@ -232,46 +280,6 @@ export default function Widget(props) {
     </div>
   );
 
-  let searchResults;
-  if (searchList.length > 0)
-    searchResults = (
-      <div>
-        <div className={classNames(styles.searchTitle)}>
-          <h4>Search Results</h4>
-          <IconButton onClick={() => setSearchList([])}>
-            <RemoveIcon />
-          </IconButton>
-        </div>
-        {searchList.map((story, index) => (
-          <div key={index} className={classNames(styles.storyItem)}>
-            <p>
-              {story.text.length > 200
-                ? story.text.substring(0, 200) + "..."
-                : story.text}
-            </p>
-            <div className={classNames(styles.storyBtn)}>
-              <span className={classNames(styles.createAt)}>
-                create at: {story.updatedAt}
-              </span>
-              <Button
-                size="small"
-                onClick={() =>
-                  setSingleStory({
-                    status: true,
-                    list: searchList,
-                    index: index,
-                  })
-                }
-              >
-                More
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  else searchResults = <h4 style={{ color: "var(--primary)" }}>{errorMsg}</h4>;
-
   let expandedStory;
   if (singleStory.list !== null && singleStory.index !== -1) {
     expandedStory = (
@@ -290,6 +298,22 @@ export default function Widget(props) {
         >
           Back
         </Button>
+      </div>
+    );
+  }
+
+  let displayedStories;
+  if (singleStory.status) {
+    displayedStories = (
+      <div className={classNames("storyList", styles.storyList)}>
+        {expandedStory}
+      </div>
+    );
+  } else {
+    displayedStories = (
+      <div className={classNames("storyList", styles.storyList)}>
+        {searchResults}
+        {nearestStories}
       </div>
     );
   }
@@ -317,10 +341,7 @@ export default function Widget(props) {
           </IconButton>
         </FormControl>
       </div>
-      <div className={classNames("storyList", styles.storyList)}>
-        {singleStory.status ? expandedStory : searchResults}
-        {singleStory.status ? expandedStory : nearestStories}
-      </div>
+      {displayedStories}
     </div>
   );
 
