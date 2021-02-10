@@ -196,35 +196,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     },
   ];
 
-  // const userStatus = () => (
-  //   <div
-  //     className={classNames(styles.statusList)}
-  //     style={{ textAlign: "left" }}
-  //   >
-  //     <div className={classNames("row", styles.statusItem)}>
-  //       <span
-  //         className={styles.dot}
-  //         style={{ background: statusMapping[story.sick].color }}
-  //       />
-  //       {statusMapping[story.sick].name.toUpperCase()}
-  //     </div>
-  //     <div className={classNames("row", styles.statusItem)}>
-  //       <span
-  //         className={styles.dot}
-  //         style={{ background: statusMapping[story.tested].color }}
-  //       />
-  //       {statusMapping[story.tested].name.toUpperCase()}
-  //     </div>
-  //   </div>
-  // );
-
-  // const informationHeader = () => (
-  //   <div className={classNames(styles.box, styles.top, styles.header)}>
-  //     {userStatus()}
-  //     {/* {resources()} */}
-  //   </div>
-  // );
-
   const profileBar = () => (
     <Grid
       container
@@ -335,9 +306,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
       </Grid>
     </Grid>
   );
-
-  // <div className={classNames(styles.right)}>{informationHeader()}</div>
-  //put after Map
 
   return (
     <div className={styles.root}>
