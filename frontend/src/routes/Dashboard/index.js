@@ -59,15 +59,6 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const statusMapping = {
-  [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
-  [testStatus.NEGATIVE]: { name: "Tested Negative", color: "purple" },
-  [testStatus.NOT_TESTED]: { name: "Not Tested", color: "blue" },
-  [sicknessStatus.SICK]: { name: "Sick", color: "orange" },
-  [sicknessStatus.RECOVERED]: { name: "Recovered", color: "green" },
-  [sicknessStatus.NOT_SICK]: { name: "Not Sick", color: "gray" },
-};
-
 function Dashboard(props, { draggableMapRoutes = [] }) {
   const dispatch = useDispatch();
   const [countries, setCountries] = useState([]);
@@ -205,35 +196,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
     },
   ];
 
-  const userStatus = () => (
-    <div
-      className={classNames(styles.statusList)}
-      style={{ textAlign: "left" }}
-    >
-      <div className={classNames("row", styles.statusItem)}>
-        <span
-          className={styles.dot}
-          style={{ background: statusMapping[story.sick].color }}
-        />
-        {statusMapping[story.sick].name.toUpperCase()}
-      </div>
-      <div className={classNames("row", styles.statusItem)}>
-        <span
-          className={styles.dot}
-          style={{ background: statusMapping[story.tested].color }}
-        />
-        {statusMapping[story.tested].name.toUpperCase()}
-      </div>
-    </div>
-  );
-
-  const informationHeader = () => (
-    <div className={classNames(styles.box, styles.top, styles.header)}>
-      {userStatus()}
-      {/* {resources()} */}
-    </div>
-  );
-
   const profileBar = () => (
     <Grid
       container
@@ -357,7 +319,6 @@ function Dashboard(props, { draggableMapRoutes = [] }) {
             latestMyStory={tempMyStory ? tempMyStory : story.latestMyStory}
             storyList={storyList}
           />
-          <div className={classNames(styles.right)}>{informationHeader()}</div>
           {barDisplay ? profileBar() : ""}
           <SpeedDial
             ariaLabel="Daily actions"

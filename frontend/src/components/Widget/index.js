@@ -22,6 +22,16 @@ import SearchIcon from "@material-ui/icons/Search";
 import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
 import RemoveIcon from "@material-ui/icons/Remove";
 import api from "utils";
+import { sicknessStatus, testStatus } from "routes/types";
+
+const statusMapping = {
+  [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
+  [testStatus.NEGATIVE]: { name: "Tested Negative", color: "purple" },
+  [testStatus.NOT_TESTED]: { name: "Not Tested", color: "blue" },
+  [sicknessStatus.SICK]: { name: "Sick", color: "orange" },
+  [sicknessStatus.RECOVERED]: { name: "Recovered", color: "green" },
+  [sicknessStatus.NOT_SICK]: { name: "Not Sick", color: "gray" },
+};
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -351,8 +361,31 @@ export default function Widget(props) {
     { label: "stories", content: stories, icon: <LibraryBooksIcon /> },
   ];
 
+  const userStatus = () => (
+    <div
+      className={classNames(styles.statusList)}
+      style={{ textAlign: "left" }}
+    >
+      <div className={classNames("row", styles.statusItem)}>
+        <span
+          className={styles.dot}
+          style={{ background: statusMapping[userStory.sick].color }}
+        />
+        {statusMapping[userStory.sick].name.toUpperCase()}
+      </div>
+      <div className={classNames("row", styles.statusItem)}>
+        <span
+          className={styles.dot}
+          style={{ background: statusMapping[userStory.tested].color }}
+        />
+        {statusMapping[userStory.tested].name.toUpperCase()}
+      </div>
+    </div>
+  );
+
   return (
     <div className={classes.root}>
+      <>{userStatus()}</>
       <Tabs
         variant="fullWidth"
         value={tabIndex}

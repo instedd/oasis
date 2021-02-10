@@ -8,20 +8,21 @@ repos:
         exclude: legacy/
         language_version: python3.7
   - repo: https://gitlab.com/PyCQA/flake8
-    rev: ""
+    rev: ''
     hooks:
       - id: flake8
         exclude: >
-            (?x)^(
-                legacy/|
-                backend/emails/contents.py|
-                backend/alembic/env.py
-            )$
+          (?x)^(
+              legacy/|
+              backend/emails/contents.py|
+              backend/alembic/env.py
+          )$
         language_version: python3.7
     # tried to to all the precommit work here, didn't work.
     # Leaving it as something we might want to look into
-  - repo: https://github.com/prettier/prettier
-    rev: "" # Use the sha or tag you want to point at
+    #the old repo for prettier: https://github.com/prettier/prettier
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: '' # Use the sha or tag you want to point at
     hooks:
       - id: prettier
         files: \.(js|ts)$
