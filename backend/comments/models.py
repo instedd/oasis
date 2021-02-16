@@ -21,3 +21,11 @@ class CommentLike(Base):
     like = Column(Boolean)
     comment_id = Column(Integer, ForeignKey("comments.id"))
     story_id = Column(Integer, ForeignKey("stories.id"))
+
+
+class CommentSpam(Base):
+    __tablename__ = "comment_spams"
+
+    spam = Column(Boolean)
+    comment_id = Column(Integer, ForeignKey("comments.id"))
+    story_id = Column(Integer, ForeignKey("stories.id"))

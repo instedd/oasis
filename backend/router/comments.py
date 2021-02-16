@@ -37,8 +37,21 @@ def create_comment(
 
 
 @router.get("/my_stories/{my_story_id}", response_model=List[schemas.Comment])
-def get_comments_by_my_story(my_story_id: int, db: Session = Depends(get_db)):
-    return crud.get_comments_by_my_story(db, my_story_id)
+def get_comments_by_my_story(
+    my_story_id: int,
+    current_story: stories_schemas.Story = Depends(main.get_current_story),
+    db: Session = Depends(get_db),
+):
+    comments = crud.get_comments_by_my_story(db, my_story_id)
+    if current_story:
+        for comment in comments:
+            db_spam = crud.get_spam_by_comment_and_user(
+                db, comment.id, current_story.id
+            )
+            if db_spam:
+                comment.reported = db_spam.spam
+
+    return comments
 
 
 @router.post("/{comment_id}", response_model=schemas.Comment)
@@ -82,7 +95,7 @@ def like_comment(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User must first share their story before "
-            + "liking or dislike a comment",
+            + "they can like or dislike a comment",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
@@ -106,3 +119,21 @@ def count_like(
     d["like_by_me"] = like_by_me
 
     return JSONResponse(d, status_code=200,)
+
+
+@router.post("/{comment_id}/report", response_model=schemas.CommentLike)
+def report_comment(
+    comment_id: int,
+    dto: schemas.CommentSpamCreate,
+    current_story: stories_schemas.Story = Depends(main.get_current_story),
+    db: Session = Depends(get_db),
+):
+    if not current_story:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User must first share their story before "
+            + "reporting a comment",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    return crud.report_comment(db, comment_id, current_story.id, dto.spam)
