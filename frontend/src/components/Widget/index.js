@@ -11,6 +11,7 @@ import {
   IconButton,
   Button,
   Collapse,
+  Tooltip,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -21,6 +22,12 @@ import LinkIcon from "@material-ui/icons/Link";
 import SearchIcon from "@material-ui/icons/Search";
 import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
 import RemoveIcon from "@material-ui/icons/Remove";
+import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
+import FeedbackIcon from "@material-ui/icons/Feedback";
+import FeedbackOutlinedIcon from "@material-ui/icons/FeedbackOutlined";
+import FavoriteIcon from "@material-ui/icons/Favorite";
+import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
+import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import api from "utils";
 
 const useStyles = makeStyles((theme) => ({
@@ -40,13 +47,23 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 40,
     flexDirection: "row",
   },
+  commentArea: {
+    display: "flex",
+    padding: "2px 4px",
+    alignItems: "center",
+    border: "1px solid white",
+    borderRadius: 40,
+    flexDirection: "row",
+    "& input::placeholder": {
+      fontSize: 10,
+    },
+  },
   input: {
     marginLeft: theme.spacing(1),
     flex: 1,
     color: "white",
   },
-  iconButton: {
-    padding: 10,
+  whiteButton: {
     color: "white",
   },
   tab: {
@@ -63,6 +80,12 @@ const useStyles = makeStyles((theme) => ({
   },
   expandOpen: {
     transform: "rotate(180deg)",
+  },
+  inactive: {
+    color: "white",
+  },
+  active: {
+    color: "var(--primary)",
   },
   tabPanel: {
     height: "calc(100vh - 70px - 72px - 44px)",
@@ -84,6 +107,8 @@ export default function Widget(props) {
     recovered: "",
   });
   const [expanded, setExpanded] = useState(true);
+  const [report, setReport] = useState(false);
+  const [like, setLike] = useState(false);
   const [singleStory, setSingleStory] = useState({
     status: false,
     list: null,
@@ -94,8 +119,10 @@ export default function Widget(props) {
     userNum: null,
     storyNum: null,
   });
-  const [keyword, setKeyword] = useState("");
-  const [searchResults, setSearchResults] = useState("");
+
+  //#region Stories Tab Searchbar
+  const [keyword, setKeyword] = useState(null);
+  const [searchResults, setSearchResults] = useState(null);
 
   const handleKeywordChange = (event) => {
     setKeyword(event.target.value);
@@ -127,6 +154,7 @@ export default function Widget(props) {
                 onClick={() => {
                   setSearchResults("");
                 }}
+                className={classes.whiteButton}
               >
                 <RemoveIcon />
               </IconButton>
@@ -139,10 +167,7 @@ export default function Widget(props) {
                     : story.text}
                 </p>
                 <div className={classNames(styles.storyBtn)}>
-                  <span className={classNames(styles.createAt)}>
-                    create at: {story.updatedAt}
-                  </span>
-                  <Button
+                  <IconButton
                     size="small"
                     onClick={() =>
                       setSingleStory({
@@ -151,9 +176,10 @@ export default function Widget(props) {
                         index: index,
                       })
                     }
+                    className={classes.whiteButton}
                   >
-                    More
-                  </Button>
+                    <MoreHorizIcon />
+                  </IconButton>
                 </div>
               </div>
             ))}
@@ -162,7 +188,9 @@ export default function Widget(props) {
       }
     });
   }
+  //#endregion
 
+  //#region Fetch Data
   useEffect(() => {
     api(`stories/all`, {
       method: "GET",
@@ -173,11 +201,36 @@ export default function Widget(props) {
       });
     });
   }, []);
+  useEffect(() => {
+    fetch("https://covid19api.herokuapp.com/latest")
+      .then((res) => res.json())
+      .then((result) => setData(result));
+  }, []);
+  //#endregion
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+  const handleReportClick = () => {
+    setReport(!report);
+  };
+  const handleLikeClick = () => {
+    setLike(!like);
+  };
 
+  //#region Comments
+  const [myComment, setMyComment] = useState(null);
+  const handleMyCommentChange = (event) => {
+    setMyComment(event.target.value);
+  };
+  const [allComments, setAllComments] = useState([]);
+  function postComment(comment) {
+    setAllComments([...allComments, comment]);
+    console.log(allComments);
+  }
+  //#endregion
+
+  //#region Tab Functions
   function TabPanel(props) {
     const { children, value, index } = props;
 
@@ -199,18 +252,14 @@ export default function Widget(props) {
     value: PropTypes.any.isRequired,
   };
 
-  useEffect(() => {
-    fetch("https://covid19api.herokuapp.com/latest")
-      .then((res) => res.json())
-      .then((result) => setData(result));
-  }, []);
-
   const classes = useStyles();
   const [tabIndex, setTabIndex] = React.useState(2);
   const handleChange = (event, newValue) => {
     setTabIndex(newValue);
   };
+  //#endregion
 
+  //#region Stats Tab
   const stats = (
     <div className={classNames(styles.stats)}>
       <div>
@@ -233,7 +282,9 @@ export default function Widget(props) {
       </div>
     </div>
   );
+  //#endregion
 
+  //#region Resources Tab
   const resources = (
     <div className={classNames(styles.resources)}>
       {getStoryResources(userStory).map((resource, i) => (
@@ -251,7 +302,9 @@ export default function Widget(props) {
       ))}
     </div>
   );
+  //#endregion
 
+  //#region Nearest Stories
   const nearestStories = (
     <div>
       <h4>Nearest Stories</h4>
@@ -264,22 +317,24 @@ export default function Widget(props) {
           </p>
           <div className={classNames(styles.storyBtn)}>
             <span className={classNames(styles.createAt)}>
-              create at: {story.updatedAt}
+              created at: {story.updatedAt}
             </span>
-            <Button
-              size="small"
+            <IconButton
+              className={classes.whiteButton}
               onClick={() =>
                 setSingleStory({ status: true, list: storyList, index: index })
               }
             >
-              More
-            </Button>
+              <MoreHorizIcon />
+            </IconButton>
           </div>
         </div>
       ))}
     </div>
   );
+  //#endregion
 
+  //#region Expanded Story
   let expandedStory;
   if (singleStory.list !== null && singleStory.index !== -1) {
     expandedStory = (
@@ -287,21 +342,73 @@ export default function Widget(props) {
         <div key={singleStory.index} className={classNames(styles.content)}>
           <p>{singleStory.list[singleStory.index].text}</p>
           <div className={classNames(styles.createAt)}>
-            create at: {singleStory.list[singleStory.index].updatedAt}
+            created at: {singleStory.list[singleStory.index].updatedAt}
+          </div>
+          <div>
+            <Tooltip title="like">
+              <IconButton
+                aria-label="like"
+                className={clsx(classes.inactive, {
+                  [classes.active]: like,
+                })}
+                onClick={handleLikeClick}
+              >
+                {like ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="report as spam">
+              <IconButton
+                aria-label="report"
+                className={clsx(classes.inactive, {
+                  [classes.active]: report,
+                })}
+                onClick={handleReportClick}
+              >
+                {report ? <FeedbackIcon /> : <FeedbackOutlinedIcon />}
+              </IconButton>
+            </Tooltip>
+          </div>
+          <FormControl className={classes.searchBar}>
+            <InputBase
+              className={classes.input}
+              value={myComment}
+              onChange={handleMyCommentChange}
+              placeholder="Write a comment..."
+              inputProps={{ "aria-label": "searchbar" }}
+              autoFocus
+            />
+            <Button
+              type="submit"
+              aria-label="post"
+              onClick={() => postComment(myComment)}
+              className={styles.postButton}
+            >
+              Post
+            </Button>
+          </FormControl>
+          <div className={styles.commentWrapper}>
+            {allComments.map((comment, index) => (
+              <div className={styles.commentItem} key={index}>
+                {comment}
+              </div>
+            ))}
           </div>
         </div>
-        <Button
-          size="small"
+        <IconButton
+          aria-label="back"
+          className={classes.whiteButton}
           onClick={() =>
             setSingleStory({ status: false, list: null, index: -1 })
           }
         >
-          Back
-        </Button>
+          <ArrowBackIosIcon />
+        </IconButton>
       </div>
     );
   }
+  //#endregion
 
+  //#region Displayed Stories
   let displayedStories;
   if (singleStory.status) {
     displayedStories = (
@@ -317,33 +424,40 @@ export default function Widget(props) {
       </div>
     );
   }
+  //#endregion
 
+  //#region Stories Tab
   const stories = (
     <div className={classNames(styles.stories)}>
-      <div className={styles.searchBarWrapper}>
-        <FormControl className={classes.searchBar}>
-          <InputBase
-            className={classes.input}
-            value={keyword}
-            error
-            onChange={handleKeywordChange}
-            placeholder="Search Keywords"
-            inputProps={{ "aria-label": "searchbar" }}
-            autoFocus
-          />
-          <IconButton
-            type="submit"
-            className={classes.iconButton}
-            aria-label="search"
-            onClick={() => searchStories(keyword)}
-          >
-            <SearchIcon />
-          </IconButton>
-        </FormControl>
-      </div>
+      {singleStory.status ? (
+        ""
+      ) : (
+        <div className={styles.searchBarWrapper}>
+          <FormControl className={classes.searchBar}>
+            <InputBase
+              className={classes.input}
+              value={keyword}
+              error
+              onChange={handleKeywordChange}
+              placeholder="Search Keywords"
+              inputProps={{ "aria-label": "searchbar" }}
+              autoFocus
+            />
+            <IconButton
+              type="submit"
+              className={classes.whiteButton}
+              aria-label="search"
+              onClick={() => searchStories(keyword)}
+            >
+              <SearchIcon />
+            </IconButton>
+          </FormControl>
+        </div>
+      )}
       {displayedStories}
     </div>
   );
+  //#endregion
 
   const tabs = [
     { label: "resources", content: resources, icon: <LinkIcon /> },
@@ -383,7 +497,7 @@ export default function Widget(props) {
         ))}
       </Collapse>
       <IconButton
-        className={clsx(classes.expand, classes.iconButton, {
+        className={clsx(classes.expand, classes.whiteButton, {
           [classes.expandOpen]: expanded,
         })}
         onClick={handleExpandClick}

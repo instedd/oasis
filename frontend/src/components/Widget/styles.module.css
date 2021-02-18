@@ -43,6 +43,9 @@
 
 .storyItem p, .expandedStory p {
     word-wrap: break-word;
+    line-height: 1.6rem;
+    font-size: 0.9rem;
+    text-align: justify;
 }
 
 .createAt {
@@ -50,19 +53,6 @@
     display: block;
     margin-top: 10px;
     color: var(--primary);
-}
-
-.storyItem button, .storyItem button:hover {
-    color: white;
-    background: var(--primary);
-    width: 50px;
-    font-size: 0.6rem;
-    min-width: 0;
-}
-
-.expandedStory button, .expandedStory button:hover {
-    color: white;
-    background: var(--primary);
 }
 
 .storyBtn {
@@ -103,4 +93,22 @@
 
 .searchTitle button {
     color: white
+}
+
+.commentItem {
+    background: #828282;
+    padding: 5px;
+    font-size: 12px;
+    border-radius: 15px;
+    margin-bottom: 0.5rem;
+}
+
+.commentWrapper {
+    margin-top: 1rem;
+    height: 85px;
+    overflow: auto;
+}
+
+.postButton {
+    color: var(--primary) !important
 }
