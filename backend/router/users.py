@@ -28,3 +28,8 @@ async def read_users_me(
 @router.get("/count/")
 def get_user_count(db: Session = Depends(get_db)):
     return crud.get_user_count(db)
+
+
+@router.get("/trend/")
+def get_user_trend(db: Session = Depends(get_db)):
+    return crud.get_user_trend(db)

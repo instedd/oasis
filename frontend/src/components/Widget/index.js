@@ -29,6 +29,16 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import api from "utils";
+import { sicknessStatus, testStatus } from "routes/types";
+
+const statusMapping = {
+  [testStatus.POSITIVE]: { name: "Tested Positive", color: "red" },
+  [testStatus.NEGATIVE]: { name: "Tested Negative", color: "purple" },
+  [testStatus.NOT_TESTED]: { name: "Not Tested", color: "blue" },
+  [sicknessStatus.SICK]: { name: "Sick", color: "orange" },
+  [sicknessStatus.RECOVERED]: { name: "Recovered", color: "green" },
+  [sicknessStatus.NOT_SICK]: { name: "Not Sick", color: "gray" },
+};
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -119,10 +129,8 @@ export default function Widget(props) {
     userNum: null,
     storyNum: null,
   });
-
-  //#region Stories Tab Searchbar
-  const [keyword, setKeyword] = useState(null);
-  const [searchResults, setSearchResults] = useState(null);
+  const [keyword, setKeyword] = useState("");
+  const [searchResults, setSearchResults] = useState("");
 
   const handleKeywordChange = (event) => {
     setKeyword(event.target.value);
@@ -167,6 +175,9 @@ export default function Widget(props) {
                     : story.text}
                 </p>
                 <div className={classNames(styles.storyBtn)}>
+                  <span className={classNames(styles.createAt)}>
+                    created at: {story.updatedAt}
+                  </span>
                   <IconButton
                     size="small"
                     onClick={() =>
@@ -465,8 +476,31 @@ export default function Widget(props) {
     { label: "stories", content: stories, icon: <LibraryBooksIcon /> },
   ];
 
+  const userStatus = () => (
+    <div
+      className={classNames(styles.statusList)}
+      style={{ textAlign: "left" }}
+    >
+      <div className={classNames("row", styles.statusItem)}>
+        <span
+          className={styles.dot}
+          style={{ background: statusMapping[userStory.sick].color }}
+        />
+        {statusMapping[userStory.sick].name.toUpperCase()}
+      </div>
+      <div className={classNames("row", styles.statusItem)}>
+        <span
+          className={styles.dot}
+          style={{ background: statusMapping[userStory.tested].color }}
+        />
+        {statusMapping[userStory.tested].name.toUpperCase()}
+      </div>
+    </div>
+  );
+
   return (
     <div className={classes.root}>
+      <>{userStatus()}</>
       <Tabs
         variant="fullWidth"
         value={tabIndex}

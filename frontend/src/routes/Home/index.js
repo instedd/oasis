@@ -14,7 +14,6 @@ import { useDispatch } from "react-redux";
 import SimpleMap from "components/SimpleMap";
 import paths from "routes/paths";
 import styles from "./styles.module.css";
-import api from "utils";
 import { setStory, setMyStory } from "actions/story";
 import { fields, initialFieldsState } from "./fields";
 import PersonPinCircleIcon from "@material-ui/icons/PersonPinCircle";
@@ -38,18 +37,7 @@ export default function Home(props, { draggableMapRoutes = [] }) {
     requiredFields: null,
   });
 
-  let userNum = null;
-
   let location = useLocation();
-
-  useEffect(() => {
-    api(`stories/all`, {
-      method: "GET",
-    }).then((storiesData) => {
-      userNum = storiesData.length;
-      console.log(userNum);
-    });
-  }, []);
 
   useEffect(() => {
     let shouldDragMap = draggableMapRoutes.includes(location.pathname);
@@ -268,8 +256,6 @@ export default function Home(props, { draggableMapRoutes = [] }) {
             SKIP AND CONTINUE
           </Button>
         </div>
-
-        <div>{userNum && <p>There are {userNum} users on OASIS</p>}</div>
       </div>
 
       <div className={classNames("background", styles.background)} />
