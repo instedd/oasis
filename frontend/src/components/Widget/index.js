@@ -12,6 +12,7 @@ import {
   Button,
   Collapse,
   Tooltip,
+  Fab,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -21,13 +22,15 @@ import EqualizerIcon from "@material-ui/icons/Equalizer";
 import LinkIcon from "@material-ui/icons/Link";
 import SearchIcon from "@material-ui/icons/Search";
 import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
-import RemoveIcon from "@material-ui/icons/Remove";
+import ClearAllIcon from "@material-ui/icons/ClearAll";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import FeedbackIcon from "@material-ui/icons/Feedback";
 import FeedbackOutlinedIcon from "@material-ui/icons/FeedbackOutlined";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
-import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import CommentIcon from "@material-ui/icons/Comment";
+import CommentOutlinedIcon from "@material-ui/icons/CommentOutlined";
 import api from "utils";
 import { sicknessStatus, testStatus } from "routes/types";
 
@@ -98,7 +101,7 @@ const useStyles = makeStyles((theme) => ({
     color: "var(--primary)",
   },
   tabPanel: {
-    height: "calc(100vh - 70px - 72px - 44px)",
+    height: "calc(100vh - 223px)",
   },
 }));
 
@@ -116,9 +119,23 @@ export default function Widget(props) {
     deaths: "",
     recovered: "",
   });
+
   const [expanded, setExpanded] = useState(true);
   const [report, setReport] = useState(false);
   const [like, setLike] = useState(false);
+  const [expandComment, setExpandComment] = useState(false);
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+  const handleReportClick = () => {
+    setReport(!report);
+  };
+  const handleLikeClick = () => {
+    setLike(!like);
+  };
+  const handleExpandCommentClick = () => {
+    setExpandComment(!expandComment);
+  };
   const [singleStory, setSingleStory] = useState({
     status: false,
     list: null,
@@ -129,6 +146,8 @@ export default function Widget(props) {
     userNum: null,
     storyNum: null,
   });
+
+  //#region Search Fuction
   const [keyword, setKeyword] = useState("");
   const [searchResults, setSearchResults] = useState("");
 
@@ -164,7 +183,7 @@ export default function Widget(props) {
                 }}
                 className={classes.whiteButton}
               >
-                <RemoveIcon />
+                <ClearAllIcon />
               </IconButton>
             </div>
             {results.map((story, index) => (
@@ -176,7 +195,7 @@ export default function Widget(props) {
                 </p>
                 <div className={classNames(styles.storyBtn)}>
                   <span className={classNames(styles.createAt)}>
-                    created at: {story.updatedAt}
+                    Created at: {story.updatedAt}
                   </span>
                   <IconButton
                     size="small"
@@ -219,26 +238,28 @@ export default function Widget(props) {
   }, []);
   //#endregion
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
-  const handleReportClick = () => {
-    setReport(!report);
-  };
-  const handleLikeClick = () => {
-    setLike(!like);
-  };
-
   //#region Comments
   const [myComment, setMyComment] = useState(null);
   const handleMyCommentChange = (event) => {
     setMyComment(event.target.value);
   };
   const [allComments, setAllComments] = useState([]);
-  function postComment(comment) {
-    setAllComments([...allComments, comment]);
-    console.log(allComments);
+  function postComment(storyId) {
+    api(`comments/my_stories/${storyId}`, {
+      method: "POST",
+      body: { text: myComment },
+    }).then((results) => {
+      console.log(results);
+    });
+
+    api(`comments/my_stories/${storyId}`, {
+      method: "GET",
+    }).then((results) => {
+      setAllComments(results);
+      console.log(results);
+    });
   }
+
   //#endregion
 
   //#region Tab Functions
@@ -328,7 +349,7 @@ export default function Widget(props) {
           </p>
           <div className={classNames(styles.storyBtn)}>
             <span className={classNames(styles.createAt)}>
-              created at: {story.updatedAt}
+              Created at: {story.updatedAt}
             </span>
             <IconButton
               className={classes.whiteButton}
@@ -348,72 +369,94 @@ export default function Widget(props) {
   //#region Expanded Story
   let expandedStory;
   if (singleStory.list !== null && singleStory.index !== -1) {
+    let item = singleStory.list[singleStory.index];
     expandedStory = (
       <div className={classNames(styles.expandedStory)}>
-        <div key={singleStory.index} className={classNames(styles.content)}>
-          <p>{singleStory.list[singleStory.index].text}</p>
-          <div className={classNames(styles.createAt)}>
-            created at: {singleStory.list[singleStory.index].updatedAt}
-          </div>
-          <div>
-            <Tooltip title="like">
-              <IconButton
-                aria-label="like"
-                className={clsx(classes.inactive, {
-                  [classes.active]: like,
-                })}
-                onClick={handleLikeClick}
-              >
-                {like ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="report as spam">
-              <IconButton
-                aria-label="report"
-                className={clsx(classes.inactive, {
-                  [classes.active]: report,
-                })}
-                onClick={handleReportClick}
-              >
-                {report ? <FeedbackIcon /> : <FeedbackOutlinedIcon />}
-              </IconButton>
-            </Tooltip>
-          </div>
-          <FormControl className={classes.searchBar}>
-            <InputBase
-              className={classes.input}
-              value={myComment}
-              onChange={handleMyCommentChange}
-              placeholder="Write a comment..."
-              inputProps={{ "aria-label": "searchbar" }}
-              autoFocus
-            />
-            <Button
-              type="submit"
-              aria-label="post"
-              onClick={() => postComment(myComment)}
-              className={styles.postButton}
+        <div className={classNames(styles.storyTitle)}>
+          <div className={classNames(styles.backBtn)}>
+            <IconButton
+              aria-label="back"
+              className={classes.whiteButton}
+              onClick={() =>
+                setSingleStory({ status: false, list: null, index: -1 })
+              }
             >
-              Post
-            </Button>
-          </FormControl>
-          <div className={styles.commentWrapper}>
-            {allComments.map((comment, index) => (
-              <div className={styles.commentItem} key={index}>
-                {comment}
-              </div>
-            ))}
+              <ChevronLeftIcon />
+            </IconButton>
           </div>
+          <h4>Story</h4>
         </div>
-        <IconButton
-          aria-label="back"
-          className={classes.whiteButton}
-          onClick={() =>
-            setSingleStory({ status: false, list: null, index: -1 })
-          }
-        >
-          <ArrowBackIosIcon />
-        </IconButton>
+        <div key={singleStory.index} className={classNames(styles.content)}>
+          <p>{item.text}</p>
+          <div className={classNames(styles.storyBtn)}>
+            <div className={classNames(styles.createAt)}>
+              Created at: {item.updatedAt}
+            </div>
+            <div>
+              <Tooltip title="like">
+                <IconButton
+                  aria-label="like"
+                  className={clsx(classes.inactive, {
+                    [classes.active]: like,
+                  })}
+                  onClick={handleLikeClick}
+                >
+                  {like ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="report as spam">
+                <IconButton
+                  aria-label="report"
+                  className={clsx(classes.inactive, {
+                    [classes.active]: report,
+                  })}
+                  onClick={handleReportClick}
+                >
+                  {report ? <FeedbackIcon /> : <FeedbackOutlinedIcon />}
+                </IconButton>
+              </Tooltip>
+              <Tooltip>
+                <IconButton
+                  className={clsx(classes.inactive, {
+                    [classes.active]: expandComment,
+                  })}
+                  onClick={handleExpandCommentClick}
+                  aria-label="expand"
+                >
+                  {expandComment ? <CommentIcon /> : <CommentOutlinedIcon />}
+                </IconButton>
+              </Tooltip>
+            </div>
+          </div>
+          <Collapse in={expandComment} timeout="auto" unmountOnExit>
+            <FormControl className={classes.searchBar}>
+              <InputBase
+                className={classes.input}
+                value={myComment}
+                onChange={handleMyCommentChange}
+                placeholder="Write a comment..."
+                inputProps={{ "aria-label": "searchbar" }}
+                autoFocus
+              />
+              <Fab
+                variant="extended"
+                aria-label="post"
+                size="medium"
+                onClick={() => postComment(item.storyId)}
+                className={styles.postButton}
+              >
+                Post
+              </Fab>
+            </FormControl>
+            <div className={styles.commentWrapper}>
+              {allComments.map((comment, index) => (
+                <div className={styles.commentItem} key={index}>
+                  {comment}
+                </div>
+              ))}
+            </div>
+          </Collapse>
+        </div>
       </div>
     );
   }
@@ -423,7 +466,7 @@ export default function Widget(props) {
   let displayedStories;
   if (singleStory.status) {
     displayedStories = (
-      <div className={classNames("storyList", styles.storyList)}>
+      <div className={classNames("singleStory", styles.singleStory)}>
         {expandedStory}
       </div>
     );
