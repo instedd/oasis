@@ -9,7 +9,6 @@ import {
   FormControl,
   InputBase,
   IconButton,
-  Button,
   Collapse,
   Tooltip,
   Fab,
@@ -121,19 +120,55 @@ export default function Widget(props) {
   });
 
   const [expanded, setExpanded] = useState(true);
-  const [report, setReport] = useState(false);
+  const [dislike, setDislike] = useState(false);
   const [like, setLike] = useState(false);
   const [expandComment, setExpandComment] = useState(false);
   const [allComments, setAllComments] = useState([]);
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
-  const handleReportClick = () => {
-    setReport(!report);
-  };
-  const handleLikeClick = () => {
-    setLike(!like);
-  };
+  function handleDislikeClick(id) {
+    let value;
+    if (dislike === true) {
+      value = null;
+      setDislike(false);
+    } else {
+      value = false;
+      setLike(false);
+      setDislike(true);
+    }
+    api(`likes`, {
+      method: "POST",
+      body: { like: value, my_story_id: id },
+    });
+  }
+  function handleLikeClick(id) {
+    let value;
+    if (like === true) {
+      value = null;
+      setLike(false);
+    } else {
+      value = true;
+      setLike(true);
+      setDislike(false);
+    }
+    api(`likes`, {
+      method: "POST",
+      body: { like: value, my_story_id: id },
+    });
+  }
+  function handleMoreClick(id) {
+    api(`likes/${id}`, {
+      method: "GET",
+    }).then((results) => {
+      if (results.likeByMe) {
+        setLike(true);
+      } else if (results.likeByMe === false) {
+        setDislike(true);
+      }
+    });
+    setExpandComment(false);
+  }
   function handleExpandCommentClick(id) {
     api(`comments/my_stories/${id}`, {
       method: "GET",
@@ -205,13 +240,14 @@ export default function Widget(props) {
                   </span>
                   <IconButton
                     size="small"
-                    onClick={() =>
+                    onClick={() => {
                       setSingleStory({
                         status: true,
                         list: results,
                         index: index,
-                      })
-                    }
+                      });
+                      handleMoreClick(story.id);
+                    }}
                     className={classes.whiteButton}
                   >
                     <MoreHorizIcon />
@@ -353,7 +389,7 @@ export default function Widget(props) {
               className={classes.whiteButton}
               onClick={() => {
                 setSingleStory({ status: true, list: storyList, index: index });
-                setExpandComment(false);
+                handleMoreClick(story.id);
               }}
             >
               <MoreHorizIcon />
@@ -369,7 +405,6 @@ export default function Widget(props) {
   let expandedStory;
   if (singleStory.list !== null && singleStory.index !== -1) {
     let item = singleStory.list[singleStory.index];
-    console.log(item);
     expandedStory = (
       <div className={classNames(styles.expandedStory)}>
         <div className={classNames(styles.storyTitle)}>
@@ -399,7 +434,7 @@ export default function Widget(props) {
                   className={clsx(classes.inactive, {
                     [classes.active]: like,
                   })}
-                  onClick={handleLikeClick}
+                  onClick={() => handleLikeClick(item.id)}
                 >
                   {like ? <FavoriteIcon /> : <FavoriteBorderIcon />}
                 </IconButton>
@@ -408,11 +443,11 @@ export default function Widget(props) {
                 <IconButton
                   aria-label="report"
                   className={clsx(classes.inactive, {
-                    [classes.active]: report,
+                    [classes.active]: dislike,
                   })}
-                  onClick={handleReportClick}
+                  onClick={() => handleDislikeClick(item.id)}
                 >
-                  {report ? <FeedbackIcon /> : <FeedbackOutlinedIcon />}
+                  {dislike ? <FeedbackIcon /> : <FeedbackOutlinedIcon />}
                 </IconButton>
               </Tooltip>
               <Tooltip>
