@@ -124,6 +124,7 @@ export default function Widget(props) {
   const [report, setReport] = useState(false);
   const [like, setLike] = useState(false);
   const [expandComment, setExpandComment] = useState(false);
+  const [allComments, setAllComments] = useState([]);
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
@@ -133,9 +134,14 @@ export default function Widget(props) {
   const handleLikeClick = () => {
     setLike(!like);
   };
-  const handleExpandCommentClick = () => {
+  function handleExpandCommentClick(id) {
+    api(`comments/my_stories/${id}`, {
+      method: "GET",
+    }).then((results) => {
+      setAllComments(results);
+    });
     setExpandComment(!expandComment);
-  };
+  }
   const [singleStory, setSingleStory] = useState({
     status: false,
     list: null,
@@ -243,20 +249,12 @@ export default function Widget(props) {
   const handleMyCommentChange = (event) => {
     setMyComment(event.target.value);
   };
-  const [allComments, setAllComments] = useState([]);
-  function postComment(storyId) {
-    api(`comments/my_stories/${storyId}`, {
+  function postComment(id) {
+    api(`comments/my_stories/${id}`, {
       method: "POST",
       body: { text: myComment },
     }).then((results) => {
-      console.log(results);
-    });
-
-    api(`comments/my_stories/${storyId}`, {
-      method: "GET",
-    }).then((results) => {
-      setAllComments(results);
-      console.log(results);
+      setAllComments([...allComments, { text: myComment, id: -1 }]);
     });
   }
 
@@ -353,9 +351,10 @@ export default function Widget(props) {
             </span>
             <IconButton
               className={classes.whiteButton}
-              onClick={() =>
-                setSingleStory({ status: true, list: storyList, index: index })
-              }
+              onClick={() => {
+                setSingleStory({ status: true, list: storyList, index: index });
+                setExpandComment(false);
+              }}
             >
               <MoreHorizIcon />
             </IconButton>
@@ -370,6 +369,7 @@ export default function Widget(props) {
   let expandedStory;
   if (singleStory.list !== null && singleStory.index !== -1) {
     let item = singleStory.list[singleStory.index];
+    console.log(item);
     expandedStory = (
       <div className={classNames(styles.expandedStory)}>
         <div className={classNames(styles.storyTitle)}>
@@ -420,8 +420,9 @@ export default function Widget(props) {
                   className={clsx(classes.inactive, {
                     [classes.active]: expandComment,
                   })}
-                  onClick={handleExpandCommentClick}
+                  onClick={() => handleExpandCommentClick(item.id)}
                   aria-label="expand"
+                  id={item.id}
                 >
                   {expandComment ? <CommentIcon /> : <CommentOutlinedIcon />}
                 </IconButton>
@@ -442,7 +443,7 @@ export default function Widget(props) {
                 variant="extended"
                 aria-label="post"
                 size="medium"
-                onClick={() => postComment(item.storyId)}
+                onClick={() => postComment(item.id)}
                 className={styles.postButton}
               >
                 Post
@@ -450,8 +451,12 @@ export default function Widget(props) {
             </FormControl>
             <div className={styles.commentWrapper}>
               {allComments.map((comment, index) => (
-                <div className={styles.commentItem} key={index}>
-                  {comment}
+                <div
+                  className={styles.commentItem}
+                  key={comment.id}
+                  id={comment.id}
+                >
+                  {comment.text}
                 </div>
               ))}
             </div>
