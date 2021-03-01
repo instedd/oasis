@@ -168,6 +168,7 @@ export default function Widget(props) {
       }
     });
     setExpandComment(false);
+    setAllComments([]);
   }
   function handleExpandCommentClick(id) {
     api(`comments/my_stories/${id}`, {
@@ -291,6 +292,7 @@ export default function Widget(props) {
       body: { text: myComment },
     }).then((results) => {
       setAllComments([...allComments, { text: myComment, id: -1 }]);
+      setMyComment("");
     });
   }
 
