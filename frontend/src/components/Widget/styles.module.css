@@ -1,133 +1,125 @@
 .resources a {
-  text-align: left;
-  color: white;
-  text-decoration: underline;
-  line-height: 2rem;
+    text-align: left;
+    color: white;
+    text-decoration: underline;
+    line-height: 2rem;
 }
 
 .resources svg {
-  vertical-align: middle;
-  margin-right: 8px;
+    vertical-align: middle;
+    margin-right: 8px;
 }
 
 .link {
-  text-align: left;
+    text-align: left;
 }
 
 .stats {
-  text-align: left;
-  line-height: 1.5rem;
+    text-align: left;
+    line-height: 1.5rem;
 }
 
-.stories {
-  height: 100%;
+.stories, .singleStory {
+    height: 100%;
 }
 
-.resources,
-.stats {
-  padding: 2rem;
+.singleStory {
+    margin-top: -1rem;
+}
+
+.resources, .stats {
+    padding: 2rem;
 }
 
 .storyList {
-  overflow-y: scroll;
-  margin-top: 1rem;
-  height: calc(100% - 66px - 1rem);
+    overflow-y: auto;
+    margin-top: 1rem;
+    height: calc(100% - 86px);
 }
 
 .storyItem {
-  border: 1px solid white;
-  border-radius: 10px;
-  text-align: left;
-  padding: 1rem;
-  margin: 0 2rem 1rem 2rem;
+    border: 1px solid white;
+    border-radius: 10px;
+    text-align: left;
+    padding: 1rem;
+    margin: 0 2rem 1rem 2rem;
 }
 
-.storyItem p,
-.expandedStory p {
-  word-wrap: break-word;
+.storyItem p, .expandedStory p {
+    word-wrap: break-word;
+    line-height: 1.6rem;
+    font-size: 0.9rem;
+    text-align: justify;
 }
 
 .createAt {
-  font-size: 10px;
-  display: block;
-  margin-top: 10px;
-  color: var(--primary);
-}
-
-.storyItem button,
-.storyItem button:hover {
-  color: white;
-  background: var(--primary);
-  width: 50px;
-  font-size: 0.6rem;
-  min-width: 0;
-}
-
-.expandedStory button,
-.expandedStory button:hover {
-  color: white;
-  background: var(--primary);
+    font-size: 10px;
+    display: block;
+    color: gray;
 }
 
 .storyBtn {
-  display: flex;
-  margin-top: 10px;
-  justify-content: space-between;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .expandedStory {
-  height: 100%;
+    height: 100%;
 }
 
 .expandedStory .content {
-  border: 1px solid white;
-  border-radius: 10px;
-  text-align: left;
-  padding: 1rem;
-  margin: 0rem 2rem 1rem 2rem;
-  overflow: hidden;
-  height: calc(100% - 90px);
+    border: 1px solid white;
+    border-radius: 10px;
+    text-align: left;
+    padding: 1rem;
+    margin: 0rem 2rem 1rem 2rem;
+    overflow: auto;
+    height: calc(90% - 2rem);
 }
 
 .expandBtn {
-  right: 0px;
-  position: absolute !important;
-  color: white !important;
+    right: 0px;
+    position: absolute !important;
+    color: white !important;
 }
 
 .searchBarWrapper {
-  padding: 1rem 2rem 0 2rem;
+    padding: 1rem 2rem 0 2rem;
 }
 
-.searchTitle {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 2rem;
+.searchTitle, .storyTitle {
+    position: relative;
+    padding: 0 2rem;
 }
 
 .searchTitle button {
-  color: white;
+    position: absolute;
+    top: -16px;
+    right: 2rem;
 }
 
-.dot {
-  height: 1em;
-  width: 1em;
-  background-color: #bbb;
-  border-radius: 50%;
-  display: inline-block;
-  margin-right: 5px;
+.backBtn {
+    position: absolute;
+    top: -16px;
+    left: 2rem;
 }
 
-.statusList {
-  top: 32px;
-  right: 30px;
-  font-weight: 900;
-  align-items: center;
-  display: inline-flex;
+.commentItem {
+    background: #828282;
+    padding: 5px;
+    font-size: 12px;
+    border-radius: 15px;
+    margin-bottom: 0.5rem;
 }
 
-.statusItem {
-  align-items: center;
-  display: inline-flex;
-  margin-right: 20px;
+.commentWrapper {
+    margin-top: 1rem;
+    overflow: auto;
+}
+
+.postButton {
+    font-weight: 900 !important;
+    color: white !important;
+    background-color: transparent !important;
 }

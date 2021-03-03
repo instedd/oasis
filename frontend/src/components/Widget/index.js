@@ -9,8 +9,9 @@ import {
   FormControl,
   InputBase,
   IconButton,
-  Button,
   Collapse,
+  Tooltip,
+  Fab,
 } from "@material-ui/core";
 import PropTypes from "prop-types";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -20,7 +21,15 @@ import EqualizerIcon from "@material-ui/icons/Equalizer";
 import LinkIcon from "@material-ui/icons/Link";
 import SearchIcon from "@material-ui/icons/Search";
 import LibraryBooksIcon from "@material-ui/icons/LibraryBooks";
-import RemoveIcon from "@material-ui/icons/Remove";
+import ClearAllIcon from "@material-ui/icons/ClearAll";
+import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
+import FeedbackIcon from "@material-ui/icons/Feedback";
+import FeedbackOutlinedIcon from "@material-ui/icons/FeedbackOutlined";
+import FavoriteIcon from "@material-ui/icons/Favorite";
+import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import CommentIcon from "@material-ui/icons/Comment";
+import CommentOutlinedIcon from "@material-ui/icons/CommentOutlined";
 import api from "utils";
 import { sicknessStatus, testStatus } from "routes/types";
 
@@ -50,13 +59,23 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 40,
     flexDirection: "row",
   },
+  commentArea: {
+    display: "flex",
+    padding: "2px 4px",
+    alignItems: "center",
+    border: "1px solid white",
+    borderRadius: 40,
+    flexDirection: "row",
+    "& input::placeholder": {
+      fontSize: 10,
+    },
+  },
   input: {
     marginLeft: theme.spacing(1),
     flex: 1,
     color: "white",
   },
-  iconButton: {
-    padding: 10,
+  whiteButton: {
     color: "white",
   },
   tab: {
@@ -74,8 +93,14 @@ const useStyles = makeStyles((theme) => ({
   expandOpen: {
     transform: "rotate(180deg)",
   },
+  inactive: {
+    color: "white",
+  },
+  active: {
+    color: "var(--primary)",
+  },
   tabPanel: {
-    height: "calc(100vh - 70px - 72px - 44px)",
+    height: "calc(100vh - 223px)",
   },
 }));
 
@@ -93,7 +118,66 @@ export default function Widget(props) {
     deaths: "",
     recovered: "",
   });
+
   const [expanded, setExpanded] = useState(true);
+  const [dislike, setDislike] = useState(false);
+  const [like, setLike] = useState(false);
+  const [expandComment, setExpandComment] = useState(false);
+  const [allComments, setAllComments] = useState([]);
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+  function handleDislikeClick(id) {
+    let value;
+    if (dislike === true) {
+      value = null;
+      setDislike(false);
+    } else {
+      value = false;
+      setLike(false);
+      setDislike(true);
+    }
+    api(`likes`, {
+      method: "POST",
+      body: { like: value, my_story_id: id },
+    });
+  }
+  function handleLikeClick(id) {
+    let value;
+    if (like === true) {
+      value = null;
+      setLike(false);
+    } else {
+      value = true;
+      setLike(true);
+      setDislike(false);
+    }
+    api(`likes`, {
+      method: "POST",
+      body: { like: value, my_story_id: id },
+    });
+  }
+  function handleMoreClick(id) {
+    api(`likes/${id}`, {
+      method: "GET",
+    }).then((results) => {
+      if (results.likeByMe) {
+        setLike(true);
+      } else if (results.likeByMe === false) {
+        setDislike(true);
+      }
+    });
+    setExpandComment(false);
+    setAllComments([]);
+  }
+  function handleExpandCommentClick(id) {
+    api(`comments/my_stories/${id}`, {
+      method: "GET",
+    }).then((results) => {
+      setAllComments(results);
+    });
+    setExpandComment(!expandComment);
+  }
   const [singleStory, setSingleStory] = useState({
     status: false,
     list: null,
@@ -104,6 +188,8 @@ export default function Widget(props) {
     userNum: null,
     storyNum: null,
   });
+
+  //#region Search Fuction
   const [keyword, setKeyword] = useState("");
   const [searchResults, setSearchResults] = useState("");
 
@@ -137,8 +223,9 @@ export default function Widget(props) {
                 onClick={() => {
                   setSearchResults("");
                 }}
+                className={classes.whiteButton}
               >
-                <RemoveIcon />
+                <ClearAllIcon />
               </IconButton>
             </div>
             {results.map((story, index) => (
@@ -150,20 +237,22 @@ export default function Widget(props) {
                 </p>
                 <div className={classNames(styles.storyBtn)}>
                   <span className={classNames(styles.createAt)}>
-                    create at: {story.updatedAt}
+                    Created at: {story.updatedAt}
                   </span>
-                  <Button
+                  <IconButton
                     size="small"
-                    onClick={() =>
+                    onClick={() => {
                       setSingleStory({
                         status: true,
                         list: results,
                         index: index,
-                      })
-                    }
+                      });
+                      handleMoreClick(story.id);
+                    }}
+                    className={classes.whiteButton}
                   >
-                    More
-                  </Button>
+                    <MoreHorizIcon />
+                  </IconButton>
                 </div>
               </div>
             ))}
@@ -172,7 +261,9 @@ export default function Widget(props) {
       }
     });
   }
+  //#endregion
 
+  //#region Fetch Data
   useEffect(() => {
     api(`stories/all`, {
       method: "GET",
@@ -183,11 +274,31 @@ export default function Widget(props) {
       });
     });
   }, []);
+  useEffect(() => {
+    fetch("https://covid19api.herokuapp.com/latest")
+      .then((res) => res.json())
+      .then((result) => setData(result));
+  }, []);
+  //#endregion
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
+  //#region Comments
+  const [myComment, setMyComment] = useState(null);
+  const handleMyCommentChange = (event) => {
+    setMyComment(event.target.value);
   };
+  function postComment(id) {
+    api(`comments/my_stories/${id}`, {
+      method: "POST",
+      body: { text: myComment },
+    }).then((results) => {
+      setAllComments([...allComments, { text: myComment, id: -1 }]);
+      setMyComment("");
+    });
+  }
 
+  //#endregion
+
+  //#region Tab Functions
   function TabPanel(props) {
     const { children, value, index } = props;
 
@@ -209,18 +320,14 @@ export default function Widget(props) {
     value: PropTypes.any.isRequired,
   };
 
-  useEffect(() => {
-    fetch("https://covid19api.herokuapp.com/latest")
-      .then((res) => res.json())
-      .then((result) => setData(result));
-  }, []);
-
   const classes = useStyles();
   const [tabIndex, setTabIndex] = React.useState(2);
   const handleChange = (event, newValue) => {
     setTabIndex(newValue);
   };
+  //#endregion
 
+  //#region Stats Tab
   const stats = (
     <div className={classNames(styles.stats)}>
       <div>
@@ -243,7 +350,9 @@ export default function Widget(props) {
       </div>
     </div>
   );
+  //#endregion
 
+  //#region Resources Tab
   const resources = (
     <div className={classNames(styles.resources)}>
       {getStoryResources(userStory).map((resource, i) => (
@@ -261,7 +370,9 @@ export default function Widget(props) {
       ))}
     </div>
   );
+  //#endregion
 
+  //#region Nearest Stories
   const nearestStories = (
     <div>
       <h4>Nearest Stories</h4>
@@ -274,48 +385,130 @@ export default function Widget(props) {
           </p>
           <div className={classNames(styles.storyBtn)}>
             <span className={classNames(styles.createAt)}>
-              create at: {story.updatedAt}
+              Created at: {story.updatedAt}
             </span>
-            <Button
-              size="small"
-              onClick={() =>
-                setSingleStory({ status: true, list: storyList, index: index })
-              }
+            <IconButton
+              className={classes.whiteButton}
+              onClick={() => {
+                setSingleStory({ status: true, list: storyList, index: index });
+                handleMoreClick(story.id);
+              }}
             >
-              More
-            </Button>
+              <MoreHorizIcon />
+            </IconButton>
           </div>
         </div>
       ))}
     </div>
   );
+  //#endregion
 
+  //#region Expanded Story
   let expandedStory;
   if (singleStory.list !== null && singleStory.index !== -1) {
+    let item = singleStory.list[singleStory.index];
     expandedStory = (
       <div className={classNames(styles.expandedStory)}>
-        <div key={singleStory.index} className={classNames(styles.content)}>
-          <p>{singleStory.list[singleStory.index].text}</p>
-          <div className={classNames(styles.createAt)}>
-            create at: {singleStory.list[singleStory.index].updatedAt}
+        <div className={classNames(styles.storyTitle)}>
+          <div className={classNames(styles.backBtn)}>
+            <IconButton
+              aria-label="back"
+              className={classes.whiteButton}
+              onClick={() =>
+                setSingleStory({ status: false, list: null, index: -1 })
+              }
+            >
+              <ChevronLeftIcon />
+            </IconButton>
           </div>
+          <h4>Story</h4>
         </div>
-        <Button
-          size="small"
-          onClick={() =>
-            setSingleStory({ status: false, list: null, index: -1 })
-          }
-        >
-          Back
-        </Button>
+        <div key={singleStory.index} className={classNames(styles.content)}>
+          <p>{item.text}</p>
+          <div className={classNames(styles.storyBtn)}>
+            <div className={classNames(styles.createAt)}>
+              Created at: {item.updatedAt}
+            </div>
+            <div>
+              <Tooltip title="like">
+                <IconButton
+                  aria-label="like"
+                  className={clsx(classes.inactive, {
+                    [classes.active]: like,
+                  })}
+                  onClick={() => handleLikeClick(item.id)}
+                >
+                  {like ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="report as spam">
+                <IconButton
+                  aria-label="report"
+                  className={clsx(classes.inactive, {
+                    [classes.active]: dislike,
+                  })}
+                  onClick={() => handleDislikeClick(item.id)}
+                >
+                  {dislike ? <FeedbackIcon /> : <FeedbackOutlinedIcon />}
+                </IconButton>
+              </Tooltip>
+              <Tooltip>
+                <IconButton
+                  className={clsx(classes.inactive, {
+                    [classes.active]: expandComment,
+                  })}
+                  onClick={() => handleExpandCommentClick(item.id)}
+                  aria-label="expand"
+                  id={item.id}
+                >
+                  {expandComment ? <CommentIcon /> : <CommentOutlinedIcon />}
+                </IconButton>
+              </Tooltip>
+            </div>
+          </div>
+          <Collapse in={expandComment} timeout="auto" unmountOnExit>
+            <FormControl className={classes.searchBar}>
+              <InputBase
+                className={classes.input}
+                value={myComment}
+                onChange={handleMyCommentChange}
+                placeholder="Write a comment..."
+                inputProps={{ "aria-label": "searchbar" }}
+                autoFocus
+              />
+              <Fab
+                variant="extended"
+                aria-label="post"
+                size="medium"
+                onClick={() => postComment(item.id)}
+                className={styles.postButton}
+              >
+                Post
+              </Fab>
+            </FormControl>
+            <div className={styles.commentWrapper}>
+              {allComments.map((comment, index) => (
+                <div
+                  className={styles.commentItem}
+                  key={comment.id}
+                  id={comment.id}
+                >
+                  {comment.text}
+                </div>
+              ))}
+            </div>
+          </Collapse>
+        </div>
       </div>
     );
   }
+  //#endregion
 
+  //#region Displayed Stories
   let displayedStories;
   if (singleStory.status) {
     displayedStories = (
-      <div className={classNames("storyList", styles.storyList)}>
+      <div className={classNames("singleStory", styles.singleStory)}>
         {expandedStory}
       </div>
     );
@@ -327,33 +520,40 @@ export default function Widget(props) {
       </div>
     );
   }
+  //#endregion
 
+  //#region Stories Tab
   const stories = (
     <div className={classNames(styles.stories)}>
-      <div className={styles.searchBarWrapper}>
-        <FormControl className={classes.searchBar}>
-          <InputBase
-            className={classes.input}
-            value={keyword}
-            error
-            onChange={handleKeywordChange}
-            placeholder="Search Keywords"
-            inputProps={{ "aria-label": "searchbar" }}
-            autoFocus
-          />
-          <IconButton
-            type="submit"
-            className={classes.iconButton}
-            aria-label="search"
-            onClick={() => searchStories(keyword)}
-          >
-            <SearchIcon />
-          </IconButton>
-        </FormControl>
-      </div>
+      {singleStory.status ? (
+        ""
+      ) : (
+        <div className={styles.searchBarWrapper}>
+          <FormControl className={classes.searchBar}>
+            <InputBase
+              className={classes.input}
+              value={keyword}
+              error
+              onChange={handleKeywordChange}
+              placeholder="Search Keywords"
+              inputProps={{ "aria-label": "searchbar" }}
+              autoFocus
+            />
+            <IconButton
+              type="submit"
+              className={classes.whiteButton}
+              aria-label="search"
+              onClick={() => searchStories(keyword)}
+            >
+              <SearchIcon />
+            </IconButton>
+          </FormControl>
+        </div>
+      )}
       {displayedStories}
     </div>
   );
+  //#endregion
 
   const tabs = [
     { label: "resources", content: resources, icon: <LinkIcon /> },
@@ -416,7 +616,7 @@ export default function Widget(props) {
         ))}
       </Collapse>
       <IconButton
-        className={clsx(classes.expand, classes.iconButton, {
+        className={clsx(classes.expand, classes.whiteButton, {
           [classes.expandOpen]: expanded,
         })}
         onClick={handleExpandClick}
