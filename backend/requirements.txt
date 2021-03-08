@@ -14,3 +14,4 @@ pandas
 jenkspy
 sigfig
 GitPython
+nltk
