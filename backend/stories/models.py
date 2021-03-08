@@ -103,3 +103,9 @@ class MyStory(Base):
 
     story = relationship("Story", back_populates="my_stories")
     comments = relationship("Comment", lazy="select")
+
+
+class Trending(Base):
+    __tablename__ = "trending_words"
+
+    data = Column(JSON)

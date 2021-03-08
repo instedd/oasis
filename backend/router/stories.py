@@ -216,3 +216,9 @@ def explore(
     return crud.get_story_feed(
         db, current_story.id, current_story.latitude, current_story.longitude
     )
+
+
+@router.get("/trending")
+def trending(db: Session = Depends(get_db)):
+    db_trending = crud.get_trending_words(db)
+    return db_trending

@@ -1,12 +1,21 @@
 from typing import List
 import random
+import datetime
 
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.sql.expression import func, and_
+import nltk
+from nltk.corpus import stopwords
+from nltk.probability import FreqDist
+import string
+import asyncio
 
 from database import Base
 from users.models import User
 from . import models, schemas
+
+nltk.download("stopwords")
+sampling_trending_words = False
 
 
 def update(model_id: int, dto: schemas.BaseModel, model: Base, db: Session):
@@ -198,3 +207,58 @@ def rand_per_story(arr: [models.MyStory]):
             output.append(ms)
 
     return output
+
+
+def get_trending_words(db: Session):
+    db_trending = db.query(models.Trending).first()
+    now = datetime.datetime.now()
+
+    if not db_trending or (now - db_trending.updated_at).days >= 7:
+        run_sample_task(db, db_trending)
+
+    return db_trending
+
+
+def run_sample_task(db: Session, to_update):
+    global sampling_trending_words
+    if sampling_trending_words:
+        return
+
+    sampling_trending_words = True
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(sample_trending_words(db, to_update))
+    loop.close()
+
+
+async def sample_trending_words(db: Session, to_update):
+    global sampling_trending_words
+    k = 3
+
+    db_stories = db.query(models.Story).all()
+    stop_words = set(stopwords.words("english"))
+    all_words = []
+
+    for story in db_stories:
+        for my_story in story.my_stories:
+            if not my_story.text:
+                continue
+
+            text = my_story.text.lower().translate(
+                str.maketrans("", "", string.punctuation)
+            )
+            for word in text.split():
+                if word not in stop_words:
+                    all_words.append(word)
+
+    fdist = FreqDist(all_words)
+    top = fdist.most_common(k)
+
+    if to_update:
+        update(to_update.id, {"data": top}, models.Trending, db)
+    else:
+        db_trending = models.Trending(data=top)
+        db.add(db_trending)
+        db.commit()
+
+    sampling_trending_words = False
