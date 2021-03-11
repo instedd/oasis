@@ -28,8 +28,6 @@ import FeedbackOutlinedIcon from "@material-ui/icons/FeedbackOutlined";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import CommentIcon from "@material-ui/icons/Comment";
-import CommentOutlinedIcon from "@material-ui/icons/CommentOutlined";
 import api from "utils";
 import { sicknessStatus, testStatus } from "routes/types";
 
@@ -122,8 +120,9 @@ export default function Widget(props) {
   const [expanded, setExpanded] = useState(true);
   const [dislike, setDislike] = useState(false);
   const [like, setLike] = useState(false);
-  const [expandComment, setExpandComment] = useState(false);
   const [allComments, setAllComments] = useState([]);
+  const [likeComment, setLikeComment] = useState({});
+  const [dislikeComment, setDislikeComment] = useState({});
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
@@ -134,7 +133,6 @@ export default function Widget(props) {
       setDislike(false);
     } else {
       value = false;
-      setLike(false);
       setDislike(true);
     }
     api(`likes`, {
@@ -150,7 +148,6 @@ export default function Widget(props) {
     } else {
       value = true;
       setLike(true);
-      setDislike(false);
     }
     api(`likes`, {
       method: "POST",
@@ -167,17 +164,56 @@ export default function Widget(props) {
         setDislike(true);
       }
     });
-    setExpandComment(false);
-    setAllComments([]);
-  }
-  function handleExpandCommentClick(id) {
     api(`comments/my_stories/${id}`, {
       method: "GET",
     }).then((results) => {
       setAllComments(results);
     });
-    setExpandComment(!expandComment);
+    allComments.forEach((comment) => {
+      api(`comments/${comment.id}/like`, {
+        method: "GET",
+      }).then((results) => {
+        if (results.likeByMe === true) {
+          setLikeComment({ ...likeComment, [comment.id]: true });
+        } else if (results.likeByMe === false) {
+          setDislikeComment({ ...dislikeComment, [comment.id]: true });
+        } else {
+          setLikeComment({ ...likeComment, [comment.id]: false });
+          setDislikeComment({ ...dislikeComment, [comment.id]: false });
+        }
+      });
+    });
   }
+  function handleLikeCommentClick(commentId) {
+    let value;
+    if (likeComment[commentId] === true) {
+      value = null;
+      setLikeComment({ ...likeComment, [commentId]: false });
+    } else {
+      value = true;
+      setLikeComment({ ...likeComment, [commentId]: true });
+    }
+    api(`comments/${commentId}/like`, {
+      method: "POST",
+      body: { like: value },
+    });
+  }
+
+  function handleDislikeCommentClick(commentId) {
+    let value;
+    if (dislikeComment[commentId] === true) {
+      value = null;
+      setDislikeComment({ ...dislikeComment, [commentId]: false });
+    } else {
+      value = false;
+      setDislikeComment({ ...dislikeComment, [commentId]: true });
+    }
+    api(`comments/${commentId}/like`, {
+      method: "POST",
+      body: { like: value },
+    });
+  }
+
   const [singleStory, setSingleStory] = useState({
     status: false,
     list: null,
@@ -414,9 +450,10 @@ export default function Widget(props) {
             <IconButton
               aria-label="back"
               className={classes.whiteButton}
-              onClick={() =>
-                setSingleStory({ status: false, list: null, index: -1 })
-              }
+              onClick={() => {
+                setSingleStory({ status: false, list: null, index: -1 });
+                setAllComments([]);
+              }}
             >
               <ChevronLeftIcon />
             </IconButton>
@@ -452,52 +489,69 @@ export default function Widget(props) {
                   {dislike ? <FeedbackIcon /> : <FeedbackOutlinedIcon />}
                 </IconButton>
               </Tooltip>
-              <Tooltip>
-                <IconButton
-                  className={clsx(classes.inactive, {
-                    [classes.active]: expandComment,
-                  })}
-                  onClick={() => handleExpandCommentClick(item.id)}
-                  aria-label="expand"
-                  id={item.id}
-                >
-                  {expandComment ? <CommentIcon /> : <CommentOutlinedIcon />}
-                </IconButton>
-              </Tooltip>
             </div>
           </div>
-          <Collapse in={expandComment} timeout="auto" unmountOnExit>
-            <FormControl className={classes.searchBar}>
-              <InputBase
-                className={classes.input}
-                value={myComment}
-                onChange={handleMyCommentChange}
-                placeholder="Write a comment..."
-                inputProps={{ "aria-label": "searchbar" }}
-                autoFocus
-              />
-              <Fab
-                variant="extended"
-                aria-label="post"
-                size="medium"
-                onClick={() => postComment(item.id)}
-                className={styles.postButton}
+
+          <FormControl className={classes.searchBar}>
+            <InputBase
+              className={classes.input}
+              value={myComment}
+              onChange={handleMyCommentChange}
+              placeholder="Write a comment..."
+              inputProps={{ "aria-label": "searchbar" }}
+              autoFocus
+            />
+            <Fab
+              variant="extended"
+              aria-label="post"
+              size="medium"
+              onClick={() => postComment(item.id)}
+              className={styles.postButton}
+            >
+              Post
+            </Fab>
+          </FormControl>
+          <div className={styles.commentWrapper}>
+            {allComments.map((comment, index) => (
+              <div
+                className={styles.commentItem}
+                key={comment.id}
+                id={comment.id}
               >
-                Post
-              </Fab>
-            </FormControl>
-            <div className={styles.commentWrapper}>
-              {allComments.map((comment, index) => (
-                <div
-                  className={styles.commentItem}
-                  key={comment.id}
-                  id={comment.id}
-                >
-                  {comment.text}
-                </div>
-              ))}
-            </div>
-          </Collapse>
+                {comment.text}
+                <span>
+                  <IconButton
+                    aria-label="like comment"
+                    size="small"
+                    className={clsx(classes.inactive, {
+                      [classes.active]: likeComment[comment.id],
+                    })}
+                    onClick={() => handleLikeCommentClick(comment.id)}
+                  >
+                    {likeComment[comment.id] ? (
+                      <FavoriteIcon />
+                    ) : (
+                      <FavoriteBorderIcon />
+                    )}
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    aria-label="report comment"
+                    className={clsx(classes.inactive, {
+                      [classes.active]: dislikeComment[comment.id],
+                    })}
+                    onClick={() => handleDislikeCommentClick(comment.id)}
+                  >
+                    {dislikeComment[comment.id] ? (
+                      <FeedbackIcon />
+                    ) : (
+                      <FeedbackOutlinedIcon />
+                    )}
+                  </IconButton>
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
