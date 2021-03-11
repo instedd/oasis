@@ -118,8 +118,8 @@ export default function Widget(props) {
   });
 
   const [expanded, setExpanded] = useState(true);
-  const [dislike, setDislike] = useState(false);
-  const [like, setLike] = useState(false);
+  const [dislike, setDislike] = useState({});
+  const [like, setLike] = useState({});
   const [allComments, setAllComments] = useState([]);
   const [likeComment, setLikeComment] = useState({});
   const [dislikeComment, setDislikeComment] = useState({});
@@ -128,12 +128,12 @@ export default function Widget(props) {
   };
   function handleDislikeClick(id) {
     let value;
-    if (dislike === true) {
+    if (dislike[id] === true) {
       value = null;
-      setDislike(false);
+      setDislike({ ...dislike, [id]: false });
     } else {
       value = false;
-      setDislike(true);
+      setDislike({ ...dislike, [id]: true });
     }
     api(`likes`, {
       method: "POST",
@@ -142,12 +142,12 @@ export default function Widget(props) {
   }
   function handleLikeClick(id) {
     let value;
-    if (like === true) {
+    if (like[id] === true) {
       value = null;
-      setLike(false);
+      setLike({ ...like, [id]: false });
     } else {
       value = true;
-      setLike(true);
+      setLike({ ...like, [id]: true });
     }
     api(`likes`, {
       method: "POST",
@@ -159,9 +159,12 @@ export default function Widget(props) {
       method: "GET",
     }).then((results) => {
       if (results.likeByMe) {
-        setLike(true);
+        setLike({ ...like, [id]: true });
       } else if (results.likeByMe === false) {
-        setDislike(true);
+        setDislike({ ...dislike, [id]: true });
+      } else {
+        setLike({ ...like, [id]: false });
+        setDislike({ ...dislike, [id]: false });
       }
     });
     api(`comments/my_stories/${id}`, {
@@ -471,22 +474,26 @@ export default function Widget(props) {
                 <IconButton
                   aria-label="like"
                   className={clsx(classes.inactive, {
-                    [classes.active]: like,
+                    [classes.active]: like[item.id],
                   })}
                   onClick={() => handleLikeClick(item.id)}
                 >
-                  {like ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                  {like[item.id] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
                 </IconButton>
               </Tooltip>
               <Tooltip title="report as spam">
                 <IconButton
                   aria-label="report"
                   className={clsx(classes.inactive, {
-                    [classes.active]: dislike,
+                    [classes.active]: dislike[item.id],
                   })}
                   onClick={() => handleDislikeClick(item.id)}
                 >
-                  {dislike ? <FeedbackIcon /> : <FeedbackOutlinedIcon />}
+                  {dislike[item.id] ? (
+                    <FeedbackIcon />
+                  ) : (
+                    <FeedbackOutlinedIcon />
+                  )}
                 </IconButton>
               </Tooltip>
             </div>
