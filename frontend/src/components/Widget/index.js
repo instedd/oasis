@@ -98,7 +98,7 @@ const useStyles = makeStyles((theme) => ({
     color: "var(--primary)",
   },
   tabPanel: {
-    height: "calc(100vh - 223px)",
+    height: "calc(100vh - 214px)",
   },
 }));
 

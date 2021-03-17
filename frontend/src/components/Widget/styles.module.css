@@ -120,6 +120,7 @@
     height: 16px;
     width: 16px;
 }
+
 .commentWrapper {
     margin-top: 1rem;
     overflow: auto;
@@ -129,4 +130,26 @@
     font-weight: 900 !important;
     color: white !important;
     background-color: transparent !important;
+}
+
+.dot {
+    height: 1em;
+    width: 1em;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.statusList {
+    font-size: 14px;
+    line-height: 24px;
+    font-weight: 900;
+    display: inline-flex;
+}
+
+.statusItem {
+    align-items: center;
+    display: inline-flex;
+    margin-right: 20px;
 }
