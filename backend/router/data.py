@@ -20,9 +20,9 @@ COVID_US_STATES_API_URL = (
     "https://api.covidtracking.com/v1/states/current.json"
 )
 COVID_SD_ZIP_CODE_API_URL = (
-    "https://gis-public.sandiegocounty.gov/arcgis/rest/services/Hosted"
+   "https://gis-public.sandiegocounty.gov/arcgis/rest/services/Hosted"
     "/COVID_19_Statistics__by_ZIP_Code/FeatureServer/0/query?f=json"
-    "&where=1%3D1&outFields=ziptext,created_date,rate_100k,case_count,"
+    "&where=1%3D1&outFields=ziptext,rate_100k,case_count,"
     "updatedate&returnGeometry=false"
     "&spatialRel=esriSpatialRelIntersects&outFields"
     "=*&orderByFields=updatedate%20DESC"
