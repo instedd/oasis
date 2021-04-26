@@ -11,7 +11,6 @@ import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import paths from "routes/paths";
-import { sicknessStatus, testStatus } from "routes/types";
 import styles from "./styles.module.css";
 import { fetchStory, submitMyStory, submitStory } from "actions/story";
 import { LOADING } from "actions/types";
