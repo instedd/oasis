@@ -35,7 +35,7 @@ services:
       DATABASE_USER: 'root'
       DATABASE_PASSWORD: ''
       PEPPER: '56UpUXF8lF'
-      DEV: 'True' 
+      DEV: 'True'
       JWT_SECRET: 'eXqByNjF4w8O3TvR2NZm8qQTG0tVe5yR'
       COOKIE_EXPIRATION_SECONDS: '86400'
   db:
@@ -44,7 +44,7 @@ services:
       dockerfile: ./Dockerfile.db
     volumes:
       - db:/var/lib/mysql
-    environment: 
+    environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
 
 volumes:
