@@ -21,6 +21,7 @@ class Comment(CommentCreate):
     updated_at: date
     created_at: date
     story: Story = None
+    reported: bool = None
 
     class Config:
         orm_mode = True
@@ -31,6 +32,18 @@ class CommentLikeCreate(BaseModel):
 
 
 class CommentLike(CommentLikeCreate):
+    comment_id: int
+    story_id: int
+
+    class Config:
+        orm_mode = True
+
+
+class CommentSpamCreate(BaseModel):
+    spam: bool = None
+
+
+class CommentSpam(CommentSpamCreate):
     comment_id: int
     story_id: int
 

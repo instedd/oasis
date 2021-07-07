@@ -95,3 +95,33 @@ def count_like(db: Session, comment_id):
     )
 
     return {"like": like, "dislike": dislike}
+
+
+def get_spam_by_comment_and_user(db, comment_id, story_id):
+    return (
+        db.query(models.CommentSpam)
+        .filter(
+            and_(
+                models.CommentSpam.comment_id == comment_id,
+                models.CommentSpam.story_id == story_id,
+            )
+        )
+        .first()
+    )
+
+
+def report_comment(db: Session, comment_id, story_id, is_spam):
+    spam = schemas.CommentSpam(
+        spam=is_spam, comment_id=comment_id, story_id=story_id
+    )
+    db_spam = get_spam_by_comment_and_user(db, comment_id, story_id)
+
+    if db_spam:
+        update(db_spam.id, spam, models.CommentSpam, db)
+    else:
+        db_spam = models.CommentSpam(**spam.dict())
+        db.add(db_spam)
+        db.commit()
+
+    db.refresh(db_spam)
+    return db_spam
