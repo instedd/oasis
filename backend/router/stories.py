@@ -201,8 +201,11 @@ def search_my_story(query: schemas.Search, db: Session = Depends(get_db)):
     return crud.search_my_story(db, query.text)
 
 
-@router.get("/explore", response_model=List[schemas.MyStoryWithStory])
+@router.get(
+    "/explore/{page_num}", response_model=List[schemas.MyStoryWithStory]
+)
 def explore(
+    page_num: int,
     current_story: schemas.Story = Depends(main.get_current_story),
     db: Session = Depends(get_db),
 ):
@@ -213,8 +216,13 @@ def explore(
             detail=msg,
             headers={"WWW-Authenticate": "Bearer"},
         )
+
     return crud.get_story_feed(
-        db, current_story.id, current_story.latitude, current_story.longitude
+        db,
+        current_story.id,
+        current_story.latitude,
+        current_story.longitude,
+        page_num,
     )
 
 

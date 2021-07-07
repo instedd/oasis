@@ -177,7 +177,7 @@ def search_my_story(db: Session, query: str):
     )
 
 
-def get_story_feed(db: Session, cur_id, lat, lng):
+def get_story_feed(db: Session, cur_id, lat, lng, page_num):
     dist = func.sqrt(
         func.pow(models.Story.latitude - lat, 2)
         + func.pow(models.Story.longitude - lng, 2)
@@ -189,10 +189,12 @@ def get_story_feed(db: Session, cur_id, lat, lng):
         .filter(models.Story.id != cur_id)
         .order_by(dist)
         .order_by(models.MyStory.updated_at.desc())
+        .limit(10)
+        .offset(10 * page_num)
         .all()
     )
 
-    return rand_per_story(db_my_stories)
+    return db_my_stories
 
 
 def rand_per_story(arr: [models.MyStory]):
